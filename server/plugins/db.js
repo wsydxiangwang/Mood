@@ -5,4 +5,7 @@ module.exports = app => {
         useNewUrlParser: true, 
         useUnifiedTopology: true
     })
+    mongoose.connection.once("open", function(){
+        console.log('mongoose success ~ ~')
+    })
 }

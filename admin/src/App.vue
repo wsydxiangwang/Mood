@@ -19,10 +19,12 @@ export default {
 #app.pc{
 	height: 100vh;
 	display: flex;
+	overflow: hidden;
 }
 #app.pc .page-content{
 	flex: 1;
 	padding: 20px;
+	overflow-y: auto;
 }
 * {
 	margin: 0;

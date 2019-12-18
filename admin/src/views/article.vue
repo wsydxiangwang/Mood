@@ -23,7 +23,7 @@
                     <td class="title">{{item.title}}</td>
                     <td class="classify">{{item.classify}}</td>
                     <td class="comment">{{item.comment}}</td>
-                    <td class="date">{{item.date}}</td>
+                    <td class="date">{{item.time}}</td>
                 </tr>
             </tbody>
         </table>
@@ -48,6 +48,16 @@ export default {
                     date: '2019/12/12'
                 }
             ]
+        }
+    },
+    created(){
+        this.fetch()
+    },
+    methods: {
+        async fetch(){
+            const res = await this.$http.get('article');
+            this.articleList = res.data;
+        console.table(this.articleList)
         }
     }
 }
