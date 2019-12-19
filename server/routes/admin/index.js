@@ -5,22 +5,21 @@ module.exports = app => {
     const Article = require('../../models/NewArticle')
 
     // 添加文章
-    router.post('/NewArticle', async (req, res) => {
+    router.post('/newArticle', async (req, res) => {
         const model = await Article.create(req.body)
         res.send(model)
     })
 
     // 获取文章
     router.get('/article', async (req, res) => {
-        try {
-            const item = await Article.find().sort({time: -1}).limit(20)
-            const count = await Article.countDocuments()
-            res.send(item)
-            console.log(item)
-        } catch(err) {
-            res.send(err)
-            console.log(err);
-        }
+        const data = await Article.find().sort({time: -1}).limit(20)
+        res.send(data)
+    })
+
+    // 更新文章
+    router.get('/updateArticle/:id', async (req, res) => {
+        const data = await Article.find().sort({time: -1}).limit(20)
+        res.send(data)
     })
 
     // 添加说说

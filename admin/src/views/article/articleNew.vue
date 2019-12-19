@@ -75,7 +75,7 @@ export default {
         submit(){
             console.log(this.data)
             // const res = await this.$http.post('NewArticle', this.data)
-            this.$http.post('NewArticle', this.data).then(res => {
+            this.$http.post('newArticle', this.data).then(res => {
                 console.log(res)
             })
         },

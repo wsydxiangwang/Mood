@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import index from '../views/index.vue'
-import article from '../views/article.vue'
-import articleNew from '../views/articleNew.vue'
+import article from '../views/article/articleList.vue'
+import articleNew from '../views/article/articleNew.vue'
+import edit from '../views/article/edit.vue'
 import phrase from '../views/phrase.vue'
 import phraseNew from '../views/phraseNew.vue'
 
@@ -14,12 +15,17 @@ const routes = [
 		component: index
 	},
 	{
-		path: '/article',
+		path: '/article/articleList',
 		component: article
 	},
 	{
-		path: '/articleNew',
+		path: '/article/articleNew',
 		component: articleNew
+	},
+	{
+		path: '/article/edit/',
+		name: 'edit',
+		component: edit
 	},
 	{
 		path: '/phrase',

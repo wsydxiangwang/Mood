@@ -27,22 +27,22 @@ export default {
                 {
                     icon: '',
                     title: '文章',
-                    link: 'article',
+                    link: '/article/articleList',
                 },
                 {
                     icon: '',
                     title: '新文章',
-                    link: 'articleNew',
+                    link: '/article/articleNew',
                 },
                 {
                     icon: '',
                     title: '细语',
-                    link: 'phrase',
+                    link: '/phrase',
                 },
                 {
                     icon: '',
                     title: '新细语',
-                    link: 'phraseNew',
+                    link: '/phraseNew',
                 },
                 {
                     icon: '',
