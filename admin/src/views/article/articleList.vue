@@ -17,6 +17,7 @@
                     <td>评论</td>
                     <td>日期</td>
                     <td>操作</td>
+                    <td>操作</td>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,7 @@
                     <td class="comment">{{item.comment}}</td>
                     <td class="date">{{item.time}}</td>
                     <td @click="edit(item)" class="edit">编辑</td>
+                    <td @click="remove(item)" class="edit">删除</td>
                 </tr>
             </tbody>
         </table>
@@ -49,10 +51,14 @@ export default {
         },
         edit(item){
             this.$router.push({
-                path: `article/edit/${item}`,
-                name: 'edit',
+                path: `/article/edit/${item}`,
+                name: 'articleEdit',
                 params: item
             })
+        },
+        async remove(item){
+            const res = await this.$http.delete(`article/${item._id}`);
+            this.fetch()
         }
     }
 }

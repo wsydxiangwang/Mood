@@ -13,33 +13,9 @@
             <div class="state">
                 <div>时间</div>
                 <input type="text" v-model="dataAll.time">
-                <h2>文章置顶</h2>
-                <div>保存草稿</div>
             </div>
         </section>
 
-        <section>
-            <h2>文章分类</h2>
-            <div class="category">
-                <div>342342423</div>
-                <div>342342423</div>
-                <div>342342423</div>
-            </div>
-        </section>
-
-        <section>
-            <h2>摘要</h2>
-            <div class="intro">
-                <input type="text" v-model="dataAll.describe" placeholder="简介">
-            </div>
-        </section>
-
-        <section>
-            <h2>封面图</h2>
-            <div class="picture">
-                <input type="text" v-model="dataAll.image" placeholder="图片链接">
-            </div>
-        </section>
 
         <button class="submit" @click="submit">提交</button>
     </div>
@@ -62,7 +38,7 @@ export default {
             this.dataAll.contentHtml = render;     // render 为 markdown 解析后的结果[html]
         },
         async submit(){
-            const res = await this.$http.put(`article/${this.dataAll._id}`, this.dataAll)
+            const res = await this.$http.put(`/phrase/${this.dataAll._id}`, this.dataAll)
             console.log(res)
         }
     },

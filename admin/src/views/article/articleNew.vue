@@ -57,9 +57,10 @@ export default {
             data: {
                 title: '',              // 标题
                 content: '',            // 内容
+                contentHtml: '',        // 内容解析html
                 describe: '',           // 描述
                 time: '',               // 时间
-                stick: false,           // 置顶
+                stick: '',           // 置顶
                 category: '',           // 分类
                 image: '',              // 封面图
             }
@@ -70,24 +71,28 @@ export default {
     },
     methods: {
         change(value, render){
-            this.data.content = render;     // render 为 markdown 解析后的结果[html]
+            this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
+            this.data.content = value;          // 输入的内容
         },
         submit(){
-            console.log(this.data)
-            // const res = await this.$http.post('NewArticle', this.data)
-            this.$http.post('newArticle', this.data).then(res => {
+            for(let key in this.data){
+                if(this.data[key] == ''){
+                    this.$delete(this.data, key)
+                }
+            }
+            this.$http.post('article', this.data).then(res => {
                 console.log(res)
             })
         },
         dateFormat(fmt){
             let date = new Date();
             let opt = {
-            "Y+": date.getFullYear().toString(),        // 年
-            "M+": (date.getMonth() + 1).toString(),     // 月
-            "D+": date.getDate().toString(),            // 日
-            "H+": date.getHours().toString(),           // 时
-            "m+": date.getMinutes().toString(),         // 分
-            "s+": date.getSeconds().toString()          // 秒
+                "Y+": date.getFullYear().toString(),        // 年
+                "M+": (date.getMonth() + 1).toString(),     // 月
+                "D+": date.getDate().toString(),            // 日
+                "H+": date.getHours().toString(),           // 时
+                "m+": date.getMinutes().toString(),         // 分
+                "s+": date.getSeconds().toString()          // 秒
             };
             for(let k in opt) {
                 let ret = new RegExp("(" + k + ")").exec(fmt);

@@ -13,17 +13,18 @@
             <thead>
                 <tr>
                     <td>标题</td>
-                    <td>分类</td>
-                    <td>评论</td>
                     <td>日期</td>
+                    <td>操作</td>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="item in phraseList">
                     <td class="title">{{item.title}}</td>
-                    <td class="classify">{{item.classify}}</td>
-                    <td class="comment">{{item.comment}}</td>
                     <td class="date">{{item.date}}</td>
+                    <td>
+                        <span @click="edit(item)">编辑</span>
+                        <span @click="remove(item)">删除</span>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -34,21 +35,28 @@
 export default {
     data() {
         return {
-            phraseList: [
-                {
-                    title: '放宽心，坚持住，一切都是最好的安排！！',
-                    classify: '心情小镇',
-                    comment: '21',
-                    date: '2019/12/12'
-                },
-                {
-                    title: '放宽心，坚持住，一切都是最好的安排！！',
-                    classify: '心情小镇',
-                    comment: '21',
-                    date: '2019/12/12'
-                }
-            ]
+            phraseList: []
         }
+    },
+    created(){
+        this.fetch();
+    },
+    methods: {
+        async fetch(){
+            const res = await this.$http.get('/phrase');
+            this.phraseList = res.data;
+        },
+        async remove(item){
+            const res = await this.$http.delete(`/phrase/${item._id}`);
+            this.fetch()
+        },
+        edit(item){
+            this.$router.push({
+                path: `/phrase/edit/${item}`,
+                name: 'phraseEdit',
+                params: item
+            })
+        },
     }
 }
 </script>

@@ -1,11 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import index from '../views/index.vue'
-import article from '../views/article/articleList.vue'
-import articleNew from '../views/article/articleNew.vue'
-import edit from '../views/article/edit.vue'
-import phrase from '../views/phrase.vue'
-import phraseNew from '../views/phraseNew.vue'
 
 Vue.use(VueRouter)
 
@@ -16,24 +11,33 @@ const routes = [
 	},
 	{
 		path: '/article/articleList',
-		component: article
+		name: "article",
+		component: resolve => require(['@/views/article/articleList'], resolve)
 	},
 	{
 		path: '/article/articleNew',
-		component: articleNew
+		name: "articleNew",
+		component: resolve => require(['@/views/article/articleNew'], resolve)
 	},
 	{
-		path: '/article/edit/',
-		name: 'edit',
-		component: edit
+		path: '/article/edit',
+		name: "articleEdit",
+		component: resolve => require(['@/views/article/edit'], resolve)
 	},
 	{
 		path: '/phrase',
-		component: phrase
+		name: "phrase",
+		component: resolve => require(['@/views/phrase/phrase'], resolve)
 	},
 	{
 		path: '/phraseNew',
-		component: phraseNew
+		name: "phraseNew",
+		component: resolve => require(['@/views/phrase/phraseNew'], resolve)
+	},
+	{
+		path: '/phrase/edit',
+		name: "phraseEdit",
+		component: resolve => require(['@/views/phrase/edit'], resolve)
 	},
 ]
 

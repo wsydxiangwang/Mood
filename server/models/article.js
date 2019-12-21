@@ -1,20 +1,27 @@
 /* 
- * 发布文章 模块
+ * 文章模块
 */
 
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    title: String,
+    time: String,
+    image: String,
     content: String,
     describe: String,
-    time: String,
+    contentHtml: String,
+    title: {
+        type: String,
+        default: '这是被遗忘的文字'
+    },
+    category: {
+        type: String,
+        default: '求个身份'
+    },
     stick: {
         type: Boolean,
         default: false
     },
-    category: String,
-    image: String
 })
 
 module.exports = mongoose.model('Article', schema)
