@@ -7,7 +7,7 @@
             <input type="text" v-model="data.title" placeholder="标题">
         </section>
 
-        <mavon-editor @change="change" ref="md" style="min-height: 60vh"/>
+        <mavon-editor @change="change" ref="md" style="height: 60vh"/>
 
         <section>
             <div class="state">

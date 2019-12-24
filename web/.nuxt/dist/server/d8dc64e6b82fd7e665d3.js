@@ -1,0 +1,1 @@
+exports.ids=[1],exports.modules={26:function(t,e,r){"use strict";r.r(e);var o={data:()=>({data:""}),created(){console.log(this.$route.query.data),this.data=this.$route.query.data}},c=r(1),component=Object(c.a)(o,(function(){var t=this.$createElement;return(this._self._c||t)("div")}),[],!1,null,null,"c4cb5a08");e.default=component.exports}};

@@ -63,13 +63,5 @@ module.exports = app => {
  
     
 
-
-
-    // 添加说说
-    router.post('/NewPhrase', async (req, res) => {
-        const model = await Phrase.create(req.body)
-        res.send(model)
-    })
-
     app.use('/admin/api', router)
 }
