@@ -10,14 +10,14 @@ const routes = [
 		component: index
 	},
 	{
-		path: '/article/articleList',
+		path: '/article',
 		name: "article",
-		component: resolve => require(['@/views/article/articleList'], resolve)
+		component: resolve => require(['@/views/article/article'], resolve)
 	},
 	{
-		path: '/article/articleNew',
+		path: '/article/NewArticle',
 		name: "articleNew",
-		component: resolve => require(['@/views/article/articleNew'], resolve)
+		component: resolve => require(['@/views/article/NewArticle'], resolve)
 	},
 	{
 		path: '/article/edit',
@@ -30,9 +30,9 @@ const routes = [
 		component: resolve => require(['@/views/phrase/phrase'], resolve)
 	},
 	{
-		path: '/phraseNew',
+		path: '/phrase/NewPhrase',
 		name: "phraseNew",
-		component: resolve => require(['@/views/phrase/phraseNew'], resolve)
+		component: resolve => require(['@/views/phrase/NewPhrase'], resolve)
 	},
 	{
 		path: '/phrase/edit',

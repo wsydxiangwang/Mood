@@ -26,7 +26,7 @@
                     <td class="classify">{{item.classify}}</td>
                     <td class="comment">{{item.comment}}</td>
                     <td class="date">{{item.time}}</td>
-                    <td @click="edit(item)" class="edit">编辑</td>
+                    <td @click="edit(item._id)" class="edit">编辑</td>
                     <td @click="remove(item)" class="edit">删除</td>
                 </tr>
             </tbody>
@@ -42,23 +42,24 @@ export default {
         }
     },
     created(){
-        this.fetch()
+        this.loadData()
     },
     methods: {
-        async fetch(){
+        async loadData(){
             const res = await this.$http.get('article');
             this.articleList = res.data;
         },
-        edit(item){
+        edit(id){
             this.$router.push({
-                path: `/article/edit/${item}`,
                 name: 'articleEdit',
-                params: item
+                query: {
+                    id: id
+                }
             })
         },
         async remove(item){
             const res = await this.$http.delete(`article/${item._id}`);
-            this.fetch()
+            this.loadData()
         }
     }
 }

@@ -61,16 +61,21 @@ export default {
         change(value, render){
             this.dataAll.contentHtml = render;     // render 为 markdown 解析后的结果[html]
         },
+        // 提交更新文章
         async submit(){
             const res = await this.$http.put(`article/${this.dataAll._id}`, this.dataAll)
             console.log(res)
+        },
+        // 获取当前文章的数据
+        async loadData(){
+            let id = this.$route.query.id;
+            const res = await this.$http.get(`article/${id}`)
+            this.dataAll = res.data;
         }
     },
     created() {
-        this.dataAll = this.$route.params;
-        console.log(this.dataAll)
+        this.loadData()
     },
-    
 }
 </script>
 
