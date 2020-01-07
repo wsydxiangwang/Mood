@@ -12,6 +12,14 @@ module.exports = app => {
         res.send(data)
     })
 
+    // 获取指定id文章
+    router.get('/article/:id', async (req, res) => {
+        const data = await Article.findById(req.params.id)
+        res.send(data)
+    })
+
+    
+
     // 添加文章
     router.post('/article', async (req, res) => {
         const model = await Article.create(req.body)
