@@ -1,6 +1,10 @@
 const express = require('express');
 const history = require('connect-history-api-fallback');
+// const token = require('jsonwebtoken');
+
 const app = express();
+
+
 
 app.use(history({
     index: '/admin/index.html'
