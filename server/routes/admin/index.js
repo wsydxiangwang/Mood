@@ -1,7 +1,8 @@
 module.exports = app => {
     const db = require('mongoose');
-    const jwt = require('jsonwebtoken');
+    const crypto = require('crypto');
     const express = require('express');
+    const jwt = require('jsonwebtoken');
 
     const router = express.Router();
 
@@ -11,13 +12,20 @@ module.exports = app => {
     const User = require('../../models/user')
     
 
-    router.post('/login', (req, res) => {
+    router.post('/login', async (req, res) => {
+        let pwd = crypto.createHash('sha256').update('Libai12335').digest('hex');
+        
+        console.log(pwd)
+
+        // let ss =  crypto.createHash('sha256', req.body.password).update('I love cupcakes').digest('hex');
+        // console.log(ss)
+
         let content = {name: req.body.name}; 
         let key = "jwt";
         let token = jwt.sign(content, key, {
-            expiresIn: 60 * 60 * 1  // 1小时过期
+            expiresIn: 6  // 1小时过期
         });
-
+        // console.log(token)
         res.json({
             status: 1,
             mess: 'ok',
@@ -25,12 +33,12 @@ module.exports = app => {
             user_name: req.body.name
         })
         
-        console.log(token)
+        // console.log(token)
         
-        User.find().exec((err, data) => {
-            console.log(data, err)
-        })
+        // let data = await User.find();
+
         // console.log(data)
+
 
     })
 

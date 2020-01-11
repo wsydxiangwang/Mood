@@ -12,7 +12,7 @@ export default {
         async login(){
             let data = {
                 name: 'Libai',
-                pass: '123456'
+                password: '123456'
             }
             const res = await this.$http.post('/login', data);
 
