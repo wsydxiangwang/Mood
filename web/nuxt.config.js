@@ -39,11 +39,11 @@ module.exports = {
   },
   proxy: {
     // 开启代理 跨域
-    '/api/': {
+    '/api': {
       target: process.env.BASE_URL || 'http://localhost:3000/web/api',
       changeOrigin: true,
       pathRewrite: {
-        '^/api': ''
+        '^/api': '/'
       },
     },
   }, 
