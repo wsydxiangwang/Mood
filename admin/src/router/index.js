@@ -10,6 +10,11 @@ const routes = [
 		component: index
 	},
 	{
+		path: '/login',
+		name: "login",
+		component: resolve => require(['@/views/login'], resolve)
+	},
+	{
 		path: '/article',
 		name: "article",
 		component: resolve => require(['@/views/article/article'], resolve)
