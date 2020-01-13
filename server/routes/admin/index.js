@@ -1,14 +1,11 @@
 module.exports = app => {
-    const db = require('mongoose');
-    const crypto = require('crypto');
     const express = require('express');
-    const jwt = require('jsonwebtoken');
-
     const router = express.Router();
 
     const Article = require('../../models/article')
     const Phrase = require('../../models/phrase')
     const Category = require('../../models/category')
+<<<<<<< HEAD
     const User = require('../../models/user')
     
 
@@ -39,6 +36,8 @@ module.exports = app => {
 
 
     })
+=======
+>>>>>>> ab56fde17e87fe922953bc54095df05c3a4ace1a
 
 
     // 获取文章

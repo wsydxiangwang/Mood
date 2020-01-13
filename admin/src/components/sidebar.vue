@@ -8,7 +8,7 @@
         </div>
         <ul>
             <li v-for="item in list">
-                <router-link :to="item.link"><span>{{item.title}}</span></router-link>
+                <div @click="toPage(item.link)">{{item.title}}</div>
             </li>
         </ul>
     </div>
@@ -66,6 +66,21 @@ export default {
                 }
             ]
         }
+    },
+    methods: {
+        toPage(data){
+            if(data){
+                this.$router.push(data)
+            }else{
+                /**
+                 * 清除token
+                 * 回到登录页
+                 */
+                localStorage.removeItem('Authorization');
+                this.$router.push('/login');
+                console.log('退出登录')
+            }
+        }
     }
 }
 </script>
@@ -102,10 +117,10 @@ export default {
             height: 40px;
             line-height: 40px;
             text-align: center;
-            a{
-                display: block;
+            div{
                 color: #fff;
                 padding: 0 10px;
+                cursor: pointer;
                 transition: all .3s;
                 &:hover{
                     background: red;

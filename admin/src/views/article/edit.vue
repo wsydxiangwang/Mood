@@ -7,8 +7,8 @@
             <input type="text" v-model="dataAll.title" placeholder="标题">
         </section>
 
-        <mavon-editor @change="change" v-model="dataAll.content" ref="md" style="height: 70vh"/>
-
+        <mavon-editor :ishljs="true" codeStyle="monokai-sublime"  @change="change" v-model="dataAll.content" ref="md" style="height: 70vh"/>
+        
         <section>
             <div class="state">
                 <div>时间</div>

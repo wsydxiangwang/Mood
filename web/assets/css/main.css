@@ -1,0 +1,31 @@
+html {
+	font-family: "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+	word-spacing: 1px;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+*, *:before, *:after {
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	letter-spacing: 0.4px;
+	box-sizing: border-box;
+}
+
+body{
+	overflow-x: hidden;
+}
+body::-webkit-scrollbar{
+	width: 6px;
+}
+body::-webkit-scrollbar-thumb{
+	background: #e7e7e7;
+}
+body::-webkit-scrollbar-track{
+	background: #f6f6f6;
+}
+
+
+/* color: #24292e; */

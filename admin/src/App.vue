@@ -1,6 +1,6 @@
 <template>
 	<div id="app" class="pc">
-		<sidebar></sidebar>
+		<sidebar v-if="isShow"></sidebar>
 		<div class="page-content">
 			<router-view />
 		</div>
@@ -11,6 +11,25 @@ import sidebar from "./components/sidebar";
 export default {
 	components: {
 		sidebar
+	},
+	data() {
+		return {
+			isShow: true
+		}
+	},
+	watch: {
+		/**
+		 * 监听页面路由
+		 * login'
+		 * 则不显示全局组件
+		 */
+		$route(to, form){
+			if(this.$route.path === '/login'){
+				this.isShow = false;
+			}else{
+				this.isShow = true;
+			}
+		}
 	}
 };
 </script>

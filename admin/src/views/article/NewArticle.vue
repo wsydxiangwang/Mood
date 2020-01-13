@@ -7,7 +7,8 @@
             <input type="text" v-model="data.title" placeholder="标题">
         </section>
 
-        <mavon-editor @change="change" ref="md" style="height: 70vh"/>
+        <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" ref="md" style="height: 70vh"/>
+
 
         <section>
             <div class="state">
@@ -58,21 +59,38 @@ export default {
                 title: '',              // 标题
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
-                describe: '',           // 描述
-                time: '',               // 时间
-                stick: '',           // 置顶
+                time: {
+                    default: '',        // 默认全时间段
+                    date: '',           // 日期
+                    month1: '',          // 月份
+                    month2: '',          // 月份
+                    year: '',           // 年份
+                    day: '',            // 天数
+                    hour: '',           // 时分
+                },
                 category: '',           // 分类
                 image: '',              // 封面图
             }
         }
     },
     created() {
+        // this.data.time = {
+
+        // }
         this.data.time = this.dateFormat('YYYY-MM-DD HH:mm')
+
+        console.log(this.dateFormat('YYYY/MM/DD HH:mm'))
+        console.log(this.dateFormat('YYYY'))
+        console.log(this.dateFormat('MM', 'MM'))
+        console.log(this.dateFormat('DD'))
+        console.log(this.dateFormat('HH:mm'))
+        
     },
     methods: {
         change(value, render){
             this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
             this.data.content = value;          // 输入的内容
+            console.log(value.length)
         },
         submit(){
             for(let key in this.data){
@@ -80,11 +98,13 @@ export default {
                     this.$delete(this.data, key)
                 }
             }
+            console.log(this.data)
+            return;
             this.$http.post('article', this.data).then(res => {
                 console.log(res)
             })
         },
-        dateFormat(fmt){
+        dateFormat(fmt, mm){
             let date = new Date();
             let opt = {
                 "Y+": date.getFullYear().toString(),        // 年
@@ -100,6 +120,14 @@ export default {
                     fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
                 };
             };
+            if(mm){
+                let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+                let data = {
+                    month1: fmt,
+                    month2: mArr[Number(fmt) - 1]
+                }
+                fmt = data;
+            }
             return fmt;
         }
     }

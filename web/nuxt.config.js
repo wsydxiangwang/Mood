@@ -39,11 +39,11 @@ module.exports = {
   },
   proxy: {
     // 开启代理 跨域
-    '/api/': {
+    '/api': {
       target: process.env.BASE_URL || 'http://localhost:3000/web/api',
       changeOrigin: true,
       pathRewrite: {
-        '^/api': ''
+        '^/api': '/'
       },
     },
   }, 
@@ -54,12 +54,12 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: [
-  ],
+  css: ["~assets/css/main.css"],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '@/plugins/vue-mavon-editor', srr: false }
   ],
   /*
   ** Nuxt.js dev-modules
