@@ -5,7 +5,6 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    time: String,
     image: String,
     content: String,
     describe: String,
@@ -22,6 +21,18 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    time: {
+        default: String,
+        date: String,
+        month1: String,
+        month2: String,
+        year: String,
+        day: String,
+        hour: String
+    },
+    like: Number,
+    words: Number,
+    comment: {}
 })
 
 module.exports = mongoose.model('Article', schema)

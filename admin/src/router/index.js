@@ -11,7 +11,10 @@ const routes = [
 	},
 	{
 		path: '/login',
-		name: "login",
+		name: "login", 
+		meta: {
+            requireAuth: true,  // 除此路由外，其他都需登录
+        },
 		component: resolve => require(['@/views/login'], resolve)
 	},
 	{
@@ -50,6 +53,26 @@ const router = new VueRouter({
 	mode: 'history',
 	base: process.env.BASE_URL,
 	routes
+})
+
+router.beforeEach((to, from, next) => {
+	/**
+	 * 判断路由是否需要登录权限
+	 */
+	if (!to.meta.requireAuth) {  
+		/**
+		 * 获取当前的token是否存在
+		 * 不存在则进入登录页面
+		 */
+		if (localStorage.getItem("Authorization")) {
+			next();
+        } else {
+			console.log('未登录 请先登录')
+            next({path: '/login'})
+        }
+    } else {
+        next();
+    }
 })
 
 export default router

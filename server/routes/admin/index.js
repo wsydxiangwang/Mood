@@ -1,46 +1,10 @@
 module.exports = app => {
-    const db = require('mongoose');
-    const crypto = require('crypto');
     const express = require('express');
-    const jwt = require('jsonwebtoken');
-
     const router = express.Router();
 
     const Article = require('../../models/article')
     const Phrase = require('../../models/phrase')
     const Category = require('../../models/category')
-    const User = require('../../models/user')
-    
-
-    router.post('/login', async (req, res) => {
-        let pwd = crypto.createHash('sha256').update('Libai12335').digest('hex');
-        
-        console.log(pwd)
-
-        // let ss =  crypto.createHash('sha256', req.body.password).update('I love cupcakes').digest('hex');
-        // console.log(ss)
-
-        let content = {name: req.body.name}; 
-        let key = "jwt";
-        let token = jwt.sign(content, key, {
-            expiresIn: 6  // 1小时过期
-        });
-        // console.log(token)
-        res.json({
-            status: 1,
-            mess: 'ok',
-            token: token,
-            user_name: req.body.name
-        })
-        
-        // console.log(token)
-        
-        // let data = await User.find();
-
-        // console.log(data)
-
-
-    })
 
 
     // 获取文章
