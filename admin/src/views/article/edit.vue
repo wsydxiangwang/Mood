@@ -35,6 +35,13 @@
         </section>
 
         <section>
+            <h2>音乐</h2>
+            <div class="picture">
+                <input type="text" v-model="dataAll.music" placeholder="北京音乐">
+            </div>
+        </section>
+
+        <section>
             <h2>封面图</h2>
             <div class="picture">
                 <input type="text" v-model="dataAll.image" placeholder="图片链接">
@@ -63,6 +70,9 @@ export default {
         },
         // 提交更新文章
         async submit(){
+
+            
+            return;
             const res = await this.$http.put(`article/${this.dataAll._id}`, this.dataAll)
             console.log(res)
         },

@@ -4,6 +4,12 @@
   "description": "My fabulous Nuxt.js project",
   "author": "Libai",
   "private": true,
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0",
+      "port": "8000"
+    }
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "build": "nuxt build",
@@ -16,7 +22,8 @@
     "cross-env": "^5.2.0",
     "express": "^4.16.4",
     "mavon-editor": "^2.7.7",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "weixin-js-sdk": "^1.4.0-test"
   },
   "devDependencies": {
     "node-sass": "^4.13.0",

@@ -9,7 +9,6 @@
 
         <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" ref="md" style="height: 70vh"/>
 
-
         <section>
             <div class="state">
                 <div>时间</div>
@@ -32,6 +31,13 @@
             <h2>摘要</h2>
             <div class="intro">
                 <input type="text" v-model="data.describe" placeholder="简介">
+            </div>
+        </section>
+
+        <section>
+            <h2>音乐</h2>
+            <div class="picture">
+                <input type="text" v-model="data.music" placeholder="音乐地址">
             </div>
         </section>
 
@@ -59,38 +65,29 @@ export default {
                 title: '',              // 标题
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
-                time: {
-                    default: '',        // 默认全时间段
-                    date: '',           // 日期
-                    month1: '',          // 月份
-                    month2: '',          // 月份
-                    year: '',           // 年份
-                    day: '',            // 天数
-                    hour: '',           // 时分
-                },
+                time: {},               // 时间
                 category: '',           // 分类
-                image: '',              // 封面图
+                image: '',              // 图片
+                music: '',              // 音乐
             }
         }
     },
     created() {
-        // this.data.time = {
-
-        // }
-        this.data.time = this.dateFormat('YYYY-MM-DD HH:mm')
-
-        console.log(this.dateFormat('YYYY/MM/DD HH:mm'))
-        console.log(this.dateFormat('YYYY'))
-        console.log(this.dateFormat('MM', 'MM'))
-        console.log(this.dateFormat('DD'))
-        console.log(this.dateFormat('HH:mm'))
-        
+        // 默认时间
+        this.data.time = {
+            date: this.dateFormat('YYYY/MM/DD HH:mm'),
+            year: this.dateFormat('YYYY'),
+            monthTxt: this.dateFormat('MM', 'mm'),
+            monthNum: this.dateFormat('MM'),
+            day: this.dateFormat('DD'),
+            hour: this.dateFormat('HH:mm')
+        }
     },
     methods: {
         change(value, render){
-            this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
+            this.data.contentHtml = render;     // 解析的html
             this.data.content = value;          // 输入的内容
-            console.log(value.length)
+            this.data.words = value.length;     // 字数
         },
         submit(){
             for(let key in this.data){
@@ -98,12 +95,12 @@ export default {
                     this.$delete(this.data, key)
                 }
             }
-            console.log(this.data)
-            return;
             this.$http.post('article', this.data).then(res => {
                 console.log(res)
+                alert('成功')
             })
         },
+        // 时间
         dateFormat(fmt, mm){
             let date = new Date();
             let opt = {
@@ -122,11 +119,7 @@ export default {
             };
             if(mm){
                 let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
-                let data = {
-                    month1: fmt,
-                    month2: mArr[Number(fmt) - 1]
-                }
-                fmt = data;
+                fmt = mArr[Number(fmt) - 1];
             }
             return fmt;
         }

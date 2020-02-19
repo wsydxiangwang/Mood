@@ -1,38 +1,38 @@
 /* 
  * 文章模块
 */
-
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    image: String,
-    content: String,
-    describe: String,
-    contentHtml: String,
-    title: {
-        type: String,
-        default: '这是被遗忘的文字'
-    },
-    category: {
-        type: String,
-        default: '求个身份'
-    },
-    stick: {
+    music: String,                      // 音乐
+    image: String,                      // 封面
+    content: String,                    // 内容
+    describe: String,                   // 描述
+    contentHtml: String,                // 内容源码
+    title: String,                      // 标题
+    category: String,                   // 分类
+    stick: {                            // 置顶
         type: Boolean,
         default: false
     },
-    time: {
-        default: String,
-        date: String,
-        month1: String,
-        month2: String,
+    time: {                             // 时间
+        date: String,                   
+        monthNum: String,               
+        monthTxt: String,
         year: String,
         day: String,
         hour: String
     },
-    like: Number,
-    words: Number,
-    comment: {}
+    like: {
+        type: Number,
+        default: 0
+    },                       // 喜欢
+    read: {
+        type: Number,
+        default: 0
+    },                       // 阅读
+    words: Number,                      // 字数
+    comment: [],                        // 评论
 })
 
 module.exports = mongoose.model('Article', schema)

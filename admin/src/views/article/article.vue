@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in articleList">
+                <tr v-for="(item, index) in articleList" :key="index">
                     <td class="title">{{item.title}}</td>
                     <td class="classify">{{item.classify}}</td>
                     <td class="comment">{{item.comment}}</td>
@@ -47,7 +47,9 @@ export default {
     methods: {
         async loadData(){
             const res = await this.$http.get('article');
-            this.articleList = res.data;
+            if(res.data){
+                this.articleList = res.data;
+            }
         },
         edit(id){
             this.$router.push({

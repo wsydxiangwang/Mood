@@ -1,22 +1,40 @@
 <template>
     <div class="container">
         <header>
-            <div>222</div>
+            <div class="l icon">
+                <span class="logo" @click="toIndex">
+                    <img src="../static/image/logo.png">
+                </span>
+                <span 
+                    class="iconfont" 
+                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    @click="changeMusic"
+                ></span>
+            </div>
             <div class="title" :class="{active: title}">{{data.title}}</div>
-            <div>3333</div>
+            <div class="r icon">
+                <span 
+                    class="iconfont icon-heart1" 
+                    :class="{like: isLike}"
+                    @click="like"
+                ></span>
+                <!-- <span class="iconfont icon-wechat" @click="wechat"></span> -->
+                <span class="myself" @click="myself">
+                    <img src="../static/image/myself.png">
+                </span>
+            </div>
+            <!-- 音乐进度条 -->
+            <div class="musicBar" :style="{width: changeProgress}"></div>
+            <!-- 文章进度条 -->
+            <div class="scrollbar" :style="{width: postProgress}"></div>
         </header>
         <h1 class="title">{{data.title}}</h1>
         <div class="stuff">
-            <!-- <span>{{data.category}}</span>
-            <span>{{data.like || 0}}</span>
-            <span>{{data.comment || 0}}</span>
-            <span>{{data.time}}</span>
-             -->
-            <span>十一月 24, 2018</span>
-            <span>阅读 2941</span>
-            <span>字数 2941</span>
-            <span>评论 154</span>
-            <span>喜欢 639</span>
+            <span>{{data.time.monthTxt}}月 {{data.time.day}}, {{data.time.year}}</span>
+            <span>阅读 {{data.read}}</span>
+            <span>字数 {{data.words}}</span>
+            <span>评论 {{data.comment.length}}</span>
+            <span>喜欢 {{data.like}}</span>
             <span v-if="data.stick">置顶</span>
         </div>
         <div class="content">
@@ -25,35 +43,151 @@
             </client-only>
         </div>
         <div class="comment">
-            <h2>评论列表</h2>
             <div class="comment-form">
-                <input type="text" placeholder="称呼" v-model="comment.name">
-                <input type="text" placeholder="邮箱" v-model="comment.email">
-                <input type="text" placeholder="站点" v-model="comment.address">
+                <div class="input-box">
+                    <input type="text" placeholder="称呼" v-model="comment.name">
+                    <input type="text" placeholder="邮箱" v-model="comment.email">
+                    <input type="text" placeholder="站点" v-model="comment.address">
+                </div>
                 <textarea placeholder="" v-model="comment.content"></textarea>
                 <button type="button" @click="commentSubmit">发表评论</button>
             </div>
-            <div class="comment-list">
-                <div class="comment-item">
-
+            <template v-if="data.comment.length > 0">
+                <h2>评论列表</h2>
+                <div class="comment-list">
+                    <div class="comment-item" v-for="(item, index) in data.comment" :key="index">
+                        <div class="head">
+                            <div class="img">
+                                <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
+                            </div>
+                            <div class="name">
+                                <a href="javascript:;">{{item.name}}</a>
+                                <div class="r">
+                                    <div class="reply">reply</div>
+                                    <span class="time">{{item.time}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-content">{{item.content}}</div>
+                    </div>
                 </div>
-            </div>
+            </template>
         </div>
+
+        <!-- music -->
+        <audio id="music" loop="loop" preload="auto">
+            <source type="audio/mpeg" :src="data.music">
+        </audio>
+
     </div>
 </template>
 
 <script>
+// import wx from 'weixin-js-sdk';
+
 export default {
     data(){
         return{
+            comment: {},
+            timer: null,
             title: false,
-            comment: {}
+            isLike: false,
+            isStore: false,
+            postProgress: 0,
+            changeProgress: 0,
         }
     },
+    head () {
+        return {
+            title: this.data.title,
+            meta: [
+                { hid: 'description', name: 'description', content: this.data.describe }
+            ]
+        }
+    },
+    created(){
+
+    },
     mounted(){
+        this.$axios.get('/getsign').then(res => {
+            // wx.config({
+            //     debug: true,                    // 调试模式 wx弹窗 pc打印
+            //     appId: 'wxc21bbf3b44300995',    // 标识
+            //     timestamp: res.data.timestamp,  // 时间戳
+            //     nonceStr: res.data.noncestr,    // 随机串
+            //     signature: res.data.signature,  // 签名
+            //     jsApiList: [                    // 接口
+            //         'updateAppMessageShareData',// 朋友
+            //         'updateTimelineShareData'   // 朋友圈
+            //     ] 
+            // });
+        })
+
+        return;
+        this.$axios.get(`https://api.weixin.qq.com/cgi-bin/token?
+        grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
+        .then(res => {
+
+        })
+        .catch(err => {
+
+        })
+        // wx.config({
+        //     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        //     appId: 'wxc21bbf3b44300995', // 必填，公众号的唯一标识
+        //     timestamp: '', // 必填，生成签名的时间戳
+        //     nonceStr: '', // 必填，生成签名的随机串
+        //     signature: '',// 必填，签名
+        //     jsApiList: [] // 必填，需要使用的JS接口列表
+        // });
+        
+        // 滚动条
         window.addEventListener('scroll', this.handleScroll)
+
+        // 是否点赞
+        let like = localStorage.getItem(`like-${this.data._id}`);
+        if(like) this.isLike = true;
+
+        // 阅读量+1
+        this.$axios.put(`article_read/${this.data._id}`).then(res => {
+            this.data.read++;
+        })
     },
     methods: {
+        // 音乐播放
+        changeMusic(){
+            let music = document.getElementById("music");
+            this.isStore = !this.isStore;
+            // 播放
+            if(this.isStore){                    
+                music.play();
+                // 进度条
+                this.timer = setInterval(() => {
+                    var n = (100 * (music.currentTime / music.duration)).toFixed(2);
+                    // 循环
+                    if(n >= 100) clearInterval(this.timer);
+                    this.changeProgress = n + '%';
+                }, 50)
+            }
+            // 暂停
+            else{
+                music.pause();
+                clearInterval(this.timer);
+            }
+        },
+        // 点赞
+        like(){
+            if(this.isLike){
+                alert("已点过赞了哦！")
+            }else{
+                this.$axios.put(`article_like/${this.data._id}`).then(res => {
+                    this.data.like++;
+                    this.isLike = true;
+                    localStorage.setItem(`like-${this.data._id}`, true);
+                })
+            }
+        },
+        // 滚动条位置
         handleScroll(){
             let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             if(scrollTop >= 100){
@@ -61,14 +195,75 @@ export default {
             }else{
                 this.title = false;
             }
+
+            var h1 = document.getElementsByClassName('content')[0];
+            var h2 = document.getElementsByClassName('stuff')[0];
+            var h3 = document.getElementsByTagName('h1')[0];
+
+            var h = h1.offsetHeight + h2.offsetHeight + h3.offsetHeight - document.documentElement.clientHeight - 100;
+            var n = (100 * (scrollTop / h)).toFixed(4);
+
+            if(n < 110) this.postProgress = n + '%';
+
         },
+        // 发表评论
         commentSubmit(){
-            console.log(this.comment)
+
+            if(!this.comment.content){
+                alert('请先输入您想说的话，再按发表评论按钮哦！！')
+                return;
+            }
+            if(!this.comment.name){
+                alert('请输入您的名字！')
+                return;
+            }
+            if(!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.comment.email)){
+                alert('请输入正确的邮箱，方便发送回复通知！')
+                return;
+            }
+
+            this.comment.time = this.dateFormat('YYYY/MM/DD HH:mm');
+            this.comment.id = this.data.comment[0].id + 1;
+            this.comment.comments = [];
+
+            this.$axios.put(`article_comment/${this.data._id}`, this.comment)
+                .then(res => {
+                    this.data.comment.unshift(this.comment)
+                    alert('评论成功')
+                }).catch(err => {
+                    alert('评论失败，请刷新再试！！')
+                })
+        },
+        myself(){
+            this.$router.push('/myself')
+        },
+        toIndex(){
+            this.$router.push('/')
+        },
+        // 时间
+        dateFormat(fmt, mm){
+            let date = new Date();
+            let opt = {
+                "Y+": date.getFullYear().toString(),        // 年
+                "M+": (date.getMonth() + 1).toString(),     // 月
+                "D+": date.getDate().toString(),            // 日
+                "H+": date.getHours().toString(),           // 时
+                "m+": date.getMinutes().toString(),         // 分
+                "s+": date.getSeconds().toString()          // 秒
+            };
+            for(let k in opt) {
+                let ret = new RegExp("(" + k + ")").exec(fmt);
+                if (ret) {
+                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+                };
+            };
+            return fmt;
         }
     },
     async asyncData(context){
         let id = context.route.query.id
-		let {data} = await context.$axios.get(`article/${id}`)
+        let {data} = await context.$axios.get(`article/${id}`)
+        data.comment.reverse()
 		return {data: data}
 	},
 }
@@ -90,22 +285,82 @@ header{
     align-items: center;
     justify-content: space-between;
     color: #666;
+    padding: 0 15px;
     background: #fff;
     z-index: 99999;
+    .musicBar{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 50px;
+        z-index: -1;
+        background: #eee;
+    }
+    .scrollbar{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #50bcb6;
+        transition: width .5s ease;
+    }
     .title{
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
         transition: all .8s;
+        text-align: center;
         opacity: 0;
         &.active{
             opacity: 1;
         }
     }
+    .iconfont{
+        color: #888;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 5px;
+        transition: all .3s;
+        &:hover{
+            color: #555;
+        }
+        &.like, &.like:hover{
+            color: #EF6D57;
+        }
+    }
+    .logo{
+        display: inline-block;
+        height: 20px;
+        width: 20px;
+        vertical-align: top;
+        margin-right: 15px;
+        margin-left: 4px;
+        cursor: pointer;
+        img{
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .myself{
+        width: 26px;
+        height: 26px;
+        display: inline-block;
+        border-radius: 50%;
+        overflow: hidden;
+        vertical-align: bottom;
+        margin-left: 8px;
+        cursor: pointer;
+        img{
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 h1.title{
     font-size: 30px;
-    margin: 130px 0 22px;
+    padding: 130px 0 22px;
     color: #333;
 }
 .stuff{
@@ -113,7 +368,7 @@ h1.title{
     position: relative;
     span{
         font-size: 13px;
-        margin: 0 2px;
+        margin-right: 10px;
     }
     &:after{
         content: '';
@@ -134,8 +389,13 @@ h1.title{
         p{
             line-height: 36px;
             margin: 0 0 18px;
-            img{
-                // height: 20px;
+            mark{
+                padding: 0 4px;
+                line-height: 22px;
+                display: inline-block;
+            }
+            strong{
+                font-weight: bold;
             }
         }
         h1, h2, h3, h4, h5{
@@ -169,6 +429,11 @@ h1.title{
                 left: -16px;
             }
         }
+        iframe{
+            width: 100%;
+            height: 450px;
+            margin-bottom: 20px;
+        }
         pre{
             padding: 0;
             font-size: 16px;
@@ -195,6 +460,280 @@ h1.title{
                         background: #23241f;
                     }
                 }
+            }
+        }
+    }
+}
+
+.comment{
+    h2{
+        font-size:18px;
+        font-weight:400;
+        margin-bottom:20px;
+        display:inline-block;
+        border-bottom:1px solid #666;
+        color:#333
+    }
+    .comment-form{
+        border:1px solid #eee;
+        margin-bottom:60px;
+        border-radius:4px;
+        padding:15px 12px;
+        .input-box{
+            display:flex;
+            input{
+                width:32.33%;
+                height:38px;
+                font-size:13px;
+                padding-left:10px;
+                margin-right:1.5%;
+                -webkit-transition:all .3s;
+                transition:all .3s;
+                border:none;
+                border-bottom:1px dashed #f0f0f0;
+                outline:none;
+                &:focus{
+                    border-color:#b9b9b9;
+                }
+                &:last-child{
+                    margin: 0;
+                }
+            }
+        }
+        textarea{
+            width:100%;
+            height:200px;
+            margin:10px 0;
+            border:1px dashed #eee;
+            -webkit-transition:all .3s;
+            transition:all .3s;
+            border-radius:4px;
+            font-size:13px;
+            padding:15px;
+            outline:none;
+            resize:none;
+            &:focus{
+                border-color: #b9b9b9;
+            }
+        }
+        button{
+            height:34px;
+            width:100px;
+            font-size:13px;
+            color:#5f5f5f;
+            border-radius:6px;
+            background:#eaeaea;
+            cursor:pointer;
+            outline:none;
+            border:none;
+            -webkit-transition:all .3s;
+            transition:all .3s;
+        }
+    }
+    .comment-list{
+        padding:0 0 60px;
+        .comment-item{
+            padding:25px 0;
+            border-bottom:1px solid #f6f7f8;
+            
+            &:hover .head .name .r .reply{
+                opacity: 1;
+            }
+            .head{
+                display:-webkit-box;
+                display:flex;
+                position:relative;
+                .img{
+                    width:45px;
+                    height:45px;
+                    border-radius:50%;
+                    margin-right:12px;
+                    overflow:hidden;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+                .name{
+                    flex:1;
+                    display:-webkit-box;
+                    display:flex;
+                    -webkit-box-align:center;
+                    align-items:center;
+                    -webkit-box-pack:justify;
+                    justify-content:space-between;
+                    a{
+                        font-weight:400;
+                        color:#ef6d57;
+                        font-size:16px;
+                        height:20px;
+                        -webkit-transition:all .3s;
+                        transition:all .3s;
+                        text-decoration:none;
+                        &:hover{
+                            color:#ef2f11;
+                            text-decoration:underline;
+                        }
+                    }
+                    .r{
+                        display: flex;
+                        .time{
+                            color:#999;
+                            font-size:12px;
+                            letter-spacing:0;
+                        }
+                        .reply{
+                            opacity: 0;
+                            font-size: 12px;
+                            color: #ef6d57;
+                            margin-right: 12px;
+                            cursor: pointer;
+                            transition: all .2s;
+                            text-decoration: underline;
+                            text-transform: capitalize;
+                            &:hover{
+                                font-weight: bold;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            .comment-content{
+                color:#303030;
+                line-height:22px;
+                padding:0 0 0 58px
+            }
+        }
+        .comments{
+            padding-left:58px;
+            margin-top:38px;
+            .item{
+                margin-top:32px;
+                .head{
+                    display:-webkit-box;
+                    display:flex;
+                    -webkit-box-align:center;
+                    align-items:center;
+                    position:relative;
+                    .img{
+                        width:40px;
+                        height:40px;
+                    }
+                    .name{
+                        position:relative;
+                        &:after{
+                            content:"";
+                            width:100%;
+                            border-top:1px solid #f6f7f8;
+                            position:absolute;
+                            top:-22px;
+                            left:0
+                        }
+                    }
+                }
+                .comment-content{
+                    color:#666;
+                    padding:0;
+                    margin:0 0 0 50px;
+                    span{
+                        color:#00b7ff;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .container{
+        width: 90%;
+    }
+    h1.title{
+        font-size: 20px;
+        padding: 90px 0 15px;
+    }
+    .content{
+        padding: 60px 0;
+        /deep/ 
+        .markdown-body{
+            p{
+                line-height: 28px;
+            }
+            iframe{
+                height: 390px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    header{
+        position: absolute;
+    }
+    .content{
+        /deep/ 
+        .markdown-body{
+            iframe{
+                height: 310px;
+            }
+        }
+    }
+
+    .comment .comment-list .comment-item{
+        .head{
+            .img{
+                width: 40px;
+                height: 40px;
+                margin-right: 10px;
+            }
+            .name{
+                flex-direction: column;
+                align-items: baseline;
+                justify-content: space-evenly;
+                a{
+                    font-size: 13px;
+                }
+                .r{
+                    .time{
+                        font-size: 11px;    
+                    }
+                    .reply{
+                        opacity: 1;
+                        font-size: 12px;
+                        color: #ef6d57;
+                        position: absolute;
+                        right: 0;
+                        top: 13px;
+                        cursor: pointer;
+                        text-decoration: underline;
+                        text-transform: capitalize;
+                    }
+                }
+            }
+        }
+        .comment-content{
+            padding: 0;
+            margin-top: 10px;
+        }
+    }
+}
+@media screen and (max-width: 500px) {
+    .content{
+        /deep/ 
+        .markdown-body{
+            iframe{
+                height: 260px;
+            }
+        }
+    }
+}
+@media screen and (max-width: 414px) {
+    .content{
+        /deep/ 
+        .markdown-body{
+            iframe{
+                height: 220px;
             }
         }
     }

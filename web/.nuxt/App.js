@@ -9,12 +9,16 @@ import {
 import NuxtError from '..\\layouts\\error.vue'
 import NuxtLoading from './components/nuxt-loading.vue'
 
+import '..\\assets\\css\\main.css'
+
+import '..\\static\\css\\iconfont.css'
+
 import _6f6c098b from '..\\layouts\\default.vue'
 
 const layouts = { "_default": _6f6c098b }
 
 export default {
-  head: {"title":"Libai","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"My fabulous Nuxt.js project"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[]},
+  head: {"title":"Libai","meta":[{"charset":"utf-8"},{"name":"author","content":"Libai"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"name":"keywords","content":"白茶, libai, 李白, 李白茶, 音乐, 故事, 美文, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 独行侠"},{"hid":"description","name":"description","content":"My fabulous Nuxt.js project"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[]},
 
   render (h, props) {
     const loadingEl = h('NuxtLoading', { ref: 'loading' })

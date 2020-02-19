@@ -16,6 +16,8 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.8.1"
+    "memory-cache": "^0.2.0",
+    "mongoose": "^5.8.1",
+    "request": "^2.88.2"
   }
 }

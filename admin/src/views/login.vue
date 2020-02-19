@@ -1,27 +1,34 @@
 <template>
     <div class="login">
-        <input type="text" placeholder="用户名">
-        <input type="password" placeholder="密码">
+        <input type="text" placeholder="用户名" v-model="data.username">
+        <input type="password" placeholder="密码" v-model="data.password">
         <button @click="login">登录</button>
     </div>
 </template>
 
 <script>
 export default {
+    data(){
+        return {
+            data: {
+                username: '',
+                password: ''
+            }
+        }
+    },
     methods: {
         async login(){
-            let data = {
-                username: 'Libai',
-                password: 'Libaiwsydxw98521'
-            }
-            const res = await this.$http.post('/login', data);
+            const res = await this.$http.post('/login', this.data);
+            /**
+             * 登录成功
+             * 设置token
+             * 去到首页
+             */
             if(res.data.status === 1){
-                // 设置token
                 localStorage.setItem("Authorization", res.data.token)
                 this.$router.push('/')
-                console.log('登录成功')
             }else{
-                console.log('登录失败')
+                alert(res.data.message)
             }
         }
     }

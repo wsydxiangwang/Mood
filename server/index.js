@@ -31,12 +31,13 @@ app.use(function(err, req, res, next) {
     if(req.originalUrl.slice(1, 4) == 'web'){
         return next();
     }
-    // console.error(err)
+    // Token过期
     if (err.name === "UnauthorizedError") {
         res.status(err.status || 401);
         res.json({
             message: 'token过期，请重新登录',
-            code: 401
+            code: 401,
+            time: err.inner.expiredAt
         })
         return
     }
@@ -46,6 +47,7 @@ app.use(function(err, req, res, next) {
 require('./routes/admin')(app)
 require('./routes/admin/login')(app)
 require('./routes/web')(app)
+require('./routes/web/jssdk')(app)
 require('./plugins/db')(app)
 
 app.listen(3000, () => {

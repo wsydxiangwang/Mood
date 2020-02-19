@@ -5,39 +5,6 @@ module.exports = app => {
     const Article = require('../../models/article')
     const Phrase = require('../../models/phrase')
     const Category = require('../../models/category')
-<<<<<<< HEAD
-    const User = require('../../models/user')
-    
-
-    router.post('/login', async (req, res) => {
-        let pwd = crypto.createHash('sha256').update('Libai12335').digest('hex');
-        
-        // let ss =  crypto.createHash('sha256', req.body.password).update('I love cupcakes').digest('hex');
-        // console.log(ss)
-
-        let content = {name: req.body.name}; 
-        let key = "suiyi";
-        let token = jwt.sign(content, key, {
-            expiresIn: 60 * 60 * 1  // 1小时过期
-        });
-        console.log(token)
-        res.json({
-            status: 1,
-            mess: 'ok',
-            token: token,
-            user_name: req.body.name
-        })
-        
-        // console.log(token)
-        
-        // let data = await User.find();
-
-        // console.log(data)
-
-
-    })
-=======
->>>>>>> ab56fde17e87fe922953bc54095df05c3a4ace1a
 
 
     // 获取文章
@@ -75,35 +42,6 @@ module.exports = app => {
             success: true
         })
     })
-
-    // 获取说说
-    router.get('/phrase', async (req, res) => {
-        const data = await Phrase.find().sort({time: -1}).limit(20)
-        res.send(data)
-    })
-
-    // 添加说说
-    router.post('/phrase', async (req, res) => {
-        const model = await Phrase.create(req.body)
-        res.send(model)
-    })
-
-    // 更新说说
-    router.put('/phrase/:id', async (req, res) => {
-        const data = await Phrase.findByIdAndUpdate(req.params.id, req.body)
-        res.send(data)
-    })
-
-    // 删除说说
-    router.delete('/phrase/:id', async (req, res) => {
-        await Phrase.findByIdAndDelete(req.params.id, req.body)
-        res.send({
-            success: true
-        })
-    })
-
- 
-    
 
     app.use('/admin/api', router)
 }

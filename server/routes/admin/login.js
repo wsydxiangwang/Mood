@@ -1,10 +1,9 @@
 module.exports = app => {
     const express = require('express');
-    const router = express.Router();
-
     const crypto = require('crypto');
     const jwt = require('jsonwebtoken');
 
+    const router = express.Router();
     const User = require('../../models/user')
 
     // 登录
@@ -21,8 +20,8 @@ module.exports = app => {
             if(docs.length != 0){
                 // 生成token
                 let token = jwt.sign(info, 'Libai', {
-                    expiresIn: 60 * 60 * 12
-                });
+                    expiresIn: 60 * 60 * 24  // 24小时过期
+                }); 
                 res.json({
                     status: 1,
                     message: 'ok',
@@ -35,14 +34,6 @@ module.exports = app => {
                 })
             }
         })
-
-        // if(req.headers.authorization){
-        //     res.json({
-        //         status: 1,
-        //         message: 'ok'
-        //     })
-        // }else{
-
     })
     app.use('/admin/api', router)
 }

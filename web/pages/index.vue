@@ -10,24 +10,25 @@
 			</div>
 		</div>
 		<div class="content">
-			<div v-for="(item, index) in articleList" class="post">
+			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item._id)">
-					<img src="https://isujin.com/wp-content/themes/Diaspora/timthumb/timthumb.php?src=https://isujin.com/wp-content/uploads/2017/01/wallhaven-435453.png" alt="">
+					<img :src="item.image" alt="">
 				</div>
 				<div class="info">
-					<div class="time">十二月 18, 2018</div>
+					<div class="time">{{item.time.monthTxt}}月 {{item.time.day}}, {{item.time.year}}</div>
 					<div class="title" @click="article(item._id)">{{item.title}}</div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
-						<span>2813</span>
-						<span>2813</span>
-						<span>2813</span>
+						<span><i class="iconfont icon-wenzi1"></i> {{item.words}}</span>
+						<span><i class="iconfont icon-eye"></i> {{item.read}}</span>
+						<span><i class="iconfont icon-heart1"></i> {{item.like}}</span>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
+
 
 <script>
 export default {
@@ -36,7 +37,7 @@ export default {
 		return {articleList: data}
 	},
 	mounted(){
-		console.log(process.env.baseUrl)
+		// console.log(process.env.baseUrl)
 	},
 	methods: {
 		article(id){
@@ -118,10 +119,15 @@ export default {
 		.img-box{
 			width: 680px;
 			height: 440px;
+			font-size: 0;
 			display: inline-block;
 			position: relative;
 			cursor: pointer;
 			z-index: 3;
+			img{
+				width: 100%;
+				height: 100%;
+			}
 		}
 		.info{
 			width: 500px;
@@ -144,6 +150,11 @@ export default {
 				font-size: 14px;
 				line-height: 22px;
 				margin-top: 10px;
+				word-break: break-all;
+				display: -webkit-box;
+				-webkit-line-clamp: 3;    /* 指定行数*/
+				-webkit-box-orient: vertical;
+				overflow: hidden; 
 			}
 			.stuff{
 				font-size: 12px;
@@ -153,6 +164,7 @@ export default {
 				left: 80px;
 				span{
 					font-size: 12px;
+					margin-right: 10px;
 				}
 			}
 		}
@@ -168,6 +180,109 @@ export default {
 				text-align: left;
 				right: 660px;
 			}
+		}
+	}
+}
+@media screen and (max-width: 1200px){
+	.content{
+		width: 900px;
+		.post{
+			.img-box{
+				width: 480px;
+				height: 310px;
+			}
+			.info{
+				top: 10px;
+				width: 420px;
+				height: 290px;
+				padding: 50px 60px 0 60px;
+				.stuff{
+					bottom: 50px;
+					left: 60px;
+				}
+			}
+			&:nth-child(odd) .info{
+				left: 450px;
+			}
+			&:nth-child(even) .info{
+				right: 450px;
+			}
+		}
+	}
+}
+@media screen and (max-width: 900px){
+	.content{
+		width: 100%;
+		.post{
+			margin-top: 60px;
+			background: #fff;
+			border-bottom: 1px solid #eaeaea;
+			.img-box{
+				width: 100%;
+				height: auto;
+				display: block;
+				text-align: center;
+				img{
+					width: 680px;
+					max-width: 100%;
+				}
+			}
+			.info{
+				position: static;
+				width: 96%;
+				padding: 30px 20px 40px;
+				margin: auto;
+				border: none;
+				background: #fff;
+				height: auto;
+				.stuff{
+					position: static;
+					margin: 20px 0 20px;
+				}
+			}
+		}
+	}
+}
+@media screen and (max-width: 780px){
+	.cover{
+		.post{
+			bottom: 60px;
+			top: auto;
+			width: 70%;
+			transform: none;
+			.time{
+				display: none;
+			}
+			.title{
+				margin-bottom: 10px;
+				a{
+					font-size: 18px;
+				}
+			}
+			.describe{
+				font-size: 12px;
+				line-height: 16px;
+			}
+		}
+		.cover-bg{
+			img{
+				position: absolute;
+				left: 50%;
+				top: 0;
+				height: 100%;
+				width: auto;
+				transform: translateX(-50%);
+			}
+		}
+	}
+	.content{
+		width: 100%;
+		.post{
+			.img-box{
+				width: 100%;
+				height: auto;
+			}
+			
 		}
 	}
 }

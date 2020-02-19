@@ -8,7 +8,9 @@ module.exports = {
     title: process.env.npm_package_name || '',
     meta: [
       { charset: 'utf-8' },
+      { name: 'author', content: 'Libai' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'keywords', content: '白茶, libai, 李白, 李白茶, 音乐, 故事, 美文, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 独行侠' },
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
@@ -54,12 +56,12 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ["~assets/css/main.css"],
+  css: ["~assets/css/main.css", "~static/css/iconfont.css"],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '@/plugins/vue-mavon-editor', srr: false }
+    { src: '@/plugins/vue-mavon-editor', srr: false },
   ],
   /*
   ** Nuxt.js dev-modules
