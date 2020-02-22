@@ -1,8 +1,8 @@
 {
   "name": "Libai",
   "version": "1.0.0",
-  "description": "My fabulous Nuxt.js project",
-  "author": "Libai",
+  "description": "世界上每个角落都有人过着相似的人生",
+  "author": "白茶",
   "private": true,
   "config": {
     "nuxt": {
@@ -23,7 +23,9 @@
     "express": "^4.16.4",
     "mavon-editor": "^2.7.7",
     "nuxt": "^2.0.0",
-    "weixin-js-sdk": "^1.4.0-test"
+    "parallax-js": "^3.1.0",
+    "weixin-js-sdk": "^1.4.0-test",
+    "weixin-jsapi": "^1.1.0"
   },
   "devDependencies": {
     "node-sass": "^4.13.0",

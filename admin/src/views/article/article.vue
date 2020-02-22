@@ -26,7 +26,7 @@
                     <td class="classify">{{item.classify}}</td>
                     <td class="comment">{{item.comment}}</td>
                     <td class="date">{{item.time}}</td>
-                    <td @click="edit(item._id)" class="edit">编辑</td>
+                    <td @click="edit(item.id)" class="edit">编辑</td>
                     <td @click="remove(item)" class="edit">删除</td>
                 </tr>
             </tbody>

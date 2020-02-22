@@ -79,22 +79,49 @@
             <source type="audio/mpeg" :src="data.music">
         </audio>
 
+        <!-- mobile music -->
+        <div 
+            class="music-btn" 
+            @click="changeMusic"
+            :class="mobileMusic ? 'show' : 'exit'"
+        >
+            <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
+                <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray" :stroke-dashoffset="dashOffset"/>
+            </svg>
+            <span 
+                class="iconfont" 
+                :class="isStore ? 'icon-pause' : 'icon-play'" 
+            ></span>
+        </div>
+
+        <!-- back top -->
+        <!-- <div class="back-top" @click="backTop" v-if="scrollTopBtn">
+            top
+        </div> -->
     </div>
 </template>
 
 <script>
-// import wx from 'weixin-js-sdk';
-
 export default {
     data(){
         return{
             comment: {},
-            timer: null,
             title: false,
             isLike: false,
             isStore: false,
+
+            timer: null,
             postProgress: 0,
             changeProgress: 0,
+
+            percent: 0,
+            mobileMusic: false,
+            dashArray: Math.PI * 100,
+
+            scrollTop: 0,
+            timerTop: null,
+            scrollTopBtn: false,
         }
     },
     head () {
@@ -105,44 +132,80 @@ export default {
             ]
         }
     },
-    created(){
-
+    beforeRouteLeave(to,from,next){
+        // 销毁滚动条事件
+        window.removeEventListener('scroll', this.handleScroll, true)
+        next();
+    },
+    computed: {
+        // 圆环进度
+        dashOffset() {
+            return (1 - this.percent) * this.dashArray;
+        }
     },
     mounted(){
-        this.$axios.get('/getsign').then(res => {
-            // wx.config({
-            //     debug: true,                    // 调试模式 wx弹窗 pc打印
-            //     appId: 'wxc21bbf3b44300995',    // 标识
-            //     timestamp: res.data.timestamp,  // 时间戳
-            //     nonceStr: res.data.noncestr,    // 随机串
-            //     signature: res.data.signature,  // 签名
-            //     jsApiList: [                    // 接口
-            //         'updateAppMessageShareData',// 朋友
-            //         'updateTimelineShareData'   // 朋友圈
-            //     ] 
-            // });
-        })
+        // 微信分享
+        // this.$axios.get('/getsign').then(res => {
+        //     wx.config({
+        //         debug: true,                   // 调试模式 wx弹窗 pc打印
+        //         appId: 'wxc21bbf3b44300995',    // 标识
+        //         timestamp: res.data.timestamp,  // 时间戳
+        //         nonceStr: res.data.noncestr,    // 随机串
+        //         signature: res.data.signature,  // 签名
+        //         jsApiList: [                    // 接口
+        //             'onMenuShareAppMessage',    // 朋友
+        //             'updateAppMessageShareData'
+        //         ] 
+        //     });
+            
+        //     wx.ready(() => {
+        //         wx.checkJsApi({
+        //             jsApiList: ['onMenuShareAppMessage', 'updateAppMessageShareData'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+        //             success: function(res) {
+        //                 alert(JSON.stringify(res))
+        //             }
+        //         }),
+        //         wx.updateAppMessageShareData({ 
+        //             title: '2222', // 分享标题
+        //             desc: '33333', // 分享描述
+        //             link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        //             imgUrl: this.data.image, // 分享图标
+        //             success: function () {
+        //                 // 设置成功
+        //                 alert('send success')
+        //             },
+        //             fail: function(){
+        //                 alert('oh')
+        //             }
+        //         })
+        //         // wx.onMenuShareTimeline({
+        //         //     title: this.data.title, // 分享标题
+        //         //     link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        //         //     imgUrl: this.data.image, // 分享图标
+        //         //     success: function () {
+        //         //     // 用户点击了分享后执行的回调函数
+        //         //         alert('朋友圈')
+        //         //     }
+        //         // }),
+        //         // wx.onMenuShareAppMessage({ 
+        //         //     title: this.data.title,     // 标题
+        //         //     desc: this.data.describe,   // 描述
+        //         //     link: res.data.url,         // 链接
+        //         //     imgUrl: this.data.image,    // 图标
+        //         //     type: 'link',
+        //         //     dataUrl: '',
+        //         //     success: function(){
+        //         //         alert('send success')
+        //         //     }
+        //         // })
+        //     });
+        //     wx.error(function(res){
+        //         alert(res)
+        //     });
+        // })
 
-        return;
-        this.$axios.get(`https://api.weixin.qq.com/cgi-bin/token?
-        grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`)
-        .then(res => {
-
-        })
-        .catch(err => {
-
-        })
-        // wx.config({
-        //     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        //     appId: 'wxc21bbf3b44300995', // 必填，公众号的唯一标识
-        //     timestamp: '', // 必填，生成签名的时间戳
-        //     nonceStr: '', // 必填，生成签名的随机串
-        //     signature: '',// 必填，签名
-        //     jsApiList: [] // 必填，需要使用的JS接口列表
-        // });
-        
-        // 滚动条
-        window.addEventListener('scroll', this.handleScroll)
+        // 监听滚动条事件
+        window.addEventListener('scroll', this.handleScroll, true)
 
         // 是否点赞
         let like = localStorage.getItem(`like-${this.data._id}`);
@@ -164,9 +227,11 @@ export default {
                 // 进度条
                 this.timer = setInterval(() => {
                     var n = (100 * (music.currentTime / music.duration)).toFixed(2);
+                    var ns = (1 * (music.currentTime / music.duration));
                     // 循环
                     if(n >= 100) clearInterval(this.timer);
                     this.changeProgress = n + '%';
+                    this.percent = ns;
                 }, 50)
             }
             // 暂停
@@ -189,22 +254,42 @@ export default {
         },
         // 滚动条位置
         handleScroll(){
-            let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            if(scrollTop >= 100){
+            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            if(this.scrollTop >= 100){
                 this.title = true;
+                this.mobileMusic = true;
             }else{
                 this.title = false;
+                this.mobileMusic = false;
             }
+
+            // back top btn
+            // if(this.scrollTop >= 2000){
+            //     this.scrollTopBtn = true;
+            // }else{
+            //     this.scrollTopBtn = false;
+            // }
 
             var h1 = document.getElementsByClassName('content')[0];
             var h2 = document.getElementsByClassName('stuff')[0];
             var h3 = document.getElementsByTagName('h1')[0];
 
             var h = h1.offsetHeight + h2.offsetHeight + h3.offsetHeight - document.documentElement.clientHeight - 100;
-            var n = (100 * (scrollTop / h)).toFixed(4);
+            var n = (100 * (this.scrollTop / h)).toFixed(4);
 
             if(n < 110) this.postProgress = n + '%';
 
+        },
+        // 返回顶部
+        backTop(){
+            this.timerTop = setInterval(() => {
+                let osTop = document.documentElement.scrollTop || document.body.scrollTop;
+                let ispeed = Math.floor(-osTop / 5);
+                document.documentElement.scrollTop = document.body.scrollTop = osTop + ispeed;
+                if (osTop === 0) {
+                    clearInterval(this.timerTop)
+                }
+            }, 30)
         },
         // 发表评论
         commentSubmit(){
@@ -261,11 +346,11 @@ export default {
         }
     },
     async asyncData(context){
-        let id = context.route.query.id
+        let id = context.params.article;
         let {data} = await context.$axios.get(`article/${id}`)
         data.comment.reverse()
 		return {data: data}
-	},
+	}
 }
 </script>
 
@@ -644,6 +729,61 @@ h1.title{
         }
     }
 }
+.back-top{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    height: 20px;
+    line-height: 20px;
+    background: #50bcb6;
+    font-size: 13px;
+    z-index: 99999;
+    padding: 0 5px;
+    color: #fff;
+}
+.music-btn{
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 36px;
+    padding: 3px;
+    height: 36px;
+    color: #fff;
+    opacity: 0.8;
+    cursor: pointer;
+    z-index: 9999999;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    .progress-circle{
+        height: 30px;
+        width: 30px;
+        circle{
+            stroke-width: 10px;
+            transform-origin: center;
+            &.progress-background{
+                transform: scale(0.9);
+                stroke: #fff;
+            }
+            &.progress-bar{
+                transform: scale(0.9) rotate(-90deg);
+                stroke: #50bcb6;
+            }
+        }
+    }
+    .iconfont{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: inline-block;
+        padding: 1px 0 0 3px;
+        font-size: 14px;
+        &.icon-pause{
+            padding-left: 1px;
+        }
+    }
+}
 
 @media screen and (max-width: 800px) {
     .container{
@@ -667,9 +807,39 @@ h1.title{
     }
 }
 
+@keyframes fadeInTop{
+    from {
+        opacity: 0;
+        -webkit-transform: translate(0, 30px); 
+        transform: translate(0, 30px);
+    }
+    to {
+        opacity:1;
+        -webkit-transform: translate(0,0);
+        transform: translate(0,0);
+    }
+}
+@keyframes fadeInDown{
+    from {
+        opacity: 1;
+        -webkit-transform: translate(0,0px);
+        transform: translate(0,0px);
+    } 
+    to {    
+        opacity: 0;
+        visibility: hidden;
+        -webkit-transform: translate(0,30px); 
+        transform: translate(0,30px);
+    }
+}
+
 @media screen and (max-width: 600px) {
     header{
         position: absolute;
+        .scrollbar{
+            position: fixed;
+            height: 1px;
+        }
     }
     .content{
         /deep/ 
@@ -679,7 +849,16 @@ h1.title{
             }
         }
     }
-
+    .music-btn{
+        display: block;
+        &.show{
+            visibility: visible;
+            animation: fadeInTop 0.6s both;
+        }
+        &.exit{
+            animation: fadeInDown 0.6s both;
+        }
+    }
     .comment .comment-list .comment-item{
         .head{
             .img{

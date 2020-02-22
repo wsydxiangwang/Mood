@@ -20,6 +20,11 @@
             </div>
             <!-- 音乐进度条 -->
             <div class="musicBar" :style="{width: changeProgress}"></div>
+
+            <!-- music -->
+            <audio id="music" loop="loop" preload="auto">
+                <source type="audio/mpeg" src="https://image.yeyucm.cn/music/qianbaidu.mp3">
+            </audio>
         </header>
 
         <div>

@@ -18,7 +18,7 @@ import _6f6c098b from '..\\layouts\\default.vue'
 const layouts = { "_default": _6f6c098b }
 
 export default {
-  head: {"title":"Libai","meta":[{"charset":"utf-8"},{"name":"author","content":"Libai"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"name":"keywords","content":"白茶, libai, 李白, 李白茶, 音乐, 故事, 美文, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 独行侠"},{"hid":"description","name":"description","content":"My fabulous Nuxt.js project"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[]},
+  head: {"title":"Libai","meta":[{"charset":"utf-8"},{"name":"author","content":"Libai"},{"name":"viewport","content":"width=device-width, initial-scale=1.0, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"},{"name":"keywords","content":"白茶, libai, 李白, 李白茶, 纯音乐, 音乐, 故事, 美文, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 独行侠"},{"hid":"description","name":"description","content":"世界上每个角落都有人过着相似的人生"},{"http-equiv":"X-UA-Compatible","content":"IE=edge"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[]},
 
   render (h, props) {
     const loadingEl = h('NuxtLoading', { ref: 'loading' })

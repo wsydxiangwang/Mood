@@ -6,13 +6,13 @@ module.exports = app => {
     
     // 获取所有文章
     router.get('/article', async (req, res) => {
-        const data = await Article.find().sort({time: -1}).limit(20)
+        const data = await Article.find({hide:false}).sort({time: -1}).limit(20)
         res.send(data)
     })
 
     // 查找当前文章
     router.get('/article/:id', async (req, res) => {
-        const data = await Article.findById(req.params.id)
+        const data = await Article.findOne({id: req.params.id})
         res.send(data)
     })
 
@@ -33,7 +33,7 @@ module.exports = app => {
         let data = await Article.updateOne({
                 '_id': req.params.id
             }, {
-                $inc: { 'like': 1}
+                $inc: { 'like': 1 }
             })
         res.send(data)
     })

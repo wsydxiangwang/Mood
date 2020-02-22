@@ -4,6 +4,7 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
+    id: Number,                         
     music: String,                      // 音乐
     image: String,                      // 封面
     content: String,                    // 内容
@@ -11,7 +12,7 @@ const schema = new mongoose.Schema({
     contentHtml: String,                // 内容源码
     title: String,                      // 标题
     category: String,                   // 分类
-    stick: {                            // 置顶
+    hide: {                             // 隐藏
         type: Boolean,
         default: false
     },
