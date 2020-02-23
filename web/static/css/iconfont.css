@@ -15,43 +15,43 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-eye:before {
+.iconeye:before {
   content: "\e6a8";
 }
 
-.icon-heart1:before {
+.iconheart1:before {
   content: "\e6a0";
 }
 
-.icon-play:before {
+.iconplay:before {
   content: "\e60a";
 }
 
-.icon-caidan:before {
+.iconcaidan:before {
   content: "\e606";
 }
 
-.icon-wechat:before {
+.iconwechat:before {
   content: "\e685";
 }
 
-.icon-menu--fill:before {
+.iconmenu--fill:before {
   content: "\e866";
 }
 
-.icon-pause:before {
+.iconpause:before {
   content: "\e63f";
 }
 
-.icon-wenzi:before {
+.iconwenzi:before {
   content: "\e69d";
 }
 
-.icon-wenzi1:before {
+.iconwenzi1:before {
   content: "\e6af";
 }
 
-.icon-searchclose:before {
+.iconsearchclose:before {
   content: "\e608";
 }
 

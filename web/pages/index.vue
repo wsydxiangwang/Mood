@@ -7,16 +7,16 @@
 				</div>
 			</div>
 			<div class="head">
-				<div class="logo">2222</div>
+				<div class="logo"><span class="icon icon-_20200223094858"></span></div>
 				<div class="menu" @click="menu">
-					<span class="iconfont" :class="isNav ? 'icon-searchclose' : 'icon-menu--fill'"></span>
+					<span class="iconfont" :class="isNav ? 'iconsearchclose' : 'iconmenu--fill'"></span>
 				</div>
 			</div>
 			<div class="misk"></div>
 			<div class="post">
 				<div class="time">二月 24, 2020</div>
-				<div class="title"><a>你好，我是李白！</a></div>
-				<div class="describe">愿所有的美好如约而至，愿所有黑暗都能看到希望，我们都行微笑前行，人生没有完美，有些遗憾才美...</div>
+				<div class="title"><a @click="article(1103)">你好，我是李白！</a></div>
+				<div class="describe">愿所有的美好如约而至，愿所有黑暗都能看到希望，我们都能微笑前行，人生没有完美，有些遗憾才美...</div>
 			</div>
 			<!-- menu -->
 			<div class="nav">
@@ -25,6 +25,10 @@
 						<a>{{item.title}}</a>
 					</li>
 				</ul>
+				<div class="world">
+					<!-- <span>©2020 白茶.</span> -->
+					<span>Everywhere in the world has a similar life.</span>
+				</div>
 			</div>
 		</div>
 		<div class="content">
@@ -37,9 +41,9 @@
 					<div class="title" @click="article(item.id)"><a>{{item.title}}</a></div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
-						<span><i class="iconfont icon-wenzi1"></i> {{item.words}}</span>
-						<span><i class="iconfont icon-eye"></i> {{item.read}}</span>
-						<span><i class="iconfont icon-heart1"></i> {{item.like}}</span>
+						<span><i class="iconfont iconwenzi1"></i> {{item.words}}</span>
+						<span><i class="iconfont iconeye"></i> {{item.read}}</span>
+						<span><i class="iconfont iconheart1"></i> {{item.like}}</span>
 					</div>
 				</div>
 			</div>
@@ -122,6 +126,11 @@ export default {
 		// nav
 		menu(){
 			this.isNav = !this.isNav;
+			if(this.isNav){
+				document.body.style.overflowY = 'hidden'
+			}else{
+				document.body.style.overflowY = 'auto'
+			}
 		},
 		// Cover Picture
 		coverLayer(){
@@ -204,9 +213,16 @@ export default {
 		width: 100%;
 		color: #fff;
 		z-index: 99999;
-		padding: 0 30px;
+		padding: 0 30px 0 24px;
 		display: flex;
 		justify-content: space-between;
+		.logo{
+			transition: all .3s;
+			.icon{
+				font-size: 36px;
+				cursor: pointer;
+			}
+		}
 		.menu{
 			width: 30px;
 			height: 30px;
@@ -373,12 +389,21 @@ export default {
     z-index: 9999;
     background: rgba(255, 255, 255, 0.96);
     transition: top 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-	.nav-list{
+	.world{
+		width: 100%;
+		position: absolute;
+		bottom: 30px;
 		display: block;
 		text-align: center;
-		margin-top: 25%;
+		color: #999;
+	}
+	.nav-list{
+		width: 80%;
+		display: block;
+		text-align: center;
+		margin: 260px auto 0;
 		li{
-			margin: 0 10px;
+			margin: 0 20px 20px;
 			list-style: none;
 			display: inline-block;
 			a{
@@ -394,6 +419,9 @@ export default {
 	}
 }
 .container.navActive{
+	.logo{
+		color: #333;
+	}
 	.nav{
 		top: 0;
 	}
@@ -471,6 +499,9 @@ export default {
 }
 @media screen and (max-width: 780px){
 	.cover{
+		.head{
+			top: 40px;
+		}
 		.misk{
 			clip-path: none;
 			background: rgba(176, 14, 37, 0.35);
@@ -500,7 +531,17 @@ export default {
 				width: 100%;
 				height: auto;
 			}
-			
+		}
+	}
+	.nav{
+		.nav-list{
+			margin-top: 180px;
+			li{
+				// margin: 0 12px;
+				a{
+					font-size: 16px;
+				}
+			}
 		}
 	}
 }
@@ -519,5 +560,16 @@ export default {
 			}
 		}
 	}
+}
+@media screen and (max-width: 480px){
+	// .nav{
+	// 	.world{
+	// 		display: flex;
+	// 		flex-direction: column;
+	// 		span:first-child{
+	// 			margin-bottom: 8px;
+	// 		}
+	// 	}
+	// }
 }
 </style>

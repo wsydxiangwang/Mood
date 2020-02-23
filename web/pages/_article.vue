@@ -7,18 +7,18 @@
                 </span>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    :class="isStore ? 'iconpause' : 'iconplay'" 
                     @click="changeMusic"
                 ></span>
             </div>
             <div class="title" :class="{active: title}">{{data.title}}</div>
             <div class="r icon">
                 <span 
-                    class="iconfont icon-heart1" 
+                    class="iconfont iconheart1" 
                     :class="{like: isLike}"
                     @click="like"
                 ></span>
-                <!-- <span class="iconfont icon-wechat" @click="wechat"></span> -->
+                <!-- <span class="iconfont iconwechat" @click="wechat"></span> -->
                 <span class="myself" @click="myself">
                     <img src="../static/image/myself.png">
                 </span>
@@ -91,7 +91,7 @@
             </svg>
             <span 
                 class="iconfont" 
-                :class="isStore ? 'icon-pause' : 'icon-play'" 
+                :class="isStore ? 'iconpause' : 'iconplay'" 
             ></span>
         </div>
 
@@ -779,7 +779,7 @@ h1.title{
         display: inline-block;
         padding: 1px 0 0 3px;
         font-size: 14px;
-        &.icon-pause{
+        &.iconpause{
             padding-left: 1px;
         }
     }

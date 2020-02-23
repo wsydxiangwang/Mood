@@ -13,6 +13,8 @@ import '..\\assets\\css\\main.css'
 
 import '..\\static\\css\\iconfont.css'
 
+import '..\\static\\css\\iconfonts.css'
+
 import _6f6c098b from '..\\layouts\\default.vue'
 
 const layouts = { "_default": _6f6c098b }
