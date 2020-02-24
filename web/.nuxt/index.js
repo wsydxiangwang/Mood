@@ -11,7 +11,7 @@ import { setContext, getLocation, getRouteData, normalizeError } from './utils'
 
 /* Plugins */
 
-import nuxt_plugin_axios_369edc63 from 'nuxt_plugin_axios_369edc63' // Source: .\\axios.js (mode: 'all')
+import nuxt_plugin_axios_c79d1344 from 'nuxt_plugin_axios_c79d1344' // Source: .\\axios.js (mode: 'all')
 import nuxt_plugin_vuemavoneditor_e5e1de58 from 'nuxt_plugin_vuemavoneditor_e5e1de58' // Source: ..\\plugins\\vue-mavon-editor (mode: 'all')
 import nuxt_plugin_wxsdk_235f1845 from 'nuxt_plugin_wxsdk_235f1845' // Source: ..\\plugins\\wxsdk (mode: 'client')
 
@@ -147,8 +147,8 @@ async function createApp (ssrContext) {
 
   // Plugin execution
 
-  if (typeof nuxt_plugin_axios_369edc63 === 'function') {
-    await nuxt_plugin_axios_369edc63(app.context, inject)
+  if (typeof nuxt_plugin_axios_c79d1344 === 'function') {
+    await nuxt_plugin_axios_c79d1344(app.context, inject)
   }
 
   if (typeof nuxt_plugin_vuemavoneditor_e5e1de58 === 'function') {
