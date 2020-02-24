@@ -11,7 +11,7 @@
                     @click="changeMusic"
                 ></span>
             </div>
-            <div class="title" :class="{active: title}">Libai</div>
+            <div class="title" :class="{active: title}">你好，我是李白！</div>
             <div class="r icon">
                 <span class="iconfont icon-wechat" @click="wechat"></span>
                 <span class="myself">

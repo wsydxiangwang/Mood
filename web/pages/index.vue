@@ -22,7 +22,7 @@
 			<div class="nav">
 				<ul class="nav-list">
 					<li v-for="(item, index) in navList" :key="index">
-						<a>{{item.title}}</a>
+						<a @click="toPage(item.url)">{{item.title}}</a>
 					</li>
 				</ul>
 				<div class="world">
@@ -66,12 +66,12 @@ export default {
 			boxW: '100%',
 			navList: [
 				{
-					title: 'Archive',
-					url: ''
+					title: 'Article',
+					url: 'article'
 				},
 				{
 					title: 'Rainy',
-					url: ''
+					url: 'Rainy'
 				},
 				{
 					title: 'Envelope',
@@ -79,7 +79,7 @@ export default {
 				},
 				{
 					title: 'Myself',
-					url: ''
+					url: 'myself'
 				}
 			],
 			isNav: false
@@ -107,7 +107,7 @@ export default {
 		 * Cover Picture End
 		 */
 
-		// 浏览器窗口事件
+		// Browser window event
 		window.onresize = () => {
 			if(this.timer) clearTimeout(this.timer)
 			this.timer = setTimeout(() => {
@@ -123,7 +123,11 @@ export default {
 		window.onresize = null;
     },
 	methods: {
-		// nav
+		// Other pages
+		toPage(url){
+			this.$router.push(`/${url}`)
+		},
+		// Nav
 		menu(){
 			this.isNav = !this.isNav;
 			if(this.isNav){
@@ -182,6 +186,7 @@ export default {
 
 			this.imgStyle = Object.assign({}, this.imgStyle, style);
 		},
+		// To view the article
 		article(id){
 			this.$router.push({
 				path: '/' + id
@@ -251,7 +256,7 @@ export default {
 		height: 100%;
 		width: 100%;
 		background-color: rgba(176, 14, 37, 0.7);
-		clip-path: polygon(0 0, 250px 0, 800px 100%, 0% 100%);
+		clip-path: polygon(0 0, 25% 0, 60% 100%, 0% 100%);
 	}
 	.post{
 		position: absolute;
