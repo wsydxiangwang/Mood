@@ -28,82 +28,85 @@
             <!-- 文章进度条 -->
             <div class="scrollbar" :style="{width: postProgress}"></div>
         </header>
-        <h1 class="title">{{data.title}}</h1>
-        <div class="stuff">
-            <span>{{data.time.monthTxt}}月 {{data.time.day}}, {{data.time.year}}</span>
-            <span>阅读 {{data.read}}</span>
-            <span>字数 {{data.words}}</span>
-            <span>评论 {{data.comment.length}}</span>
-            <span>喜欢 {{data.like}}</span>
-            <span v-if="data.stick">置顶</span>
-        </div>
-        <div class="content">
-            <client-only>
-                <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
-            </client-only>
-        </div>
-        <div class="comment">
-            <div class="comment-form">
-                <div class="input-box">
-                    <input type="text" placeholder="称呼" v-model="comment.name">
-                    <input type="text" placeholder="邮箱" v-model="comment.email">
-                    <input type="text" placeholder="站点" v-model="comment.address">
-                </div>
-                <textarea placeholder="" v-model="comment.content"></textarea>
-                <button type="button" @click="commentSubmit">发表评论</button>
+        <section>
+            <h1 class="title">{{data.title}}</h1>
+            <div class="stuff">
+                <span>{{data.time.monthTxt}}月 {{data.time.day}}, {{data.time.year}}</span>
+                <span>阅读 {{data.read}}</span>
+                <span>字数 {{data.words}}</span>
+                <span>评论 {{data.comment.length}}</span>
+                <span>喜欢 {{data.like}}</span>
+                <span v-if="data.stick">置顶</span>
             </div>
-            <template v-if="data.comment.length > 0">
-                <h2>评论列表</h2>
-                <div class="comment-list">
-                    <div class="comment-item" v-for="(item, index) in data.comment" :key="index">
-                        <div class="head">
-                            <div class="img">
-                                <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
-                            </div>
-                            <div class="name">
-                                <a href="javascript:;">{{item.name}}</a>
-                                <div class="r">
-                                    <div class="reply">reply</div>
-                                    <span class="time">{{item.time}}</span>
+            <div class="content">
+                <client-only>
+                    <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
+                </client-only>
+            </div>
+            <div class="comment">
+                <div class="comment-form">
+                    <div class="input-box">
+                        <input type="text" placeholder="称呼" v-model="comment.name">
+                        <input type="text" placeholder="邮箱" v-model="comment.email">
+                        <input type="text" placeholder="站点" v-model="comment.address">
+                    </div>
+                    <textarea placeholder="" v-model="comment.content"></textarea>
+                    <button type="button" @click="commentSubmit">发表评论</button>
+                </div>
+                <template v-if="data.comment.length > 0">
+                    <h2>评论列表</h2>
+                    <div class="comment-list">
+                        <div class="comment-item" v-for="(item, index) in data.comment" :key="index">
+                            <div class="head">
+                                <div class="img">
+                                    <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
+                                </div>
+                                <div class="name">
+                                    <a href="javascript:;">{{item.name}}</a>
+                                    <div class="r">
+                                        <div class="reply">reply</div>
+                                        <span class="time">{{item.time}}</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="comment-content">{{item.content}}</div>
                         </div>
-                        <div class="comment-content">{{item.content}}</div>
                     </div>
-                </div>
-            </template>
-        </div>
+                </template>
+            </div>
 
-        <!-- music -->
-        <audio id="music" loop="loop" preload="auto">
-            <source type="audio/mpeg" :src="data.music">
-        </audio>
+            <!-- music -->
+            <audio id="music" loop="loop" preload="auto">
+                <source type="audio/mpeg" :src="data.music">
+            </audio>
 
-        <!-- mobile music -->
-        <div 
-            class="music-btn" 
-            @click="changeMusic"
-            :class="mobileMusic ? 'show' : 'exit'"
-        >
-            <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
-                <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray" :stroke-dashoffset="dashOffset"/>
-            </svg>
-            <span 
-                class="iconfont" 
-                :class="isStore ? 'iconpause' : 'iconplay'" 
-            ></span>
-        </div>
+            <!-- mobile music -->
+            <div 
+                class="music-btn" 
+                @click="changeMusic"
+                :class="mobileMusic ? 'show' : 'exit'"
+            >
+                <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
+                    <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray" :stroke-dashoffset="dashOffset"/>
+                </svg>
+                <span 
+                    class="iconfont" 
+                    :class="isStore ? 'iconpause' : 'iconplay'" 
+                ></span>
+            </div>
 
-        <!-- back top -->
-        <!-- <div class="back-top" @click="backTop" v-if="scrollTopBtn">
-            top
-        </div> -->
+            <!-- back top -->
+            <!-- <div class="back-top" @click="backTop" v-if="scrollTopBtn">
+                top
+            </div> -->
+        </section>
     </div>
 </template>
 
 <script>
 export default {
+    transition: 'article',
     data(){
         return{
             comment: {},
@@ -280,7 +283,7 @@ export default {
             if(n < 110) this.postProgress = n + '%';
 
         },
-        // 返回顶部
+        // Back Top
         backTop(){
             this.timerTop = setInterval(() => {
                 let osTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -346,7 +349,7 @@ export default {
         }
     },
     async asyncData(context){
-        let id = context.params.article;
+        let id = context.params.articleId;
         let {data} = await context.$axios.get(`article/${id}`)
         data.comment.reverse()
 		return {data: data}
@@ -355,7 +358,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container{
+.article-enter-active, .article-leave-active {
+  transition: all .3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
+}
+.article-enter, .article-leave-active {
+  transform: translateX(100%);
+}
+.container section{
     width: 800px;
     margin: auto;
 }
@@ -786,7 +795,7 @@ h1.title{
 }
 
 @media screen and (max-width: 800px) {
-    .container{
+    .container section{
         width: 90%;
     }
     h1.title{
