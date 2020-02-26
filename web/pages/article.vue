@@ -159,7 +159,7 @@ header{
 @media screen and (max-width: 700px){
     .list{
         width: 100%;
-        margin-top: 80px;
+        padding: 80px 0 20px;
     }
 }
 </style>

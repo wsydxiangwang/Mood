@@ -61,13 +61,15 @@ export default {
             if(val == 2){
                 setTimeout(() => {
                     this.loading = false;
+                    this.$nextTick(() => {
+                        this.music(0, false)
+                    })
                 }, 2000)
             }
         }
     },
     mounted(){
         this.loading = true;
-        this.music(0, false)
     },
     methods: {
         toIndex(){
@@ -91,9 +93,6 @@ export default {
 </script>
 
 <style lang="scss">
-body{
-    overflow: hidden !important;
-}
 @keyframes Loading{
     5% { transform: scale(1); } 
     10% { transform:scale(0.95); }
@@ -117,6 +116,8 @@ body{
 .rain{
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
+    position: relative;
     .loading{
         position: fixed;
         top: 0;
@@ -169,15 +170,32 @@ body{
             display: inline-block;
             list-style-type: none;
             cursor: pointer;
+            span{
+                display: inline-block;
+            }
         }
     }
 }
 @media screen and (max-width: 480px){
-    .rain .words{
-        top: 30%;
-        left: 50%;
-        right: auto;
-        transform: translate(-50%, -50% );
+    .rain{
+        .words{
+            top: 30%;
+            left: 50%;
+            right: auto;
+            transform: translate(-50%, -50% );
+        }
+        .option{
+            width: auto;
+            right: 20px;
+            li{
+                width: 60px;
+                overflow: hidden;
+                span{
+                    display: flex;
+                    justify-content: center;
+                }
+            }
+        }
     }
 }
 </style>

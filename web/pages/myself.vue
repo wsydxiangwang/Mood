@@ -7,7 +7,7 @@
                 </span>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    :class="isStore ? 'iconpause' : 'iconplay'" 
                     @click="changeMusic"
                 ></span>
             </div>
@@ -53,11 +53,12 @@ export default {
     mounted(){
         // 滚动条
         window.addEventListener('scroll', this.handleScroll)
+        this.$nextTick(() => {
+            this.changeMusic()
+        })
     },
     methods: {
-        wechat(){
-
-        },
+        wechat(){},
         // 音乐播放
         changeMusic(){
             let music = document.getElementById("music");
