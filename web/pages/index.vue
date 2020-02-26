@@ -103,6 +103,8 @@ export default {
 		this.loading = true;
 	},
 	mounted(){
+		// loading
+		document.body.style.overflowY = 'hidden';
 		/**
 		 * Cover Picture Start
 		 */
@@ -119,7 +121,6 @@ export default {
 		/**
 		 * Cover Picture End
 		 */
-
 		// Browser window event
 		window.onresize = () => {
 			if(this.timer) clearTimeout(this.timer)
@@ -134,14 +135,15 @@ export default {
 	},
 	destroyed(){
 		window.onresize = null;
-		document.body.style.overflowY = 'auto';
+		document.body.style.overflowY = '';
+		document.removeEventListener('touchmove', this.on, {passive: false})
     },
 	methods: {
 		// Cover image loading is complete
 		coverImgLoad(e){
 			setTimeout(() => {
 				this.loading = false,
-				document.body.style.overflowY = 'auto';
+				document.body.style.overflowY = '';
 			}, 1000)
 		},
 		// Other pages
@@ -152,10 +154,15 @@ export default {
 		menu(){
 			this.isNav = !this.isNav;
 			if(this.isNav){
-				document.body.style.overflowY = 'hidden'
+				document.body.style.overflowY = 'hidden';
+				document.addEventListener('touchmove', this.on, {passive: false})
 			}else{
-				document.body.style.overflowY = 'auto'
+				document.body.style.overflowY = '';
+				document.removeEventListener('touchmove', this.on, {passive: false})
 			}
+		},
+		on(e){
+			e.preventDefault()
 		},
 		// Cover Picture
 		coverLayer(){
@@ -214,10 +221,7 @@ export default {
 	}
 };
 </script>
-<style lang="scss">
-body{
-	overflow-y: hidden;
-}
+<style lang="scss" scoped>
 .index{
 	.cover-loading{
 		position: fixed;
@@ -596,7 +600,7 @@ body{
 		}
 		.nav{
 			.nav-list{
-				margin-top: 180px;
+				margin-top: 200px;
 				li{
 					// margin: 0 12px;
 					a{

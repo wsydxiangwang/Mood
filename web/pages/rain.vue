@@ -61,9 +61,9 @@ export default {
             if(val == 2){
                 setTimeout(() => {
                     this.loading = false;
-                    this.$nextTick(() => {
-                        this.music(0, false)
-                    })
+                    // this.$nextTick(() => {
+                    //     this.music(0, false)
+                    // })
                 }, 2000)
             }
         }
@@ -92,7 +92,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @keyframes Loading{
     5% { transform: scale(1); } 
     10% { transform:scale(0.95); }

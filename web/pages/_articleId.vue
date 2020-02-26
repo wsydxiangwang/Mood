@@ -147,9 +147,9 @@ export default {
         }
     },
     mounted(){
-        this.$nextTick(() => {
-            this.changeMusic()
-        })
+        // this.$nextTick(() => {
+        //     this.changeMusic()
+        // })
         // 微信分享
         // this.$axios.get('/getsign').then(res => {
         //     wx.config({

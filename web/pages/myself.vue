@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import soundBuffer from './soundBuffer';
 export default {
     data(){
         return{
@@ -53,9 +54,6 @@ export default {
     mounted(){
         // 滚动条
         window.addEventListener('scroll', this.handleScroll)
-        this.$nextTick(() => {
-            this.changeMusic()
-        })
     },
     methods: {
         wechat(){},
