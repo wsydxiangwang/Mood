@@ -4,6 +4,12 @@
   "description": "世界上每个角落都有人过着相似的人生",
   "author": "白茶",
   "private": true,
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0",
+      "port": "8000"
+    }
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "build": "nuxt build",

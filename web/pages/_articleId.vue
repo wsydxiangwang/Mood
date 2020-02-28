@@ -76,8 +76,8 @@
             </div>
 
             <!-- music -->
-            <audio id="music" loop="loop" preload="auto">
-                <source type="audio/mpeg" :src="data.music">
+            <audio id="music" loop="loop" preload="auto" muted>
+                <source type="audio/mpeg" :src="data.music" muted>
             </audio>
 
             <!-- mobile music -->
@@ -106,7 +106,7 @@
 
 <script>
 export default {
-    transition: 'article',
+    // transition: 'article',
     data(){
         return{
             comment: {},
@@ -129,7 +129,7 @@ export default {
     },
     head () {
         return {
-            title: this.data.title,
+            title: `${this.data.title} | 白茶`,
             meta: [
                 { hid: 'description', name: 'description', content: this.data.describe }
             ]
@@ -147,6 +147,9 @@ export default {
         }
     },
     mounted(){
+        // this.$nextTick(() => {
+        //     this.changeMusic()
+        // })
         // 微信分享
         // this.$axios.get('/getsign').then(res => {
         //     wx.config({
@@ -319,11 +322,11 @@ export default {
                     this.data.comment.unshift(this.comment)
                     alert('评论成功')
                 }).catch(err => {
-                    alert('评论失败，请刷新再试！！')
+                    alert('评论失败，请重新试！！')
                 })
         },
         myself(){
-            this.$router.push('/myself')
+            this.$router.push('/Libai')
         },
         toIndex(){
             this.$router.push('/')
@@ -358,12 +361,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.article-enter-active, .article-leave-active {
-  transition: all .3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-}
-.article-enter, .article-leave-active {
-  transform: translateX(100%);
-}
+// .article-enter-active, .article-leave-active {
+//   transition: all .3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
+// }
+// .article-enter, .article-leave-active {
+//   transform: translateX(100%);
+// }
 .container section{
     width: 800px;
     margin: auto;

@@ -7,7 +7,7 @@
                 </span>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    :class="isStore ? 'iconpause' : 'iconplay'" 
                     @click="changeMusic"
                 ></span>
             </div>
@@ -27,7 +27,7 @@
             </audio>
         </header>
 
-        <div>
+        <div style="margin: 100px;text-align: center;font-size: 20px;">
         你好，我是李白！
         </div>
     </div>
@@ -47,10 +47,7 @@ export default {
     },
     head () {
         return {
-            title: '李白茶 | Libai',
-            meta: [
-                // { hid: 'description', name: 'description', content: this.data.、 }
-            ]
+            title: '白茶 | Libai'
         }
     },
     mounted(){
@@ -58,9 +55,7 @@ export default {
         window.addEventListener('scroll', this.handleScroll)
     },
     methods: {
-        wechat(){
-
-        },
+        wechat(){},
         // 音乐播放
         changeMusic(){
             let music = document.getElementById("music");
