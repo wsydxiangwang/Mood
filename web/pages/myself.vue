@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import soundBuffer from './soundBuffer';
 export default {
     data(){
         return{
