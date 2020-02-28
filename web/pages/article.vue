@@ -56,7 +56,7 @@ export default {
             this.$router.push(`/${id}`)
         },
         myself(){
-            this.$router.push('/myself')
+            this.$router.push('/Libai')
         },
         toIndex(){
             this.$router.push('/')

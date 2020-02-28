@@ -18,6 +18,7 @@
     "jsonwebtoken": "^8.5.1",
     "memory-cache": "^0.2.0",
     "mongoose": "^5.8.1",
+    "nodemon": "^2.0.2",
     "request": "^2.88.2"
   }
 }

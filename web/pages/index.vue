@@ -83,7 +83,7 @@ export default {
 				},
 				{
 					title: 'Myself',
-					url: 'myself'
+					url: 'Libai'
 				}
 			],
 			isNav: false,

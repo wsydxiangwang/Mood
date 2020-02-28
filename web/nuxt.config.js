@@ -9,8 +9,8 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'author', content: 'Libai' },
-      { name: 'keywords', content: '白茶, libai, 李白, 李白茶, 纯音乐, 音乐, 故事, 美文, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 独行侠' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' },
+      { name: 'keywords', content: '白茶, 李白, Libai, 不如吃茶去, 李白茶, 纯音乐, 音乐, 故事, 美文, 习惯独处, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 永远相信美好的事情即将发生' },
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' },
       { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
     ],
