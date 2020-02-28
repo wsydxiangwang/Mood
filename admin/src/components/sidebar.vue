@@ -37,12 +37,12 @@ export default {
                 {
                     icon: '',
                     title: '细语',
-                    link: '/phrase',
+                    link: '/envelope',
                 },
                 {
                     icon: '',
                     title: '新细语',
-                    link: '/phrase/NewPhrase',
+                    link: '/envelope/new',
                 },
                 {
                     icon: '',

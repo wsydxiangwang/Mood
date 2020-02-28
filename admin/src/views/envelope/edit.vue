@@ -16,7 +16,6 @@
             </div>
         </section>
 
-
         <button class="submit" @click="submit">提交</button>
     </div>
 </template>
@@ -50,7 +49,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 section{
     padding: 10px;
     margin: 20px 0;

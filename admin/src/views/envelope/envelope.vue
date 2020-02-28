@@ -43,16 +43,16 @@ export default {
     },
     methods: {
         async fetch(){
-            const res = await this.$http.get('/phrase');
+            const res = await this.$http.get('/envelope');
             this.phraseList = res.data;
         },
         async remove(item){
-            const res = await this.$http.delete(`/phrase/${item._id}`);
+            const res = await this.$http.delete(`/envelope/${item._id}`);
             this.fetch()
         },
         edit(item){
             this.$router.push({
-                path: `/phrase/edit/${item}`,
+                path: `/envelope/edit/${item}`,
                 name: 'phraseEdit',
                 params: item
             })
@@ -61,7 +61,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .phrase{
     box-shadow: 0 0 10px #eee;
     padding: 20px;

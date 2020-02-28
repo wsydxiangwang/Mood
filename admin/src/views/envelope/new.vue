@@ -1,20 +1,9 @@
 <template>
-    <div class="phrase-new">
-        <h1>标题</h1>
-
-        <section>
-            <h2>标题</h2>
-            <input type="text" v-model="data.title" placeholder="标题">
-        </section>
-
+    <div class="content">
+        
         <mavon-editor @change="change" ref="md" style="height: 60vh"/>
 
-        <section>
-            <div class="state">
-                <div>时间</div>
-                <input type="text" v-model="data.time">
-            </div>
-        </section>
+        <date></date>
 
         <button class="submit" @click="submit">提交</button>
     </div>
@@ -22,19 +11,19 @@
 
 <script>
 import { mavonEditor } from 'mavon-editor'
+import date from '@/components/date'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
+        date,
         mavonEditor
     },
     data() {
         return {
             data: {
-                title: '',              // 标题
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
                 time: '',               // 时间
-                stick: false,           // 置顶
             }
         }
     },
@@ -47,14 +36,15 @@ export default {
             this.data.content = value;          // 输入的内容
         },
         submit(){
-            for(let key in this.data){
-                if(this.data[key] == ''){
-                    this.$delete(this.data, key)
-                }
-            }
+            console.log(this.data)
+
+            return;
+
             this.$http.post('/phrase', this.data).then(res => {
                 console.log(res)
             })
+
+
         },
         dateFormat(fmt){
             let date = new Date();
@@ -78,7 +68,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 section{
     padding: 10px;
     margin: 20px 0;
