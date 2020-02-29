@@ -37,6 +37,4 @@ http.interceptors.response.use(
     }
 )
 
-console.log(process.env)
-
 export default http

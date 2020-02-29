@@ -1,7 +1,6 @@
 /* 
  * 信封 时光机
 */
-
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
@@ -11,7 +10,9 @@ const schema = new mongoose.Schema({
         monthTxt: String,
         year: String,
         day: String,
-        hour: String
+        hour: String,
+        time: String,
+        min: String,
     },
     content: String,
     contentHtml: String,

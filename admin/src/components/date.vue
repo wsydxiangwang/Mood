@@ -1,51 +1,80 @@
 <template>
     <div>
         <input type="number" oninput="if(value.length>4)value=value.slice(0,4)" v-model="data.year">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.month">
+        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.monthNum">
         <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.day">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.hour">
+        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.time">
         <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.min">
     </div>
 </template>
 
 <script>
 export default {
+    props: ['originalDate'],
     data(){
         return{
-            data: {}
+            data: {},
+            timer: null
         }
     },
     watch: {
         data: {
             handler(val, oldVal){
-                console.log(val)
+                if(Object.keys(oldVal).length != 0){
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(() =>{
+                        this.dateFormat()
+                    }, 800)
+                }
             },
             deep: true
         }
     },
+    mounted(){
+        this.data = this.dateFormat();
+    },
     methods: {
         // 时间
-        dateFormat(fmt, mm){
+        dateFormat(){
             let date = new Date();
             let opt = {
-                "Y+": date.getFullYear().toString(),        // 年
-                "M+": (date.getMonth() + 1).toString(),     // 月
-                "D+": date.getDate().toString(),            // 日
-                "H+": date.getHours().toString(),           // 时
-                "m+": date.getMinutes().toString(),         // 分
-                "s+": date.getSeconds().toString()          // 秒
+                "Y": date.getFullYear().toString(),        // 年
+                "M": (date.getMonth() + 1).toString(),     // 月
+                "D": date.getDate().toString(),            // 日
+                "H": date.getHours().toString(),           // 时
+                "m": date.getMinutes().toString(),         // 分
             };
-            for(let k in opt) {
-                let ret = new RegExp("(" + k + ")").exec(fmt);
-                if (ret) {
-                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+            let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+            let time = {};
+
+            if(Object.keys(this.data).length > 0){
+                opt = {
+                    "Y": this.data.year,
+                    "M": this.data.monthNum,
+                    "D": this.data.day,
+                    "H": this.data.time,
+                    "m": this.data.min,
                 };
-            };
-            if(mm){
-                let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
-                fmt = mArr[Number(fmt) - 1];
             }
-            return fmt;
+
+            for(let k in opt){
+                opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
+            }
+
+            time = {
+                date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
+                monthNum: opt.M,
+                monthTxt: mArr[Number(opt.M) - 1],
+                year: opt.Y,
+                day: opt.D,
+                hour: `${opt.H}:${opt.m}`,
+                time: `${opt.H}`,
+                min: `${opt.m}`,
+            }
+
+            this.$emit('getDate', time)
+
+            return time
         }
     }
 }

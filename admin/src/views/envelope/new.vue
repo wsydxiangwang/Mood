@@ -3,15 +3,15 @@
         
         <mavon-editor @change="change" ref="md" style="height: 60vh"/>
 
-        <date></date>
+        <date @getDate="getDate"></date>
 
         <button class="submit" @click="submit">提交</button>
     </div>
 </template>
 
 <script>
-import { mavonEditor } from 'mavon-editor'
 import date from '@/components/date'
+import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
@@ -27,42 +27,19 @@ export default {
             }
         }
     },
-    created() {
-        this.data.time = this.dateFormat('YYYY-MM-DD HH:mm')
-    },
     methods: {
+        // get Time
+        getDate(e){
+            this.data.time = e;
+        },
         change(value, render){
             this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
             this.data.content = value;          // 输入的内容
         },
         submit(){
-            console.log(this.data)
-
-            return;
-
-            this.$http.post('/phrase', this.data).then(res => {
+            this.$http.post('/envelope', this.data).then(res => {
                 console.log(res)
             })
-
-
-        },
-        dateFormat(fmt){
-            let date = new Date();
-            let opt = {
-            "Y+": date.getFullYear().toString(),        // 年
-            "M+": (date.getMonth() + 1).toString(),     // 月
-            "D+": date.getDate().toString(),            // 日
-            "H+": date.getHours().toString(),           // 时
-            "m+": date.getMinutes().toString(),         // 分
-            "s+": date.getSeconds().toString()          // 秒
-            };
-            for(let k in opt) {
-                let ret = new RegExp("(" + k + ")").exec(fmt);
-                if (ret) {
-                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-                };
-            };
-            return fmt;
         }
     }
 }

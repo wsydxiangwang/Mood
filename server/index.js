@@ -46,8 +46,11 @@ app.use(function(err, req, res, next) {
 
 require('./routes/admin')(app)
 require('./routes/admin/login')(app)
+require('./routes/admin/envelope')(app)
+
 require('./routes/web')(app)
 require('./routes/web/jssdk')(app)
+
 require('./plugins/db')(app)
 
 app.listen(3000, () => {
