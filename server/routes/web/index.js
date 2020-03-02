@@ -7,10 +7,7 @@ module.exports = app => {
 
     // All articles
     router.get('/article', async (req, res) => {
-        const data = await Article.find({hide:false}).sort({time: -1}).limit(20)
-        data.forEach(item => {
-            console.log(item.time.date)
-        })
+        let data = await Article.find({hide:false}).sort({time: -1}).limit(20)
         res.send(data)
     })
 

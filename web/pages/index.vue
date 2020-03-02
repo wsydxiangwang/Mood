@@ -52,9 +52,8 @@
 			<a href="http://www.beian.miit.gov.cn/" target="_blank">粤ICP备18132517号</a>
 		</div>
 
-		<div class="cover-loading" v-if="loading">
-			<span></span>
-		</div>
+		<!-- loading -->
+		<div class="cover-loading" v-if="loading"><span></span></div>
 	</div>
 </template>
 

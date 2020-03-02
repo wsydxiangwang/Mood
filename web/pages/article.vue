@@ -176,8 +176,8 @@ header{
                 .item-l{
                     display: flex;
                     .img{
-                        width: 42px;
-                        height: 42px;
+                        width: 45px;
+                        height: 45px;
                         border-radius: 4px;
                         margin-right: 15px;
                         overflow: hidden;
@@ -188,12 +188,14 @@ header{
                         }
                     }
                     .tit{
+                        flex: 1;
                         display: flex;
                         flex-flow: column;
                         justify-content: space-around;
                         span:first-child{
                             color: #5b6773;
                             cursor: pointer;
+                            font-size: 15px;
                             transition: all .3s;
                             &:hover{
                                 color: #024180;
@@ -201,7 +203,7 @@ header{
                         }
                         span:last-child{
                             color: #a1a0d6;
-                            font-size: 12px;
+                            font-size: 13px;
                             margin-top: 4px;
                             letter-spacing: 0;
                         }
@@ -218,7 +220,43 @@ header{
 @media screen and (max-width: 700px){
     .list{
         width: 100%;
-        padding: 80px 0 20px;
+        padding: 80px 20px 20px;
+    }
+}
+@media screen and (max-width: 500px){
+    .list{
+        padding: 80px 10px 20px;
+        .year-list{
+            padding: 10px 10px 10px 6px;
+        }
+        .mon-list {
+            .month{
+                margin: 0 0 30px;
+                &:before{
+                    margin-right: 10px;
+                }
+            }
+            .day-list{
+                padding-left: 18px;
+                li{
+                    margin-bottom: 18px;
+                    padding-bottom: 18px;
+                    .item-l {
+                        .img{
+                            margin-right: 12px;
+                        }
+                        .tit span{
+                            margin-bottom: 6px;
+                        }
+                    }
+                    .item-r{
+                        white-space: nowrap;
+                        margin: 2px 0 0 10px;
+                    }
+                }
+            } 
+        }
+        
     }
 }
 </style>
