@@ -1,19 +1,10 @@
 <template>
     <div class="edit">
-        <h1>标题</h1>
+
+        <mavon-editor @change="change"  v-model="isData" ref="md" style="height: 70vh"/>
 
         <section>
-            <h2>标题</h2>
-            <input type="text" v-model="dataAll.title" placeholder="标题">
-        </section>
-
-        <mavon-editor @change="change" v-model="dataAll.content" ref="md" style="height: 70vh"/>
-
-        <section>
-            <div class="state">
-                <div>时间</div>
-                <input type="text" v-model="dataAll.time">
-            </div>
+            <date v-if="isReset" @getDate="getDate" :originalDate="originalDate"></date>
         </section>
 
         <button class="submit" @click="submit">提交</button>
@@ -21,29 +12,59 @@
 </template>
 
 <script>
+import date from '@/components/date'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
+        date,
         mavonEditor
     },
     data() {
         return {
-            dataAll: ''
+            dataAll: '',
+            originalDate: '',
+            isReset: ''
+        }
+    },
+    computed: {
+        isData: {
+            get(){
+                if(this.dataAll){
+                    return this.dataAll.content
+                }else{
+                    return ''
+                }
+            },
+            set(v){}
         }
     },
     methods: {
+        getDate(e){
+            this.dataAll.time = e;
+        },
         change(value, render){
+            this.dataAll.content = value;              // 输入的内容
             this.dataAll.contentHtml = render;     // render 为 markdown 解析后的结果[html]
         },
         async submit(){
-            const res = await this.$http.put(`/phrase/${this.dataAll._id}`, this.dataAll)
-            console.log(res)
-        }
+            const res = await this.$http.put(`/envelope/${this.dataAll._id}`, this.dataAll)
+        },
+        async loadData(){
+            let id = this.$route.query.id;
+            let res = await this.$http.get(`envelope/${id}`)
+
+            this.dataAll = res.data;
+            this.originalDate = res.data.time;
+
+            this.isReset = false;
+            this.$nextTick(() => {
+                this.isReset = true;
+            })
+        },
     },
     created() {
-        this.dataAll = this.$route.params;
-        console.log(this.dataAll)
+        this.loadData()
     },
     
 }

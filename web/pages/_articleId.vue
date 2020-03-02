@@ -76,9 +76,7 @@
             </div>
 
             <!-- music -->
-            <audio id="music" loop="loop" preload="auto" muted>
-                <source type="audio/mpeg" :src="data.music" muted>
-            </audio>
+            <audio id="music" loop="loop" preload="auto" ref="audio"></audio>
 
             <!-- mobile music -->
             <div 
@@ -142,9 +140,11 @@ export default {
         }
     },
     mounted(){
+        // music src
         this.$nextTick(() => {
-            this.changeMusic()
+            this.$refs.audio.src = this.data.music;
         })
+
         // 微信分享
         // this.$axios.get('/getsign').then(res => {
         //     wx.config({
@@ -218,61 +218,28 @@ export default {
         })
     },
     methods: {
-        request (url) {
-            return new Promise (resolve => {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', url);
-                // 这里需要设置xhr response的格式为arraybuffer
-                // 否则默认是二进制的文本格式
-                xhr.responseType = 'arraybuffer';
-                xhr.onreadystatechange = function () {
-                    // 请求完成，并且成功
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        resolve(xhr.response);
-                    }
-                };
-                xhr.send();
-            });
-        },
-        play(context, decodeBuffer){
-             let source = context.createBufferSource();
-                source.buffer = decodeBuffer;
-                source.connect(context.destination);
-                // 从0s开始播放
-                source.start(0);
-        },
         // 音乐播放
         changeMusic(){
-            // Safari是使用webkit前缀
-            let context = new (window.AudioContext || window.webkitAudioContext)();
-            // 请求音频数据
-            let audioMedia = this.request('https://image.yeyucm.cn/music/qianbaidu.mp3');
-            // 进行decode和play
-            context.decodeAudioData(audioMedia, decode => this.play(context, decode));
-
-           
-
-
-            // let music = document.getElementById("music");
-            // this.isStore = !this.isStore;
-            // // 播放
-            // if(this.isStore){                    
-            //     music.play();
-            //     // 进度条
-            //     this.timer = setInterval(() => {
-            //         var n = (100 * (music.currentTime / music.duration)).toFixed(2);
-            //         var ns = (1 * (music.currentTime / music.duration));
-            //         // 循环
-            //         if(n >= 100) clearInterval(this.timer);
-            //         this.changeProgress = n + '%';
-            //         this.percent = ns;
-            //     }, 50)
-            // }
-            // // 暂停
-            // else{
-            //     music.pause();
-            //     clearInterval(this.timer);
-            // }
+            let music = document.getElementById("music");
+            this.isStore = !this.isStore;
+            // 播放
+            if(this.isStore){
+                music.play();
+                // 进度条
+                this.timer = setInterval(() => {
+                    var n = (100 * (music.currentTime / music.duration)).toFixed(2);
+                    var ns = (1 * (music.currentTime / music.duration));
+                    // 循环
+                    if(n >= 100) clearInterval(this.timer);
+                    this.changeProgress = n + '%';
+                    this.percent = ns;
+                }, 50)
+            }
+            // 暂停
+            else{
+                music.pause();
+                clearInterval(this.timer);
+            }
         },
         // 点赞
         like(){
@@ -375,19 +342,13 @@ export default {
     async asyncData(context){
         let id = context.params.articleId;
         let {data} = await context.$axios.get(`article/${id}`)
-        data.comment.reverse()
+        data.comment.reverse(); // 评论排序
 		return {data: data}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
-// .article-enter-active, .article-leave-active {
-//   transition: all .3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-// }
-// .article-enter, .article-leave-active {
-//   transform: translateX(100%);
-// }
 .container section{
     width: 800px;
     margin: auto;

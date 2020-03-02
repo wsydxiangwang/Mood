@@ -19,10 +19,10 @@
             </thead>
             <tbody>
                 <tr v-for="item in phraseList">
-                    <td class="title">{{item.title}}</td>
-                    <td class="date">{{item.date}}</td>
+                    <td class="title">{{item.content}}</td>
+                    <td class="date">{{item.time.date}}</td>
                     <td>
-                        <span @click="edit(item)">编辑</span>
+                        <span @click="edit(item._id)">编辑</span>
                         <span @click="remove(item)">删除</span>
                     </td>
                 </tr>
@@ -50,11 +50,12 @@ export default {
             const res = await this.$http.delete(`/envelope/${item._id}`);
             this.fetch()
         },
-        edit(item){
+        edit(id){
             this.$router.push({
-                path: `/envelope/edit/${item}`,
-                name: 'phraseEdit',
-                params: item
+                name: 'envelopeEdit',
+                query: {
+                    id: id
+                }
             })
         },
     }

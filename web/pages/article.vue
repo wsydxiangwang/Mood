@@ -14,13 +14,19 @@
         </header>
         <section class="list">
             <div class="year-list" v-for="(val, key, idx) in newData" :key="idx">
-                <h2 class="year">{{key}}年</h2>
+                <!-- <h2 class="year">年</h2> -->
                 <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
-                    <li class="month">{{keys}}月 <span>（{{vals.length}}篇文章）</span></li>
+                    <li class="month">{{key}}-{{keys}}</li>
                     <ul class="day-list">
                         <li v-for="(valss, keyss, idxss) in vals" :key="idxss">
-                            <span>{{valss.time.day}}日:</span>
-                            <span @click="viewArticle(valss.id)">{{valss.title}}</span>
+                            <div class="item-l">
+                                <div class="img" @click="viewArticle(valss.id)"><img :src="valss.image"></div>
+                                <div class="tit">
+                                    <span @click="viewArticle(valss.id)">{{valss.title}}</span>
+                                    <span>{{valss.like}} LIKE / {{valss.read}} READ</span>
+                                </div>
+                            </div>
+                            <span class="item-r">{{valss.time.monthNum}}-{{valss.time.day}}</span>
                         </li>
                     </ul>
                 </ul>
@@ -39,7 +45,7 @@ export default {
     },
     head () {
         return {
-            title: '白茶 | article'
+            title: '白茶 | Article'
         }
     },
     mounted(){
@@ -119,8 +125,8 @@ header{
     }
 }
 .list{
-    width: 700px;
-    padding: 120px 0 80px;
+    width: 640px;
+    padding: 120px 0 0;
     margin: auto;
     .year-list{
         padding: 10px 20px;
@@ -132,11 +138,24 @@ header{
         margin: 10px 0 15px;
     }
     .mon-list{
-        padding-left: 20px;
-        margin-top: 10px;
         .month{
-            color: #333;
+            color: #6e7ab5;
             font-weight: 400;
+            font-size: 18px;
+            margin: 22px 0;
+            list-style: none;
+            position: relative;
+            &:before{
+                content: "";
+                width: 12px;
+                height: 12px;
+                display: inline-block;
+                background-color: #DCE8EC;
+                border: 3px solid #AFCFFF;
+                margin-right: 22px;
+                border-radius: 50%;
+                box-sizing: border-box;
+            }
             span{
                 color: #999;
                 font-size: 13px;
@@ -144,13 +163,48 @@ header{
             }
         }
         .day-list{
-            margin-top: 10px;
-            padding-left: 20px;
+            padding-left: 30px;
+            border-left: 1px solid #f3fafd;
+            margin-left: 6px;
             li{
-                margin: 18px 0;
-                span:last-child{
-                    cursor: pointer;
-                    text-decoration: underline;
+                margin: 0 0 25px;
+                padding-bottom: 25px;
+                border-bottom: 1px solid #F3FAFD;
+                display: flex;
+                justify-content: space-between;
+                .item-l{
+                    display: flex;
+                    .img{
+                        width: 42px;
+                        height: 42px;
+                        border-radius: 4px;
+                        margin-right: 15px;
+                        overflow: hidden;
+                        cursor: pointer;
+                        img{
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                    .tit{
+                        display: flex;
+                        flex-flow: column;
+                        justify-content: space-around;
+                        span:first-child{
+                            color: #5b6773;
+                            cursor: pointer;
+                        }
+                        span:last-child{
+                            color: #a1a0d6;
+                            font-size: 12px;
+                            margin-top: 4px;
+                            letter-spacing: 0;
+                        }
+                    }
+                }
+                .item-r{
+                    color: #d2c6a3;
+                    font-size: 13px;
                 }
             }
         }

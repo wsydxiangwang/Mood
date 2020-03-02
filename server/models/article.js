@@ -22,16 +22,18 @@ const schema = new mongoose.Schema({
         monthTxt: String,
         year: String,
         day: String,
-        hour: String
+        hour: String,
+        time: String,
+        min: String,
     },
-    like: {
+    like: {                             // 喜欢
         type: Number,
         default: 0
-    },                       // 喜欢
-    read: {
+    },                       
+    read: {                             // 阅读
         type: Number,
         default: 0
-    },                       // 阅读
+    },                       
     words: Number,                      // 字数
     comment: [],                        // 评论
 })

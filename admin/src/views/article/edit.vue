@@ -7,24 +7,10 @@
             <input type="text" v-model="dataAll.title" placeholder="标题">
         </section>
 
-        <mavon-editor :ishljs="true" codeStyle="monokai-sublime"  @change="change" v-model="dataAll.content" ref="md" style="height: 70vh"/>
+        <mavon-editor :ishljs="true" codeStyle="monokai-sublime"  @change="change" v-model="isData" ref="md" style="height: 70vh"/>
         
         <section>
-            <div class="state">
-                <div>时间</div>
-                <input type="text" v-model="dataAll.time">
-                <h2>文章置顶</h2>
-                <div>保存草稿</div>
-            </div>
-        </section>
-
-        <section>
-            <h2>文章分类</h2>
-            <div class="category">
-                <div>342342423</div>
-                <div>342342423</div>
-                <div>342342423</div>
-            </div>
+            <date v-if="isReset" @getDate="getDate" :originalDate="originalDate"></date>
         </section>
 
         <section>
@@ -37,7 +23,7 @@
         <section>
             <h2>音乐</h2>
             <div class="picture">
-                <input type="text" v-model="dataAll.music" placeholder="北京音乐">
+                <input type="text" v-model="dataAll.music" placeholder="音乐地址">
             </div>
         </section>
 
@@ -53,26 +39,40 @@
 </template>
 
 <script>
+import date from '@/components/date'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
+        date,
         mavonEditor
     },
     data() {
         return {
-            dataAll: ''
+            dataAll: '',
+            originalDate: '',
+            isReset: true
+        }
+    },
+    computed: {
+        isData: {
+            get(){
+                if(this.dataAll){
+                    return this.dataAll.content
+                }else{
+                    return ''
+                }
+            },
+            set(v){}
         }
     },
     methods: {
         change(value, render){
+            this.dataAll.content = value;     // render 为 markdown 解析后的结果[html]
             this.dataAll.contentHtml = render;     // render 为 markdown 解析后的结果[html]
         },
         // 提交更新文章
-        async submit(){
-
-            
-            return;
+        async submit(){            
             const res = await this.$http.put(`article/${this.dataAll._id}`, this.dataAll)
             console.log(res)
         },
@@ -81,6 +81,13 @@ export default {
             let id = this.$route.query.id;
             const res = await this.$http.get(`article/${id}`)
             this.dataAll = res.data;
+            this.originalDate = res.data.time;
+            this.isReset = false;
+            this.$nextTick(() => {
+                this.isReset = true;
+            })
+        },
+        getDate(e){
         }
     },
     created() {

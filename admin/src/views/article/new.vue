@@ -10,21 +10,7 @@
         <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" ref="md" style="height: 70vh"/>
 
         <section>
-            <div class="state">
-                <div>时间</div>
-                <input type="text" v-model="data.time">
-                <h2>文章置顶</h2>
-                <div>保存草稿</div>
-            </div>
-        </section>
-
-        <section>
-            <h2>文章分类</h2>
-            <div class="category">
-                <div>342342423</div>
-                <div>342342423</div>
-                <div>342342423</div>
-            </div>
+            <date @getDate="getDate"></date>
         </section>
 
         <section>
@@ -53,10 +39,12 @@
 </template>
 
 <script>
+import date from '@/components/date'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
+        date,
         mavonEditor
     },
     data() {
@@ -70,17 +58,6 @@ export default {
                 image: '',              // 图片
                 music: '',              // 音乐
             }
-        }
-    },
-    created() {
-        // 默认时间
-        this.data.time = {
-            date: this.dateFormat('YYYY/MM/DD HH:mm'),
-            year: this.dateFormat('YYYY'),
-            monthTxt: this.dateFormat('MM', 'mm'),
-            monthNum: this.dateFormat('MM'),
-            day: this.dateFormat('DD'),
-            hour: this.dateFormat('HH:mm')
         }
     },
     methods: {
@@ -100,28 +77,8 @@ export default {
                 alert('成功')
             })
         },
-        // 时间
-        dateFormat(fmt, mm){
-            let date = new Date();
-            let opt = {
-                "Y+": date.getFullYear().toString(),        // 年
-                "M+": (date.getMonth() + 1).toString(),     // 月
-                "D+": date.getDate().toString(),            // 日
-                "H+": date.getHours().toString(),           // 时
-                "m+": date.getMinutes().toString(),         // 分
-                "s+": date.getSeconds().toString()          // 秒
-            };
-            for(let k in opt) {
-                let ret = new RegExp("(" + k + ")").exec(fmt);
-                if (ret) {
-                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-                };
-            };
-            if(mm){
-                let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
-                fmt = mArr[Number(fmt) - 1];
-            }
-            return fmt;
+        getDate(e){
+            this.data.time = e;
         }
     }
 }

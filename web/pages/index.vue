@@ -34,11 +34,11 @@
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img :src="item.image" alt="">
+					<img :src="item.image || 'https://image.yeyucm.cn/img/mood-NationalDay/5.jpg'" alt="">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.monthTxt}}月 {{item.time.day}}, {{item.time.year}}</div>
-					<div class="title" @click="article(item.id)"><a>{{item.title}}</a></div>
+					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
 						<span><i class="iconfont iconwenzi1"></i> {{item.words}}</span>
@@ -79,7 +79,7 @@ export default {
 				},
 				{
 					title: 'Envelope',
-					url: ''
+					url: 'envelope'
 				},
 				{
 					title: 'Myself',
@@ -94,7 +94,7 @@ export default {
         return {
             title: '白茶'
         }
-    },
+	},
 	async asyncData(context){
 		let {data} = await context.$axios.get('article')
 		return {articleList: data}
@@ -133,6 +133,7 @@ export default {
 			}, 100)
 		}
 	},
+	// 
 	destroyed(){
 		window.onresize = null;
 		document.body.style.overflowY = '';
@@ -395,13 +396,15 @@ export default {
 					color: #999;
 					font-size: 12px;
 				}
-				.title a{
-					font-size: 24px;
-					cursor: pointer;
+				.title{
 					margin-top: 5px;
-					display: inline-block;
-					&:hover{
-						text-decoration: underline;
+					a{
+						font-size: 24px;
+						cursor: pointer;
+						display: inline;
+						&:hover{
+							text-decoration: underline;
+						}
 					}
 				}
 				.describe{

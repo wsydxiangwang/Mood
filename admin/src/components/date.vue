@@ -31,7 +31,11 @@ export default {
         }
     },
     mounted(){
-        this.data = this.dateFormat();
+        if(this.originalDate){
+            this.data = this.originalDate;
+        }else{
+            this.data = this.dateFormat();
+        }
     },
     methods: {
         // 时间

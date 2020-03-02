@@ -3,20 +3,21 @@ module.exports = app => {
     const router = express.Router();
 
     const Article = require('../../models/article')
+    const Envelope = require('../../models/envelope')
     
-    // 获取所有文章
+    // All articles
     router.get('/article', async (req, res) => {
         const data = await Article.find({hide:false}).sort({time: -1}).limit(20)
         res.send(data)
     })
 
-    // 查找当前文章
+    // Current article
     router.get('/article/:id', async (req, res) => {
         const data = await Article.findOne({id: req.params.id})
         res.send(data)
     })
 
-    // 发表评论
+    // Post a comment
     router.put('/article_comment/:id', async (req, res) => {
         const data = await Article.updateOne({
             '_id': req.params.id
@@ -28,7 +29,7 @@ module.exports = app => {
         res.send(data)
     })
 
-    // 点赞+1
+    // like +1
     router.put('/article_like/:id', async (req, res) => {
         let data = await Article.updateOne({
                 '_id': req.params.id
@@ -38,13 +39,20 @@ module.exports = app => {
         res.send(data)
     })
 
-    // 阅读量+1
+    // read +1
     router.put('/article_read/:id', async (req, res) => {
         let data = await Article.updateOne({
                 '_id': req.params.id
             }, {
                 $inc: { 'read': 1}
             })
+        res.send(data)
+    })
+
+
+    // envelope
+    router.get('/envelope', async (req, res) => {
+        const data = await Envelope.find().sort({time: -1}).limit(20)
         res.send(data)
     })
 

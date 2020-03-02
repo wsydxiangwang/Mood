@@ -1,11 +1,17 @@
 html {
-	font-family: "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+	font-family: "eafont", "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
 	word-spacing: 1px;
 	-ms-text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 }
+@font-face{
+	font-style: normal;
+	font-family: 'eafont';
+	src: url('../../static/font/eafont.ttf') format('truetype');
+}
+
 *{
 	margin: 0;
 	padding: 0;
@@ -22,7 +28,7 @@ body::-webkit-scrollbar{
 	width: 6px;
 }
 body::-webkit-scrollbar-thumb{
-	background: #e7e7e7;
+	background: #dbdbdb;
 }
 body::-webkit-scrollbar-track{
 	background: #f6f6f6;
