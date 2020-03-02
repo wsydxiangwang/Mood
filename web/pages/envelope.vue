@@ -1,41 +1,42 @@
 <template>
     <div class="container">
-        <header>
-            <div class="l icon">
-                <span class="logo" @click="toIndex">
-                    <img src="../static/image/logo.png">
-                </span>
-            </div>
-            <div class="r icon">
-                <span class="myself" @click="myself">
-                    <img src="../static/image/myself.png">
-                </span>
-            </div>
-        </header>
+        <Header :music="music" title="原本这个就有很多东西是没有什么意义的！"></Header>
         <section class="content">
-            <div v-for="(item, index) in data" :key="index">
-                <div v-html="item.contentHtml"></div>
+            <div v-for="(item, index) in data" :key="index" class="item">
+                <div class="text" v-html="item.contentHtml"></div>
             </div>
         </section>
     </div>
 </template>
 
 <script>
+import Header from "../components/header";
 export default {
+	components: {
+		Header
+    },
+    data(){
+        return{
+            music: 'https://image.raindays.cn/music/%E5%BF%98%E3%82%8C%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%E3%81%AB.mp3',
+        }
+    },
     head () {
         return {
-            title: '白茶 | Envelope'
+            title: 'Envelope | 白茶'
         }
     },
     async asyncData(context){
         let {data} = await context.$axios.get('envelope')
-        console.log(data)
 		return {data: data}
-	},
+    },
 }
 </script>
 
 <style lang="scss" scoped>
+.container{
+    min-height: 100vh;
+    background: #eef5ff;
+}
 header{
     position: fixed;
     top: 0;
@@ -81,6 +82,18 @@ header{
 .content{
     width: 700px;
     margin: auto;
-    padding: 120px 0 0;
+    padding: 120px 0 50px;
+    .item{
+        margin-bottom: 30px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 6px;
+        .text{
+            color: #333;
+            /deep/ .hljs-right{
+                text-align: right;
+            }
+        }
+    }
 }
 </style>

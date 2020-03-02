@@ -1,17 +1,6 @@
 <template>
     <div class="container">
-        <header>
-            <div class="l icon">
-                <span class="logo" @click="toIndex">
-                    <img src="../static/image/logo.png">
-                </span>
-            </div>
-            <div class="r icon">
-                <span class="myself" @click="myself">
-                    <img src="../static/image/myself.png">
-                </span>
-            </div>
-        </header>
+        <Header :music="music" title="加油啦"></Header>
         <section class="list">
             <div class="year-list" v-for="(val, key, idx) in newData" :key="idx">
                 <!-- <h2 class="year">年</h2> -->
@@ -36,16 +25,20 @@
 </template>
 
 <script>
+import Header from "../components/header";
 export default {
-    // transition: 'article',
+	components: {
+		Header
+    },
     data(){
         return{
-            newData: ''
+            newData: '',
+            music: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3',
         }
     },
     head () {
         return {
-            title: '白茶 | Article'
+            title: 'Article | 白茶'
         }
     },
     mounted(){
@@ -56,17 +49,10 @@ export default {
             a['_'+year][date].push(b);
             return a;
         }, {})
-        console.log(this.newData)
     },
     methods: {
         viewArticle(id){
             this.$router.push(`/${id}`)
-        },
-        myself(){
-            this.$router.push('/Libai')
-        },
-        toIndex(){
-            this.$router.push('/')
         },
     },
     async asyncData(context){

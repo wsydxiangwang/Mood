@@ -1,31 +1,6 @@
 <template>
     <div class="container">
-        <header>
-            <div class="l icon">
-                <span class="logo" @click="toIndex">
-                    <img src="../static/image/logo.png">
-                </span>
-                <span 
-                    class="iconfont" 
-                    :class="isStore ? 'iconpause' : 'iconplay'" 
-                    @click="changeMusic"
-                ></span>
-            </div>
-            <div class="title" :class="{active: title}">你好，我是李白！</div>
-            <div class="r icon">
-                <span class="iconfont icon-wechat" @click="wechat"></span>
-                <span class="myself">
-                    <img src="../static/image/myself.png">
-                </span>
-            </div>
-            <!-- 音乐进度条 -->
-            <div class="musicBar" :style="{width: changeProgress}"></div>
-
-            <!-- music -->
-            <audio id="music" loop="loop" preload="auto">
-                <source type="audio/mpeg" src="https://image.yeyucm.cn/music/qianbaidu.mp3">
-            </audio>
-        </header>
+        <Header :music="music" title="嘿，陌生人，你今天笑了么 (≖ᴗ≖)✧"></Header>
 
         <div style="margin: 100px;text-align: center;font-size: 20px;">
         你好，我是李白！
@@ -34,62 +9,22 @@
 </template>
 
 <script>
+import Header from "../components/header";
 export default {
+	components: {
+		Header
+    },
     data(){
         return{
             title: false,
-            comment: {},
-            isLike: false,
-            isStore: false,
-            timer: null,
-            changeProgress: 0,
+            music: 'https://image.yeyucm.cn/music/qianbaidu.mp3',
         }
     },
     head () {
         return {
-            title: '白茶 | Libai'
+            title: 'Libai | 白茶'
         }
     },
-    mounted(){
-        // 滚动条
-        window.addEventListener('scroll', this.handleScroll)
-    },
-    methods: {
-        wechat(){},
-        // 音乐播放
-        changeMusic(){
-            let music = document.getElementById("music");
-            this.isStore = !this.isStore;
-            // 播放
-            if(this.isStore){                    
-                music.play();
-                // 进度条
-                this.timer = setInterval(() => {
-                    var n = (100 * (music.currentTime / music.duration)).toFixed(2);
-                    // 循环
-                    if(n >= 100) clearInterval(this.timer);
-                    this.changeProgress = n + '%';
-                }, 50)
-            }
-            // 暂停
-            else{
-                music.pause();
-                clearInterval(this.timer);
-            }
-        },
-        // 滚动条位置
-        handleScroll(){
-            let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            if(scrollTop >= 100){
-                this.title = true;
-            }else{
-                this.title = false;
-            }
-        },
-        toIndex(){
-            this.$router.push('/')
-        },  
-    }
 }
 </script>
 
