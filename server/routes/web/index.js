@@ -4,10 +4,13 @@ module.exports = app => {
 
     const Article = require('../../models/article')
     const Envelope = require('../../models/envelope')
-    
+
     // All articles
     router.get('/article', async (req, res) => {
         const data = await Article.find({hide:false}).sort({time: -1}).limit(20)
+        data.forEach(item => {
+            console.log(item.time.date)
+        })
         res.send(data)
     })
 

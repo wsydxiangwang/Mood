@@ -16,7 +16,7 @@
             <div class="year-list" v-for="(val, key, idx) in newData" :key="idx">
                 <!-- <h2 class="year">年</h2> -->
                 <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
-                    <li class="month">{{key}}-{{keys}}</li>
+                    <li class="month">{{key.slice(1, 5)}}-{{keys}}</li>
                     <ul class="day-list">
                         <li v-for="(valss, keyss, idxss) in vals" :key="idxss">
                             <div class="item-l">
@@ -49,13 +49,14 @@ export default {
         }
     },
     mounted(){
-        this.newData = this.data.reduce((a,b)=>{
+        this.newData = this.data.reduce((a, b)=>{
             var [ , year, date] = /(\d+)\/(\d+)/.exec(b.time.date);
-            a[year] = a[year] || {};
-            a[year][date] = a[year][date] || [];
-            a[year][date].push(b);
+            a['_'+year] = a['_'+year] || {};
+            a['_'+year][date] = a['_'+year][date] || [];
+            a['_'+year][date].push(b);
             return a;
         }, {})
+        console.log(this.newData)
     },
     methods: {
         viewArticle(id){
@@ -69,7 +70,7 @@ export default {
         },
     },
     async asyncData(context){
-		let {data} = await context.$axios.get('article')
+        let {data} = await context.$axios.get('article')
 		return {data: data}
 	},
 }
@@ -193,6 +194,10 @@ header{
                         span:first-child{
                             color: #5b6773;
                             cursor: pointer;
+                            transition: all .3s;
+                            &:hover{
+                                color: #024180;
+                            }
                         }
                         span:last-child{
                             color: #a1a0d6;
