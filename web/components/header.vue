@@ -78,7 +78,6 @@ export default {
         },
         // 滚动条位置
         handleScroll(){
-            console.log(1)
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             if(this.scrollTop >= 100){
                 this.isTitle = true;

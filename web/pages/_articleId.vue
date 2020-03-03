@@ -18,7 +18,7 @@
                     :class="{like: isLike}"
                     @click="like"
                 ></span>
-                <span class="iconfont iconwechat" @click="wechat"></span>
+                <!-- <span class="iconfont iconwechat" @click="wechat"></span> -->
                 <span class="myself" @click="myself">
                     <img src="../static/image/myself.png">
                 </span>
