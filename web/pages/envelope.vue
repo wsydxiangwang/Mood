@@ -96,4 +96,20 @@ header{
         }
     }
 }
+@media screen and (max-width: 700px){
+    .content{
+        width: 100%;
+        padding: 80px 20px 20px;
+    }
+}
+@media screen and (max-width: 500px){
+    .content{
+        width: 100%;
+        padding: 70px 20px 10px;
+        .item{
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+    }
+}
 </style>

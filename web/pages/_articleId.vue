@@ -489,14 +489,17 @@ h1.title{
         box-shadow: none !important;
         p{
             line-height: 36px;
-            margin: 0 0 18px;
+            margin: 0 0 22px;
+            font-size: 16px;
             mark{
                 padding: 0 4px;
                 line-height: 22px;
                 display: inline-block;
+                font-size: 16px;
             }
             strong{
                 font-weight: bold;
+                font-size: 16px;
             }
         }
         h1, h2, h3, h4, h5{
@@ -508,12 +511,14 @@ h1.title{
         blockquote{
             background: white;
             border-radius: 10px;
+            padding-left: 22px;
+            margin-bottom: 20px;
             p{
                 margin: 10px 0;
             }
         }
         ul, ol{
-            margin: 0 0 18px;
+            margin: 0 0 20px;
             li{
                 margin: 10px 0;
                 line-height: 28px;
@@ -862,6 +867,15 @@ h1.title{
         .markdown-body{
             iframe{
                 height: 310px;
+            }
+            blockquote{
+                padding-left: 16px;
+            }
+            p{
+                font-size: 14px;
+                strong, mark{
+                    font-size: 14px;
+                }
             }
         }
     }

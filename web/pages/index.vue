@@ -81,7 +81,7 @@ export default {
 					url: 'envelope'
 				},
 				{
-					title: 'Myself',
+					title: "I'm Libai",
 					url: 'Libai'
 				}
 			],
@@ -471,6 +471,9 @@ export default {
 			display: block;
 			text-align: center;
 			color: #999;
+			span{
+				font-size: 16px;	
+			}
 		}
 		.nav-list{
 			width: 80%;
@@ -482,7 +485,7 @@ export default {
 				list-style: none;
 				display: inline-block;
 				a{
-					font-size: 20px;
+					font-size: 24px;
 					cursor: pointer;
 					color: #666;
 					letter-spacing: 1px;
@@ -606,7 +609,7 @@ export default {
 				li{
 					// margin: 0 12px;
 					a{
-						font-size: 16px;
+						font-size: 18px;
 					}
 				}
 			}
@@ -626,6 +629,9 @@ export default {
 					line-height: 20px;
 				}
 			}
+		}
+		.nav .world span{
+			font-size: 14px;	
 		}
 	}
 	@media screen and (max-width: 480px){
