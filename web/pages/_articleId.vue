@@ -145,65 +145,87 @@ export default {
             this.$refs.audio.src = this.data.music;
         })
 
-        // 微信分享
-        // this.$axios.get('/getsign').then(res => {
-        //     wx.config({
-        //         debug: true,                   // 调试模式 wx弹窗 pc打印
-        //         appId: 'wxc21bbf3b44300995',    // 标识
-        //         timestamp: res.data.timestamp,  // 时间戳
-        //         nonceStr: res.data.noncestr,    // 随机串
-        //         signature: res.data.signature,  // 签名
-        //         jsApiList: [                    // 接口
-        //             'onMenuShareAppMessage',    // 朋友
-        //             'updateAppMessageShareData'
-        //         ] 
-        //     });
+        // weixin
+        if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
             
-        //     wx.ready(() => {
-        //         wx.checkJsApi({
-        //             jsApiList: ['onMenuShareAppMessage', 'updateAppMessageShareData'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-        //             success: function(res) {
-        //                 alert(JSON.stringify(res))
-        //             }
-        //         }),
-        //         wx.updateAppMessageShareData({ 
-        //             title: '2222', // 分享标题
-        //             desc: '33333', // 分享描述
-        //             link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-        //             imgUrl: this.data.image, // 分享图标
-        //             success: function () {
-        //                 // 设置成功
-        //                 alert('send success')
-        //             },
-        //             fail: function(){
-        //                 alert('oh')
-        //             }
-        //         })
-        //         // wx.onMenuShareTimeline({
-        //         //     title: this.data.title, // 分享标题
-        //         //     link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-        //         //     imgUrl: this.data.image, // 分享图标
-        //         //     success: function () {
-        //         //     // 用户点击了分享后执行的回调函数
-        //         //         alert('朋友圈')
-        //         //     }
-        //         // }),
-        //         // wx.onMenuShareAppMessage({ 
-        //         //     title: this.data.title,     // 标题
-        //         //     desc: this.data.describe,   // 描述
-        //         //     link: res.data.url,         // 链接
-        //         //     imgUrl: this.data.image,    // 图标
-        //         //     type: 'link',
-        //         //     dataUrl: '',
-        //         //     success: function(){
-        //         //         alert('send success')
-        //         //     }
-        //         // })
-        //     });
-        //     wx.error(function(res){
-        //         alert(res)
-        //     });
-        // })
+            const script = document.createElement('script');
+            script.src = 'https://res.wx.qq.com/open/js/jweixin-1.2.0.js';
+
+        　　new Promise((resolve, reject) => {
+            　　let done = false;
+            　　script.onload = script.onreadystatechange = () => {
+                　　if (!done && (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete')){
+                　　　　　　done = true;
+                　　　　　　script.onload = script.onreadystatechange = null;
+                　　　　　　resolve(script);
+                    }
+                }
+                script.onerror = reject;
+                document.getElementsByTagName('head')[0].appendChild(script);
+            })
+            .then(res => {
+    　　　　　　  this.$axios.get('/getsign').then(res => {
+                    wx.config({
+                        debug: false,                   // 调试模式 wx弹窗 pc打印
+                        appId: 'wxc21bbf3b44300995',    // 标识
+                        timestamp: res.data.timestamp,  // 时间戳
+                        nonceStr: res.data.noncestr,    // 随机串
+                        signature: res.data.signature,  // 签名
+                        jsApiList: [                    // 接口
+                            'onMenuShareAppMessage',    // 朋友
+                            'onMenuShareTimeline',
+                            'updateAppMessageShareData',
+                            'updateTimelineShareData'
+                        ] 
+                    });
+                    
+                    wx.ready(() => {
+                        // wx.checkJsApi({
+                        //     jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'updateAppMessageShareData', 'updateTimelineShareData'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+                        //     success: function(res) {
+                        //         alert(JSON.stringify(res))
+                        //     }
+                        // })
+
+
+                        // console.log(this.data)
+                        // wx.onMenuShareTimeline({
+                        //     title: this.data.title + ' | 白茶', // 分享标题
+                        //     link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        //     imgUrl: this.data.image, // 分享图标
+                        //     success: function () {
+                        //     // 用户点击了分享后执行的回调函数
+                        //         // alert('朋友圈')
+                        //     }
+                        // })
+                        wx.updateAppMessageShareData({ 
+                            title: this.data.title + ' | 白茶',     // 标题
+                            desc: this.data.describe,               // 描述
+                            link: res.data.url,                     // 链接
+                            imgUrl: this.data.image,                // 图标
+                            success: function () {
+                                // alert('send success')
+                            // 设置成功
+                            }
+                        })
+                        // wx.onMenuShareAppMessage({ 
+                        //     title: this.data.title + ' | 白茶',     // 标题
+                        //     desc: this.data.describe,               // 描述
+                        //     link: res.data.url,                     // 链接
+                        //     imgUrl: this.data.image,                // 图标
+                        //     type: 'link',
+                        //     dataUrl: '',
+                        //     success: function(){
+                        //         alert('send success')
+                        //     }
+                        // })
+                    });
+                    // wx.error(function(res){
+                    //     alert(res)
+                    // });
+                })
+            })
+        }       
 
         // 监听滚动条事件
         window.addEventListener('scroll', this.handleScroll, true)

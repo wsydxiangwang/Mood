@@ -58,12 +58,16 @@ module.exports = {
   ** Global CSS
   */
   css: ["~assets/css/main.css", "~static/css/iconfont.css", "~static/css/iconfonts.css"],
+  script: [
+    {src: 'https://hm.baidu.com/hm.js?5f85ae1c4efdaa4f4b24d0fa4abc9fd1'}
+  ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     { src: '@/plugins/vue-mavon-editor', ssr: true },
     { src: '@/plugins/wxsdk', ssr: false },
+    { src: '@/plugins/baidu', ssr: false },
   ],
   /*
   ** Nuxt.js dev-modules
