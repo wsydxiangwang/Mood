@@ -5,6 +5,36 @@ module.exports = app => {
     const Article = require('../../models/article')
     const Envelope = require('../../models/envelope')
 
+
+    const fs = require('fs')
+    const http = require('http')
+    const path = require('path')
+
+    function toArrayBuffer(buf) {
+        var ab = new ArrayBuffer(buf.length);
+        var view = new Uint8Array(ab);
+        for (var i = 0; i < buf.length; ++i) {
+            view[i] = buf[i];
+        }
+        return ab;
+    }
+
+    // let paths = path.resolve(__dirname, "https://image.yeyucm.cn/music/qianbaidu.mp3");
+    router.get('/music', (req, res) => {        
+        fs.readFile('routes/music/qianbaidu.mp3', (err, data) => {
+            if(err){
+                console.log(err)
+            }else{
+                console.log(toArrayBuffer(data))
+                res.send(toArrayBuffer(data))
+            }
+        })
+    })
+    
+
+    // var url = 'http://image.yeyucm.cn/music/qianbaidu.mp3';
+
+
     // All articles
     router.get('/article', async (req, res) => {
         let data = await Article.find({hide:false}).sort({time: -1}).limit(20)
