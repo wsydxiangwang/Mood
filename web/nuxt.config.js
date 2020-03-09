@@ -57,13 +57,12 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ["~assets/css/main.css", "~static/css/iconfont.css", "~static/css/iconfonts.css"],
+  css: ["~assets/css/main.css", "~static/css/iconfont.css"],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     { src: '@/plugins/vue-mavon-editor', ssr: true },
-    { src: '@/plugins/wxsdk', ssr: false },
     { src: '@/plugins/baidu.js', ssr: false },
   ],
   /*

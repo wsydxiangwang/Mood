@@ -23,9 +23,7 @@
     "express": "^4.16.4",
     "mavon-editor": "^2.7.7",
     "nuxt": "^2.0.0",
-    "parallax-js": "^3.1.0",
-    "weixin-js-sdk": "^1.4.0-test",
-    "weixin-jsapi": "^1.1.0"
+    "parallax-js": "^3.1.0"
   },
   "devDependencies": {
     "node-sass": "^4.13.0",

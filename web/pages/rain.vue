@@ -1,6 +1,6 @@
 <template>
     <div class="rain">
-        <span class="logo icon icon-_20200223094858" @click="toIndex"></span>
+        <span class="logo iconfont icon-logo4" @click="toIndex"></span>
         <img class="rain-bg" src="https://image.yeyucm.cn/Myself-Resources/rain/rain-bg.gif" draggable="false" @load="handleLoad">
         <img class="words" src="https://image.yeyucm.cn/Myself-Resources/rain/words.png" draggable="false" @load="handleLoad">
         <ul class="option">
@@ -142,8 +142,8 @@ export default {
     .logo{
         color: #fff;
         position: fixed;
-        bottom: 18px;
-        left: 12px;
+        bottom: 20px;
+        left: 30px;
         z-index: 9999;
         font-size: 30px;
         cursor: pointer;
@@ -195,6 +195,9 @@ export default {
                     justify-content: center;
                 }
             }
+        }
+        .logo{
+            left: 20px;
         }
     }
 }

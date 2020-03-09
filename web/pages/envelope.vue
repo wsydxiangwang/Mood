@@ -4,6 +4,7 @@
         <section class="content">
             <div v-for="(item, index) in data" :key="index" class="item">
                 <div class="text" v-html="item.contentHtml"></div>
+                <div>{{item.newTime}}</div>
             </div>
         </section>
     </div>
@@ -17,7 +18,7 @@ export default {
     },
     data(){
         return{
-            music: 'https://image.raindays.cn/music/%E5%BF%98%E3%82%8C%E3%81%AA%E3%81%84%E3%81%9F%E3%82%81%E3%81%AB.mp3',
+            music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
         }
     },
     head () {
@@ -27,6 +28,7 @@ export default {
     },
     async asyncData(context){
         let {data} = await context.$axios.get('envelope')
+        console.log(data)
 		return {data: data}
     },
 }
@@ -36,48 +38,6 @@ export default {
 .container{
     min-height: 100vh;
     background: #eef5ff;
-}
-header{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border-bottom: 1px solid #f6f7f8;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #666;
-    padding: 0 15px;
-    background: #fff;
-    z-index: 99999;
-    .logo{
-        display: inline-block;
-        height: 20px;
-        width: 20px;
-        vertical-align: top;
-        margin-right: 15px;
-        margin-left: 4px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
-        }
-    }
-    .myself{
-        width: 26px;
-        height: 26px;
-        display: inline-block;
-        border-radius: 50%;
-        overflow: hidden;
-        vertical-align: bottom;
-        margin-left: 8px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
-        }
-    }
 }
 .content{
     width: 700px;

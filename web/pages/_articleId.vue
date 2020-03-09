@@ -2,19 +2,17 @@
     <div class="container">
         <header>
             <div class="l icon">
-                <span class="logo" @click="toIndex">
-                    <img src="../static/image/logo.png">
-                </span>
+                <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'iconpause' : 'iconplay'" 
+                    :class="isStore ? 'icon-pause' : 'icon-play'" 
                     @click="changeMusic"
                 ></span>
             </div>
             <div class="title" :class="{active: title}">{{data.title}}</div>
             <div class="r icon">
                 <span 
-                    class="iconfont iconheart1" 
+                    class="iconfont icon-like" 
                     :class="{like: isLike}"
                     @click="like"
                 ></span>
@@ -90,7 +88,7 @@
                 </svg>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'iconpause' : 'iconplay'" 
+                    :class="isStore ? 'icon-pause' : 'icon-play'" 
                 ></span>
             </div>
         </section>
@@ -140,93 +138,63 @@ export default {
         }
     },
     mounted(){
-        this.changeMusic()
         // music src
-        // this.$nextTick(() => {
-        //     this.$refs.audio.src = this.data.music;
-        // })
+        this.$nextTick(() => {
+            this.$refs.audio.src = this.data.music;
+        })
 
         // weixin
         if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
-            
             const script = document.createElement('script');
-            script.src = 'https://res.wx.qq.com/open/js/jweixin-1.2.0.js';
+            script.src = 'https://res.wx.qq.com/open/js/jweixin-1.6.0.js';
 
         　　new Promise((resolve, reject) => {
             　　let done = false;
             　　script.onload = script.onreadystatechange = () => {
                 　　if (!done && (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete')){
-                　　　　　　done = true;
-                　　　　　　script.onload = script.onreadystatechange = null;
-                　　　　　　resolve(script);
+                        done = true;
+                        script.onload = script.onreadystatechange = null;
+                        resolve(script);
                     }
                 }
                 script.onerror = reject;
                 document.getElementsByTagName('head')[0].appendChild(script);
             })
             .then(res => {
-    　　　　　　  this.$axios.get('/getsign').then(res => {
+                this.$axios.get('/getsign').then(res => {
                     wx.config({
-                        debug: false,                   // 调试模式 wx弹窗 pc打印
-                        appId: 'wxc21bbf3b44300995',    // 标识
+                        debug: false,                    // 调试模式 wx弹窗 pc打印
+                        appId: res.data.appId,          // 标识
                         timestamp: res.data.timestamp,  // 时间戳
                         nonceStr: res.data.noncestr,    // 随机串
                         signature: res.data.signature,  // 签名
                         jsApiList: [                    // 接口
-                            'onMenuShareAppMessage',    // 朋友
+                            'onMenuShareAppMessage',
                             'onMenuShareTimeline',
-                            'updateAppMessageShareData',
-                            'updateTimelineShareData'
                         ] 
                     });
-                    
                     wx.ready(() => {
-                        // wx.checkJsApi({
-                        //     jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'updateAppMessageShareData', 'updateTimelineShareData'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-                        //     success: function(res) {
-                        //         alert(JSON.stringify(res))
-                        //     }
-                        // })
-
-
-                        // console.log(this.data)
-                        // wx.onMenuShareTimeline({
-                        //     title: this.data.title + ' | 白茶', // 分享标题
-                        //     link: res.data.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                        //     imgUrl: this.data.image, // 分享图标
-                        //     success: function () {
-                        //     // 用户点击了分享后执行的回调函数
-                        //         // alert('朋友圈')
-                        //     }
-                        // })
-                        wx.updateAppMessageShareData({ 
-                            title: this.data.title + ' | 白茶',     // 标题
-                            desc: this.data.describe,               // 描述
-                            link: res.data.url,                     // 链接
-                            imgUrl: this.data.image,                // 图标
-                            success: function () {
-                                // alert('send success')
-                            // 设置成功
-                            }
+                        wx.checkJsApi({
+                            jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline',]
                         })
-                        // wx.onMenuShareAppMessage({ 
-                        //     title: this.data.title + ' | 白茶',     // 标题
-                        //     desc: this.data.describe,               // 描述
-                        //     link: res.data.url,                     // 链接
-                        //     imgUrl: this.data.image,                // 图标
-                        //     type: 'link',
-                        //     dataUrl: '',
-                        //     success: function(){
-                        //         alert('send success')
-                        //     }
-                        // })
+                        let desc = this.data.describe.slice(0, 25) + '...';
+                        wx.onMenuShareAppMessage({ 
+                            title: this.data.title + ' | 白茶',
+                            desc: desc,
+                            link: res.data.url,
+                            imgUrl: this.data.image,
+                            type: 'link',
+                            dataUrl: ''
+                        })
+                        wx.onMenuShareTimeline({
+                            title: this.data.title + ' | 白茶',
+                            link: res.data.url,
+                            imgUrl: this.data.image
+                        })
                     });
-                    // wx.error(function(res){
-                    //     alert(res)
-                    // });
                 })
             })
-        }       
+        }  
 
         // 监听滚动条事件
         window.addEventListener('scroll', this.handleScroll, true)
@@ -240,33 +208,33 @@ export default {
             this.data.read++;
         })
     },
-    methods: { 
-        request (url) {
-            return new Promise (resolve => {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', url);
-                // 这里需要设置xhr response的格式为arraybuffer
-                // 否则默认是二进制的文本格式
-                xhr.setRequestHeader("Access-Control-Allow-Origin", '*');
-                xhr.setRequestHeader("content-type", 'application/json; charset=utf-8');
-                xhr.responseType = 'arraybuffer';
-                xhr.onreadystatechange = function () {
-                    // 请求完成，并且成功
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        resolve(xhr.response);
-                        console.log(xhr)
-                    }
-                };
-                xhr.send();
-            });
-        },
-        play(context, decodeBuffer){
-             let source = context.createBufferSource();
-                source.buffer = decodeBuffer;
-                source.connect(context.destination);
-                // 从0s开始播放
-                source.start(0);
-        },
+    methods: {
+        // request (url) {
+        //     return new Promise (resolve => {
+        //         let xhr = new XMLHttpRequest();
+        //         xhr.open('GET', url);
+        //         // 这里需要设置xhr response的格式为arraybuffer
+        //         // 否则默认是二进制的文本格式
+        //         xhr.setRequestHeader("Access-Control-Allow-Origin", '*');
+        //         xhr.setRequestHeader("content-type", 'application/json; charset=utf-8');
+        //         xhr.responseType = 'arraybuffer';
+        //         xhr.onreadystatechange = function () {
+        //             // 请求完成，并且成功
+        //             if (xhr.readyState === 4 && xhr.status === 200) {
+        //                 resolve(xhr.response);
+        //                 console.log(xhr)
+        //             }
+        //         };
+        //         xhr.send();
+        //     });
+        // },
+        // play(context, decodeBuffer){
+        //      let source = context.createBufferSource();
+        //         source.buffer = decodeBuffer;
+        //         source.connect(context.destination);
+        //         // 从0s开始播放
+        //         source.start(0);
+        // },
         // 音乐播放
         changeMusic(){
             
@@ -274,41 +242,39 @@ export default {
             // let context = new (window.AudioContext || window.webkitAudioContext)();
             // 请求音频数据
 
-            this.$axios.get('/music', {
-                header: {
-                    ' Accept-Encoding ' : ' gzip,deflate,sdch '
-                }
-            }).then(res => {
-                console.log(res.data)
-            }).catch(err => {
-                console.log(err)
-            })
+            // this.$axios.get('/music', {
+            //     header: {
+            //         ' Accept-Encoding ' : ' gzip,deflate,sdch '
+            //     }
+            // }).then(res => {
+            //     console.log(res.data)
+            // }).catch(err => {
+            //     console.log(err)
+            // })
 
 
 
             // 进行decode和play
             // context.decodeAudioData(audioMedia, decode => this.play(context, decode));
 
-            // let music = document.getElementById("music");
-            // this.isStore = !this.isStore;
-            // // 播放
-            // if(this.isStore){
-            //     music.play();
-            //     // 进度条
-            //     this.timer = setInterval(() => {
-            //         var n = (100 * (music.currentTime / music.duration)).toFixed(2);
-            //         var ns = (1 * (music.currentTime / music.duration));
-            //         // 循环
-            //         if(n >= 100) clearInterval(this.timer);
-            //         this.changeProgress = n + '%';
-            //         this.percent = ns;
-            //     }, 50)
-            // }
-            // // 暂停
-            // else{
-            //     music.pause();
-            //     clearInterval(this.timer);
-            // }
+            let music = document.getElementById("music");
+            this.isStore = !this.isStore;
+            // 播放
+            if(this.isStore){
+                music.play();
+                // 进度条
+                this.timer = setInterval(() => {
+                    var n = (100 * (music.currentTime / music.duration)).toFixed(2);
+                    var ns = (1 * (music.currentTime / music.duration));
+                    // 循环
+                    if(n >= 100) clearInterval(this.timer);
+                    this.changeProgress = n + '%';
+                    this.percent = ns;
+                }, 50)
+            } else {
+                music.pause();
+                clearInterval(this.timer);
+            }
         },
         // 点赞
         like(){
@@ -469,26 +435,19 @@ header{
         color: #888;
         font-size: 20px;
         cursor: pointer;
-        margin: 0 5px;
+        margin: 4px 5px 0;
         transition: all .3s;
+        vertical-align: middle;
+        display: inline-block;
+        &.logo{
+            color: #444;
+            font-size: 30px;
+        }
         &:hover{
             color: #555;
         }
         &.like, &.like:hover{
             color: #EF6D57;
-        }
-    }
-    .logo{
-        display: inline-block;
-        height: 20px;
-        width: 20px;
-        vertical-align: top;
-        margin-right: 15px;
-        margin-left: 4px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
         }
     }
     .myself{
@@ -503,6 +462,14 @@ header{
         img{
             width: 100%;
             height: 100%;
+        }
+    }
+    .r{
+        display: flex;
+        align-items: center;
+        margin-top: 4px;
+        .iconfont{
+            margin: 0 8px 0;
         }
     }
 }
@@ -847,7 +814,7 @@ h1.title{
         display: inline-block;
         padding: 1px 0 0 3px;
         font-size: 14px;
-        &.iconpause{
+        &.icon-pause{
             padding-left: 1px;
         }
     }
@@ -907,6 +874,10 @@ h1.title{
         .scrollbar{
             position: fixed;
             height: 1px;
+        }
+        .iconfont.logo{
+            font-size: 28px;
+            margin: 4px 0 0;
         }
     }
     .content{

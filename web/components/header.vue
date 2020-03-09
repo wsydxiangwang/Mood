@@ -1,12 +1,10 @@
 <template>
     <header>
         <div class="l icon">
-            <span class="logo" @click="toIndex">
-                <img src="../static/image/logo.png">
-            </span>
+            <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
             <span 
                 class="iconfont" 
-                :class="isStore ? 'iconpause' : 'iconplay'" 
+                :class="isStore ? 'icon-pause' : 'icon-play'" 
                 @click="changeMusic"
             ></span>
         </div>
@@ -128,26 +126,13 @@ header{
         color: #888;
         font-size: 20px;
         cursor: pointer;
-        margin: 0 5px;
+        margin: 4px 5px 0;
         transition: all .3s;
-        &:hover{
-            color: #555;
-        }
-        &.like, &.like:hover{
-            color: #EF6D57;
-        }
-    }
-    .logo{
+        vertical-align: middle;
         display: inline-block;
-        height: 20px;
-        width: 20px;
-        vertical-align: top;
-        margin-right: 15px;
-        margin-left: 4px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
+        &.logo{
+            color: #444;
+            font-size: 30px;
         }
     }
     .myself{
@@ -162,6 +147,19 @@ header{
         img{
             width: 100%;
             height: 100%;
+        }
+    }
+}
+@media screen and (max-width: 600px) {
+    header{
+        position: absolute;
+        .scrollbar{
+            position: fixed;
+            height: 1px;
+        }
+        .iconfont.logo{
+            font-size: 28px;
+            margin: 4px 0 0;
         }
     }
 }

@@ -7,9 +7,9 @@
 				</div>
 			</div>
 			<div class="head">
-				<div class="logo"><span class="icon icon-_20200223094858"></span></div>
+				<div class="logo"><span class="iconfont icon-logo4"></span></div>
 				<div class="menu" @click="menu">
-					<span class="iconfont" :class="isNav ? 'iconsearchclose' : 'iconmenu--fill'"></span>
+					<span class="iconfont" :class="isNav ? 'icon-close' : 'icon-menu'"></span>
 				</div>
 			</div>
 			<div class="misk"></div>
@@ -41,9 +41,9 @@
 					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
-						<span><i class="iconfont iconwenzi1"></i> {{item.words}}</span>
-						<span><i class="iconfont iconeye"></i> {{item.read}}</span>
-						<span><i class="iconfont iconheart1"></i> {{item.like}}</span>
+						<span><i class="iconfont icon-text"></i> {{item.words}}</span>
+						<span><i class="iconfont icon-eye"></i> {{item.read}}</span>
+						<span><i class="iconfont icon-like"></i> {{item.like}}</span>
 					</div>
 				</div>
 			</div>
@@ -291,7 +291,7 @@ export default {
 			justify-content: space-between;
 			.logo{
 				transition: all .3s;
-				.icon{
+				.iconfont{
 					font-size: 36px;
 					cursor: pointer;
 				}
@@ -426,6 +426,9 @@ export default {
 					span{
 						font-size: 12px;
 						margin-right: 10px;
+						.iconfont{
+							vertical-align: text-bottom;
+						}
 					}
 				}
 			}
