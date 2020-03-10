@@ -116,6 +116,8 @@ export default {
             scrollTop: 0,
             timerTop: null,
             scrollTopBtn: false,
+
+            loading: false
         }
     },
     head () {
@@ -135,9 +137,26 @@ export default {
         // mobile music progress
         dashOffset() {
             return (1 - this.percent) * this.dashArray;
+        },
+        loadData(){
+            if(this.data){
+                setTimeout(() => {
+                    this.loading = false,
+                    document.body.style.overflowY = '';
+                }, 1000)
+                console.log(222)
+            }else{
+                console.log(11)
+            }
         }
     },
+	created(){
+        this.loading = true;
+	},
     mounted(){
+        // start loading
+        document.body.style.overflowY = 'hidden';
+        
         // music src
         this.$nextTick(() => {
             this.$refs.audio.src = this.data.music;

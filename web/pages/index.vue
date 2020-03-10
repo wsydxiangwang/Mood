@@ -41,9 +41,9 @@
 					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
-						<span><i class="iconfont icon-text"></i> {{item.words}}</span>
-						<span><i class="iconfont icon-eye"></i> {{item.read}}</span>
-						<span><i class="iconfont icon-like"></i> {{item.like}}</span>
+						<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
+						<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
+						<div><i class="iconfont icon-like"></i><span>{{item.like}}</span></div>
 					</div>
 				</div>
 			</div>
@@ -102,7 +102,7 @@ export default {
 		this.loading = true;
 	},
 	mounted(){
-		// loading
+		// start loading
 		document.body.style.overflowY = 'hidden';
 		/**
 		 * Cover Picture Start
@@ -423,11 +423,29 @@ export default {
 					position: absolute;
 					bottom: 80px;
 					left: 80px;
-					span{
+					display: flex;
+					div{
 						font-size: 12px;
-						margin-right: 10px;
+						margin-right: 12px;
+						display: flex;
+						align-items: center;
 						.iconfont{
-							vertical-align: text-bottom;
+							margin-right: 4px;
+							margin-top: -4px;
+							display: inline-block;
+							&.icon-like{
+								font-size: 14px;
+								margin-top: -1px;
+							}
+							&.icon-eye{
+								margin-top: -6px;
+							}
+							&.icon-text{
+								font-size: 17px;
+							}
+						}
+						span{
+							display: inline-block;
 						}
 					}
 				}

@@ -15,10 +15,12 @@ module.exports = app => {
             url = req.headers.referer,
             appId = config.appId,
             jsapi_ticket;
+        
+        console.log('1')
 
         // 获取缓存的ticket
         if (cache.get('ticket')) {
-            console.log(1)
+            console.log(1, 'ticket')
             jsapi_ticket = cache.get('ticket');
             var obj = {
                 noncestr: noncestr,
@@ -31,13 +33,13 @@ module.exports = app => {
             res.send(obj)
             // console.log(obj)
         } else {
-            console.log(2)
+            console.log(2, 'ticket')
             // 获取access_token
             request(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`, (error, response, body) => {
                 if (!error && response.statusCode == 200) {
                     var tokenMap = JSON.parse(body);
 
-                    // console.log(tokenMap)
+                    console.log(tokenMap)
                     // 获取jsapi_ticket
                     request(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${tokenMap.access_token}&type=jsapi`, (error, resp, json) => {
                         if (!error && response.statusCode == 200) {
@@ -45,7 +47,7 @@ module.exports = app => {
                             // 加入缓存
                             cache.put('ticket', ticketMap.ticket, 1000 * 60 * 60 * 24);
 
-                            // console.log(ticketMap)
+                            console.log(ticketMap)
 
                             var obj = {
                                 noncestr: noncestr,
