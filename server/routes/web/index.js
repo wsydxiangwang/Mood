@@ -1,6 +1,7 @@
 module.exports = app => {
     const express = require('express');
     const router = express.Router();
+    const email = require('../../plugins/email.js'); 
 
     const Article = require('../../models/article')
     const Envelope = require('../../models/envelope')
@@ -86,7 +87,16 @@ module.exports = app => {
         res.send(data)
     })
 
-    app.use('/web/api', router)
+    // email
+    let data = {
+        email: '1409103874@qq.com',
+        title: '谁让你评论我的',
+        content: '评论的内容'
+    }
+    email.sendMail(data, (state) => {
+        console.log(state)
+        // return res.send(state)
+    })
 
-    
+    app.use('/web/api', router)
 }

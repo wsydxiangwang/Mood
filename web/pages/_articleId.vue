@@ -48,13 +48,21 @@
                         <input type="text" placeholder="邮箱" v-model="comment.email">
                         <input type="text" placeholder="站点" v-model="comment.address">
                     </div>
-                    <textarea placeholder="" v-model="comment.content"></textarea>
+                    <div class="" v-if="reply">
+                        {{replyName}}
+                    </div>
+                    <textarea placeholder="" v-model="comment.content">3333</textarea>
                     <button type="button" @click="commentSubmit">发表评论</button>
                 </div>
                 <template v-if="data.comment.length > 0">
                     <h2>评论列表</h2>
                     <div class="comment-list">
-                        <div class="comment-item" v-for="(item, index) in data.comment" :key="index">
+                        <div 
+                            class="comment-item" 
+                            v-for="(item, index) in data.comment" 
+                            :key="index"
+                            :data-id="item.id"
+                        >
                             <div class="head">
                                 <div class="img">
                                     <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
@@ -62,7 +70,7 @@
                                 <div class="name">
                                     <a href="javascript:;">{{item.name}}</a>
                                     <div class="r">
-                                        <div class="reply">reply</div>
+                                        <div class="reply" @click="commentSubmit(item, 1)">reply</div>
                                         <span class="time">{{item.time}}</span>
                                     </div>
                                 </div>
@@ -116,6 +124,10 @@ export default {
             scrollTop: 0,
             timerTop: null,
             scrollTopBtn: false,
+
+            reply: false,
+            replys: false,
+            replyName: '',
         }
     },
     head () {
@@ -213,54 +225,8 @@ export default {
         })
     },
     methods: {
-        // request (url) {
-        //     return new Promise (resolve => {
-        //         let xhr = new XMLHttpRequest();
-        //         xhr.open('GET', url);
-        //         // 这里需要设置xhr response的格式为arraybuffer
-        //         // 否则默认是二进制的文本格式
-        //         xhr.setRequestHeader("Access-Control-Allow-Origin", '*');
-        //         xhr.setRequestHeader("content-type", 'application/json; charset=utf-8');
-        //         xhr.responseType = 'arraybuffer';
-        //         xhr.onreadystatechange = function () {
-        //             // 请求完成，并且成功
-        //             if (xhr.readyState === 4 && xhr.status === 200) {
-        //                 resolve(xhr.response);
-        //                 console.log(xhr)
-        //             }
-        //         };
-        //         xhr.send();
-        //     });
-        // },
-        // play(context, decodeBuffer){
-        //      let source = context.createBufferSource();
-        //         source.buffer = decodeBuffer;
-        //         source.connect(context.destination);
-        //         // 从0s开始播放
-        //         source.start(0);
-        // },
         // 音乐播放
         changeMusic(){
-            
-            // Safari是使用webkit前缀
-            // let context = new (window.AudioContext || window.webkitAudioContext)();
-            // 请求音频数据
-
-            // this.$axios.get('/music', {
-            //     header: {
-            //         ' Accept-Encoding ' : ' gzip,deflate,sdch '
-            //     }
-            // }).then(res => {
-            //     console.log(res.data)
-            // }).catch(err => {
-            //     console.log(err)
-            // })
-
-
-
-            // 进行decode和play
-            // context.decodeAudioData(audioMedia, decode => this.play(context, decode));
-
             let music = document.getElementById("music");
             this.isStore = !this.isStore;
             // 播放
@@ -325,7 +291,17 @@ export default {
             }, 30)
         },
         // 发表评论
-        commentSubmit(){
+        commentSubmit(item, type){
+            console.log(item)
+            // 一级回复
+            if(type == 1){
+                this.reply = true;
+                this.replyName = `@${item.name}`;
+            }
+            // 二级回复
+            else if(type == 2){
+
+            }
 
             if(!this.comment.content){
                 alert('请先输入您想说的话，再按发表评论按钮哦！！')
@@ -340,18 +316,24 @@ export default {
                 return;
             }
 
+            console.log(this.data.comment);
+
             this.comment.time = this.dateFormat('YYYY/MM/DD HH:mm');
-            this.comment.id = this.data.comment[0].id + 1;
+            this.comment.id = this.data.comment.length == 0 ? 1 : this.data.comment[0].id + 1;
             this.comment.comments = [];
 
+return;
             this.$axios.put(`article_comment/${this.data._id}`, this.comment)
                 .then(res => {
                     this.data.comment.unshift(this.comment)
+                    this.comment = {}
                     alert('评论成功')
-                }).catch(err => {
+                })
+                .catch(err => {
                     alert('评论失败，请重新试！！')
                 })
         },
+        
         myself(){
             this.$router.push('/Libai')
         },

@@ -18,7 +18,10 @@
     "jsonwebtoken": "^8.5.1",
     "memory-cache": "^0.2.0",
     "mongoose": "^5.8.1",
-    "nodemon": "^2.0.2",
+    "nodemailer": "^6.4.5",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
