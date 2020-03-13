@@ -50,14 +50,37 @@ module.exports = app => {
 
     // Post a comment
     router.put('/article_comment/:id', async (req, res) => {
-        const data = await Article.updateOne({
-            '_id': req.params.id
-        }, {
-            $push:{
-                "comment": req.body
-            }
-        })
-        res.send(data)
+        // 回复评论
+        if(req.body.type){
+            let data = await Article.findOneAndUpdate({
+                '_id': req.params.id
+            }, {
+                $set: { 'comment' : req.body.body }
+            }, {
+                new: true
+            })
+            res.send({
+                type: 'reply',
+                body: data.comment,
+                message: 'success'
+            })
+        }
+        // 发表评论
+        else{
+            let data = await Article.updateOne({
+                '_id': req.params.id
+            }, {
+                $push:{
+                    "comment": req.body
+                }
+            }, {
+                new: true
+            })
+            res.send({
+                body: data,
+                message: 'success'
+            })
+        }
     })
 
     // like +1
@@ -88,15 +111,22 @@ module.exports = app => {
     })
 
     // email
-    let data = {
-        email: '1409103874@qq.com',
-        title: '谁让你评论我的',
-        content: '评论的内容'
-    }
-    email.sendMail(data, (state) => {
-        console.log(state)
-        // return res.send(state)
-    })
+    // let data = {
+    //     email: '1409103874@qq.com',
+    //     title: '谁让你评论我的',
+    //     content: `
+    //         <style>
+    //         .node-email{
+    //             color:red;
+    //         }
+    //         </style>
+    //         <div class="node-email">1234234</div>
+    //     `
+    // }
+    // email.sendMail(data, (state) => {
+    //     console.log(state)
+    //     // return res.send(state)
+    // })
 
     app.use('/web/api', router)
 }

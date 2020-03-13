@@ -48,8 +48,8 @@
                         <input type="text" placeholder="邮箱" v-model="comment.email">
                         <input type="text" placeholder="站点" v-model="comment.address">
                     </div>
-                    <div class="" v-if="reply">
-                        {{replyName}}
+                    <div class="" v-if="isReply">
+                        {{replyObj.name}}
                     </div>
                     <textarea placeholder="" v-model="comment.content">3333</textarea>
                     <button type="button" @click="commentSubmit">发表评论</button>
@@ -57,6 +57,7 @@
                 <template v-if="data.comment.length > 0">
                     <h2>评论列表</h2>
                     <div class="comment-list">
+                        <!-- 评论列表 -->
                         <div 
                             class="comment-item" 
                             v-for="(item, index) in data.comment" 
@@ -70,12 +71,36 @@
                                 <div class="name">
                                     <a href="javascript:;">{{item.name}}</a>
                                     <div class="r">
-                                        <div class="reply" @click="commentSubmit(item, 1)">reply</div>
+                                        <div class="reply" @click="reply(item, 1)">reply</div>
                                         <span class="time">{{item.time}}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="comment-content">{{item.content}}</div>
+
+                            <!-- 回复评论 -->
+                            <div class="comments">
+                                <div 
+                                    class="comments-item" 
+                                    v-for="(items, indexs) in item.comments" 
+                                    :key="indexs"
+                                    :data-id="items.id"
+                                >
+                                    <div class="head">
+                                        <div class="img">
+                                            <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
+                                        </div>
+                                        <div class="name">
+                                            <a href="javascript:;">{{items.name}}</a>
+                                            <div class="r">
+                                                <div class="reply" @click="reply(items, 1)">reply</div>
+                                                <span class="time">{{items.time}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comments-content">{{items.content}}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -125,9 +150,9 @@ export default {
             timerTop: null,
             scrollTopBtn: false,
 
-            reply: false,
-            replys: false,
-            replyName: '',
+            isReply: false,     // 一级回复
+            isReplys: false,    // 二级回复
+            replyObj: {},       // 回复对象的信息
         }
     },
     head () {
@@ -290,19 +315,19 @@ export default {
                 }
             }, 30)
         },
-        // 发表评论
-        commentSubmit(item, type){
-            console.log(item)
+        reply(item, type){
             // 一级回复
             if(type == 1){
-                this.reply = true;
-                this.replyName = `@${item.name}`;
+                this.isReply = true;
+                this.replyObj = item;
             }
             // 二级回复
-            else if(type == 2){
+            else{
 
             }
-
+        },
+        // 发表评论
+        commentSubmit(){
             if(!this.comment.content){
                 alert('请先输入您想说的话，再按发表评论按钮哦！！')
                 return;
@@ -316,17 +341,50 @@ export default {
                 return;
             }
 
-            console.log(this.data.comment);
-
             this.comment.time = this.dateFormat('YYYY/MM/DD HH:mm');
-            this.comment.id = this.data.comment.length == 0 ? 1 : this.data.comment[0].id + 1;
-            this.comment.comments = [];
 
-return;
-            this.$axios.put(`article_comment/${this.data._id}`, this.comment)
+            var data = '';
+            // 回复评论
+            if(this.isReply){
+                let length = this.replyObj.comments.length;
+                let count = 0;
+                if(length == 0){
+                    count = Number(this.replyObj.id + '001');
+                }else{
+                    count = this.replyObj.comments[length - 1].id;
+                    count++;
+                }
+                this.comment.id = count;
+                this.comment.reply = '@' + this.replyObj.name;
+                this.comment.replyEmail = this.replyObj.email;
+
+                this.replyObj.comments.push(this.comment)
+
+                data = {
+                    body: this.data.comment.reverse(),
+                    type: 'isReply'
+                }
+            }
+            // 发表评论
+            else{
+                this.comment.id = this.data.comment.length == 0 ? 1 : this.data.comment[0].id + 1;
+                this.comment.comments = [];
+                data = this.comment;
+            }
+  
+            this.$axios.put(`article_comment/${this.data._id}`, data)
                 .then(res => {
-                    this.data.comment.unshift(this.comment)
-                    this.comment = {}
+                    /**
+                     * if 评论回复
+                     * el 发表评论
+                     */
+                    console.log(res)
+                    if(res.data.type){
+                        console.log(res.data.body)
+                    }else{
+                        this.data.comment.unshift(data)
+                        this.comment = {}
+                    }                
                     alert('评论成功')
                 })
                 .catch(err => {

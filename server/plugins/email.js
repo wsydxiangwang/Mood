@@ -23,7 +23,7 @@ function sendMail(data, call) {
         if (error) {
             call(error)
         } else {
-            call('Message sent')
+            call('Email sentd')
         }
     });
     transporter.close(); // 如果没用，关闭连接池
