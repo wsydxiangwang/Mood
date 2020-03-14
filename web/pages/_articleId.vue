@@ -48,8 +48,8 @@
                         <input type="text" placeholder="邮箱" v-model="comment.email">
                         <input type="text" placeholder="站点" v-model="comment.address">
                     </div>
-                    <div class="" v-if="isReply">
-                        {{replyObj.name}}
+                    <div class="" v-if="isReply || isReplys">
+                        {{replyObjs.name || replyObj.name}}
                     </div>
                     <textarea placeholder="" v-model="comment.content">3333</textarea>
                     <button type="button" @click="commentSubmit">发表评论</button>
@@ -64,24 +64,26 @@
                             :key="index"
                             :data-id="item.id"
                         >
-                            <div class="head">
-                                <div class="img">
-                                    <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
-                                </div>
-                                <div class="name">
-                                    <a href="javascript:;">{{item.name}}</a>
-                                    <div class="r">
-                                        <div class="reply" @click="reply(item, 1)">reply</div>
-                                        <span class="time">{{item.time}}</span>
+                            <div class="comment-item-box">
+                                <div class="head">
+                                    <div class="img">
+                                        <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
+                                    </div>
+                                    <div class="name">
+                                        <a href="javascript:;">{{item.name}}</a>
+                                        <div class="r">
+                                            <div class="reply" @click="reply(item, 1)">reply</div>
+                                            <span class="time">{{item.time}}</span>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="comment-content">{{item.content}}</div>
                             </div>
-                            <div class="comment-content">{{item.content}}</div>
 
                             <!-- 回复评论 -->
-                            <div class="comments">
+                            <div class="comments" v-if="item.comments.length > 0">
                                 <div 
-                                    class="comments-item" 
+                                    class="item" 
                                     v-for="(items, indexs) in item.comments" 
                                     :key="indexs"
                                     :data-id="items.id"
@@ -93,12 +95,12 @@
                                         <div class="name">
                                             <a href="javascript:;">{{items.name}}</a>
                                             <div class="r">
-                                                <div class="reply" @click="reply(items, 1)">reply</div>
+                                                <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                 <span class="time">{{items.time}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="comments-content">{{items.content}}</div>
+                                    <div class="comments-content"><span class="reply-name">{{items.reply}}</span> {{items.content}}</div>
                                 </div>
                             </div>
                         </div>
@@ -153,6 +155,7 @@ export default {
             isReply: false,     // 一级回复
             isReplys: false,    // 二级回复
             replyObj: {},       // 回复对象的信息
+            replyObjs: {},      // 二级回复对象的信息
         }
     },
     head () {
@@ -174,9 +177,6 @@ export default {
             return (1 - this.percent) * this.dashArray;
         }
     },
-	created(){
-        this.loading = true;
-	},
     mounted(){
         
         // music src
@@ -315,15 +315,20 @@ export default {
                 }
             }, 30)
         },
-        reply(item, type){
+        reply(item, type, items){
             // 一级回复
             if(type == 1){
                 this.isReply = true;
                 this.replyObj = item;
+                this.isReplys = false;
+                this.replyObjs = {};
             }
             // 二级回复
             else{
-
+                this.isReply = false;
+                this.isReplys = true;
+                this.replyObj = item;
+                this.replyObjs = items;
             }
         },
         // 发表评论
@@ -345,7 +350,10 @@ export default {
 
             var data = '';
             // 回复评论
-            if(this.isReply){
+            if(this.isReply || this.isReplys){
+                /**
+                 * 根据当前评论id，和最新子评论的id，生成id
+                 */
                 let length = this.replyObj.comments.length;
                 let count = 0;
                 if(length == 0){
@@ -354,15 +362,43 @@ export default {
                     count = this.replyObj.comments[length - 1].id;
                     count++;
                 }
+                /**
+                 * id
+                 * 回复对象名字
+                 * 回复对象邮箱
+                 */
                 this.comment.id = count;
-                this.comment.reply = '@' + this.replyObj.name;
-                this.comment.replyEmail = this.replyObj.email;
+                // 一级回复
+                if(this.isReply){
+                    this.comment.reply = '@' + this.replyObj.name;
+                    this.comment.replyEmail = this.replyObj.email;
+                }else{
+                    // 二级回复
+                    this.comment.reply = '@' + this.replyObjs.name;
+                    this.comment.replyEmail = this.replyObjs.email;
+                }
 
-                this.replyObj.comments.push(this.comment)
+                /**
+                 * 当前评论数组的索引
+                 * 所有子评论集合
+                 */
+                let comment = this.data.comment;
+                let index = comment.indexOf(this.replyObj);
 
+                let replyIdx = comment.length - 1 - index;
+                let newArr = this.data.comment[index].comments;
+
+                newArr.push(this.comment)
+
+                /**
+                 * 评论数据
+                 * 回复模式
+                 * 评论索引
+                 */
                 data = {
-                    body: this.data.comment.reverse(),
-                    type: 'isReply'
+                    body: newArr,
+                    type: 'isReply',
+                    index: replyIdx
                 }
             }
             // 发表评论
@@ -371,21 +407,29 @@ export default {
                 this.comment.comments = [];
                 data = this.comment;
             }
-  
+
             this.$axios.put(`article_comment/${this.data._id}`, data)
                 .then(res => {
-                    /**
-                     * if 评论回复
-                     * el 发表评论
-                     */
                     console.log(res)
-                    if(res.data.type){
-                        console.log(res.data.body)
+                    if(res.data.status == 1){
+                        /**
+                         * if 回复评论
+                         * el 发表评论
+                         */
+                        if(res.data.type){
+                            this.comment = {};
+                            this.isReply = false;
+                            this.isReplys = false;
+                            this.replyObj = {};
+                            this.replyObjs = {};
+                        }else{
+                            this.data.comment.unshift(data)
+                            this.comment = {}
+                        }
+                        alert('评论成功')
                     }else{
-                        this.data.comment.unshift(data)
-                        this.comment = {}
-                    }                
-                    alert('评论成功')
+                        alert('评论失败，请重新试！！')
+                    }                    
                 })
                 .catch(err => {
                     alert('评论失败，请重新试！！')
@@ -421,7 +465,7 @@ export default {
     async asyncData(context){
         let id = context.params.articleId;
         let {data} = await context.$axios.get(`article/${id}`)
-        data.comment.reverse(); // 评论排序
+        data.comment.reverse(); // 评论倒叙 按最新时间显示
 		return {data: data}
 	}
 }
@@ -699,9 +743,10 @@ h1.title{
         .comment-item{
             padding:25px 0;
             border-bottom:1px solid #f6f7f8;
-            
-            &:hover .head .name .r .reply{
-                opacity: 1;
+            .comment-item-box:hover{
+                .head .name .r .reply{
+                    opacity: 1;
+                }
             }
             .head{
                 display:-webkit-box;
@@ -774,6 +819,11 @@ h1.title{
             margin-top:38px;
             .item{
                 margin-top:32px;
+                &:hover{
+                    .head .name .r .reply{
+                        opacity: 1;
+                    }
+                }
                 .head{
                     display:-webkit-box;
                     display:flex;
@@ -796,12 +846,19 @@ h1.title{
                         }
                     }
                 }
-                .comment-content{
+                .comments-content{
                     color:#666;
                     padding:0;
                     margin:0 0 0 50px;
                     span{
-                        color:#00b7ff;
+                        color: #868cb3;
+                        background: #e8e8e8;
+                        display: inline-block;
+                        height: 18px;
+                        padding: 0 4px;
+                        line-height: 20px;
+                        border-radius: 10px;
+                        margin-right: 2px;
                     }
                 }
             }
@@ -957,12 +1014,13 @@ h1.title{
             .img{
                 width: 40px;
                 height: 40px;
-                margin-right: 10px;
+                margin-right: 12px;
             }
             .name{
                 flex-direction: column;
                 align-items: baseline;
                 justify-content: space-evenly;
+                margin-top: 2px;
                 a{
                     font-size: 13px;
                 }
@@ -986,7 +1044,13 @@ h1.title{
         }
         .comment-content{
             padding: 0;
-            margin-top: 10px;
+            margin-top: 12px;
+        }
+        .comments{
+            padding-left: 30px;
+            .comments-content{
+                margin-top: 6px;
+            }
         }
     }
 }

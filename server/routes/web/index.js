@@ -49,36 +49,51 @@ module.exports = app => {
     })
 
     // Post a comment
-    router.put('/article_comment/:id', async (req, res) => {
+    router.put('/article_comment/:id', (req, res) => {
         // 回复评论
         if(req.body.type){
-            let data = await Article.findOneAndUpdate({
+            Article.findOneAndUpdate({
                 '_id': req.params.id
             }, {
-                $set: { 'comment' : req.body.body }
-            }, {
-                new: true
-            })
-            res.send({
-                type: 'reply',
-                body: data.comment,
-                message: 'success'
+                $set: { 
+                    ['comment.' + req.body.index + '.comments'] : req.body.body 
+                }
+            }, (err, doc) => {
+                if(doc){
+                    res.send({
+                        type: 'reply',
+                        message: 'success',
+                        status: 1
+                    })
+                }else{
+                    res.send({
+                        type: 'reply',
+                        message: err,
+                        status: 2
+                    })
+                }
             })
         }
         // 发表评论
         else{
-            let data = await Article.updateOne({
+            Article.findOneAndUpdate({
                 '_id': req.params.id
             }, {
                 $push:{
                     "comment": req.body
                 }
-            }, {
-                new: true
-            })
-            res.send({
-                body: data,
-                message: 'success'
+            }, (err, doc) => {
+                if(doc){
+                    res.send({
+                        status: 1,
+                        message: 'success'
+                    })
+                }else{
+                    res.send({
+                        status: 2,
+                        message: err
+                    })
+                }
             })
         }
     })
