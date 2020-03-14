@@ -437,9 +437,6 @@ export default {
 								font-size: 14px;
 								margin-top: -1px;
 							}
-							&.icon-eye{
-								margin-top: -6px;
-							}
 							&.icon-text{
 								font-size: 17px;
 							}
