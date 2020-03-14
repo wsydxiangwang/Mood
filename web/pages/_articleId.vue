@@ -48,10 +48,11 @@
                         <input type="text" placeholder="邮箱" v-model="comment.email">
                         <input type="text" placeholder="站点" v-model="comment.address">
                     </div>
-                    <div class="" v-if="isReply || isReplys">
-                        {{replyObjs.name || replyObj.name}}
+                    <div class="reply-name" v-if="isReply">
+                        <span class="">@{{replyObjs.name || replyObj.name}}</span>
+                        <span class="iconfont icon-close" @click="cancel"></span>
                     </div>
-                    <textarea placeholder="" v-model="comment.content">3333</textarea>
+                    <textarea placeholder="" v-model="comment.content"></textarea>
                     <button type="button" @click="commentSubmit">发表评论</button>
                 </div>
                 <template v-if="data.comment.length > 0">
@@ -70,7 +71,7 @@
                                         <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
                                     </div>
                                     <div class="name">
-                                        <a href="javascript:;">{{item.name}}</a>
+                                        <a href="javascript:;">{{item.name}}<span v-if="item.author == 'admin'">我亦行人</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
                                             <span class="time">{{item.time}}</span>
@@ -93,14 +94,14 @@
                                             <img src="https://secure.gravatar.com/avatar/c1870bcd4a5d168d679aecf6f0c68b59?s=40&d=monsterid&r=g" alt="">
                                         </div>
                                         <div class="name">
-                                            <a href="javascript:;">{{items.name}}</a>
+                                            <a href="javascript:;">{{items.name}}<span v-if="items.author == 'admin'">我亦行人</span></a>
                                             <div class="r">
                                                 <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                 <span class="time">{{items.time}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="comments-content"><span class="reply-name">{{items.reply}}</span> {{items.content}}</div>
+                                    <div class="comments-content"><span v-if="items.type != 1" class="reply-name">{{items.reply}}</span> {{items.content}}</div>
                                 </div>
                             </div>
                         </div>
@@ -152,8 +153,7 @@ export default {
             timerTop: null,
             scrollTopBtn: false,
 
-            isReply: false,     // 一级回复
-            isReplys: false,    // 二级回复
+            isReply: '',        // 回复
             replyObj: {},       // 回复对象的信息
             replyObjs: {},      // 二级回复对象的信息
         }
@@ -315,18 +315,22 @@ export default {
                 }
             }, 30)
         },
+        //取消回复
+        cancel(){
+            this.isReply = '';
+            this.replyObj = {};
+            this.replyObjs = {};
+        },
         reply(item, type, items){
             // 一级回复
             if(type == 1){
-                this.isReply = true;
+                this.isReply = 1;
                 this.replyObj = item;
-                this.isReplys = false;
                 this.replyObjs = {};
             }
             // 二级回复
             else{
-                this.isReply = false;
-                this.isReplys = true;
+                this.isReply = 2;
                 this.replyObj = item;
                 this.replyObjs = items;
             }
@@ -346,11 +350,26 @@ export default {
                 return;
             }
 
+            if(this.comment.name == '李白' && this.comment.email != '1915398623@qq.com'){
+                alert('你胆敢冒充站长，来人，拉出去砍了！！')
+                return;
+            }
+            if(this.comment.email == '1915398623@qq.com'){
+                this.comment.author = 'admin'
+            }
+
+            /**
+             * 去掉前后空格
+             * 添加当前时间
+             */
+            this.comment.name = this.comment.name.replace(/(^\s*)|(\s*$)/g, "");
+            this.comment.email = this.comment.email.replace(/(^\s*)|(\s*$)/g, "");
+            this.comment.content = this.comment.content.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.time = this.dateFormat('YYYY/MM/DD HH:mm');
 
             var data = '';
             // 回复评论
-            if(this.isReply || this.isReplys){
+            if(this.isReply){
                 /**
                  * 根据当前评论id，和最新子评论的id，生成id
                  */
@@ -369,11 +388,13 @@ export default {
                  */
                 this.comment.id = count;
                 // 一级回复
-                if(this.isReply){
+                if(this.isReply == 1){
+                    this.comment.type = 1;
                     this.comment.reply = '@' + this.replyObj.name;
                     this.comment.replyEmail = this.replyObj.email;
                 }else{
                     // 二级回复
+                    this.comment.type = 2;
                     this.comment.reply = '@' + this.replyObjs.name;
                     this.comment.replyEmail = this.replyObjs.email;
                 }
@@ -417,9 +438,8 @@ export default {
                          * el 发表评论
                          */
                         if(res.data.type){
+                            this.isReply = '';
                             this.comment = {};
-                            this.isReply = false;
-                            this.isReplys = false;
                             this.replyObj = {};
                             this.replyObjs = {};
                         }else{
@@ -708,6 +728,23 @@ h1.title{
                 }
             }
         }
+        .reply-name{
+            color: #fff;
+            display: inline-block;
+            background: #0084ff;
+            border-radius: 21px;
+            padding: 0 10px;
+            height: 24px;
+            line-height: 23px;
+            margin-top: 10px;
+            span{
+                font-size: 13px;
+                &.iconfont{
+                    font-size: 12px;
+                    cursor: pointer;
+                }
+            }
+        }
         textarea{
             width:100%;
             height:200px;
@@ -736,6 +773,10 @@ h1.title{
             border:none;
             -webkit-transition:all .3s;
             transition:all .3s;
+            &:hover{
+                color: #fff;
+                background: #0084ff;
+            }
         }
     }
     .comment-list{
@@ -779,16 +820,29 @@ h1.title{
                         -webkit-transition:all .3s;
                         transition:all .3s;
                         text-decoration:none;
+                        position: relative;
                         &:hover{
                             color:#ef2f11;
                             text-decoration:underline;
+                        }
+                        span{
+                            color: #fff;
+                            position: absolute;
+                            top: 50%;
+                            font-size: 10px;
+                            padding: 1px 7px;
+                            margin-top: 2px;
+                            white-space: nowrap;
+                            background: #a9cff3;
+                            border-radius: 0 20px 0;
+                            transform: translateY(-50%) scale(0.9);
                         }
                     }
                     .r{
                         display: flex;
                         .time{
                             color:#999;
-                            font-size:12px;
+                            font-size:13px;
                             letter-spacing:0;
                         }
                         .reply{
@@ -811,11 +865,12 @@ h1.title{
             .comment-content{
                 color:#303030;
                 line-height:22px;
-                padding:0 0 0 58px
+                padding:0 0 0 58px;
+                white-space: pre-wrap;
             }
         }
         .comments{
-            padding-left:58px;
+            padding-left:45px;
             margin-top:38px;
             .item{
                 margin-top:32px;
@@ -850,15 +905,17 @@ h1.title{
                     color:#666;
                     padding:0;
                     margin:0 0 0 50px;
+                    white-space: pre-wrap;
                     span{
-                        color: #868cb3;
-                        background: #e8e8e8;
+                        color: #fff;
+                        background: #a9cff3;
                         display: inline-block;
                         height: 18px;
                         padding: 0 4px;
                         line-height: 20px;
                         border-radius: 10px;
                         margin-right: 2px;
+                        font-size: 13px;
                     }
                 }
             }
@@ -1023,10 +1080,14 @@ h1.title{
                 margin-top: 2px;
                 a{
                     font-size: 13px;
+                    span{
+                        margin-top: -2px;
+                    }
                 }
                 .r{
+                    margin-top: 2px;
                     .time{
-                        font-size: 11px;    
+                        font-size: 12px;    
                     }
                     .reply{
                         opacity: 1;
@@ -1047,9 +1108,12 @@ h1.title{
             margin-top: 12px;
         }
         .comments{
-            padding-left: 30px;
+            margin-top: 32px;
+            padding-left: 24px;
             .comments-content{
-                margin-top: 6px;
+                margin-top: 12px;
+                line-height: 22px;
+                margin-left: 0px;
             }
         }
     }
