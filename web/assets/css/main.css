@@ -1,4 +1,4 @@
-html {
+html, body, p, input, textarea, button, div, span {
 	font-family: "eafont", "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
 	word-spacing: 1px;
 	-ms-text-size-adjust: 100%;

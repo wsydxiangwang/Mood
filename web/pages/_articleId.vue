@@ -1,6 +1,6 @@
 <template>
     <div class="articleld">
-        <header>
+        <header :class="isVerification?'verify':''">
             <div class="l icon">
                 <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
                 <span 
@@ -26,7 +26,7 @@
             <!-- 文章进度条 -->
             <div class="scrollbar" :style="{width: postProgress}"></div>
         </header>
-        <section>
+        <section :class="isVerification?'verify':''">
             <h1 class="title">{{data.title}}</h1>
             <div class="stuff">
                 <span>{{data.time.monthTxt}}月 {{data.time.day}}, {{data.time.year}}</span>
@@ -152,15 +152,25 @@
 
             <!-- loading -->
             <Loading v-if="loading"></Loading>
+
         </section>
+
+        <PuzzleVerification 
+            blockType="puzzle" 
+            :onSuccess="handleSuccess" 
+            @clone="isVerificationClone"
+            v-if="ss"
+        />
     </div>
 </template>
 
 <script>
 import Loading from "../components/loading";
+import PuzzleVerification from '../components/puzzleVerification'
 export default {
 	components: {
-		Loading
+        Loading,
+        PuzzleVerification
     },
     data(){
         return{
@@ -168,6 +178,7 @@ export default {
             title: false,
             isLike: false,
             isStore: false,
+            ss: false,
 
             timer: null,
             postProgress: 0,
@@ -185,8 +196,10 @@ export default {
             replyObj: {},       // 回复对象的信息
             replyObjs: {},      // 二级回复对象的信息
 
-            loading: true,     
-            submitLoading: false,     
+            loading: true,              // 页面loading
+            submitLoading: false,       // 提交loading
+            isVerification: false,      // 是否验证
+            verificationSuccess: false, // 验证成功
         }
     },
     head () {
@@ -290,6 +303,16 @@ export default {
         })
     },
     methods: {
+        // 取消验证
+        isVerificationClone(){
+            this.isVerification = false;
+        },
+        // 验证通过
+        handleSuccess(){
+            this.isVerification = false;
+            this.verificationSuccess = true;
+            this.commentSubmit();
+        },
         // 音乐播放
         changeMusic(){
             let music = document.getElementById("music");
@@ -361,7 +384,29 @@ export default {
             this.replyObj = {};
             this.replyObjs = {};
         },
+        ScrollTop (number = 0, time) {
+            if (!time) {
+                document.body.scrollTop = document.documentElement.scrollTop = number;
+                return number;
+            }
+            const spacingTime = 20; // 设置循环的间隔时间  值越小消耗性能越高
+            let spacingInex = time / spacingTime; // 计算循环的次数
+            let nowTop = document.body.scrollTop + document.documentElement.scrollTop; // 获取当前滚动条位置
+            let everTop = (number - nowTop) / spacingInex; // 计算每次滑动的距离
+            let scrollTimer = setInterval(() => {
+                if (spacingInex > 0) {
+                    spacingInex--;
+                    this.ScrollTop(nowTop += everTop);
+                } else {
+                    clearInterval(scrollTimer); // 清除计时器
+                }
+            }, spacingTime);
+        },
         reply(item, type, items){
+            // 跳到评论表单模块
+            let t = document.querySelector(".comment").offsetTop;
+            this.ScrollTop(t - 50, 200);
+
             // 一级回复
             if(type == 1){
                 this.isReply = 1;
@@ -377,6 +422,7 @@ export default {
         },
         // 发表评论
         commentSubmit(){
+            this.ss = true;
             if(this.submitLoading) return;
 
             if(!this.comment.content){
@@ -394,6 +440,12 @@ export default {
 
             if(this.comment.name == '李白' && this.comment.email != '1915398623@qq.com'){
                 alert('你胆敢冒充站长，来人，拉出去砍了！！')
+                return;
+            }
+
+            if(!this.verificationSuccess){
+                // 验证
+                this.isVerification = true;
                 return;
             }
 
@@ -501,15 +553,18 @@ export default {
                         }
                         setTimeout(() => {
                             this.submitLoading = false;
+                            this.verificationSuccess = false;
                         }, 100)
                         alert('评论成功')
                     }else{
                         this.submitLoading = false;
+                        this.verificationSuccess = false;
                         alert('评论失败，请重新试！！')
                     }                    
                 })
                 .catch(err => {
                     this.submitLoading = false;
+                    this.verificationSuccess = false;
                     alert('评论失败，请重新试！！')
                 })
         },
@@ -554,6 +609,7 @@ export default {
     section{
         width: 800px;
         margin: auto;
+        transition: all .3s;
     }
     header{
         position: fixed;
@@ -569,6 +625,7 @@ export default {
         padding: 0 15px;
         background: #fff;
         z-index:9999;
+        transition: all .3s;
         .musicBar{
             position: absolute;
             left: 0;
@@ -770,7 +827,7 @@ export default {
         .comment-form{
             border:1px solid #eee;
             margin-bottom:60px;
-            border-radius:4px;
+            border-radius:6px;
             padding:15px 12px;
             .input-box{
                 display:flex;
@@ -814,6 +871,7 @@ export default {
                 width:100%;
                 height:200px;
                 margin:10px 0;
+                color: #333;
                 border:1px dashed #eee;
                 -webkit-transition:all .3s;
                 transition:all .3s;
@@ -848,6 +906,7 @@ export default {
                         border-radius:50%;
                         margin-right:12px;
                         overflow:hidden;
+                        border: 1px solid #f1f1f1;
                         img{
                             width: 100%;
                             height: 100%;
@@ -1173,11 +1232,22 @@ export default {
 }
 }
 @media screen and (max-width: 500px) {
-    .content{
-        /deep/ 
-        .markdown-body{
-            iframe{
-                height: 260px;
+    .articleld{
+        .content{
+            /deep/ 
+            .markdown-body{
+                iframe{
+                    height: 260px;
+                }
+            }
+        }
+        .comment .comment-form{
+            padding: 10px;
+            textarea, .input-box input{
+                font-size: 13px;
+            }
+            textarea{
+                padding: 12px;
             }
         }
     }
@@ -1200,6 +1270,7 @@ export default {
         align-items: center;
         button{
             height:34px;
+            line-height:36px;
             width:100px;
             font-size:14px;
             color:#5f5f5f;
@@ -1372,5 +1443,8 @@ export default {
             transform:scale(1)
         }
     }
+}
+.verify{
+    filter: blur(5px);
 }
 </style>
