@@ -14,7 +14,7 @@ let transporter = nodemailer.createTransport({
 // 参数：接收邮箱，标题，内容
 function sendMail(data, call) {
     let mailOptions = {
-        from: 'wsydxiangwang@qq.com',
+        from: '"你好，我是李白!" <wsydxiangwang@qq.com>',
         to: data.email,
         subject: data.title,
         html: data.content,
