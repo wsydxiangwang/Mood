@@ -56,24 +56,47 @@
 
                     <!-- submit loading -->
                     <div class="bottom">
-                        <button type="button" @click="commentSubmit" :class="submitLoading?'active':''">SUBMIT</button>
-                        <div class="loading" v-if="submitLoading">
-                            <div class="sk-circle selected">
-                                <div class="sk-circle1 sk-child"></div>
-                                <div class="sk-circle2 sk-child"></div>
-                                <div class="sk-circle3 sk-child"></div>
-                                <div class="sk-circle4 sk-child"></div>
-                                <div class="sk-circle5 sk-child"></div>
-                                <div class="sk-circle6 sk-child"></div>
-                                <div class="sk-circle7 sk-child"></div>
-                                <div class="sk-circle8 sk-child"></div>
-                                <div class="sk-circle9 sk-child"></div>
-                                <div class="sk-circle10 sk-child"></div>
-                                <div class="sk-circle11 sk-child"></div>
-                                <div class="sk-circle12 sk-child"></div>
+                        <button type="button" @click="commentSubmit" :class="submitStatus == 9?'active':''">SUBMIT</button>
+
+                        <template v-if="submitStatus == 9">
+                            <div class="hint">
+                                <div class="sk-circle selected">
+                                    <div class="sk-circle1 sk-child"></div>
+                                    <div class="sk-circle2 sk-child"></div>
+                                    <div class="sk-circle3 sk-child"></div>
+                                    <div class="sk-circle4 sk-child"></div>
+                                    <div class="sk-circle5 sk-child"></div>
+                                    <div class="sk-circle6 sk-child"></div>
+                                    <div class="sk-circle7 sk-child"></div>
+                                    <div class="sk-circle8 sk-child"></div>
+                                    <div class="sk-circle9 sk-child"></div>
+                                    <div class="sk-circle10 sk-child"></div>
+                                    <div class="sk-circle11 sk-child"></div>
+                                    <div class="sk-circle12 sk-child"></div>
+                                </div>
+                                <span class="loading-text">Submitting...</span>
                             </div>
-                            <span class="loading-text">Submitting...</span>
-                        </div>
+                        </template>
+
+                        <template v-else-if="submitStatus == 1">
+                            <div class="hint success">
+                                <span class="iconfont icon-success"></span>
+                                <span>评论成功, Nice.</span>
+                            </div>
+                        </template>
+
+                        <template v-if="submitStatus!=0 && submitStatus!=1 && submitStatus != 9 ">
+                            <div class="hint red">
+                                <span class="iconfont icon-error"></span>
+                                <span v-if="submitStatus == 3">您的名字是第一印象哦～</span>
+                                <span v-else-if="submitStatus == 4">胆敢冒充站长，来人，拉出去砍了！！</span>
+                                <span v-else-if="submitStatus == 5">请输入正确的邮箱，有惊喜的哦～</span>
+                                <span v-else-if="submitStatus == 6">我想你一定是个学渣，作文是不是0分～</span>
+                                <span v-else-if="submitStatus == 7">哇哦！遇到错误，要不再试试</span>
+                                <span v-else-if="submitStatus == 8">完成验证才可以提交哦～</span>
+                            </div>
+                        </template>
+
                     </div>
                 </div>
 
@@ -155,12 +178,15 @@
 
         </section>
 
-        <PuzzleVerification 
-            blockType="puzzle" 
-            :onSuccess="handleSuccess" 
-            @clone="isVerificationClone"
-            v-if="ss"
-        />
+        <!-- <div :style="{visibility: isVerification?'visible':'hidden'}"> -->
+        <div>
+            <PuzzleVerification 
+                blockType="puzzle" 
+                :onSuccess="handleSuccess"
+                :verificationShow="isVerification"
+                @clone="isVerificationClone"
+            />
+        </div>
     </div>
 </template>
 
@@ -196,9 +222,9 @@ export default {
             replyObj: {},       // 回复对象的信息
             replyObjs: {},      // 二级回复对象的信息
 
-            loading: true,              // 页面loading
-            submitLoading: false,       // 提交loading
-            isVerification: false,      // 是否验证
+            loading: true,             // 页面loading
+            submitStatus: 0,          // 提交状态
+            isVerification: false,      // 验证状态
             verificationSuccess: false, // 验证成功
         }
     },
@@ -305,13 +331,16 @@ export default {
     methods: {
         // 取消验证
         isVerificationClone(){
+            this.submitStatus = 8;
             this.isVerification = false;
         },
         // 验证通过
         handleSuccess(){
             this.isVerification = false;
             this.verificationSuccess = true;
-            this.commentSubmit();
+            setTimeout(() => {
+                this.commentSubmit();
+            }, 600)
         },
         // 音乐播放
         changeMusic(){
@@ -405,7 +434,7 @@ export default {
         reply(item, type, items){
             // 跳到评论表单模块
             let t = document.querySelector(".comment").offsetTop;
-            this.ScrollTop(t - 50, 200);
+            this.ScrollTop(t - 60, 200);
 
             // 一级回复
             if(type == 1){
@@ -422,24 +451,23 @@ export default {
         },
         // 发表评论
         commentSubmit(){
-            this.ss = true;
-            if(this.submitLoading) return;
+            if(this.submitStatus == 9) return;
 
-            if(!this.comment.content){
-                alert('请先输入您想说的话，再按发表评论按钮哦！！')
-                return;
-            }
             if(!this.comment.name){
-                alert('请输入您的名字！')
+                this.submitStatus = 3;
                 return;
             }
             if(!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.comment.email)){
-                alert('请输入正确的邮箱，方便发送回复通知！')
+                this.submitStatus = 5;
                 return;
             }
 
             if(this.comment.name == '李白' && this.comment.email != '1915398623@qq.com'){
-                alert('你胆敢冒充站长，来人，拉出去砍了！！')
+                this.submitStatus = 4;
+                return;
+            }
+            if(!this.comment.content){
+                this.submitStatus = 6;
                 return;
             }
 
@@ -450,7 +478,7 @@ export default {
             }
 
             // loading
-            this.submitLoading = true;
+            this.submitStatus = 9   ;
 
             /**
              * 去掉前后空格
@@ -538,34 +566,36 @@ export default {
             this.$axios.put(`article_comment/${this.data._id}`, data)
                 .then(res => {
                     if(res.data.status == 1){
-                        /**
-                         * if 回复评论
-                         * el 发表评论
-                         */
-                        if(res.data.type){
-                            this.isReply = '';
-                            this.comment = {};
-                            this.replyObj = {};
-                            this.replyObjs = {};
-                        }else{
-                            this.data.comment.unshift(data)
-                            this.comment = {}
-                        }
                         setTimeout(() => {
-                            this.submitLoading = false;
-                            this.verificationSuccess = false;
-                        }, 100)
-                        alert('评论成功')
+                            /**
+                             * if 回复评论
+                             * el 发表评论
+                             */
+                            if(res.data.type){
+                                this.isReply = '';
+                                this.comment = {};
+                                this.replyObj = {};
+                                this.replyObjs = {};
+                            }else{
+                                this.data.comment.unshift(data)
+                                this.comment = {}
+                            }
+                            setTimeout(() => {
+                                this.verificationSuccess = false;
+                            }, 100)
+                            this.submitStatus = 1;
+                            setTimeout(() => {
+                                this.submitStatus = 0;
+                            }, 1000)
+                        }, 1000)
                     }else{
-                        this.submitLoading = false;
                         this.verificationSuccess = false;
-                        alert('评论失败，请重新试！！')
+                        this.submitStatus = 7;
                     }                    
                 })
                 .catch(err => {
-                    this.submitLoading = false;
                     this.verificationSuccess = false;
-                    alert('评论失败，请重新试！！')
+                    this.submitStatus = 7;
                 })
         },
         
@@ -1286,12 +1316,22 @@ export default {
                 background: #0084ff;
             }
         }
-        .loading{
+        .hint{
             display: flex;
             align-items: center;
             .loading-text{
                 color: #0084ff;
                 padding-top: 3px;
+            }
+            &.red span{
+                color: red;
+                font-size: 13px;
+                margin-right: 2px;
+            }
+            &.success span{
+                color: #2fc700;
+                font-size: 13px;
+                margin-right: 2px;
             }
         }
     }

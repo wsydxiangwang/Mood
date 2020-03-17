@@ -1,5 +1,5 @@
 <template>
-	<div :style="{visibility: isVerificationOn?'visible':'hidden'}" class="puzzle-container" :class="isVerificationShow?'show':'exit'">
+	<div class="puzzle-container" :class="isVerificationShow?'show':'exit'">
 		<div class="puzzle-header">
 			<span class="puzzle-header-left">拖动下方滑块完成拼图</span>
 			<div>
@@ -48,8 +48,7 @@ export default {
 	name: "puzzleVerification",
 	data() {
 		return {
-			isVerificationShow: true,
-			isVerificationOn: false,
+			isVerificationShow: false,
 			moveStart: "",
 			displayTips: false,
 			verification: false,
@@ -75,9 +74,7 @@ export default {
 			this.$emit('setVisible', val);
 		},
 		verificationShow(val) {
-			clearTimeout(this.time)
 			this.isVerificationShow = val;
-			this.isVerificationOn = true;
 		}
 	},
 	props: {
@@ -164,12 +161,6 @@ export default {
 		/* 关闭验证 */
 		closeVerificationBox() {
 			this.isVerificationShow = false;
-			clearTimeout(this.time)
-			console.oog(1)
-			this.time = setTimeout(() => {
-				this.isVerificationOn = false;
-				console.log(2222)
-			}, 1500)
 			this.$emit('clone', true)
 		},
 		/* 刷新 */
@@ -470,12 +461,12 @@ export default {
 {
 	from {
 		opacity: 0;
-		-webkit-transform: translate(0,0); 
+		visibility: hidden;
 		transform: translate(0,0);
 	}
 	to {
 		opacity:1;
-		-webkit-transform: translate(0,-80px);
+		visibility: visible;
 		transform: translate(0,-80px);
 	}
 }
@@ -483,12 +474,12 @@ export default {
 {
 	from {
 		opacity:1;
-		-webkit-transform: translate(0,-80px);
+		visibility: visible;
 		transform: translate(0,-80px);
 	}
 	to {
 		opacity: 0;
-		-webkit-transform: translate(0,0); 
+		visibility: hidden;
 		transform: translate(0,0);
 	}
 }
