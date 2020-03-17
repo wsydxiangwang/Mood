@@ -65,7 +65,7 @@ module.exports = app => {
                         message: 'success',
                         status: 1
                     })
-                    emailFn(req.body.email)
+                    // emailFn(req.body.email)
                 }else{
                     res.send({
                         type: 'reply',

@@ -3,9 +3,11 @@
         <Header :music="music" title="加油啦"></Header>
         <section class="list">
             <div class="year-list" v-for="(val, key, idx) in newData" :key="idx">
-                <!-- <h2 class="year">年</h2> -->
+
                 <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
-                    <li class="month">{{key.slice(1, 5)}}-{{keys}}</li>
+
+                    <li class="month">{{keys.charAt(0) == 0 ? enMon[keys.slice(1, 2)] : enMon[keys]}}, {{key.slice(1, 5)}}</li>
+
                     <ul class="day-list">
                         <li v-for="(valss, keyss, idxss) in vals" :key="idxss">
                             <div class="item-l">
@@ -15,7 +17,9 @@
                                     <span>{{valss.like}} LIKE / {{valss.read}} READ</span>
                                 </div>
                             </div>
-                            <span class="item-r">{{valss.time.monthNum}}-{{valss.time.day}}</span>
+
+                            <span class="item-r">{{valss.time.day}} day</span>
+                            
                         </li>
                     </ul>
                 </ul>
@@ -34,6 +38,7 @@ export default {
         return{
             newData: '',
             music: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3',
+            enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
         }
     },
     head () {
@@ -49,6 +54,7 @@ export default {
             a['_'+year][date].push(b);
             return a;
         }, {})
+        console.log(this.newData)
     },
     methods: {
         viewArticle(id){

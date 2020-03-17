@@ -49,6 +49,7 @@ export default {
                 "m": date.getMinutes().toString(),         // 分
             };
             let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+            let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
             let time = {};
 
             if(Object.keys(this.data).length > 0){
@@ -69,11 +70,12 @@ export default {
                 date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
                 monthNum: opt.M,
                 monthTxt: mArr[Number(opt.M) - 1],
+                monthEn: enArr[Number(opt.M) - 1],
                 year: opt.Y,
                 day: opt.D,
                 hour: `${opt.H}:${opt.m}`,
-                time: `${opt.H}`,
-                min: `${opt.m}`,
+                time: opt.H,
+                min: opt.m,
             }
 
             this.$emit('getDate', time)

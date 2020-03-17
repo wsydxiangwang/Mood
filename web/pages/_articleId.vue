@@ -59,7 +59,7 @@
                         <button type="button" @click="commentSubmit" :class="submitStatus == 9?'active':''">SUBMIT</button>
 
                         <template v-if="submitStatus == 9">
-                            <div class="hint">
+                            <div class="hint loading">
                                 <div class="sk-circle selected">
                                     <div class="sk-circle1 sk-child"></div>
                                     <div class="sk-circle2 sk-child"></div>
@@ -91,7 +91,7 @@
                                 <span v-if="submitStatus == 3">您的名字是第一印象哦～</span>
                                 <span v-else-if="submitStatus == 4">胆敢冒充站长，来人，拉出去砍了！！</span>
                                 <span v-else-if="submitStatus == 5">请输入正确的邮箱，有惊喜的哦～</span>
-                                <span v-else-if="submitStatus == 6">我想你一定是个学渣，作文是不是0分～</span>
+                                <span v-else-if="submitStatus == 6">偷偷告诉我，你作文是不是0分～</span>
                                 <span v-else-if="submitStatus == 7">哇哦！遇到错误，要不再试试</span>
                                 <span v-else-if="submitStatus == 8">完成验证才可以提交哦～</span>
                             </div>
@@ -119,7 +119,7 @@
                                         <a>{{item.name}}<span v-if="item.author == 'admin'">我亦行人</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
-                                            <span class="time">{{item.time}}</span>
+                                            <span class="time">{{item.time.time}} {{item.time.monthEn}} {{item.time.day}}, {{item.time.year}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@
                                             <a>{{items.name}}<span v-if="items.author == 'admin'">我亦行人</span></a>
                                             <div class="r">
                                                 <div class="reply" @click="reply(item, 2, items)">reply</div>
-                                                <span class="time">{{items.time}}</span>
+                                                <span class="time">{{items.time.time}} {{items.time.monthEn}} {{items.time.day}}, {{items.time.year}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -413,7 +413,7 @@ export default {
             this.replyObj = {};
             this.replyObjs = {};
         },
-        ScrollTop (number = 0, time) {
+        setScroll(number = 0, time) {
             if (!time) {
                 document.body.scrollTop = document.documentElement.scrollTop = number;
                 return number;
@@ -425,7 +425,7 @@ export default {
             let scrollTimer = setInterval(() => {
                 if (spacingInex > 0) {
                     spacingInex--;
-                    this.ScrollTop(nowTop += everTop);
+                    this.setScroll(nowTop += everTop);
                 } else {
                     clearInterval(scrollTimer); // 清除计时器
                 }
@@ -434,7 +434,7 @@ export default {
         reply(item, type, items){
             // 跳到评论表单模块
             let t = document.querySelector(".comment").offsetTop;
-            this.ScrollTop(t - 60, 200);
+            this.setScroll(t - 60, 200);
 
             // 一级回复
             if(type == 1){
@@ -451,6 +451,7 @@ export default {
         },
         // 发表评论
         commentSubmit(){
+
             if(this.submitStatus == 9) return;
 
             if(!this.comment.name){
@@ -487,7 +488,7 @@ export default {
             this.comment.name = this.comment.name.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.email = this.comment.email.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.content = this.comment.content.replace(/(^\s*)|(\s*$)/g, "");
-            this.comment.time = this.dateFormat('YYYY/MM/DD HH:mm');
+            this.comment.time = this.dateFormat();
             this.comment.image = Math.floor(Math.random()* 11 + 1);
 
             if(this.comment.email == '1915398623@qq.com'){
@@ -580,13 +581,11 @@ export default {
                                 this.data.comment.unshift(data)
                                 this.comment = {}
                             }
-                            setTimeout(() => {
-                                this.verificationSuccess = false;
-                            }, 100)
+                            this.verificationSuccess = false;
                             this.submitStatus = 1;
                             setTimeout(() => {
                                 this.submitStatus = 0;
-                            }, 1000)
+                            }, 3000)
                         }, 1000)
                     }else{
                         this.verificationSuccess = false;
@@ -597,8 +596,7 @@ export default {
                     this.verificationSuccess = false;
                     this.submitStatus = 7;
                 })
-        },
-        
+        },    
         myself(){
             this.$router.push('/Libai')
         },
@@ -606,23 +604,34 @@ export default {
             this.$router.push('/')
         },
         // 时间
-        dateFormat(fmt, mm){
+        dateFormat(){
             let date = new Date();
             let opt = {
-                "Y+": date.getFullYear().toString(),        // 年
-                "M+": (date.getMonth() + 1).toString(),     // 月
-                "D+": date.getDate().toString(),            // 日
-                "H+": date.getHours().toString(),           // 时
-                "m+": date.getMinutes().toString(),         // 分
-                "s+": date.getSeconds().toString()          // 秒
+                "Y": date.getFullYear().toString(),        // 年
+                "M": (date.getMonth() + 1).toString(),     // 月
+                "D": date.getDate().toString(),            // 日
+                "H": date.getHours().toString(),           // 时
+                "m": date.getMinutes().toString(),         // 分
             };
-            for(let k in opt) {
-                let ret = new RegExp("(" + k + ")").exec(fmt);
-                if (ret) {
-                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-                };
-            };
-            return fmt;
+            let cnArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
+            let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+            let time = {};
+
+            opt['H'] = opt['H'].padStart(2, "0");
+            opt['m'] = opt['m'].padStart(2, "0");
+
+            time = {
+                date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
+                monthNum: opt.M,
+                monthCn: cnArr[Number(opt.M) - 1],
+                monthEn: enArr[Number(opt.M) - 1],
+                year: opt.Y,
+                day: opt.D,
+                time: `${opt.H}:${opt.m}`,
+                hour: opt.H,
+                min: opt.m,
+            }
+            return time
         }
     },
     async asyncData(context){
@@ -735,6 +744,7 @@ export default {
     .stuff{
         color: #6a737d;
         position: relative;
+        line-height: 22px;
         span{
             font-size: 13px;
             margin-right: 10px;
@@ -1317,16 +1327,19 @@ export default {
             }
         }
         .hint{
-            display: flex;
-            align-items: center;
-            .loading-text{
-                color: #0084ff;
-                padding-top: 3px;
+            &.loading{
+                display: flex;
+                align-items: center;
+                .loading-text{
+                    color: #0084ff;
+                    padding-top: 3px;
+                }
             }
             &.red span{
                 color: red;
                 font-size: 13px;
-                margin-right: 2px;
+                margin-right: -2px;
+                display: inline-block;
             }
             &.success span{
                 color: #2fc700;
