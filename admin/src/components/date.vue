@@ -47,9 +47,14 @@ export default {
                 "D": date.getDate().toString(),            // 日
                 "H": date.getHours().toString(),           // 时
                 "m": date.getMinutes().toString(),         // 分
+                "w": date.getDay()                   // 周
             };
+
+            // 月
             let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
             let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+            let weekEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let week = ['日', '一', '二', '三', '四', '五', '六'];
             let time = {};
 
             if(Object.keys(this.data).length > 0){
@@ -62,6 +67,21 @@ export default {
                 };
             }
 
+            // 日
+            let day;
+            let str = opt.D.charAt(opt.D.length - 1);
+            if(str == 1 && opt.D != 11){
+                day = opt.D + 'st'
+            }else if(str == 2 && opt.D != 12){
+                day = opt.D + 'nd'
+            }else if(str == 3 && opt.D == 13){
+                day = opt.D + 'rd'
+            }else{
+                day = opt.D + 'th'
+            }
+
+            console.log(day)
+
             for(let k in opt){
                 opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
             }
@@ -73,6 +93,9 @@ export default {
                 monthEn: enArr[Number(opt.M) - 1],
                 year: opt.Y,
                 day: opt.D,
+                dayEn: day,
+                week: week[opt.w],
+                weekEn: weekEn[opt.w],
                 hour: `${opt.H}:${opt.m}`,
                 time: opt.H,
                 min: opt.m,

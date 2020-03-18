@@ -34,7 +34,6 @@
                 <span>字数 {{data.words}}</span>
                 <span>评论 {{data.comment.length}}</span>
                 <span>喜欢 {{data.like}}</span>
-                <span v-if="data.stick">置顶</span>
             </div>
             <div class="content">
                 <client-only>
@@ -434,7 +433,8 @@ export default {
         reply(item, type, items){
             // 跳到评论表单模块
             let t = document.querySelector(".comment").offsetTop;
-            this.setScroll(t - 60, 200);
+            let d = document.documentElement.clientHeight / 2;
+            this.setScroll(t - d + 200, 200);
 
             // 一级回复
             if(type == 1){

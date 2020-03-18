@@ -67,6 +67,7 @@ export default {
             this.data.words = value.length;     // 字数
         },
         submit(){
+            console.log(this.data.time)
             for(let key in this.data){
                 if(this.data[key] == ''){
                     this.$delete(this.data, key)

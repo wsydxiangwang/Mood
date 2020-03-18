@@ -435,6 +435,13 @@ export default {
 			document.addEventListener("touchend", self.moveEnd);
 		}
 	},
+	beforeRouteLeave(to,from,next){
+        // 销毁滚动条事件
+        document.removeEventListener("mousemove", self.moving);
+        document.removeEventListener("touchmove", self.moving);
+        document.removeEventListener("mouseup", self.moveEnd);
+		document.removeEventListener("touchend", self.moveEnd);
+	}
 };
 </script>
 
