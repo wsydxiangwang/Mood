@@ -64,23 +64,30 @@ export default {
                     "D": this.data.day,
                     "H": this.data.time,
                     "m": this.data.min,
+                    "w": new Date(Date.parse(`${this.data.year}/${this.data.monthNum}/${this.data.day}`)).getDay(),
                 };
             }
 
             // 日
-            let day;
-            let str = opt.D.charAt(opt.D.length - 1);
-            if(str == 1 && opt.D != 11){
-                day = opt.D + 'st'
-            }else if(str == 2 && opt.D != 12){
-                day = opt.D + 'nd'
-            }else if(str == 3 && opt.D == 13){
-                day = opt.D + 'rd'
+            let day = opt.D,
+                one = 'st',
+                two = 'nd',
+                three = 'rd',
+                four = 'th',
+                obj = {
+                    1: one,
+                    2: two,
+                    3: three,
+                    21: one,
+                    22: two,
+                    23: three,
+                    31: one
+                };
+            if(obj[opt.D]){
+                day += obj[day];
             }else{
-                day = opt.D + 'th'
+                day += four;
             }
-
-            console.log(day)
 
             for(let k in opt){
                 opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
@@ -103,7 +110,7 @@ export default {
 
             this.$emit('getDate', time)
 
-            return time
+            return time;
         }
     }
 }

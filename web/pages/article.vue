@@ -18,7 +18,7 @@
                                 </div>
                             </div>
 
-                            <span class="item-r">{{valss.time.day}} day</span>
+                            <span class="item-r">{{valss.time.dayEn}}</span>
                             
                         </li>
                     </ul>
@@ -54,7 +54,6 @@ export default {
             a['_'+year][date].push(b);
             return a;
         }, {})
-        console.log(this.newData)
     },
     methods: {
         viewArticle(id){
