@@ -65,7 +65,7 @@ module.exports = app => {
                         message: 'success',
                         status: 1
                     })
-                    // emailFn(req.body.email)
+                    emailFn(req.body.email)
                 }else{
                     res.send({
                         type: 'reply',
@@ -126,48 +126,29 @@ module.exports = app => {
         res.send(data)
     })
 
+    
     function emailFn(item){
         // email
         let data = {
             email: item.email,
             title: item.title,
             content: `
-                <style>
-                .node-email{
-                    padding: 20px;
-                    color: #303030;
-                    border-radius: 8px;
-                    box-shadow: 0 0 10px #eee;
-                }
-                .node-email .title{
-                    font-size: 16px;
-                    font-weight: 400;
-                    font-style: oblique;
-                }
-                .node-email .content{
-                    text-indent: 2em;
-                }
-                .node-email .me{
-                    text-align: right;
-                    margin-top: 40px;
-                }
-                .node-email .hint{
-                    background: #eff5fb;
-                    border-left: 4px solid #c2e1ff;
-                    padding: 14px;
-                    margin-top: 30px;
-                    border-radius: 9px;
-                    font-size: 13px;
-                    color: #7d7f7f;
-                    line-height:24px;
-                }
-                </style>
-                <div class="node-email">
-                    <h2 class="title">hi，${item.name}，你今天笑了么～</h2>
-                    <p class="content">偷偷告诉你一件事，您在《<a href="${item.url}">${item.title}</a>》的心情中，收到一条新的回复啦，赶紧<a href="${item.url}">回来看看</a>是哪位神仙眼光这么好，竟然选到了世界上最棒的人，嘿嘿哈哈～</p>
-                    <p class="me">—— 白茶</p>
-                    <div class="hint">如果我们没有机会见面，那我在这儿提前预祝你早安、午安以及晚安<br>愿你所见皆彩虹，所遇皆良人，所求皆所愿，所盼皆所期<br>永远相信美好的事情即将发生～～</div>
-                </div>
+                <center>
+                    <table style="max-width:800px;letter-spacing: 0.2px;">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="padding: 30px;color: #303030;border-radius: 8px;box-shadow: 0 0 10px #eee;padding: 1.5rem;">
+                                        <h2 style="font-size: 16px;font-weight: 400;font-style: oblique;font-size:font-size: 1rem;">hi，${item.name}，你今天笑了么～</h2>
+                                        <p style="text-indent: 2em;color:#303030;font-size: 0.9rem;line-height: 24px;">偷偷告诉你一件事，您在《<a href="${item.url}">${item.title}</a>》的心情中，收到一条新的回复啦，赶紧<a href="${item.url}">回来看看</a>是哪位神仙眼光这么好，竟然选到了世界上最棒的人，嘿嘿哈哈～</p>
+                                        <p style="text-align: right;margin-top: 40px;font-size:0.9rem">—— 白茶</p>
+                                        <div style="background: #eff5fb;border-left: 4px solid #c2e1ff;padding: 14px;margin-top: 30px;border-radius: 9px;font-size: 0.85rem;color: #7d7f7f;line-height: 24px;">如果我们没有机会见面，那我在这儿提前预祝你早安、午安以及晚安<br>愿你所见皆彩虹，所遇皆良人，所求皆所愿，所盼皆所期<br>永远相信美好的事情即将发生～～</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
             `
         }
         email.sendMail(data, (state) => {
