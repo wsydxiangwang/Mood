@@ -22,6 +22,9 @@
 
         <!-- 不追热点，不关时政，不要喧哗，不惹纷争。 -->
         </div>
+
+        <!-- loading -->
+		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
@@ -35,6 +38,7 @@ export default {
         return{
             title: false,
             music: 'https://image.raindays.cn/Myself-Resources/music/qianbaidu.mp3',
+            loading: true
         }
     },
     head () {
@@ -42,6 +46,19 @@ export default {
             title: 'Libai | 白茶'
         }
     },
+    mounted() {
+        //loading
+        document.body.style.overflowY = 'hidden';
+        setTimeout(() => {
+            this.loading = false;
+            document.body.style.overflowY = '';
+        }, 800)
+
+        this.$nextTick(() => {
+			// 微信分享
+            this.$wxShare(this, 6);
+		})
+    }
 }
 </script>
 

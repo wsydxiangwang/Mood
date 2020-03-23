@@ -452,16 +452,21 @@ export default {
     background: #ffffff;
     border-radius: 12px;
     position: fixed;
-    top: 50%;
+    top: calc(50% - 105px);
     left: 50%;
 	box-shadow: 0 0 10px #dbdbdb;
-	margin: -140px 0 0 -145px;
+	margin: 0 0 0 -145px;
 	z-index: 99999;
 	&.show{
 		animation: fadeInTop 0.6s both;
 	}
 	&.exit{
 		animation: fadeInDown 0.6s both;
+	}
+}
+@media screen and (max-width: 600px) {
+	.puzzle-container{
+		margin-top: 0;
 	}
 }
 @keyframes fadeInTop

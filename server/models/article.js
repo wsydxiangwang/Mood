@@ -5,8 +5,14 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
     id: Number,                         
-    music: String,                      // 音乐
-    image: String,                      // 封面
+    music: {
+        type: String,                      // 音乐
+        default: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3'
+    },
+    image: {
+        type: String,                      // 封面
+        default: 'https://image.yeyucm.cn/img/mood-NationalDay/5.jpg'
+    },
     content: String,                    // 内容
     describe: String,                   // 描述
     contentHtml: String,                // 内容源码
@@ -38,7 +44,10 @@ const schema = new mongoose.Schema({
         type: Number,
         default: 0
     },                       
-    words: Number,                      // 字数
+    words: {                            // 字数
+        type: Number,
+        default: 0
+    },
     comment: [],                        // 评论
 })
 

@@ -73,8 +73,13 @@ export default {
         },
         // 提交更新文章
         async submit(){            
+            this.dataAll.time = this.originalDate;
             const res = await this.$http.put(`article/${this.dataAll._id}`, this.dataAll)
-            console.log(res)
+            if(res.data.status == 1){
+                alert('1')
+            }else{
+                alert('2')
+            }
         },
         // 获取当前文章的数据
         async loadData(){
@@ -88,6 +93,8 @@ export default {
             })
         },
         getDate(e){
+            console.log(e)
+            this.originalDate = e;
         }
     },
     created() {

@@ -3,7 +3,6 @@ module.exports = app => {
     const router = express.Router();
 
     const Article = require('../../models/article')
-    const Category = require('../../models/category')
     const Counter = require('../../models/counter')         // 计时器 自增
 
     // 获取文章
@@ -39,8 +38,22 @@ module.exports = app => {
 
     // 更新文章
     router.put('/article/:id', async (req, res) => {
-        const data = await Article.findByIdAndUpdate(req.params.id, req.body)
-        res.send(data)
+        const data = await Article.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            (err, doc) => {
+                if(doc){
+                    res.send({
+                        status: 1,
+                        message: 'success'
+                    })
+                }else{
+                    res.send({
+                        status: 2,
+                        message: 'error'
+                    })
+                }
+            })
     })
 
     // 删除文章

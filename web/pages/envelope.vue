@@ -7,6 +7,8 @@
                 <div class="time">{{item.newTime}}</div>
             </div>
         </section>
+        <!-- loading -->
+		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
@@ -19,6 +21,7 @@ export default {
     data(){
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
+            loading: true
         }
     },
     head () {
@@ -37,6 +40,20 @@ export default {
                 return this.data;
             }
         }
+    },
+    mounted() {
+        //loading
+        document.body.style.overflowY = 'hidden';
+        setTimeout(() => {
+            this.loading = false;
+            document.body.style.overflowY = '';
+        }, 800)
+
+        this.$nextTick(() => {
+			// 微信分享
+            this.$wxShare(this, 4);
+        })
+        
     },
     methods: {
         dateDiff(timestamp) {

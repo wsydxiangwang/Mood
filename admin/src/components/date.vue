@@ -110,6 +110,8 @@ export default {
 
             this.$emit('getDate', time)
 
+            console.log(time)
+            
             return time;
         }
     }

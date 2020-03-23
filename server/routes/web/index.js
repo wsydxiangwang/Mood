@@ -38,13 +38,16 @@ module.exports = app => {
 
     // All articles
     router.get('/article', async (req, res) => {
-        let data = await Article.find({hide:false}).sort({time: -1}).limit(20)
+        let p = req.query.page || 1;
+        let s = req.query.count || 5;
+        let data = await Article.find({hide:false}).sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
         res.send(data)
     })
 
     // Current article
     router.get('/article/:id', async (req, res) => {
-        const data = await Article.findOne({id: req.params.id})
+        let id = Number(req.params.id)
+        const data = await Article.findOne({id: id})
         res.send(data)
     })
 
@@ -140,7 +143,7 @@ module.exports = app => {
                                 <td>
                                     <div style="padding: 30px;color: #303030;border-radius: 8px;box-shadow: 0 0 10px #eee;padding: 1.5rem;">
                                         <h2 style="font-size: 16px;font-weight: 400;font-style: oblique;font-size:font-size: 1rem;">hi，${item.name}，你今天笑了么～</h2>
-                                        <p style="text-indent: 2em;color:#303030;font-size: 0.9rem;line-height: 24px;">偷偷告诉你一件事，您在《<a href="${item.url}">${item.title}</a>》的心情中，收到一条新的回复啦，赶紧<a href="${item.url}">回来看看</a>是哪位神仙眼光这么好，竟然选到了世界上最棒的人，嘿嘿哈哈～</p>
+                                        <p style="text-indent: 2em;color:#303030;font-size: 0.9rem;line-height: 24px;">偷偷告诉你一件事，您在《<a href="${item.url}">${item.title}</a>》的心情中，收到一条新的回复啦，赶紧<a href="${item.url}">回来看看</a>是哪位神仙眼光这么好，竟然选到了世界上最棒的人～</p>
                                         <p style="text-align: right;margin-top: 40px;font-size:0.9rem">—— 白茶</p>
                                         <div style="background: #eff5fb;border-left: 4px solid #c2e1ff;padding: 14px;margin-top: 30px;border-radius: 9px;font-size: 0.85rem;color: #7d7f7f;line-height: 24px;">如果我们没有机会见面，那我在这儿提前预祝你早安、午安以及晚安<br>愿你所见皆彩虹，所遇皆良人，所求皆所愿，所盼皆所期<br>永远相信美好的事情即将发生～～</div>
                                     </div>

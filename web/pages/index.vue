@@ -3,7 +3,7 @@
 		<div class="cover">
 			<div id="scene" :style="{height:boxH}">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
-					<img id="image" :style="imgStyle" src="https://image.yeyucm.cn/Myself-Resources/coverPictureOriginal.png" width="1920" height="1080" @load="coverImgLoad">
+					<img id="image" :style="imgStyle" src="https://image.yeyucm.cn/Myself-Resources/coverPicture.png" width="1920" height="1080" @load="coverImgLoad">
 				</div>
 			</div>
 			<div class="head">
@@ -14,9 +14,9 @@
 			</div>
 			<div class="misk"></div>
 			<div class="post">
-				<div class="time">二月 24, 2020</div>
+				<div class="time">十一月 3, 2020</div>
 				<div class="title"><a @click="article(1103)">你好，我是李白！</a></div>
-				<div class="describe">愿所有的美好如约而至，愿所有黑暗都能看到希望，我们都能微笑前行，人生没有完美，有些遗憾才美...</div>
+				<div class="describe">愿所有的美好如约而至，愿所有的黑暗都能看到希望，我们都能微笑前行，人生没有完美，也许有些遗憾才美...</div>
 			</div>
 			<!-- menu -->
 			<div class="nav">
@@ -31,10 +31,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="content">
+		<div class="content" :style="{paddingBottom: loadingType == 'nomore'?'100px':'200px'}">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img :src="item.image || 'https://image.yeyucm.cn/img/mood-NationalDay/5.jpg'" alt="">
+					<img :src="item.image">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.monthTxt}}月 {{item.time.day}}, {{item.time.year}}</div>
@@ -46,6 +46,17 @@
 						<div><i class="iconfont icon-like"></i><span>{{item.like}}</span></div>
 					</div>
 				</div>
+			</div>
+
+			<div class="bottom-loading">
+				<div class="loader" v-if="loadingType == 'loading'">
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+				</div>
+				<div class="btn" @click="loadMore" v-if="loadingType == 'more'">加载更多</div>
 			</div>
 		</div>
 		<div class="foot">
@@ -59,11 +70,7 @@
 
 <script>
 import Parallax from 'parallax-js'
-import Loading from "../components/loading";
 export default {
-	components: {
-		Loading
-    },
 	data(){
 		return{
 			layerStyle: {},
@@ -90,7 +97,10 @@ export default {
 				}
 			],
 			isNav: false,
-			loading: false
+			loading: false,
+			loadingType: 'more',
+			page: 1,
+			timerScroll: null
 		}
 	},
     head () {
@@ -106,6 +116,12 @@ export default {
 		this.loading = true;
 	},
 	mounted(){
+
+		this.$nextTick(() => {
+			// 微信分享
+            this.$wxShare(this, 1);
+		})
+		
 		// start loading
 		document.body.style.overflowY = 'hidden';
 		/**
@@ -136,13 +152,38 @@ export default {
 			}, 100)
 		}
 	},
-	// 
 	destroyed(){
 		window.onresize = null;
 		document.body.style.overflowY = '';
 		document.removeEventListener('touchmove', this.on, {passive: false})
     },
 	methods: {
+		loadMore(){
+			if(this.loadingType == 'nomore') return;
+			this.page++;
+			this.loadingType = 'loading';
+			this.$axios.get(`article`, {
+				params: {
+					page: this.page
+				}
+			})
+			.then(res => {
+				setTimeout(() => {
+					this.articleList = this.articleList.concat(res.data)
+
+					// 设置滚动条位置
+					this.$setScroll('.bottom-loading', -100);
+
+					if(res.data.length < 5){
+						this.loadingType = 'nomore';
+					}else{
+						this.loadingType = 'more';
+					}
+				}, 1500)
+			}).catch(err => {
+				this.loadingType = 'more';
+			})
+		},
 		// Cover image loading is complete
 		coverImgLoad(e){
 			setTimeout(() => {
@@ -319,7 +360,7 @@ export default {
 		width: 1200px;
 		margin: auto;
 		position: relative;
-		padding-bottom: 100px;
+		padding-bottom: 200px;
 		&:after{
 			content: '';
 			width: 1px;
@@ -330,6 +371,30 @@ export default {
 			background: #eaeaea;
 			z-index: 0;
 		}
+		.bottom-loading{
+			.btn{
+				position: absolute;
+				left: 50%;
+				bottom: 80px;
+				transform: translateX(-50%);
+				background: #fff;
+				border: 1px solid #eaeaea;
+				padding: 0 36px;
+				height: 34px;
+				line-height: 36px;
+				color: #666;
+				z-index: 9;
+				cursor: pointer;
+				letter-spacing: 2px;
+				transition: all .3s;
+				&:hover{
+					color: #fff;
+					background: var(--colorActive);
+					border-color: var(--colorActive);
+				}
+			}
+		}
+		
 		.post{
 			position: relative;
 			margin-top: 100px;
@@ -634,5 +699,95 @@ export default {
 	.nav{
 		top: 0;
 	}
+}
+
+.loader {
+	position: absolute;
+    width: 100px;
+    left: 50%;
+    bottom: 76px;
+    transform: translateX(-50%);
+    z-index: 99;
+    background: #fff;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.dot {
+  width: 15px;
+  height: 15px;
+  background: #3ac;
+  border-radius: 100%;
+  display: inline-block;
+  animation: slide 1s infinite;
+}
+.dot:nth-child(1) {
+  animation-delay: 0.1s;
+  background: #32aacc;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+  background: #64aacc;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+  background: #96aacc;
+}
+.dot:nth-child(4) {
+  animation-delay: 0.4s;
+  background: #c8aacc;
+}
+.dot:nth-child(5) {
+  animation-delay: 0.5s;
+  background: #faaacc;
+}
+@-moz-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@-o-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

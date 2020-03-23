@@ -16,7 +16,8 @@
             </li>
         </ul>
 
-        <div class="loading" v-if="loading"><span></span></div>
+        <!-- loading -->
+		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
@@ -28,19 +29,19 @@ export default {
                 {
                     on: require('@/static/image/rain/rain_on.png'),
                     off: require('@/static/image/rain/rain_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/rain.mp3',
+                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/thunder.mp3',
                     active: false
                 },
                 {
                     on: require('@/static/image/rain/rain2_on.png'),
                     off: require('@/static/image/rain/rain2_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/thunder.mp3',
+                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/loudThunder.mp3',
                     active: false
                 },
                 {
                     on: require('@/static/image/rain/rain3_on.png'),
                     off: require('@/static/image/rain/rain3_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/loudThunder.mp3',
+                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/rain.mp3',
                     active: false
                 }
             ],
@@ -56,20 +57,23 @@ export default {
             ]
         }
     },
+    mounted(){
+        this.$nextTick(() => {
+			// 微信分享
+            this.$wxShare(this, 5);
+		})
+    },
     watch: {
         num(val){
             if(val == 2){
                 setTimeout(() => {
                     this.loading = false;
-                    // this.$nextTick(() => {
-                    //     this.music(0, false)
-                    // })
+                    this.$nextTick(() => {
+                        this.music(0, false)
+                    })
                 }, 2000)
             }
         }
-    },
-    mounted(){
-        this.loading = true;
     },
     methods: {
         toIndex(){
@@ -93,52 +97,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes Loading{
-    5% { transform: scale(1); } 
-    10% { transform:scale(0.95); }
-    15% { transform:scale(0.9); }
-    20% { transform:scale(0.8); }
-    25% { transform:scale(0.7); }
-    30% { transform:scale(0.6); }
-    35% { transform:scale(0.5); }
-    40% { transform:scale(0.4); }
-    50% { transform:scale(0.3); }
-    60% { transform:scale(0.4); }
-    65% { transform:scale(0.5); }
-    70% { transform:scale(0.6); }
-    75% { transform:scale(0.7); }
-    80% { transform:scale(0.8); }
-    85% { transform:scale(0.85); }
-    90% { transform:scale(0.9); }
-    95% { transform:scale(0.95); }
-    100% { transform:scale(1); }
-}
 .rain{
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     position: relative;
-    .loading{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: 9999;
-        display: flex;
-		align-items: center;
-		justify-content: center;
-		span{
-			width: 15px;
-			height: 15px;
-			display: block;
-			margin-top: -20px;
-			border-radius: 50%;
-			background: #808080;
-			animation: Loading 2s both infinite;
-		}
-    }
     .logo{
         color: #fff;
         position: fixed;

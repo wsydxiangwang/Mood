@@ -11,7 +11,9 @@
                     <ul class="day-list">
                         <li v-for="(valss, keyss, idxss) in vals" :key="idxss">
                             <div class="item-l">
-                                <div class="img" @click="viewArticle(valss.id)"><img :src="valss.image"></div>
+                                <div class="img" @click="viewArticle(valss.id)">
+                                    <img :src="valss.image">
+                                </div>
                                 <div class="tit">
                                     <span @click="viewArticle(valss.id)">{{valss.title}}</span>
                                     <span>{{valss.like}} LIKE / {{valss.read}} READ</span>
@@ -25,6 +27,9 @@
                 </ul>
             </div>
         </section>
+        
+        <!-- loading -->
+		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
@@ -38,7 +43,8 @@ export default {
         return{
             newData: '',
             music: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3',
-            enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+            enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+            loading: true
         }
     },
     head () {
@@ -47,6 +53,11 @@ export default {
         }
     },
     mounted(){
+        this.$nextTick(() => {
+            // 微信分享
+            this.$wxShare(this, 3);
+        })
+        
         this.newData = this.data.reduce((a, b)=>{
             var [ , year, date] = /(\d+)\/(\d+)/.exec(b.time.date);
             a['_'+year] = a['_'+year] || {};
@@ -54,6 +65,13 @@ export default {
             a['_'+year][date].push(b);
             return a;
         }, {})
+
+        //loading
+        document.body.style.overflowY = 'hidden';
+        setTimeout(() => {
+            this.loading = false;
+            document.body.style.overflowY = '';
+        }, 800)
     },
     methods: {
         viewArticle(id){
@@ -61,8 +79,14 @@ export default {
         },
     },
     async asyncData(context){
-        let {data} = await context.$axios.get('article')
-		return {data: data}
+        let {data} = await context.$axios.get('article', {
+                params: {
+                    count: 100
+                }
+            })
+        return {
+            data: data
+        }
 	},
 }
 </script>

@@ -184,19 +184,16 @@
                 :onSuccess="handleSuccess"
                 :verificationShow="isVerification"
                 @clone="isVerificationClone"
+                v-if="isPuzzle"
             />
         </div>
     </div>
 </template>
 
 <script>
-import Loading from "../components/loading";
 import PuzzleVerification from '../components/puzzleVerification'
 export default {
-	components: {
-        Loading,
-        PuzzleVerification
-    },
+	components: { PuzzleVerification },
     data(){
         return{
             comment: {},
@@ -225,6 +222,7 @@ export default {
             submitStatus: 0,          // 提交状态
             isVerification: false,      // 验证状态
             verificationSuccess: false, // 验证成功
+            isPuzzle: true
         }
     },
     head () {
@@ -237,11 +235,13 @@ export default {
     },
     beforeRouteLeave(to,from,next){
         // 销毁滚动条事件
+        this.isPuzzle = false;
         window.removeEventListener('scroll', this.handleScroll, true)
         next();
     },
     destroyed(){
-		document.body.style.overflowY = '';
+        this.isPuzzle = false;
+        document.body.style.overflowY = '';
     },
     computed: {
         // mobile music progress
@@ -257,63 +257,13 @@ export default {
             document.body.style.overflowY = '';
         }, 800)
 
-        // music src
         this.$nextTick(() => {
+            // music src
             this.$refs.audio.src = this.data.music;
+            
+            // 微信分享
+            this.$wxShare(this, 2, this.data);
         })
-
-        // weixin
-        if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
-            const script = document.createElement('script');
-            script.src = 'https://res.wx.qq.com/open/js/jweixin-1.6.0.js';
-
-        　　new Promise((resolve, reject) => {
-            　　let done = false;
-            　　script.onload = script.onreadystatechange = () => {
-                　　if (!done && (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete')){
-                        done = true;
-                        script.onload = script.onreadystatechange = null;
-                        resolve(script);
-                    }
-                }
-                script.onerror = reject;
-                document.getElementsByTagName('head')[0].appendChild(script);
-            })
-            .then(res => {
-                this.$axios.get('/getsign').then(res => {
-                    wx.config({
-                        debug: false,                    // 调试模式 wx弹窗 pc打印
-                        appId: res.data.appId,          // 标识
-                        timestamp: res.data.timestamp,  // 时间戳
-                        nonceStr: res.data.noncestr,    // 随机串
-                        signature: res.data.signature,  // 签名
-                        jsApiList: [                    // 接口
-                            'onMenuShareAppMessage',
-                            'onMenuShareTimeline',
-                        ] 
-                    });
-                    wx.ready(() => {
-                        wx.checkJsApi({
-                            jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline',]
-                        })
-                        let desc = this.data.describe.slice(0, 25) + '...';
-                        wx.onMenuShareAppMessage({ 
-                            title: this.data.title + ' | 白茶',
-                            desc: desc,
-                            link: res.data.url,
-                            imgUrl: this.data.image,
-                            type: 'link',
-                            dataUrl: ''
-                        })
-                        wx.onMenuShareTimeline({
-                            title: this.data.title + ' | 白茶',
-                            link: res.data.url,
-                            imgUrl: this.data.image
-                        })
-                    });
-                })
-            })
-        }  
 
         // 监听滚动条事件
         window.addEventListener('scroll', this.handleScroll, true)
@@ -412,29 +362,10 @@ export default {
             this.replyObj = {};
             this.replyObjs = {};
         },
-        setScroll(number = 0, time) {
-            if (!time) {
-                document.body.scrollTop = document.documentElement.scrollTop = number;
-                return number;
-            }
-            const spacingTime = 20; // 设置循环的间隔时间  值越小消耗性能越高
-            let spacingInex = time / spacingTime; // 计算循环的次数
-            let nowTop = document.body.scrollTop + document.documentElement.scrollTop; // 获取当前滚动条位置
-            let everTop = (number - nowTop) / spacingInex; // 计算每次滑动的距离
-            let scrollTimer = setInterval(() => {
-                if (spacingInex > 0) {
-                    spacingInex--;
-                    this.setScroll(nowTop += everTop);
-                } else {
-                    clearInterval(scrollTimer); // 清除计时器
-                }
-            }, spacingTime);
-        },
         reply(item, type, items){
-            // 跳到评论表单模块
-            let t = document.querySelector(".comment").offsetTop;
-            let d = document.documentElement.clientHeight / 2;
-            this.setScroll(t - d + 200, 200);
+
+            // 设置滚动条位置
+            this.$setScroll('.comment', -200, true);
 
             // 一级回复
             if(type == 1){
@@ -489,7 +420,7 @@ export default {
             this.comment.email = this.comment.email.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.content = this.comment.content.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.time = this.dateFormat();
-            this.comment.image = Math.floor(Math.random()* 11 + 1);
+            this.comment.image = Math.floor(Math.random() * 10 + 1);
 
             if(this.comment.email == '1915398623@qq.com'){
                 this.comment.author = 'admin';
@@ -615,12 +546,11 @@ export default {
             };
             let cnArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
             let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-            let time = {};
 
             opt['H'] = opt['H'].padStart(2, "0");
             opt['m'] = opt['m'].padStart(2, "0");
 
-            time = {
+            let time = {
                 date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
                 monthNum: opt.M,
                 monthCn: cnArr[Number(opt.M) - 1],
@@ -635,11 +565,21 @@ export default {
         }
     },
     async asyncData(context){
-        let id = context.params.articleId;
-        let {data} = await context.$axios.get(`article/${id}`)
-        data.comment.reverse(); // 评论倒叙 按最新时间显示
-        return {data: data}
-	}
+        try{
+            let id = context.params.articleId;
+            let {data} = await context.$axios.get(`article/${id}`)
+            data.comment.reverse(); // 评论倒叙 按最新时间显示
+            return {
+                data: data
+            }
+        }catch(err){
+            context.error({ statusCode: 404, message: '页面未找到或无数据' }) //修改成这样就可以跳到错误提示页面
+        }
+    },
+    // （回到error错误页面）
+    validate({params}){
+        return /^\d+$/.test(params.articleId)
+    }
 }
 </script>
 
@@ -893,7 +833,7 @@ export default {
             .reply-name{
                 color: #fff;
                 display: inline-block;
-                background: #0084ff;
+                background: var(--colorActive);
                 border-radius: 21px;
                 padding: 0 10px;
                 height: 24px;
@@ -1323,7 +1263,7 @@ export default {
             transition:all .3s;
             &:hover, &.active{
                 color: #fff;
-                background: #0084ff;
+                background: var(--colorActive);
             }
         }
         .hint{
@@ -1331,7 +1271,7 @@ export default {
                 display: flex;
                 align-items: center;
                 .loading-text{
-                    color: #0084ff;
+                    color: var(--colorActive);
                     padding-top: 3px;
                 }
             }
@@ -1372,7 +1312,7 @@ export default {
         margin:0 auto;
         width:15%;
         height:15%;
-        background-color:#0084ff;
+        background-color:var(--colorActive);
         border-radius:100%;
         -webkit-animation:sk-circleBounceDelay 1.2s infinite ease-in-out both;
         animation:sk-circleBounceDelay 1.2s infinite ease-in-out both
