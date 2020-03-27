@@ -4,7 +4,11 @@
 
         <section>
             <h2>标题</h2>
-            <input type="text" v-model="data.title" placeholder="标题">
+            <el-input
+                placeholder="标题"
+                v-model="data.title"
+                clearable>
+            </el-input>
         </section>
 
         <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" ref="md" style="height: 70vh"/>
@@ -16,25 +20,37 @@
         <section>
             <h2>摘要</h2>
             <div class="intro">
-                <input type="text" v-model="data.describe" placeholder="简介">
+                <el-input
+                    placeholder="简介"
+                    v-model="data.describe"
+                    clearable>
+                </el-input>
             </div>
         </section>
 
         <section>
             <h2>音乐</h2>
             <div class="picture">
-                <input type="text" v-model="data.music" placeholder="音乐地址">
+                <el-input
+                    placeholder="音乐地址"
+                    v-model="data.music"
+                    clearable>
+                </el-input>
             </div>
         </section>
 
         <section>
             <h2>封面图</h2>
             <div class="picture">
-                <input type="text" v-model="data.image" placeholder="图片链接">
+                <el-input
+                    placeholder="图片链接"
+                    v-model="data.image"
+                    clearable>
+                </el-input>
             </div>
         </section>
 
-        <button class="submit" @click="submit">提交</button>
+        <el-button type="primary" @click="submit">提交</el-button>
     </div>
 </template>
 

@@ -7,8 +7,8 @@
             <p class="name">李白不吃茶</p>
         </div>
         <ul>
-            <li v-for="item in list">
-                <div @click="toPage(item.link)">{{item.title}}</div>
+            <li v-for="(item, index) in list" :key="index">
+                <el-link type="primary" @click="toPage(item.link)">{{item.title}}</el-link>
             </li>
         </ul>
     </div>

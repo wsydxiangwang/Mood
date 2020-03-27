@@ -1,10 +1,15 @@
 <template>
     <div>
-        <input type="number" oninput="if(value.length>4)value=value.slice(0,4)" v-model="data.year">
+        <!-- <input type="number" oninput="if(value.length>4)value=value.slice(0,4)" v-model="data.year">
         <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.monthNum">
         <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.day">
         <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.time">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.min">
+        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.min"> -->
+        <el-date-picker
+            v-model="value"
+            type="datetime"
+            placeholder="选择日期时间">
+        </el-date-picker>
     </div>
 </template>
 
@@ -14,10 +19,14 @@ export default {
     data(){
         return{
             data: {},
+            value: '',
             timer: null
         }
     },
     watch: {
+        value(val){
+            console.log(val)
+        },
         data: {
             handler(val, oldVal){
                 if(Object.keys(oldVal).length != 0){

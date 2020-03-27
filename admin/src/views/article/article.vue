@@ -9,28 +9,25 @@
                 <div>全部(2)</div>
             </div>
         </div>
-        <table class="article-list">
-            <thead>
-                <tr>
-                    <td>标题</td>
-                    <td>分类</td>
-                    <td>评论</td>
-                    <td>日期</td>
-                    <td>操作</td>
-                    <td>操作</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, index) in articleList" :key="index">
-                    <td class="title">{{item.title}}</td>
-                    <td class="classify">{{item.classify}}</td>
-                    <td class="comment">{{item.comment}}</td>
-                    <td class="date">{{item.time}}</td>
-                    <td @click="edit(item.id)" class="edit">编辑</td>
-                    <td @click="remove(item)" class="edit">删除</td>
-                </tr>
-            </tbody>
-        </table>
+        
+        <el-table :data="articleList" style="width: 100%">
+            <el-table-column label="Name">
+                <template slot-scope="scope">
+                    <p>{{scope.row.title}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="Date">
+                <template slot-scope="scope">
+                    <span>{{scope.row.time.year}}-{{scope.row.time.monthNum}}-{{scope.row.time.day}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" @click="edit(scope.row.id)">Edit</el-button>
+                    <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
     </div>
 </template>
 
@@ -59,9 +56,26 @@ export default {
                 }
             })
         },
-        async remove(item){
-            const res = await this.$http.delete(`article/${item._id}`);
-            this.loadData()
+        remove(item){
+            this.$confirm('删除该文章, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http.delete(`article/${item._id}`).then(res => {
+                    this.loadData()
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
+            
         }
     }
 }
