@@ -32,7 +32,7 @@ export default {
                 {
                     icon: '',
                     title: '新文章',
-                    link: '/article/new',
+                    link: '/article/info',
                 },
                 {
                     icon: '',

@@ -1,9 +1,7 @@
 <template>
     <div class="article-new">
-        <h1>标题</h1>
 
         <section>
-            <h2>标题</h2>
             <el-input
                 placeholder="标题"
                 v-model="data.title"
@@ -15,21 +13,14 @@
 
         <section>
             <date @getDate="getDate"></date>
-        </section>
 
-        <section>
-            <h2>摘要</h2>
             <div class="intro">
                 <el-input
-                    placeholder="简介"
+                    placeholder="文章摘要"
                     v-model="data.describe"
                     clearable>
                 </el-input>
             </div>
-        </section>
-
-        <section>
-            <h2>音乐</h2>
             <div class="picture">
                 <el-input
                     placeholder="音乐地址"
@@ -37,13 +28,9 @@
                     clearable>
                 </el-input>
             </div>
-        </section>
-
-        <section>
-            <h2>封面图</h2>
             <div class="picture">
                 <el-input
-                    placeholder="图片链接"
+                    placeholder="封面图片"
                     v-model="data.image"
                     clearable>
                 </el-input>
@@ -88,6 +75,10 @@ export default {
                     this.$delete(this.data, key)
                 }
             }
+
+            console.log(this.data)
+
+            return;
             this.$http.post('article', this.data).then(res => {
                 console.log(res)
                 alert('成功')

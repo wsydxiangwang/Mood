@@ -8,7 +8,9 @@
         <el-date-picker
             v-model="value"
             type="datetime"
-            placeholder="选择日期时间">
+            value-format="yyyy-MM-dd HH:mm"
+            placeholder="选择日期时间"
+        >
         </el-date-picker>
     </div>
 </template>
@@ -20,19 +22,29 @@ export default {
         return{
             data: {},
             value: '',
-            timer: null
+            timer: null,
         }
     },
     watch: {
         value(val){
-            console.log(val)
+            let date = val.split(' ');
+            let dateArr = date.map((item) => {  
+                if(item.indexOf('-') != -1){
+                    return item.split('-') 
+                }else{ 
+                    return item.split(':')
+                }  
+            })
+            let dateNew = [].concat.apply([], dateArr)
+
+            this.dateFormat(dateNew)
         },
         data: {
             handler(val, oldVal){
                 if(Object.keys(oldVal).length != 0){
                     clearTimeout(this.timer);
                     this.timer = setTimeout(() =>{
-                        this.dateFormat()
+                        // this.dateFormat()
                     }, 800)
                 }
             },
@@ -43,66 +55,58 @@ export default {
         if(this.originalDate){
             this.data = this.originalDate;
         }else{
-            this.data = this.dateFormat();
+            // this.data = this.dateFormat();
+            console.log(this.data.date)
         }
     },
     methods: {
+        dateChange(val){
+            console.log(val)
+        },
         // 时间
-        dateFormat(){
-            let date = new Date();
-            let opt = {
-                "Y": date.getFullYear().toString(),        // 年
-                "M": (date.getMonth() + 1).toString(),     // 月
-                "D": date.getDate().toString(),            // 日
-                "H": date.getHours().toString(),           // 时
-                "m": date.getMinutes().toString(),         // 分
-                "w": date.getDay()                   // 周
-            };
+        dateFormat(date){
+            // date == ['2020', '12', '14', '08', '58']
 
-            // 月
-            let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
-            let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-            let weekEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let week = ['日', '一', '二', '三', '四', '五', '六'];
-            let time = {};
+            let mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+            let weekEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
-            if(Object.keys(this.data).length > 0){
-                opt = {
-                    "Y": this.data.year,
-                    "M": this.data.monthNum,
-                    "D": this.data.day,
-                    "H": this.data.time,
-                    "m": this.data.min,
-                    "w": new Date(Date.parse(`${this.data.year}/${this.data.monthNum}/${this.data.day}`)).getDay(),
-                };
+            let opt = {
+                "Y": date[0],
+                "M": date[1],
+                "D": date[2],
+                "H": date[3],
+                "m": date[4],
+                "w": new Date(Date.parse(`${date[0]}/${date[1]}/${date[2]}`)).getDay(),
             }
 
             // 日
             let day = opt.D,
-                one = 'st',
-                two = 'nd',
-                three = 'rd',
-                four = 'th',
+                st = 'st',
+                nd = 'nd',
+                rd = 'rd',
+                th = 'th',
                 obj = {
-                    1: one,
-                    2: two,
-                    3: three,
-                    21: one,
-                    22: two,
-                    23: three,
-                    31: one
+                    1: st,
+                    2: nd,
+                    3: rd,
+                    21: st,
+                    22: nd,
+                    23: rd,
+                    31: st
                 };
             if(obj[opt.D]){
                 day += obj[day];
             }else{
-                day += four;
+                day += th;
             }
 
             for(let k in opt){
                 opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
             }
 
-            time = {
+            let time = {
                 date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
                 monthNum: opt.M,
                 monthTxt: mArr[Number(opt.M) - 1],
@@ -118,8 +122,6 @@ export default {
             }
 
             this.$emit('getDate', time)
-
-            console.log(time)
             
             return time;
         }

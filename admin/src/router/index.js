@@ -23,14 +23,9 @@ const routes = [
 		component: resolve => require(['@/views/article/article'], resolve)
 	},
 	{
-		path: '/article/new',
-		name: "articleNew",
-		component: resolve => require(['@/views/article/new'], resolve)
-	},
-	{
-		path: '/article/edit',
-		name: "articleEdit",
-		component: resolve => require(['@/views/article/edit'], resolve)
+		path: '/article/info',
+		name: "info",
+		component: resolve => require(['@/views/article/info'], resolve)
 	},
 	{
 		path: '/envelope',
