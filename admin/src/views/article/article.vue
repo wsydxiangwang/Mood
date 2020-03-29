@@ -1,13 +1,7 @@
 <template>
-    <div class="article">
+    <div class="article" v-loading.fullscreen.lock="fullscreenLoading">
         <div class="header">
             <h1>文章列表</h1>
-            <div class="info">
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-            </div>
         </div>
         
         <el-table :data="articleList" style="width: 100%">
@@ -18,7 +12,7 @@
             </el-table-column>
             <el-table-column label="Date">
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.year}}-{{scope.row.time.monthNum}}-{{scope.row.time.day}}</span>
+                    <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -35,7 +29,8 @@
 export default {
     data() {
         return {
-            articleList: []
+            articleList: [],
+            fullscreenLoading: false
         }
     },
     created(){
@@ -50,10 +45,8 @@ export default {
         },
         edit(id){
             this.$router.push({
-                name: 'articleEdit',
-                query: {
-                    id: id
-                }
+                name: 'info',
+                query: { id: id }
             })
         },
         remove(item){
@@ -62,12 +55,16 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
+                this.fullscreenLoading = true;
                 this.$http.delete(`article/${item._id}`).then(res => {
                     this.loadData()
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
+                    setTimeout(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.fullscreenLoading = false;
+                    }, 1000)
                 })
             }).catch(() => {
                 this.$message({

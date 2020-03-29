@@ -1,5 +1,5 @@
 <template>
-    <div class="article-new">
+    <div class="article-new" v-loading.fullscreen.lock="fullscreenLoading">
 
         <section>
             <el-input
@@ -9,11 +9,11 @@
             </el-input>
         </section>
 
-        <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" ref="md" style="height: 70vh"/>
+        <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" v-model="data.content" ref="md" style="height: 70vh"/>
 
         <section>
-            <date @getDate="getDate"></date>
-<!-- ss -->
+            <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
+
             <div class="intro">
                 <el-input
                     placeholder="文章摘要"
@@ -60,7 +60,10 @@ export default {
                 category: '',           // 分类
                 image: '',              // 图片
                 music: '',              // 音乐
-            }
+            },
+            fullscreenLoading: false,
+            isReset: true,
+            id: ''                      // 当前文章id（编辑）
         }
     },
     methods: {
@@ -70,23 +73,65 @@ export default {
             this.data.words = value.length;     // 字数
         },
         submit(){
+            // 时间
+            if(!this.data.time || JSON.stringify(this.data.time) == '{}'){
+                this.$message.error('请选择时间');
+                return;
+            }
             for(let key in this.data){
                 if(this.data[key] == ''){
                     this.$delete(this.data, key)
                 }
             }
 
-            console.log(this.data)
-
-            return;
-            this.$http.post('article', this.data).then(res => {
-                console.log(res)
-                alert('成功')
-            })
+            this.fullscreenLoading = true;
+            
+            if(this.id){
+                this.$http.put(`article/${this.data._id}`, this.data).then(res => {
+                    console.log(res)
+                    setTimeout(() => {
+                        this.fullscreenLoading = false;
+                        if(res.data.status == 1){
+                            this.$message({
+                                message: '修改成功',
+                                type: 'success'
+                            });
+                            this.$router.push('/article')
+                        }else{
+                            this.$message.error('修改失败，请重新提交');
+                        }
+                    }, 1000)
+                })
+            }else{
+                this.$http.post('article', this.data).then(res => {
+                    setTimeout(() => {
+                        this.fullscreenLoading = false;
+                        this.$message({
+                            message: '发表成功',
+                            type: 'success'
+                        });
+                        this.$router.push('/article')
+                    }, 1000)
+                })
+            }
         },
+        // 获取时间
         getDate(e){
             this.data.time = e;
-        }
+        },
+        // 获取当前文章的数据
+        async loadData(id){
+            const res = await this.$http.get(`article/${id}`)
+            this.data = res.data;
+            this.isReset = false;
+            this.$nextTick(() => {
+                this.isReset = true;
+            })
+        },
+    },
+    created(){
+        this.id = this.$route.query.id;
+        if(this.id) this.loadData(this.id);
     }
 }
 </script>

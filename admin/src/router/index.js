@@ -33,14 +33,9 @@ const routes = [
 		component: resolve => require(['@/views/envelope/envelope'], resolve)
 	},
 	{
-		path: '/envelope/new',
-		name: "envelopeNew",
-		component: resolve => require(['@/views/envelope/new'], resolve)
-	},
-	{
-		path: '/envelope/edit',
-		name: "envelopeEdit",
-		component: resolve => require(['@/views/envelope/edit'], resolve)
+		path: '/envelope/info',
+		name: "envelopeInfo",
+		component: resolve => require(['@/views/envelope/info'], resolve)
 	},
 ]
 

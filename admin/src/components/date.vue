@@ -1,10 +1,5 @@
 <template>
     <div>
-        <!-- <input type="number" oninput="if(value.length>4)value=value.slice(0,4)" v-model="data.year">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.monthNum">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.day">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.time">
-        <input type="number" oninput="if(value.length>2)value=value.slice(0,2)" v-model="data.min"> -->
         <el-date-picker
             v-model="value"
             type="datetime"
@@ -20,49 +15,38 @@ export default {
     props: ['originalDate'],
     data(){
         return{
-            data: {},
             value: '',
-            timer: null,
         }
     },
     watch: {
         value(val){
-            let date = val.split(' ');
-            let dateArr = date.map((item) => {  
-                if(item.indexOf('-') != -1){
-                    return item.split('-') 
-                }else{ 
-                    return item.split(':')
-                }  
-            })
-            let dateNew = [].concat.apply([], dateArr)
+            if(val){
+                // 解析时间格式
+                let date = val.split(' ');
+                let dateArr = date.map((item) => {  
+                    if(item.indexOf('-') != -1){
+                        return item.split('-') 
+                    }else{ 
+                        return item.split(':')
+                    }  
+                })
+                let dateNew = [].concat.apply([], dateArr)
 
-            this.dateFormat(dateNew)
-        },
-        data: {
-            handler(val, oldVal){
-                if(Object.keys(oldVal).length != 0){
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(() =>{
-                        // this.dateFormat()
-                    }, 800)
-                }
-            },
-            deep: true
+                this.dateFormat(dateNew)
+            }else{
+                this.$emit('getDate', null)
+            }
         }
     },
     mounted(){
-        if(this.originalDate){
-            this.data = this.originalDate;
-        }else{
-            // this.data = this.dateFormat();
-            console.log(this.data.date)
+        // 默认时间
+        console.log(this.originalDate)
+        if(this.originalDate && JSON.stringify(this.originalDate) != '{}'){
+            let date = this.originalDate.date.replace(/\//g,"-")
+            this.value = date
         }
     },
     methods: {
-        dateChange(val){
-            console.log(val)
-        },
         // 时间
         dateFormat(date){
             // date == ['2020', '12', '14', '08', '58']
@@ -79,6 +63,10 @@ export default {
                 "H": date[3],
                 "m": date[4],
                 "w": new Date(Date.parse(`${date[0]}/${date[1]}/${date[2]}`)).getDay(),
+            }
+
+            for(let k in opt){
+                opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
             }
 
             // 日
@@ -101,28 +89,26 @@ export default {
             }else{
                 day += th;
             }
-
-            for(let k in opt){
-                opt[k] = opt[k].length == 1 ? (opt[k].padStart(2, "0")) : opt[k];
-            }
+            // 去除第一个0
+            day = day.slice(0, 1) == 0 ? day.slice(1) : day;
 
             let time = {
                 date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
-                monthNum: opt.M,
-                monthTxt: mArr[Number(opt.M) - 1],
-                monthEn: enArr[Number(opt.M) - 1],
                 year: opt.Y,
+                month: opt.M,
+                monthCn: mArr[Number(opt.M) - 1],
+                monthEn: enArr[Number(opt.M) - 1],
                 day: opt.D,
                 dayEn: day,
                 week: week[opt.w],
                 weekEn: weekEn[opt.w],
-                hour: `${opt.H}:${opt.m}`,
-                time: opt.H,
+                time: `${opt.H}:${opt.m}`,
+                hour: opt.H,
                 min: opt.m,
             }
 
             this.$emit('getDate', time)
-            
+            console.log(time)
             return time;
         }
     }

@@ -37,7 +37,7 @@
 					<img :src="item.image">
 				</div>
 				<div class="info">
-					<div class="time">{{item.time.monthTxt}}月 {{item.time.day}}, {{item.time.year}}</div>
+					<div class="time">{{item.time.monthCn}}月 {{item.time.day}}, {{item.time.year}}</div>
 					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
 					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">

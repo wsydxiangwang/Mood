@@ -1,33 +1,27 @@
 <template>
-    <div class="phrase">
+    <div class="phrase" v-loading.fullscreen.lock="loading">
         <div class="header">
             <h1>短语列表</h1>
-            <div class="info">
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-                <div>全部(2)</div>
-            </div>
         </div>
-        <table class="phrase-list">
-            <thead>
-                <tr>
-                    <td>标题</td>
-                    <td>日期</td>
-                    <td>操作</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in phraseList">
-                    <td class="title">{{item.content}}</td>
-                    <td class="date">{{item.time.date}}</td>
-                    <td>
-                        <span @click="edit(item._id)">编辑</span>
-                        <span @click="remove(item)">删除</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+        <el-table :data="phraseList" style="width: 100%">
+            <el-table-column label="Content">
+                <template slot-scope="scope">
+                    <p>{{scope.row.content}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="Date">
+                <template slot-scope="scope">
+                    <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini" @click="edit(scope.row._id)">Edit</el-button>
+                    <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
     </div>
 </template>
 
@@ -35,7 +29,8 @@
 export default {
     data() {
         return {
-            phraseList: []
+            phraseList: [],
+            loading: false
         }
     },
     created(){
@@ -46,16 +41,34 @@ export default {
             const res = await this.$http.get('/envelope');
             this.phraseList = res.data;
         },
-        async remove(item){
-            const res = await this.$http.delete(`/envelope/${item._id}`);
-            this.fetch()
+        remove(item){
+            this.$confirm('删除该文章, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.loading = true;
+                this.$http.delete(`envelope/${item._id}`).then(res => {
+                    setTimeout(() => {
+                        this.fetch()
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.loading = false;
+                    }, 1000)
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
         },
         edit(id){
             this.$router.push({
-                name: 'envelopeEdit',
-                query: {
-                    id: id
-                }
+                name: 'envelopeInfo',
+                query: { id: id }
             })
         },
     }

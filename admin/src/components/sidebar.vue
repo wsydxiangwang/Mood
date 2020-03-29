@@ -42,22 +42,7 @@ export default {
                 {
                     icon: '',
                     title: '新细语',
-                    link: '/envelope/new',
-                },
-                {
-                    icon: '',
-                    title: '留言',
-                    link: '',
-                },
-                {
-                    icon: '',
-                    title: '导航',
-                    link: '',
-                },
-                {
-                    icon: '',
-                    title: '我的',
-                    link: '',
+                    link: '/envelope/info',
                 },
                 {
                     icon: '',

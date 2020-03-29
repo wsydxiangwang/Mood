@@ -29,7 +29,7 @@
         <section :class="isVerification?'verify':''">
             <h1 class="title">{{data.title}}</h1>
             <div class="stuff">
-                <span>{{data.time.monthTxt}}月 {{data.time.day}}, {{data.time.year}}</span>
+                <span>{{data.time.monthCn}}月 {{data.time.day}}, {{data.time.year}}</span>
                 <span>阅读 {{data.read}}</span>
                 <span>字数 {{data.words}}</span>
                 <span>评论 {{data.comment.length}}</span>
