@@ -17,4 +17,11 @@ div, p, li, ol, span, a, input,textarea{
 a{
 	text-decoration: none;
 }
+#app{
+    background: #1885ff;
+    padding: 70px;
+    border-radius: 10px;
+    height: 100vh;
+    width: 100vw;
+}
 </style>

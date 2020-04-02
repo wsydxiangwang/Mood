@@ -2,6 +2,7 @@
     <div class="article-new" v-loading.fullscreen.lock="fullscreenLoading">
 
         <section>
+            <h2>无人问津的心情，在黑纸白字间游荡！</h2>
             <el-input
                 placeholder="标题"
                 v-model="data.title"
@@ -14,7 +15,6 @@
             @change="change" 
             v-model="data.content" 
             ref="md" 
-            style="height: 70vh"
             :subfield="false"
         />
 
@@ -137,23 +137,46 @@ export default {
 
 <style lang="scss" scoped>
 section{
-    padding: 20px;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
-    margin-bottom: 15px;
+    margin: 15px 0;
     .el-input{
         width: 100%;
         height: 38px;
         margin: 5px 0;
+        /deep/ input{
+            border-color: #eee !important;
+        }
     }
 }
 .markdown-body{
-    margin-bottom: 15px;
+    height: 70vh;
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
 }
 .submit{
     width: 200px;
     height: 40px;
     font-size: 14px;
     color: #fff;
+}
+h2{
+    margin: 10px 0 15px;
+    font-size: 16px;
+    color: #606060;
+}
+
+@media screen and (max-width: 600px) {
+    .markdown-body{
+        box-shadow: none !important;
+    }
+    section{
+        margin: 0;
+        padding: 15px;
+        box-shadow: none;
+    }
+    .submit{
+        width: 150px;
+        height: 36px;
+        margin: 0 15px 15px;
+    }
 }
 </style>

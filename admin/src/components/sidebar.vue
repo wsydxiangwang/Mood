@@ -40,27 +40,27 @@ export default {
                 },
                 {
                     icon: '',
-                    title: '文章',
+                    title: 'My Mood',
                     path: '/article',
                 },
                 {
                     icon: '',
-                    title: '新文章',
+                    title: 'Published Mood',
                     path: '/article/info',
                 },
                 {
                     icon: '',
-                    title: '细语',
+                    title: 'A letter',
                     path: '/envelope',
                 },
                 {
                     icon: '',
-                    title: '新细语',
+                    title: 'New letter',
                     path: '/envelope/info',
                 },
                 {
                     icon: '',
-                    title: '退出',
+                    title: 'Leave',
                 }
             ],
             activeIndex: ''
@@ -93,20 +93,36 @@ export default {
 <style lang="scss" scoped>
 .sidebar{
     height: 100%;
-    width: 200px;
+    width: 240px;
     color: #fff;
-    box-shadow: 0 0 10px #e1e1e1;
+    background: #0e8bff;
     .el-menu{
         border: none;
         margin-top: 40px;
+        background: none;
+        padding-left: 8px;
         .el-menu-item{
             height: 40px;
             line-height: 40px;
             text-align: center;
             float: none;
             border: none;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 5px;
+            padding-left: 35px;
+            text-align: left;
             &.is-active{
                 color: #0084ff;
+                background: #fff;
+                border-radius: 20px 0 0 20px;
+                position: relative;
+                &:before{
+                    content: '';
+                }
+                &:after{
+                    content: '';
+                }
             }
         }
     }
@@ -128,7 +144,7 @@ export default {
         }
         .name{
             margin-top: 15px;
-            color: #606060;
+            color: #fff;
         }
     }
 }
