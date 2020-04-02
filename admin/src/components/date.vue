@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <el-date-picker
-            v-model="value"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm"
-            placeholder="选择日期时间"
-        >
-        </el-date-picker>
-    </div>
+    <el-date-picker
+        v-model="value"
+        type="datetime"
+        value-format="yyyy-MM-dd HH:mm"
+        placeholder="选择日期时间"
+    >
+    </el-date-picker>
 </template>
 
 <script>
@@ -40,7 +38,6 @@ export default {
     },
     mounted(){
         // 默认时间
-        console.log(this.originalDate)
         if(this.originalDate && JSON.stringify(this.originalDate) != '{}'){
             let date = this.originalDate.date.replace(/\//g,"-")
             this.value = date
@@ -108,7 +105,7 @@ export default {
             }
 
             this.$emit('getDate', time)
-            console.log(time)
+            
             return time;
         }
     }

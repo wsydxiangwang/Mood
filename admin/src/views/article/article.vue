@@ -10,12 +10,12 @@
                     <p>{{scope.row.title}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="Date">
+            <el-table-column label="Date" :width="Width" class="hidden">
                 <template slot-scope="scope">
                     <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" :width="Width">
                 <template slot-scope="scope">
                     <el-button size="mini" @click="edit(scope.row.id)">Edit</el-button>
                     <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
@@ -30,11 +30,17 @@ export default {
     data() {
         return {
             articleList: [],
-            fullscreenLoading: false
+            fullscreenLoading: false,
+            Width: 180
         }
     },
     created(){
-        this.loadData()
+        this.loadData();
+
+        if(window.innerWidth < 600){
+            this.Width = 120
+        }
+
     },
     methods: {
         async loadData(){
@@ -108,6 +114,15 @@ export default {
                 cursor: pointer;
             }
         }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .article{
+        padding: 8px;
+    }
+    .el-table_1_column_2{
+        display: none;
     }
 }
 </style>

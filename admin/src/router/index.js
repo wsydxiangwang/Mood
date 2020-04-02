@@ -7,7 +7,35 @@ Vue.use(VueRouter)
 const routes = [
 	{
 		path: '/',
-		component: index
+		component: index,
+		redirect: '/',
+		children: [
+			{
+				path: '/',
+				name: "index",
+				component: resolve => require(['@/views/index/index'], resolve)
+			},
+			{
+				path: '/article',
+				name: "article",
+				component: resolve => require(['@/views/article/article'], resolve)
+			},
+			{
+				path: '/article/info',
+				name: "info",
+				component: resolve => require(['@/views/article/info'], resolve)
+			},
+			{
+				path: '/envelope',
+				name: "envelope",
+				component: resolve => require(['@/views/envelope/envelope'], resolve)
+			},
+			{
+				path: '/envelope/info',
+				name: "envelopeInfo",
+				component: resolve => require(['@/views/envelope/info'], resolve)
+			},
+		]
 	},
 	{
 		path: '/login',
@@ -16,27 +44,7 @@ const routes = [
             requireAuth: true,  // 除此路由外，其他都需登录
         },
 		component: resolve => require(['@/views/login'], resolve)
-	},
-	{
-		path: '/article',
-		name: "article",
-		component: resolve => require(['@/views/article/article'], resolve)
-	},
-	{
-		path: '/article/info',
-		name: "info",
-		component: resolve => require(['@/views/article/info'], resolve)
-	},
-	{
-		path: '/envelope',
-		name: "envelope",
-		component: resolve => require(['@/views/envelope/envelope'], resolve)
-	},
-	{
-		path: '/envelope/info',
-		name: "envelopeInfo",
-		component: resolve => require(['@/views/envelope/info'], resolve)
-	},
+	}
 ]
 
 const router = new VueRouter({

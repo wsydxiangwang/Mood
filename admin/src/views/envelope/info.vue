@@ -1,13 +1,19 @@
 <template>
-    <div class="content" v-loading.fullscreen.lock="loading">
+    <div v-loading.fullscreen.lock="loading">
         
-        <mavon-editor @change="change" v-model="data.content" ref="md" style="height: 60vh"/>
+        <mavon-editor 
+            @change="change" 
+            v-model="data.content" 
+            ref="md" 
+            style="height: 60vh" 
+            :subfield="false"
+        />
 
         <section>
             <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
         </section>
 
-        <button class="submit" @click="submit">提交</button>
+        <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
     </div>
 </template>
 
@@ -87,7 +93,7 @@ export default {
 
 <style lang="scss" scoped>
 section{
-    padding: 10px;
+    padding: 20px;
     margin: 20px 0;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
@@ -96,16 +102,12 @@ section{
         height: 38px;
         padding: 0 10px;
         border: 1px solid #eee;
-        margin: 10px 0;
     }
 }
 .submit{
     width: 200px;
     height: 40px;
     font-size: 14px;
-    margin-top: 20px;
-    border: none;
-    background: #2196F3;
     color: #fff;
 }
 </style>

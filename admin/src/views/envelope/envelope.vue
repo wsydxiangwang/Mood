@@ -10,12 +10,12 @@
                     <p>{{scope.row.content}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="Date">
+            <el-table-column label="Date" width=180>
                 <template slot-scope="scope">
                     <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width=180>
                 <template slot-scope="scope">
                     <el-button size="mini" @click="edit(scope.row._id)">Edit</el-button>
                     <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>

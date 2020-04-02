@@ -1,9 +1,7 @@
 <template>
-    <div class="main">
-		<sidebar></sidebar>
-        <div class="content">
-            <router-view/>
-        </div>
+    <div>
+		你好，我是李白！
+        原本这个世界就有很多东西是并没有什么意义的。
     </div>
 </template>
 
@@ -28,10 +26,5 @@ export default {
         overflow: auto;
         padding: 20px;
     }
-}
-@media screen and (max-width: 600px) {
-.main .content{
-    padding: 0;
-}
 }
 </style>

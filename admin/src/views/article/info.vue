@@ -9,35 +9,35 @@
             </el-input>
         </section>
 
-        <mavon-editor :ishljs="true" codeStyle="monokai-sublime" @change="change" v-model="data.content" ref="md" style="height: 70vh"/>
+        <mavon-editor 
+            :ishljs="true" 
+            @change="change" 
+            v-model="data.content" 
+            ref="md" 
+            style="height: 70vh"
+            :subfield="false"
+        />
 
         <section>
             <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
-
-            <div class="intro">
-                <el-input
-                    placeholder="文章摘要"
-                    v-model="data.describe"
-                    clearable>
-                </el-input>
-            </div>
-            <div class="picture">
-                <el-input
-                    placeholder="音乐地址"
-                    v-model="data.music"
-                    clearable>
-                </el-input>
-            </div>
-            <div class="picture">
-                <el-input
-                    placeholder="封面图片"
-                    v-model="data.image"
-                    clearable>
-                </el-input>
-            </div>
+            <el-input
+                placeholder="文章摘要"
+                v-model="data.describe"
+                clearable>
+            </el-input>
+            <el-input
+                placeholder="音乐地址"
+                v-model="data.music"
+                clearable>
+            </el-input>
+            <el-input
+                placeholder="封面图片"
+                v-model="data.image"
+                clearable>
+            </el-input>
         </section>
 
-        <el-button type="primary" @click="submit">提交</el-button>
+        <el-button type="primary" class="submit" @click="submit">SUBMIT</el-button>
     </div>
 </template>
 
@@ -88,7 +88,6 @@ export default {
             
             if(this.id){
                 this.$http.put(`article/${this.data._id}`, this.data).then(res => {
-                    console.log(res)
                     setTimeout(() => {
                         this.fullscreenLoading = false;
                         if(res.data.status == 1){
@@ -136,27 +135,25 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 section{
-    padding: 10px;
-    margin: 20px 0;
+    padding: 20px;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
-    input{
+    margin-bottom: 15px;
+    .el-input{
         width: 100%;
         height: 38px;
-        padding: 0 10px;
-        border: 1px solid #eee;
-        margin: 10px 0;
+        margin: 5px 0;
     }
+}
+.markdown-body{
+    margin-bottom: 15px;
 }
 .submit{
     width: 200px;
     height: 40px;
     font-size: 14px;
-    margin-top: 20px;
-    border: none;
-    background: #2196F3;
     color: #fff;
 }
 </style>
