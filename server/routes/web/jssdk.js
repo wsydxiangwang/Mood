@@ -15,8 +15,6 @@ module.exports = app => {
             url = req.headers.referer,
             appId = config.appId,
             jsapi_ticket;
-        
-        console.log('1')
 
         // 获取缓存的ticket
         if (cache.get('ticket')) {
@@ -31,7 +29,6 @@ module.exports = app => {
                 signature: crypto.createHash('sha1').update(`jsapi_ticket=${jsapi_ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`).digest('hex')
             };
             res.send(obj)
-            // console.log(obj)
         } else {
             console.log(2, 'ticket')
             // 获取access_token
@@ -44,8 +41,8 @@ module.exports = app => {
                     request(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${tokenMap.access_token}&type=jsapi`, (error, resp, json) => {
                         if (!error && response.statusCode == 200) {
                             var ticketMap = JSON.parse(json);
-                            // 加入缓存
-                            cache.put('ticket', ticketMap.ticket, 1000 * 60 * 60 * 24);
+                            
+                            cache.put('ticket', ticketMap.ticket, 1000 * 60 * 60 * 2); // 加入缓存 7200s
 
                             console.log(ticketMap)
 
@@ -58,7 +55,6 @@ module.exports = app => {
                                 signature: crypto.createHash('sha1').update(`jsapi_ticket=${ticketMap.ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`).digest('hex')
                             }
                             res.send(obj)
-                            // console.log(obj)
                         }
                     })
                 }
