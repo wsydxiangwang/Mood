@@ -1,5 +1,5 @@
 <template>
-    <div class="login">
+    <div class="login" v-loading.fullscreen.lock="loginLoading">
         <input type="text" placeholder="用户名" v-model="data.username">
         <input type="password" placeholder="密码" v-model="data.password">
         <button @click="login">登录</button>
@@ -10,14 +10,16 @@
 export default {
     data(){
         return {
+            loginLoading: false,
             data: {
                 username: '',
-                password: ''
+                password: '',
             }
         }
     },
     methods: {
         async login(){
+            this.loginLoading = true;
             const res = await this.$http.post('/login', this.data);
             /**
              * 登录成功
@@ -27,8 +29,14 @@ export default {
             if(res.data.status === 1){
                 localStorage.setItem("Authorization", res.data.token)
                 this.$router.push('/')
+                this.$message({
+                    message: '登录成功',
+                    type: 'success'
+                });
+                this.loginLoading = false;
             }else{
-                alert(res.data.message)
+                this.$message.error(res.data.message);
+                this.loginLoading = false;
             }
         }
     }

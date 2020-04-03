@@ -1,6 +1,8 @@
 <template>
     <div v-loading.fullscreen.lock="loading">
         
+        <h2>无人问津的心情，在黑纸白字间游荡！</h2>
+
         <mavon-editor 
             @change="change" 
             v-model="data.content" 
@@ -93,16 +95,20 @@ export default {
 
 <style lang="scss" scoped>
 section{
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
-    input{
+    margin: 15px 0;
+    .el-input{
         width: 100%;
         height: 38px;
-        padding: 0 10px;
-        border: 1px solid #eee;
+        margin: 5px 0;
+        /deep/ input{
+            border-color: #eee !important;
+        }
     }
+}
+.markdown-body{
+    height: 70vh;
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
 }
 .submit{
     width: 200px;
@@ -110,4 +116,26 @@ section{
     font-size: 14px;
     color: #fff;
 }
+h2{
+    margin: 10px 0 20px;
+    font-size: 16px;
+    color: #606060;
+}
+
+@media screen and (max-width: 600px) {
+    .markdown-body{
+        height: 80vh !important;
+        box-shadow: none !important;
+    }
+    section{
+        margin: 10px 0;
+        box-shadow: none;
+    }
+    .submit{
+        width: 150px;
+        height: 36px;
+        margin: 0;
+    }
+}
+
 </style>

@@ -1,30 +1,29 @@
 <template>
-    <div class="sidebar">
-        <div class="info">
-            <div class="photo">
-                <img src="../assets/logo.png">
+    <div>
+        <div class="sidebar" :class="show?'show':''">
+            <div class="info">
+                <div class="photo">
+                    <img src="../assets/logo.png">
+                </div>
+                <p class="name">李白不吃茶</p>
             </div>
-            <p class="name">李白不吃茶</p>
-        </div>
-        <el-menu 
-            :default-active="activeIndex" 
-            mode="horizontal" 
-            router
-        >
-            <el-menu-item 
-                v-for="(item, index) in list" 
-                :index="item.path"
-                :key="index"
+            <el-menu 
+                :default-active="activeIndex" 
+                mode="horizontal" 
+                router
             >
-            {{item.title}}</el-menu-item>
-        </el-menu>
-
-        <!-- 
-        <ul>
-            <li v-for="(item, index) in list" :key="index" :class="index == indexTag ? 'active':''">
-                <el-link type="primary" @click="toPage(item.link)">{{item.title}}</el-link>
-            </li>
-        </ul> -->
+                <el-menu-item 
+                    v-for="(item, index) in list" 
+                    :index="item.path"
+                    :key="index"
+                    @click="toPage(item.title)"
+                >
+                    <i :class="item.icon"></i>
+                    {{item.title}}
+                </el-menu-item>
+            </el-menu>    
+        </div>
+        <span class="btn el-icon-heavy-rain" @click="toggle"></span>
     </div>
 </template>
 
@@ -34,55 +33,70 @@ export default {
         return {
             list: [
                 {
-                    icon: '',
-                    title: '首页',
+                    icon: 'el-icon-sunrise-1',
+                    title: 'My world',
                     path: '/',
                 },
                 {
-                    icon: '',
-                    title: 'My Mood',
+                    icon: 'el-icon-heavy-rain',
+                    title: 'Small mood',
                     path: '/article',
                 },
                 {
-                    icon: '',
-                    title: 'Published Mood',
+                    icon: 'el-icon-light-rain',
+                    title: 'New mood',
                     path: '/article/info',
                 },
                 {
-                    icon: '',
+                    icon: 'el-icon-lightning',
                     title: 'A letter',
                     path: '/envelope',
                 },
                 {
-                    icon: '',
+                    icon: 'el-icon-cloudy-and-sunny',
                     title: 'New letter',
                     path: '/envelope/info',
                 },
                 {
-                    icon: '',
+                    icon: 'el-icon-moon-night',
                     title: 'Leave',
                 }
             ],
-            activeIndex: ''
+            activeIndex: '',
+            show: false
         }
     },
     mounted(){
-        console.log(this.$route.path)
         this.activeIndex = this.$route.path;
-        console.log(this.activeIndex)
     },
     methods: {
-        toPage(data){
-            if(data){
-                this.$router.push(data)
+        toggle(){
+            this.show = !this.show;
+            if(this.show){
+                document.getElementsByClassName('container')[0].style.filter = 'blur(1px)'
+                document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
             }else{
-                /**
-                 * 清除token
-                 * 回到登录页
-                 */
-                localStorage.removeItem('Authorization');
-                this.$router.push('/login');
-                console.log('退出登录')
+                document.getElementsByClassName('container')[0].style.filter = ''
+                document.getElementsByClassName('content')[0].style.overflowY = ''
+            }
+        },
+        toPage(data){
+            this.show = false;
+            document.getElementsByClassName('container')[0].style.filter = ''
+            document.getElementsByClassName('content')[0].style.overflowY = ''
+            /**
+             * 清除token
+             * 回到登录页
+             */
+            if(data == 'Leave'){
+                this.$confirm('是否退出登录?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    localStorage.removeItem('Authorization');
+                    this.$router.push('/login');
+                }).catch(() => {})
             }
         }
     }
@@ -103,25 +117,32 @@ export default {
         padding-left: 8px;
         .el-menu-item{
             height: 40px;
-            line-height: 40px;
+            line-height: 42px;
             text-align: center;
             float: none;
             border: none;
             color: #fff;
             font-size: 14px;
             margin-bottom: 5px;
-            padding-left: 35px;
+            padding: 0 0  0 22px;
             text-align: left;
-            &.is-active{
+            border-radius: 20px 0 0 20px;
+            i{
+                color: #fff;
+                vertical-align: text-bottom;
+            }
+            &:hover, &.is-active{
                 color: #0084ff;
                 background: #fff;
-                border-radius: 20px 0 0 20px;
                 position: relative;
                 &:before{
                     content: '';
                 }
                 &:after{
                     content: '';
+                }
+                i{
+                    color: #0084ff;
                 }
             }
         }
@@ -148,15 +169,39 @@ export default {
         }
     }
 }
-
+.btn{
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    background: #c6e1ff;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    color: #0084ff;
+    font-size: 24px;
+    z-index: 999999;
+    display: none;
+}
 @media screen and (max-width: 600px) {
     .sidebar{
         position: fixed;
         left: 0;
         z-index: 9;
-        background: #fff;
         transform: translateX(-100%);
         opacity: 0;
+        width: 60%;
+        max-width: 240px;
+        transition: all .3s;
+        border-radius: 0 20px 20px 0;
+        &.show{
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    .btn{
+        display: block;
     }
 }
 </style>

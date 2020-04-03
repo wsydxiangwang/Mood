@@ -38,11 +38,6 @@ export default {
     },
     created(){
         this.loadData();
-
-        // if(window.innerWidth < 600){
-        //     this.Width = 120
-        // }
-
     },
     methods: {
         async loadData(){
@@ -88,7 +83,6 @@ export default {
 
 <style lang="scss">
 .article{
-    box-shadow: 0 0 10px #eee;
     padding: 20px;
     .header{
         h1{
@@ -129,7 +123,7 @@ export default {
 
 @media screen and (max-width: 600px) {
     .article{
-        padding: 20px;
+        padding: 0;
         box-shadow: none;
         .header h1{
             font-size: 16px;

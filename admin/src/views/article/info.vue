@@ -166,17 +166,17 @@ h2{
 
 @media screen and (max-width: 600px) {
     .markdown-body{
+        height: 100vh !important;
         box-shadow: none !important;
     }
     section{
-        margin: 0;
-        padding: 15px;
+        margin: 10px 0;
         box-shadow: none;
     }
     .submit{
         width: 150px;
         height: 36px;
-        margin: 0 15px 15px;
+        margin: 0;
     }
 }
 </style>

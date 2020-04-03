@@ -17,6 +17,8 @@
             </el-table-column>
             <el-table-column label="操作" width=180>
                 <template slot-scope="scope">
+                    <i class="el-icon-edit" @click="edit(scope.row._id)"></i>
+                    <i class="el-icon-delete" @click="remove(scope.row)"></i>
                     <el-button size="mini" @click="edit(scope.row._id)">Edit</el-button>
                     <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
                 </template>
@@ -77,11 +79,15 @@ export default {
 
 <style lang="scss" scoped>
 .phrase{
-    box-shadow: 0 0 10px #eee;
     padding: 20px;
     .header{
         h1{
-            font-size: 20px;
+            border-left: 2px solid #0084ff;
+            padding-left: 16px;
+            font-size: 18px;
+            font-weight: 400;
+            margin: 20px 0 30px;
+            color: #0084ff;
         }
         .info{
             display: flex;
@@ -102,5 +108,80 @@ export default {
             }
         }
     }
+    .el-icon-edit, .el-icon-delete{
+        display: none;
+    }
+}
+@media screen and (max-width: 600px) {
+    .phrase{
+        padding: 0;
+        box-shadow: none;
+        .header h1{
+            font-size: 16px;
+            margin: 10px 0 20px;
+        }
+    }
+    .el-table__header, .el-table__body{
+        width: 100% !important;
+        display: block;
+        tbody{
+            display: block;
+        }
+        thead{
+            display: block;
+            tr{
+                display: flex;
+                th{
+                    padding: 6px 0;
+                    &:nth-of-type(2){
+                        display: none;
+                    }
+                    &:nth-of-type(1){
+                        flex: 1;
+                    }
+                    &:nth-of-type(3){
+                        width: 68px;
+                        text-align: right;
+                    }
+                    .cell{
+                        padding: 0;
+                    }
+                } 
+            }
+        }
+        .el-table__row{
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            td{
+                &:nth-of-type(2){
+                    display: none;
+                }
+                &:nth-of-type(1){
+                    flex: 1;
+                }
+                &:nth-of-type(3){
+                    width: 68px;
+                    text-align: right;
+                }
+                div{
+                    padding: 0;
+                }
+            }
+            .el-button{
+                display: none;
+            } 
+            .el-icon-edit, .el-icon-delete{
+                display: inline-block;
+                margin: 4px;
+                color: #0084ff;
+                font-size: 16px;
+                &.el-icon-delete{
+                    color: red;
+                }
+            }
+        } 
+    }
+    
 }
 </style>

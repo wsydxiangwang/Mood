@@ -1,8 +1,10 @@
 <template>
     <div class="main">
 		<sidebar></sidebar>
-        <div class="content">
-            <router-view/>
+        <div class="container">
+            <div class="content">
+                <router-view/>
+            </div>
         </div>
     </div>
 </template>
@@ -24,30 +26,46 @@ export default {
     overflow: hidden;
     border-radius: 20px;
     background: #fff;
-    box-shadow: 0 10px 30px #d9d9d9;
+    box-shadow: 0 5px 40px #d2eaff;
     max-width: 1400px;
     margin: auto;
-    .content{
+    background: #0e8bff;
+    .container{
         width: 100%;
         height: 100%;
-        overflow: auto;
-        padding: 80px;
-        &::-webkit-scrollbar-track {
-            background: #fff;
-        }
-        &::-webkit-scrollbar-thumb {
-            background: #eef7ff;
-        }
-        &::-webkit-scrollbar {
-            width: 6px;
+        padding: 40px 0;
+        border-radius: 20px;
+        background: #fff;
+        overflow: hidden;
+        transition: all .3s;
+        .content{
+            width: 100%;
+            height: 100%;
+            padding: 30px 60px;
+            overflow: auto;
+            &::-webkit-scrollbar-track {
+                background: #fff;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #eef7ff;
+            }
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
         }
     }
 }
 
 
 @media screen and (max-width: 600px) {
-.main .content{
-    padding: 0;
+.main{
+    background: none;
+    .container{
+        padding: 10px 0;
+        .content{
+            padding: 20px;
+        }
+    }
 }
 }
 </style>

@@ -18,10 +18,14 @@ a{
 	text-decoration: none;
 }
 #app{
-    background: #1885ff;
     padding: 70px;
     border-radius: 10px;
     height: 100vh;
     width: 100vw;
+}
+@media screen and (max-width: 600px) {
+	#app{
+		padding: 0;
+	}
 }
 </style>
