@@ -18,7 +18,9 @@ module.exports = app => {
 
         // 获取缓存的ticket
         if (cache.get('ticket')) {
+
             console.log(1, 'ticket')
+
             jsapi_ticket = cache.get('ticket');
             var obj = {
                 noncestr: noncestr,
@@ -30,34 +32,50 @@ module.exports = app => {
             };
             res.send(obj)
         } else {
+            
             console.log(2, 'ticket')
-            // 获取access_token
-            request(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`, (error, response, body) => {
-                if (!error && response.statusCode == 200) {
-                    var tokenMap = JSON.parse(body);
 
-                    console.log(tokenMap)
-                    // 获取jsapi_ticket
-                    request(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${tokenMap.access_token}&type=jsapi`, (error, resp, json) => {
-                        if (!error && response.statusCode == 200) {
-                            var ticketMap = JSON.parse(json);
-                            
-                            cache.put('ticket', ticketMap.ticket, 1000 * 60 * 60 * 2); // 加入缓存 7200s
-
-                            console.log(ticketMap)
-
-                            var obj = {
-                                noncestr: noncestr,
-                                timestamp: timestamp,
-                                url: url,
-                                appId: appId,
-                                jsapi_ticket: ticketMap.ticket,
-                                signature: crypto.createHash('sha1').update(`jsapi_ticket=${ticketMap.ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`).digest('hex')
+            // 获取密匙
+            function appSecret(){
+                return new Promise((resolve, reject) => {
+                    request(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`, 
+                        (error, response, body) => {
+                            if (!error && response.statusCode == 200) {
+                                resolve(JSON.parse(body))
                             }
-                            res.send(obj)
-                        }
                     })
+                })
+            }
+
+            // 获取 access_token
+            function accessToken(tokenMap){
+                return new Promise((resolve, reject) => {
+                    request(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${tokenMap.access_token}&type=jsapi`, 
+                        (error, response, body) => {
+                            if (!error && response.statusCode == 200) {                                
+                                console.log(JSON.parse(body))
+                                resolve(JSON.parse(body))
+                            }
+                    })
+                })
+            }
+
+            // 获取成功
+            appSecret()
+            .then((tokenMap) => {
+                return accessToken(tokenMap)
+            })
+            .then((ticketMap) => {
+                cache.put('ticket', ticketMap.ticket, 1000 * 60 * 60 * 2); // 加入缓存 7200s
+                var obj = {
+                    noncestr: noncestr,
+                    timestamp: timestamp,
+                    url: url,
+                    appId: appId,
+                    jsapi_ticket: ticketMap.ticket,
+                    signature: crypto.createHash('sha1').update(`jsapi_ticket=${ticketMap.ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`).digest('hex')
                 }
+                res.send(obj)
             })
         }
     });

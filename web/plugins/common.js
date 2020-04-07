@@ -3,6 +3,7 @@ import Vue from 'vue'
 var comsys = {
 
     install(Vue, option){
+        // 设置滚动条位置
         Vue.prototype.$setScroll = (domObj, number, type) => {
             let t = document.querySelector(domObj).offsetTop;
             let d = document.documentElement.clientHeight;
