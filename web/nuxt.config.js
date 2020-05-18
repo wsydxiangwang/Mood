@@ -8,9 +8,9 @@ module.exports = {
     title: process.env.npm_package_name || '',
     meta: [
       { charset: 'utf-8' },
-      { name: 'author', content: 'Libai' },
+      { name: 'Author', content: 'Libai' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' },
-      { name: 'keywords', content: '白茶, 李白, Libai, 不如吃茶去, 李白茶, 纯音乐, 音乐, 故事, 美文, 习惯独处, 心情小镇, 心情驿站, 李白日记, 心灵驿站, 学习, 加油, 永远相信美好的事情即将发生' },
+      { name: 'keywords', content: '白茶,李白,Libai,web,前端,设计,不如吃茶去,纯音乐,故事,心情小镇,学习,永远相信美好的事情即将发生'},
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' },
       { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
     ],

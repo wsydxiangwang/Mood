@@ -115,7 +115,7 @@
                                         <img :src="require('../static/image/comment/'+item.image+'.jpg')">
                                     </div>
                                     <div class="name">
-                                        <a>{{item.name}}<span v-if="item.author == 'admin'">我亦行人</span></a>
+                                        <a>{{item.name}}<span v-if="item.author == 'admin'">行人</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
                                             <span class="time">{{item.time.time}} {{item.time.monthEn}} {{item.time.day}}, {{item.time.year}}</span>
@@ -138,14 +138,14 @@
                                             <img :src="require('../static/image/comment/'+items.image+'.jpg')">
                                         </div>
                                         <div class="name">
-                                            <a>{{items.name}}<span v-if="items.author == 'admin'">我亦行人</span></a>
+                                            <a>{{items.name}}<span v-if="items.author == 'admin'">行人</span></a>
                                             <div class="r">
                                                 <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                 <span class="time">{{items.time.time}} {{items.time.monthEn}} {{items.time.day}}, {{items.time.year}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="comments-content"><span v-if="items.type != 1" class="reply-name">{{items.reply}}</span> {{items.content}}</div>
+                                    <div class="comments-content"><span v-if="items.type != 1" class="reply-name">{{items.reply}} </span>{{items.content}}</div>
                                 </div>
                             </div>
                         </div>
@@ -918,7 +918,7 @@ export default {
                                 position: absolute;
                                 top: 50%;
                                 font-size: 10px;
-                                padding: 1px 7px;
+                                padding: 1px 6px 1px 8px;
                                 margin-top: 2px;
                                 white-space: nowrap;
                                 background: #a9cff3;
@@ -990,9 +990,10 @@ export default {
                         }
                     }
                     .comments-content{
-                        color:#666;
-                        padding:0;
-                        margin:0 0 0 50px;
+                        color: #666;
+                        padding: 0;
+                        line-height: 22px;
+                        margin: 0 0 0 50px;
                         white-space: pre-wrap;
                         span{
                             color: #fff;
@@ -1002,7 +1003,7 @@ export default {
                             padding: 0 4px;
                             line-height: 20px;
                             border-radius: 10px;
-                            margin-right: 2px;
+                            margin-right: 4px;
                             font-size: 13px;
                         }
                     }

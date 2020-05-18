@@ -306,7 +306,7 @@ export default {
 				line-height: 32px;
 				border-radius: 2px;
 				cursor: pointer;
-				color: #c36a52;
+				color: #ff3600;
 				text-align: center;
 				background: rgba(255, 255, 255, 0.9);
 				span{
@@ -558,6 +558,13 @@ export default {
 					.stuff{
 						bottom: 50px;
 						left: 60px;
+					}
+					.title{
+						margin-top: 10px;
+						line-height: 25px;
+					}
+					.describe{
+						-webkit-line-clamp: 2;
 					}
 				}
 				&:nth-child(odd) .info{

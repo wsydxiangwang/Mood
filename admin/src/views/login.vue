@@ -12,8 +12,8 @@ export default {
         return {
             loginLoading: false,
             data: {
-                username: '',
-                password: '',
+                username: 'Libai',
+                password: 'Libaiwsydxw98521',
             }
         }
     },

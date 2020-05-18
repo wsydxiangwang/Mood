@@ -5,23 +5,12 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
     id: Number,                         
-    music: {
-        type: String,                      // 音乐
-        default: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3'
-    },
-    image: {
-        type: String,                      // 封面
-        default: 'https://image.yeyucm.cn/img/mood-NationalDay/5.jpg'
-    },
+    title: String,                      // 标题
+    words: Number,                      // 字数
     content: String,                    // 内容
+    category: String,                   // 分类 
     describe: String,                   // 描述
     contentHtml: String,                // 内容源码
-    title: String,                      // 标题
-    category: String,                   // 分类
-    hide: {                             // 隐藏
-        type: Boolean,
-        default: false
-    },
     time: {                             // 时间
         date: String,                   
         year: String,
@@ -43,12 +32,20 @@ const schema = new mongoose.Schema({
     read: {                             // 阅读
         type: Number,
         default: 0
-    },                       
-    words: {                            // 字数
-        type: Number,
-        default: 0
+    },                      
+    hide: {                             // 隐藏
+        type: Boolean,
+        default: false
     },
     comment: [],                        // 评论
+    music: {
+        type: String,                      // 音乐
+        default: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3'
+    },
+    image: {
+        type: String,                      // 封面
+        default: 'https://image.yeyucm.cn/img/mood-NationalDay/5.jpg'
+    },
 })
 
 module.exports = mongoose.model('Article', schema)

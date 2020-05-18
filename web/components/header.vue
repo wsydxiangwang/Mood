@@ -52,7 +52,7 @@ export default {
             let music = document.getElementById("music");
             this.isStore = !this.isStore;
             // 播放
-            if(this.isStore){                    
+            if(this.isStore){
                 music.play();
                 // 进度条
                 this.timer = setInterval(() => {

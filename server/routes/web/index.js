@@ -39,7 +39,7 @@ module.exports = app => {
     // All articles
     router.get('/article', async (req, res) => {
         let p = req.query.page || 1;
-        let s = req.query.count || 5;
+        let s = req.query.count || 10;
         let data = await Article.find({hide:false}).sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
         res.send(data)
     })
@@ -53,6 +53,9 @@ module.exports = app => {
 
     // Post a comment
     router.put('/article_comment/:id', (req, res) => {
+
+        console.log(req.body)
+        
         // 回复评论
         if(req.body.type){
             Article.findOneAndUpdate({
@@ -100,6 +103,8 @@ module.exports = app => {
                 }
             })
         }
+
+        // emailFn('1915398623@qq.com')
     })
 
     // like +1
@@ -121,7 +126,6 @@ module.exports = app => {
             })
         res.send(data)
     })
-
 
     // envelope
     router.get('/envelope', async (req, res) => {

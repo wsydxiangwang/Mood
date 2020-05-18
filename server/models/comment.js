@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
     userName: String,
-    
     time: String,
     content: String,
     contentHtml: String,
