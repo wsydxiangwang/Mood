@@ -160,7 +160,7 @@
             <div 
                 class="music-btn" 
                 @click="changeMusic"
-                :class="mobileMusic ? 'show' : 'exit'"
+                :class="[mobileMusic]"
             >
                 <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
                     <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
@@ -207,7 +207,7 @@ export default {
             changeProgress: 0,
 
             percent: 0,
-            mobileMusic: false,
+            mobileMusic: '',
             dashArray: Math.PI * 100,
 
             scrollTop: 0,
@@ -324,15 +324,20 @@ export default {
                 })
             }
         },
-        // 滚动条位置
         handleScroll(){
+            /**
+             * 顶部进度条
+             * title显示 (PC)
+             * 音乐播放控制 (Mobile)
+             */
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
             if(this.scrollTop >= 100){
                 this.title = true;
-                this.mobileMusic = true;
+                this.mobileMusic = 'show';
             }else{
                 this.title = false;
-                this.mobileMusic = false;
+                this.mobileMusic = this.mobileMusic ? 'exit' : '';
             }
 
             var h1 = document.getElementsByClassName('content')[0];
@@ -394,10 +399,14 @@ export default {
                 return;
             }
 
+            /**
+             * 你唯一的ID
+             */
             if(this.comment.name == '李白' && this.comment.email != '1915398623@qq.com'){
                 this.submitStatus = 4;
                 return;
             }
+
             if(!this.comment.content){
                 this.submitStatus = 6;
                 return;
@@ -410,7 +419,7 @@ export default {
             }
 
             // loading
-            this.submitStatus = 9   ;
+            this.submitStatus = 9;
 
             /**
              * 去掉前后空格
@@ -418,10 +427,14 @@ export default {
              */
             this.comment.name = this.comment.name.replace(/(^\s*)|(\s*$)/g, "");
             this.comment.email = this.comment.email.replace(/(^\s*)|(\s*$)/g, "");
-            this.comment.content = this.comment.content.replace(/(^\s*)|(\s*$)/g, "");
+            this.comment.content = this.comment.content.replace(/<script.*?>.*?<\/script>/ig, '');
             this.comment.time = this.dateFormat();
             this.comment.image = Math.floor(Math.random() * 10 + 1);
 
+            /**
+             * 添加管理员标志
+             * 指定管理员头像
+             */
             if(this.comment.email == '1915398623@qq.com'){
                 this.comment.author = 'admin';
                 this.comment.image = 1;
@@ -447,6 +460,7 @@ export default {
                  * 回复对象邮箱
                  */
                 this.comment.id = count;
+
                 // 一级回复
                 if(this.isReply == 1){
                     this.comment.type = 1;
@@ -475,6 +489,7 @@ export default {
                  * 评论数据
                  * 回复模式
                  * 评论索引
+                 * email: 邮件通知的信息
                  */
                 data = {
                     body: newArr,
@@ -1150,12 +1165,15 @@ export default {
     }
     .music-btn{
         opacity: 0;
-        display: block;
+        display: none;
         &.show{
+            display: block;
             visibility: visible;
             animation: fadeInTop 0.6s both;
         }
         &.exit{
+            display: block;
+            opacity: 0;
             animation: fadeInDown 0.6s both;
         }
     }

@@ -11,6 +11,9 @@
         <div class="title" :class="{active: isTitle}">{{title}}</div>
         <div class="r icon">
             <!-- <span class="iconfont icon-wechat" @click="wechat"></span> -->
+            <a href="https://github.com/wsydxiangwang" target="_blank" v-if="github">
+                <span class="iconfont icon-github"></span>
+            </a>
             <span class="myself" @click="myself">
                 <img src="../static/image/myself.png">
             </span>
@@ -27,7 +30,7 @@
 
 <script>
 export default {
-    props: ['music', 'title'],
+    props: ['music', 'title', 'github'],
     data(){
         return{
             isStore: false,
@@ -133,6 +136,15 @@ header{
         &.logo{
             color: #444;
             font-size: 30px;
+        }
+        &.icon-github{
+            font-size: 28px;
+            position: absolute;
+            right: 48px;
+            top: 5px;
+            &:hover{
+                color: #000;
+            }
         }
     }
     .myself{

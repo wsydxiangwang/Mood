@@ -607,14 +607,14 @@ export default {
 				.info{
 					position: static;
 					width: 96%;
-					padding: 30px 20px 40px;
+					padding: 40px 20px 40px;
 					margin: auto;
 					border: none;
 					background: #fff;
 					height: auto;
 					.stuff{
 						position: static;
-						margin: 20px 0 20px;
+						margin: 20px 0 0;
 					}
 				}
 			}
