@@ -197,6 +197,8 @@ header{
                         margin-right: 15px;
                         overflow: hidden;
                         cursor: pointer;
+                        display: flex;
+                        justify-content: center;
                         img{
                             height: 100%;
                         }
