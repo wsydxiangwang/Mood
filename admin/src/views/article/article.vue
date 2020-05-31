@@ -1,21 +1,21 @@
 <template>
-    <div class="article" v-loading.fullscreen.lock="fullscreenLoading">
+    <div class="article">
         <div class="header">
             <h1>文章列表</h1>
         </div>
         
         <el-table :data="articleList" style="width: 100%">
-            <el-table-column label="Name">
+            <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.title}}</p>
                 </template>
             </el-table-column>
             <el-table-column label="Date" :width="Width" class="hidden">
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
+                    <span>{{(scope.row.time).slice(0, 10)}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" :width="Width">
+            <el-table-column label="options" :width="Width">
                 <template slot-scope="scope">
                     <i class="el-icon-edit" @click="edit(scope.row.id)"></i>
                     <i class="el-icon-delete" @click="remove(scope.row)"></i>
@@ -32,7 +32,6 @@ export default {
     data() {
         return {
             articleList: [],
-            fullscreenLoading: false,
             Width: 180
         }
     },
@@ -42,8 +41,8 @@ export default {
     methods: {
         async loadData(){
             const res = await this.$http.get('article');
-            if(res.data){
-                this.articleList = res.data;
+            if(res.data.status === 1){
+                this.articleList = res.data.body;
             }
         },
         edit(id){
@@ -58,15 +57,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.fullscreenLoading = true;
                 this.$http.delete(`article/${item._id}`).then(res => {
-                    this.loadData()
                     setTimeout(() => {
+                        this.loadData()
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
-                        this.fullscreenLoading = false;
                     }, 1000)
                 })
             }).catch(() => {

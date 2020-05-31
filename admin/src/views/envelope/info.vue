@@ -1,5 +1,5 @@
 <template>
-    <div v-loading.fullscreen.lock="loading">
+    <div>
         
         <h2>无人问津的心情，在黑纸白字间游荡！</h2>
 
@@ -12,7 +12,7 @@
         />
 
         <section>
-            <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
+            <date @getDate="getDate" :originalDate="data.time" v-if="hackReset"></date>
         </section>
 
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
@@ -35,60 +35,49 @@ export default {
                 contentHtml: '',        // 内容解析html
                 time: '',               // 时间
             },
-            loading: false,
-            isReset: true,
-            id: '',
+            id: null,
+            hackReset: true
         }
     },
+    created(){
+        this.id = this.$route.query.id;
+        if(this.id) this.loadData(this.id);
+    },
     methods: {
-        // get Time
-        getDate(e){
-            this.data.time = e;
+        async loadData(id){
+            let res = await this.$http.get(`envelope/${id}`)
+            this.data = res.data;
+            this.hackReset = false;
+            this.$nextTick(() => { this.hackReset = true; })
+        },
+        getDate(time){
+            this.data.time = time;
         },
         change(value, render){
             this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
             this.data.content = value;          // 输入的内容
         },
         submit(){
-            this.loading = true;
-            if(this.id){
-                this.$http.put(`/envelope/${this.data._id}`, this.data).then(res => {
-                    setTimeout(() => {
-                        this.loading = false;
-                        this.$message({
-                            message: '修改成功',
-                            type: 'success'
-                        });
-                        this.$router.push('/envelope')
-                    }, 1000)
-                })
-            }else{
-                this.$http.post('/envelope', this.data).then(res => {
-                    setTimeout(() => {
-                        this.loading = false;
-                        this.$message({
-                            message: '添加成功',
-                            type: 'success'
-                        });
-                        this.$router.push('/envelope')
-                    }, 1000)
-                })
+            if(!this.data.content || !this.data.time){
+                this.$message.error('请填写完整的信息');
+                return;
             }
-        },
-        async loadData(id){
-            let res = await this.$http.get(`envelope/${id}`)
+            /**
+             * 编辑或发布
+             */
+            const type = this.id ? `/envelope/${this.data._id}` : '/envelope';
+            const mesg = this.id ? '修改成功' : '发布成功';
 
-            this.data = res.data;
-            console.log(this.data)
-            this.isReset = false;
-            this.$nextTick(() => {
-                this.isReset = true;
+            this.$http.post(type, this.data).then(res => {
+                setTimeout(() => {
+                    this.$message({
+                        message: mesg,
+                        type: 'success'
+                    });
+                    this.$router.push('/envelope')
+                }, 1000)
             })
-        },
-    },
-    created(){
-        this.id = this.$route.query.id;
-        if(this.id) this.loadData(this.id);
+        }
     }
 }
 </script>

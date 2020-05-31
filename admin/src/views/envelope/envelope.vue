@@ -1,21 +1,21 @@
 <template>
-    <div class="phrase" v-loading.fullscreen.lock="loading">
+    <div class="phrase">
         <div class="header">
             <h1>短语列表</h1>
         </div>
 
-        <el-table :data="phraseList" style="width: 100%">
-            <el-table-column label="Content">
+        <el-table :data="data" style="width: 100%">
+            <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.content}}</p>
                 </template>
             </el-table-column>
             <el-table-column label="Date" width=180>
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.year}}-{{scope.row.time.month}}-{{scope.row.time.day}}</span>
+                    <span>{{(scope.row.time).slice(0, 10)}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width=180>
+            <el-table-column label="options" width=180>
                 <template slot-scope="scope">
                     <i class="el-icon-edit" @click="edit(scope.row._id)"></i>
                     <i class="el-icon-delete" @click="remove(scope.row)"></i>
@@ -31,17 +31,16 @@
 export default {
     data() {
         return {
-            phraseList: [],
-            loading: false
+            data: [],
         }
     },
     created(){
-        this.fetch();
+        this.load();
     },
     methods: {
-        async fetch(){
+        async load(){
             const res = await this.$http.get('/envelope');
-            this.phraseList = res.data;
+            this.data = res.data;
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {
@@ -49,15 +48,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.loading = true;
                 this.$http.delete(`envelope/${item._id}`).then(res => {
                     setTimeout(() => {
-                        this.fetch()
+                        this.load()
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
-                        this.loading = false;
                     }, 1000)
                 })
             }).catch(() => {

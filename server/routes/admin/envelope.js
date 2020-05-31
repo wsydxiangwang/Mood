@@ -3,9 +3,9 @@ module.exports = app => {
     const router = express.Router();
 
     const Envelope = require('../../models/envelope')
+    const dateFormat = require('../../plugins/dateFormat'); 
+        
 
-    
-    // 获取文章
     router.get('/envelope', async (req, res) => {
         const data = await Envelope.find({}).sort({time: -1}).limit(20)
         res.send(data)
@@ -16,13 +16,17 @@ module.exports = app => {
         res.send(data)
     })
 
-    router.get('/envelope/:id', async (req, res) => {
-        const data = await Envelope.findById(req.params.id, req.body)
+    /**
+     * edit && get
+     */
+    router.post('/envelope/:id', async (req, res) => {
+        const data = await Envelope.findByIdAndUpdate(req.params.id, req.body)
         res.send(data)
     })
 
-    router.put('/envelope/:id', async (req, res) => {
-        const data = await Envelope.findByIdAndUpdate(req.params.id, req.body)
+    router.get('/envelope/:id', async (req, res) => {
+        const data = await Envelope.findById(req.params.id, req.body)
+        // data._doc['time'] = dateFormat(data.time);
         res.send(data)
     })
 

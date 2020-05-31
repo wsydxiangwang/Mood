@@ -1,7 +1,6 @@
 const express = require('express');
 const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
-// const token = require('jsonwebtoken');
 
 const app = express();
 
@@ -25,7 +24,7 @@ app.use(expressJwt({
     path: ["/admin/api/login"]
 }));
 
-// token过期
+// 中间件
 app.use(function(err, req, res, next) {
     // 跳过前台接口验证
     if(req.originalUrl.slice(1, 4) == 'web'){
@@ -44,8 +43,8 @@ app.use(function(err, req, res, next) {
 });
 
 
-require('./routes/admin')(app)
 require('./routes/admin/login')(app)
+require('./routes/admin/article')(app)
 require('./routes/admin/envelope')(app)
 
 require('./routes/web')(app)

@@ -1,18 +1,28 @@
 import axios from 'axios'
 import router from './router'
+import { Loading } from 'element-ui'
 
 const http = axios.create({
     baseURL: process.env.VUE_APP_URL || '/admin/api',
     timeout: 5000
 })
 
-// http request 拦截器
+let loading;
+
+// request 拦截器
 http.interceptors.request.use(
     config => {
-        let token = localStorage.getItem("Authorization");
-        if(token){
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+
+        // 设置token
+        const token = localStorage.getItem("Authorization");
+        config.headers.Authorization = `Bearer ${token}`;
+
+        // loading
+        loading = Loading.service({
+            target: '.container',
+            background: '#fff'
+        });
+
         return config;
     }, 
     err => {
@@ -20,9 +30,13 @@ http.interceptors.request.use(
     }
 )
 
-// http response 拦截器
+// response 拦截器
 http.interceptors.response.use(
     response => {
+        setTimeout(() => {
+            loading.close();
+            loading = null;
+        }, 500)
         return response;
     },
     error => {

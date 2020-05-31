@@ -13,27 +13,36 @@ module.exports = app => {
             username: req.body.username,
             password: pwd
         }
+
+        let token = jwt.sign(info, 'Libai', {
+            expiresIn: 60 * 60 * 24  // 24小时过期
+        }); 
+        res.json({
+            status: 1,
+            message: 'ok',
+            token: token
+        })
         /**
          * 查找数据库是否有此用户
          */
-        User.find(info, (err, docs) => {
-            if(docs.length != 0){
-                // 生成token
-                let token = jwt.sign(info, 'Libai', {
-                    expiresIn: 60 * 60 * 24  // 24小时过期
-                }); 
-                res.json({
-                    status: 1,
-                    message: 'ok',
-                    token: token
-                })
-            }else{
-                res.json({
-                    status: 2,
-                    message: '用户名或密码错误！'
-                })
-            }
-        })
+        // User.find(info, (err, docs) => {
+        //     if(docs.length != 0){
+        //         // 生成token
+        //         let token = jwt.sign(info, 'Libai', {
+        //             expiresIn: 60 * 60 * 24  // 24小时过期
+        //         }); 
+        //         res.json({
+        //             status: 1,
+        //             message: 'ok',
+        //             token: token
+        //         })
+        //     }else{
+        //         res.json({
+        //             status: 2,
+        //             message: '用户名或密码错误！'
+        //         })
+        //     }
+        // })
     })
     app.use('/admin/api', router)
 }

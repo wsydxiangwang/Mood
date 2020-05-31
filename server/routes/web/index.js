@@ -2,107 +2,126 @@ module.exports = app => {
     const express = require('express');
     const router = express.Router();
     const email = require('../../plugins/email.js'); 
-
-    const Article = require('../../models/article')
-    const Envelope = require('../../models/envelope')
-
-
-    // const fs = require('fs')
-    // const http = require('http')
-    // const path = require('path')
-
-    // function toArrayBuffer(buf) {
-    //     var ab = new ArrayBuffer(buf.length);
-    //     var view = new Uint8Array(ab);
-    //     for (var i = 0; i < buf.length; ++i) {
-    //         view[i] = buf[i];
-    //     }
-    //     return ab;
-    // }
-
-    // // let paths = path.resolve(__dirname, "https://image.yeyucm.cn/music/qianbaidu.mp3");
-    // router.get('/music', (req, res) => {        
-    //     fs.readFile('routes/music/qianbaidu.mp3', (err, data) => {
-    //         if(err){
-    //             console.log(err)
-    //         }else{
-    //             console.log(toArrayBuffer(data))
-    //             res.send(toArrayBuffer(data))
-    //         }
-    //     })
-    // })
     
-
-    // var url = 'http://image.yeyucm.cn/music/qianbaidu.mp3';
-
+    const Comment = require('../../models/comment')
+    const Article = require('../../models/article')
+    const Counter = require('../../models/counter')
+    const Envelope = require('../../models/envelope')
+    const dateFormat = require('../../plugins/dateFormat')
+    const requestResult = require('../../plugins/requestResult')
 
     // All articles
     router.get('/article', async (req, res) => {
-        let p = req.query.page || 1;
-        let s = req.query.count || 10;
-        let data = await Article.find({hide:false}).sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
-        res.send(data)
-    })
+        const p = req.query.page || 1;
+        const s = req.query.count || 10;
+        const data = await Article.find({hide:false}).sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
 
-    // Current article
-    router.get('/article/:id', async (req, res) => {
-        let id = Number(req.params.id)
-        const data = await Article.findOne({id: id})
-        res.send(data)
-    })
-
-    // Post a comment
-    router.put('/article_comment/:id', (req, res) => {
-
-        console.log(req.body)
+        data.forEach(item => {
+            item._doc['time'] = dateFormat(item.time)
+        })
         
-        // 回复评论
-        if(req.body.type){
-            Article.findOneAndUpdate({
-                '_id': req.params.id
-            }, {
-                $set: { 
-                    ['comment.' + req.body.index + '.comments'] : req.body.body 
-                }
-            }, (err, doc) => {
-                if(doc){
-                    res.send({
-                        type: 'reply',
-                        message: 'success',
-                        status: 1
-                    })
-                    emailFn(req.body.email)
-                }else{
-                    res.send({
-                        type: 'reply',
-                        message: err,
-                        status: 2
-                    })
-                }
-            })
+        res.send(data)
+    })
+
+    // Get article
+    router.get('/article/:id', async (req, res) => {
+        const id = Number(req.params.id)
+        const data = await Article.findOne({id: id})
+        data._doc['time'] = dateFormat(data.time)
+        res.send(data)
+    })
+
+    // Get comment
+    router.get('/comment/:id', async (req, res) => {
+        const id = Number(req.params.id)
+        const result = await Comment.find({topic_id: id})
+
+        result.forEach(item => {
+            item._doc['time'] = dateFormat(item.time)
+        })
+        
+        res.send(requestResult(result))
+    })
+    
+    // Post a comment
+    router.post('/comment', async (req, res) => {
+        const commentCount = await Counter.findOneAndUpdate({
+            name: 'comment'
+        }, {
+            $inc: { 'count' : 1 }
+        }, {
+            new: true
+        }, (err, doc) => {
+            return doc;
+        })
+
+        if(commentCount){
+            req.body.id = commentCount.count;
+            const result = await Comment.create(req.body)
+            res.send(requestResult(result))
+        }else{
+            /**
+             * 第一次发表文章
+             * 创建自增id字段
+             */
+            const data = {
+                name: 'comment',
+                count: 1
+            }
+            const count = await Counter.create(data)
+
+            req.body.id = count.count;
+            const result = await Comment.create(req.body)
+            res.send(requestResult(result))
         }
-        // 发表评论
-        else{
-            Article.findOneAndUpdate({
-                '_id': req.params.id
-            }, {
-                $push:{
-                    "comment": req.body
-                }
-            }, (err, doc) => {
-                if(doc){
-                    res.send({
-                        status: 1,
-                        message: 'success'
-                    })
-                }else{
-                    res.send({
-                        status: 2,
-                        message: err
-                    })
-                }
-            })
-        }
+        
+        // // 回复评论
+        // if(req.body.type){
+        //     Article.findOneAndUpdate({
+        //         '_id': req.params.id
+        //     }, {
+        //         $set: { 
+        //             ['comment.' + req.body.index + '.comments'] : req.body.body 
+        //         }
+        //     }, (err, doc) => {
+        //         if(doc){
+        //             res.send({
+        //                 type: 'reply',
+        //                 message: 'success',
+        //                 status: 1
+        //             })
+        //             emailFn(req.body.email)
+        //         }else{
+        //             res.send({
+        //                 type: 'reply',
+        //                 message: err,
+        //                 status: 2
+        //             })
+        //         }
+        //     })
+        // }
+        // // 发表评论
+        // else{
+        //     Article.findOneAndUpdate({
+        //         '_id': req.params.id
+        //     }, {
+        //         $push:{
+        //             "comment": req.body
+        //         }
+        //     }, (err, doc) => {
+        //         if(doc){
+        //             res.send({
+        //                 status: 1,
+        //                 message: 'success'
+        //             })
+        //         }else{
+        //             res.send({
+        //                 status: 2,
+        //                 message: err
+        //             })
+        //         }
+        //     })
+        // }
 
         // emailFn('1915398623@qq.com')
     })
@@ -119,7 +138,7 @@ module.exports = app => {
 
     // read +1
     router.put('/article_read/:id', async (req, res) => {
-        let data = await Article.updateOne({
+        const data = await Article.updateOne({
                 '_id': req.params.id
             }, {
                 $inc: { 'read': 1}

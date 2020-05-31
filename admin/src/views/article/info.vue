@@ -1,5 +1,5 @@
 <template>
-    <div class="article-new" v-loading.fullscreen.lock="fullscreenLoading">
+    <div class="article-new">
 
         <section>
             <h2>无人问津的心情，在黑纸白字间游荡！</h2>
@@ -19,7 +19,11 @@
         />
 
         <section>
-            <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
+            <date 
+                @getDate="getDate" 
+                :originalDate="data.time" 
+                v-if="isReset"
+            ></date>
             <el-input
                 placeholder="文章摘要"
                 v-model="data.describe"
@@ -35,6 +39,10 @@
                 v-model="data.image"
                 clearable>
             </el-input>
+            <el-switch
+                v-model="data.hide"
+                inactive-text="文章是否隐藏">
+            </el-switch>
         </section>
 
         <el-button type="primary" class="submit" @click="submit">SUBMIT</el-button>
@@ -56,12 +64,12 @@ export default {
                 title: '',              // 标题
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
-                time: {},               // 时间
-                category: '',           // 分类
+                describe: '',           // 文章摘要
+                time: '',               // 时间
                 image: '',              // 图片
                 music: '',              // 音乐
+                hide: false,            // 文章是否隐藏
             },
-            fullscreenLoading: false,
             isReset: true,
             id: ''                      // 当前文章id（编辑）
         }
@@ -73,59 +81,54 @@ export default {
             this.data.words = value.length;     // 字数
         },
         submit(){
-            // 时间
-            if(!this.data.time || JSON.stringify(this.data.time) == '{}'){
-                this.$message.error('请选择时间');
-                return;
+            const map = {
+                'title': '请输入标题',
+                'content': '请输入内容',
+                'time': '请选择时间',
             }
+            for(let i in map){
+                if(!this.data[i]){
+                    this.$message.error(`${map[i]}`);
+                    return;
+                }
+            }
+            // 摘要默认内容
+            let describe = this.data.describe;
+            this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
+
             for(let key in this.data){
-                if(this.data[key] == ''){
+                if(this.data[key] === ''){
                     this.$delete(this.data, key)
                 }
             }
 
-            this.fullscreenLoading = true;
-            
-            if(this.id){
-                this.$http.put(`article/${this.data._id}`, this.data).then(res => {
-                    setTimeout(() => {
-                        this.fullscreenLoading = false;
-                        if(res.data.status == 1){
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            });
-                            this.$router.push('/article')
-                        }else{
-                            this.$message.error('修改失败，请重新提交');
-                        }
-                    }, 1000)
-                })
-            }else{
-                this.$http.post('article', this.data).then(res => {
-                    setTimeout(() => {
-                        this.fullscreenLoading = false;
+            const type = this.id ? `article/${this.data._id}` : 'article';
+            const mesg = this.id ? '更新' : '发表';
+
+            this.$http.post(type, this.data).then(res => {
+                setTimeout(() => {
+                    if(res.data.status === 1){
                         this.$message({
-                            message: '发表成功',
+                            message: `${mesg}成功`,
                             type: 'success'
                         });
                         this.$router.push('/article')
-                    }, 1000)
-                })
-            }
+                    }else{
+                        this.$message.error(`${mesg}失败，请检查网络问题!`);
+                    }
+                }, 500)
+            })
         },
         // 获取时间
-        getDate(e){
-            this.data.time = e;
+        getDate(val){
+            this.data.time = val;
         },
         // 获取当前文章的数据
         async loadData(id){
             const res = await this.$http.get(`article/${id}`)
-            this.data = res.data;
+            this.data = res.data.body;
             this.isReset = false;
-            this.$nextTick(() => {
-                this.isReset = true;
-            })
+            this.$nextTick(() => { this.isReset = true; })
         },
     },
     created(){
