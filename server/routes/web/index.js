@@ -36,11 +36,24 @@ module.exports = app => {
         const id = Number(req.params.id)
         const result = await Comment.find({topic_id: id})
 
-        result.forEach(item => {
+        const data = result.reduce((total, item, index, arr) => {    
             item._doc['time'] = dateFormat(item.time)
-        })
+            if(item.type === 1){
+                item._doc['child'] = []
+                total.push(item)
+            }else{
+                total.forEach(i => {
+                    if(i.id === item.parent_id){
+                        i._doc['child'].push(item)
+                    }
+                })
+            }
+            return total
+        }, []).reverse()
         
-        res.send(requestResult(result))
+        const total = result.length;
+        
+        res.send(requestResult({data,total}))
     })
     
     // Post a comment
@@ -75,54 +88,11 @@ module.exports = app => {
             res.send(requestResult(result))
         }
         
-        // // 回复评论
-        // if(req.body.type){
-        //     Article.findOneAndUpdate({
-        //         '_id': req.params.id
-        //     }, {
-        //         $set: { 
-        //             ['comment.' + req.body.index + '.comments'] : req.body.body 
-        //         }
-        //     }, (err, doc) => {
-        //         if(doc){
-        //             res.send({
-        //                 type: 'reply',
-        //                 message: 'success',
-        //                 status: 1
-        //             })
-        //             emailFn(req.body.email)
-        //         }else{
-        //             res.send({
-        //                 type: 'reply',
-        //                 message: err,
-        //                 status: 2
-        //             })
-        //         }
-        //     })
-        // }
-        // // 发表评论
-        // else{
-        //     Article.findOneAndUpdate({
-        //         '_id': req.params.id
-        //     }, {
-        //         $push:{
-        //             "comment": req.body
-        //         }
-        //     }, (err, doc) => {
-        //         if(doc){
-        //             res.send({
-        //                 status: 1,
-        //                 message: 'success'
-        //             })
-        //         }else{
-        //             res.send({
-        //                 status: 2,
-        //                 message: err
-        //             })
-        //         }
-        //     })
-        // }
-
+        // 发送通知邮件
+        const type = req.body.parent_id;
+        if(type){
+            console.log(req.body)
+        }
         // emailFn('1915398623@qq.com')
     })
 

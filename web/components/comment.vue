@@ -1,115 +1,111 @@
 <template>
     <div class="comment">
-        <div class="comment-form" :class="isVerification?'verify':''">
-            <div class="input-box">
-                <input type="text" placeholder="Name" v-model="form.name">
-                <input type="text" placeholder="Email" v-model="form.email">
-            </div>
-            <div class="reply-name" v-if="isReply">
-                <span class="">@{{replyObjs.name || replyObj.name}}</span>
-                <span class="iconfont icon-close" @click="cancel"></span>
-            </div>
-            <textarea class="textarea" placeholder="What do you want to say..." v-model="form.content"></textarea>
+        <div :class="isVerification?'verify':''" style="transition:all .3s">
+            <div class="comment-form">
+                <div class="input-box">
+                    <input type="text" placeholder="Name" v-model="form.name">
+                    <input type="text" placeholder="Email" v-model="form.email">
+                </div>
+                <div class="reply-name" v-if="isReply">
+                    <span class="">@{{replyObj.reply_name}}</span>
+                    <span class="iconfont icon-close" @click="cancel"></span>
+                </div>
+                <textarea class="textarea" placeholder="What do you want to say..." v-model="form.content"></textarea>
 
-            <!-- submit loading -->
-            <div class="bottom">
-                <button type="button" @click="submitVerify" :class="submitStatus == 9?'active':''">SUBMIT</button>
+                <!-- submit loading -->
+                <div class="bottom">
+                    <button type="button" @click="submitVerify" :class="status == 9?'active':''">SUBMIT</button>
 
-                <template v-if="submitStatus == 9">
-                    <div class="hint loading">
-                        <div class="sk-circle selected">
-                            <div class="sk-circle1 sk-child"></div>
-                            <div class="sk-circle2 sk-child"></div>
-                            <div class="sk-circle3 sk-child"></div>
-                            <div class="sk-circle4 sk-child"></div>
-                            <div class="sk-circle5 sk-child"></div>
-                            <div class="sk-circle6 sk-child"></div>
-                            <div class="sk-circle7 sk-child"></div>
-                            <div class="sk-circle8 sk-child"></div>
-                            <div class="sk-circle9 sk-child"></div>
-                            <div class="sk-circle10 sk-child"></div>
-                            <div class="sk-circle11 sk-child"></div>
-                            <div class="sk-circle12 sk-child"></div>
-                        </div>
-                        <span class="loading-text">Submitting...</span>
-                    </div>
-                </template>
-
-                <template v-else-if="submitStatus == 1">
-                    <div class="hint success">
-                        <span class="iconfont icon-success"></span>
-                        <span>评论成功, Nice.</span>
-                    </div>
-                </template>
-
-                <template v-if="submitStatus!=0 && submitStatus!=1 && submitStatus != 9 ">
-                    <div class="hint red">
-                        <span class="iconfont icon-error"></span>
-                        <span v-if="submitStatus == 3">您的名字是第一印象哦～</span>
-                        <span v-else-if="submitStatus == 4">胆敢冒充站长，来人，拉出去砍了！！</span>
-                        <span v-else-if="submitStatus == 5">请输入正确的邮箱，有惊喜的哦～</span>
-                        <span v-else-if="submitStatus == 6">偷偷告诉我，你作文是不是0分～</span>
-                        <span v-else-if="submitStatus == 7">哇哦！遇到错误，要不再试试</span>
-                        <span v-else-if="submitStatus == 8">完成验证才可以提交哦～</span>
-                    </div>
-                </template>
-
-            </div>
-        </div>
-
-        <template v-if="comment.length > 0">
-            <h2><span>Comment List</span><span>({{comment.length}})</span></h2>
-            <div class="comment-list">
-                <!-- 评论列表 -->
-                <div 
-                    class="comment-item" 
-                    v-for="(item, index) in comment" 
-                    :key="index"
-                    :data-id="item.id"
-                >
-                    <div class="comment-item-box">
-                        <div class="head">
-                            <div class="img">
-                                <img :src="require('../static/image/comment/'+item.image+'.jpg')">
+                    <template v-if="status == 6">
+                        <div class="hint loading">
+                            <div class="sk-circle selected">
+                                <div class="sk-circle1 sk-child"></div>
+                                <div class="sk-circle2 sk-child"></div>
+                                <div class="sk-circle3 sk-child"></div>
+                                <div class="sk-circle4 sk-child"></div>
+                                <div class="sk-circle5 sk-child"></div>
+                                <div class="sk-circle6 sk-child"></div>
+                                <div class="sk-circle7 sk-child"></div>
+                                <div class="sk-circle8 sk-child"></div>
+                                <div class="sk-circle9 sk-child"></div>
+                                <div class="sk-circle10 sk-child"></div>
+                                <div class="sk-circle11 sk-child"></div>
+                                <div class="sk-circle12 sk-child"></div>
                             </div>
-                            <div class="name">
-                                <a>{{item.name}}<span v-if="item.author == 'admin'">行人</span></a>
-                                <div class="r">
-                                    <div class="reply" @click="reply(item, 1)">reply</div>
-                                    <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
-                                </div>
-                            </div>
+                            <span class="loading-text">{{hint[status]}}</span>
                         </div>
-                        <div class="comment-content">{{item.content}}</div>
-                    </div>
+                    </template>
 
-                    <!-- 回复评论 -->
-                    <!-- <div class="comments" v-if="item.comments.length > 0">
-                        <div 
-                            class="item" 
-                            v-for="(items, indexs) in item.comments" 
-                            :key="indexs"
-                            :data-id="items.id"
-                        >
+                    <template v-if="status == 7">
+                        <div class="hint success">
+                            <span class="iconfont icon-success"></span>
+                            <span>{{hint[status]}}</span>
+                        </div>
+                    </template>
+
+                    <template v-if="status!=7 && status!=6 && status!=10">
+                        <div class="hint red">
+                            <span class="iconfont icon-error"></span>
+                            <span>{{hint[status]}}</span>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+
+            <template v-if="comment.total > 0">
+                <h2><span>Comment List</span><span>({{comment.total}})</span></h2>
+                <div class="comment-list">
+                    <!-- 评论列表 -->
+                    <div 
+                        class="comment-item" 
+                        v-for="(item, index) in comment.data" 
+                        :key="index"
+                        :data-id="item.id"
+                    >
+                        <div class="comment-item-box">
                             <div class="head">
                                 <div class="img">
-                                    <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                    <img :src="require('../static/image/comment/'+item.image+'.jpg')">
                                 </div>
                                 <div class="name">
-                                    <a>{{items.name}}<span v-if="items.author == 'admin'">行人</span></a>
+                                    <a>{{item.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
                                     <div class="r">
-                                        <div class="reply" @click="reply(item, 2, items)">reply</div>
-                                        <span class="time">{{items.time.time}} {{items.time.monthEn}} {{items.time.day}}, {{items.time.year}}</span>
+                                        <div class="reply" @click="reply(item, 1)">reply</div>
+                                        <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="comments-content"><span v-if="items.type != 1" class="reply-name">{{items.reply}} </span>{{items.content}}</div>
+                            <div class="comment-content">{{item.content}}</div>
                         </div>
-                    </div> -->
-                </div>
-            </div>
-        </template>
 
+                        <!-- 回复评论 -->
+                        <div class="comments" v-if="item.child.length > 0">
+                            <div 
+                                class="item" 
+                                v-for="(items, indexs) in item.child" 
+                                :key="indexs"
+                                :data-id="items.id"
+                            >
+                                <div class="head">
+                                    <div class="img">
+                                        <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                    </div>
+                                    <div class="name">
+                                        <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                        <div class="r">
+                                            <div class="reply" @click="reply(item, 2, items)">reply</div>
+                                            <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
         <!-- 验证 -->
         <div>
             <PuzzleVerification 
@@ -117,7 +113,6 @@
                 :onSuccess="handleSuccess"
                 :verificationShow="isVerification"
                 @clone="isVerificationClone"
-                v-if="isPuzzle"
             ></PuzzleVerification>
         </div>
     </div>
@@ -132,19 +127,26 @@ export default {
     },
     data() {
         return {
-            comment: [],        // 评论列表
-
+            comment: {},        // 评论列表
             form: {},           // 表单数据
 
-            isReply: '',        // 回复
-            replyObj: {},       // 回复对象的信息
-            replyObjs: {},      // 二级回复对象的信息
-
-            loading: true,             // 页面loading
-            submitStatus: 0,          // 提交状态
+            status: 10,          // 提交状态
+            hint: [              // 提示信息
+                '您的名字是第一印象哦～',
+                '胆敢冒充站长，来人，拉出去砍了！！',
+                '请输入正确的邮箱，有惊喜的哦～',
+                '偷偷告诉我，你作文是不是0分～',
+                '哇哦！遇到错误，要不再试试',
+                '完成验证才可以提交哦～',
+                'Submitting...',
+                '提交成功, Nice.'
+            ],
             isVerification: false,      // 验证状态
             verificationSuccess: false, // 验证成功
-            isPuzzle: true
+            loading: true,              // 页面loading
+
+            replyObj: {},       // 回复的信息
+            isReply: false,     // 回复
         }
     },
     mounted(){
@@ -152,13 +154,14 @@ export default {
         this.$axios.get(`comment/${this.id}`).then(res => {
             if(res.data.status === 1){
                 this.comment = res.data.body
+                this.$emit('total', this.comment.total)
             }
         })
     },
     methods: {
         // 取消验证
         isVerificationClone(){
-            this.submitStatus = 8;
+            this.status = 5;
             this.isVerification = false;
             ['header', 'section'].map(item => document.querySelector(item).classList.remove('verify'))
         },
@@ -169,32 +172,26 @@ export default {
             ['header', 'section'].map(item => document.querySelector(item).classList.remove('verify'))
             // 提交评论
             setTimeout(() => {
-                this.submitStatus = 9; // loading
+                this.status = 6; // Submitting
                 this.submit();
             }, 600)
         },
         //取消回复
         cancel(){
-            this.isReply = '';
             this.replyObj = {};
-            this.replyObjs = {};
+            this.isReply = false;
         },
+        // 开启回复
         reply(item, type, items){
-
             // 设置滚动条位置
-            this.$setScroll('.comment', -200, true);
+            // this.$setScroll('.comment', -200, true);
 
-            // 一级回复
-            if(type == 1){
-                this.isReply = 1;
-                this.replyObj = item;
-                this.replyObjs = {};
-            }
-            // 二级回复
-            else{
-                this.isReply = 2;
-                this.replyObj = item;
-                this.replyObjs = items;
+            this.isReply = true;
+            this.replyObj = {
+                parent_id: item.id,
+                type: type == 1 ? 2 : 3,
+                reply_name: type == 1 ? item.name : items.name,
+                reply_email: type == 1 ? item.email : items.email,
             }
         },
         // 提交评论
@@ -214,160 +211,59 @@ export default {
                 topic_id: this.id,
             }
             /**
-             * 添加管理员标志
              * 指定管理员头像
              */
-            if(this.comment.email == '1915398623@qq.com') this.comment.image = 1;
+            if(this.form.email == '1915398623@qq.com') this.form.image = 1;
 
-            this.$axios.post('comment', this.form)
+            const data = Object.assign({}, this.replyObj, this.form);
+
+            this.$axios.post('comment', data)
                 .then(res => {
                     if(res.data.status === 1){
-                        this.submitStatus = 1;
-                        this.verificationSuccess = false;
+                        this.form = {};
+                        this.replyObj = {};
+                        this.status = 7;
+
                         setTimeout(() => {
-                            this.submitStatus = 0;
+                            this.status = 10;
                         }, 3000)
                     }else{
-                        this.verificationSuccess = false;
-                        this.submitStatus = 7;
+                        this.status = 4;
                     }
+                    this.verificationSuccess = false;
                 })
                 .catch(err => {
                     this.verificationSuccess = false;
-                    this.submitStatus = 7;
+                    this.status = 4;
                 })
-
-return
-            this.$axios.put(`article_comment/${this.data._id}`, data)
-                .then(res => {
-                    if(res.data.status == 1){
-                        setTimeout(() => {
-                            /**
-                             * if 回复评论
-                             * el 发表评论
-                             */
-                            if(res.data.type){
-                                this.isReply = '';
-                                this.comment = {};
-                                this.replyObj = {};
-                                this.replyObjs = {};
-                            }else{
-                                this.data.comment.unshift(data)
-                                this.comment = {}
-                            }
-                            this.verificationSuccess = false;
-                            this.submitStatus = 1;
-                            setTimeout(() => {
-                                this.submitStatus = 0;
-                            }, 3000)
-                        }, 1000)
-                    }else{
-                        this.verificationSuccess = false;
-                        this.submitStatus = 7;
-                    }                    
-                })
-                .catch(err => {
-                    this.verificationSuccess = false;
-                    this.submitStatus = 7;
-                })
-
-                
-            var data = '';
-            // 回复评论
-            if(this.isReply){
-                /**
-                 * 根据当前评论id，和最新子评论的id，生成id
-                 */
-                let length = this.replyObj.comments.length;
-                let count = 0;
-                if(length == 0){
-                    count = Number(this.replyObj.id + '001');
-                }else{
-                    count = this.replyObj.comments[length - 1].id;
-                    count++;
-                }
-                /**
-                 * id
-                 * 回复对象名字
-                 * 回复对象邮箱
-                 */
-                this.comment.id = count;
-
-                // 一级回复
-                if(this.isReply == 1){
-                    this.comment.type = 1;
-                    this.comment.reply = '@' + this.replyObj.name;
-                    this.comment.replyEmail = this.replyObj.email;
-                }else{
-                    // 二级回复
-                    this.comment.type = 2;
-                    this.comment.reply = '@' + this.replyObjs.name;
-                    this.comment.replyEmail = this.replyObjs.email;
-                }
-
-                /**
-                 * 当前评论数组的索引
-                 * 所有子评论集合
-                 */
-                let comment = this.data.comment;
-                let index = comment.indexOf(this.replyObj);
-
-                let replyIdx = comment.length - 1 - index;
-                let newArr = this.data.comment[index].comments;
-
-                newArr.push(this.comment)
-
-                /**
-                 * 评论数据
-                 * 回复模式
-                 * 评论索引
-                 * email: 邮件通知的信息
-                 */
-                data = {
-                    body: newArr,
-                    email: {
-                        name: this.comment.reply.slice(1),
-                        email: this.comment.replyEmail,
-                        title: this.data.title,
-                        url: window.location.href
-                    },
-                    type: 'isReply',
-                    index: replyIdx
-                }
-            }
-            // 发表评论
-            else{
-            }
-
-            
         },
         // 提交验证
         submitVerify(){
             // loading 状态
-            if(this.submitStatus == 9) return;
+            if(this.status == 6) return;
 
             const map = {
                 name: () => {
                     return {
-                        code: 3,
+                        code: 0,
                         type: !this.form.name
                     }
                 },
                 admin: () => {
                     return {
-                        code: 4,
+                        code: 1,
                         type: this.form.name == '李白' && this.form.email != '1915398623@qq.com'
                     }
                 },
                 email: ()=>{
                     return {
-                        code: 5,
+                        code: 2,
                         type: !/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.form.email)
                     }
                 },
                 content: () => {
                     return {
-                        code: 6,
+                        code: 3,
                         type: !this.form.content
                     }
                 }
@@ -377,7 +273,7 @@ return
             for(let i in map){
                 const result = map[i]();
                 if(result.type){
-                    this.submitStatus = result.code
+                    this.status = result.code
                     return;
                 }
             }
@@ -402,9 +298,8 @@ return
                 opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]
             }
             const time = `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
-
             return time
-        },
+        }
     }
 }
 </script>
@@ -428,15 +323,15 @@ return
             }
         }
     }
+    .verify{
+        filter: blur(5px);
+    }
     .comment-form{
         border:1px solid #eee;
         margin-bottom:60px;
         border-radius:6px;
         padding:15px 12px;
         transition: all .3s;
-        &.verify{
-            filter: blur(5px);
-        }
         .input-box{
             display:flex;
             input{

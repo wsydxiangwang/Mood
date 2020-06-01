@@ -32,7 +32,7 @@
                 <span>{{data.time.month.cn}}月 {{data.time.day.on}}, {{data.time.year}}</span>
                 <span>阅读 {{data.read}}</span>
                 <span>字数 {{data.words}}</span>
-                <!-- <span>评论 {{data.comment.length}}</span> -->
+                <span>评论 {{commentTotal}}</span>
                 <span>喜欢 {{data.like}}</span>
             </div>
             <div class="content">
@@ -69,7 +69,7 @@
 
         <!-- <div :style="{visibility: isVerification?'visible':'hidden'}"> -->
         <!-- comment -->
-        <Comment :id="data.id"></Comment>
+        <Comment :id="data.id" @total="total"></Comment>
     </div>
 </template>
 
@@ -95,7 +95,9 @@ export default {
             scrollTop: 0,
             timerTop: null,
             scrollTopBtn: false,
-            loading: true
+            loading: true,
+
+            commentTotal: 0,            // 评论数量
         }
     },
     head () {
@@ -151,6 +153,9 @@ export default {
         })
     },
     methods: {
+        total(val){
+            this.commentTotal = val;
+        },
         // 音乐播放
         changeMusic(){
             let music = document.getElementById("music");
@@ -369,6 +374,7 @@ export default {
         /deep/ 
         .markdown-body{
             box-shadow: none !important;
+            min-height: auto;
             p{
                 line-height: 36px;
                 margin: 0 0 22px;

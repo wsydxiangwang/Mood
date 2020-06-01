@@ -51,7 +51,10 @@ module.exports = app => {
                 name: 'articleId',
                 count: 1103
             }
-            const result = await Counter.create(data)
+            const count = await Counter.create(data)
+            
+            req.body.id = count.count;
+            const result = await Article.create(req.body)
             res.send(requestResult(result))
         }
     })
