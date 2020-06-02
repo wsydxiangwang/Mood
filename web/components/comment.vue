@@ -56,53 +56,56 @@
             <template v-if="comment.total > 0">
                 <h2><span>Comment List</span><span>({{comment.total}})</span></h2>
                 <div class="comment-list">
-                    <!-- 评论列表 -->
-                    <div 
-                        class="comment-item" 
-                        v-for="(item, index) in comment.data" 
-                        :key="index"
-                        :data-id="item.id"
-                    >
-                        <div class="comment-item-box">
-                            <div class="head">
-                                <div class="img">
-                                    <img :src="require('../static/image/comment/'+item.image+'.jpg')">
-                                </div>
-                                <div class="name">
-                                    <a>{{item.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
-                                    <div class="r">
-                                        <div class="reply" @click="reply(item, 1)">reply</div>
-                                        <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="comment-content">{{item.content}}</div>
-                        </div>
 
-                        <!-- 回复评论 -->
-                        <div class="comments" v-if="item.child.length > 0">
-                            <div 
-                                class="item" 
-                                v-for="(items, indexs) in item.child" 
-                                :key="indexs"
-                                :data-id="items.id"
-                            >
+                    <transition-group name="move">
+                        <!-- 评论列表 -->
+                        <div 
+                            class="comment-item" 
+                            v-for="(item, index) in comment.data" 
+                            :key="item.id"
+                            :data-id="item.id"
+                        >
+                            <div class="comment-item-box">
                                 <div class="head">
                                     <div class="img">
-                                        <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                        <img :src="require('../static/image/comment/'+item.image+'.jpg')">
                                     </div>
                                     <div class="name">
-                                        <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                        <a>{{item.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
                                         <div class="r">
-                                            <div class="reply" @click="reply(item, 2, items)">reply</div>
-                                            <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                            <div class="reply" @click="reply(item, 1)">reply</div>
+                                            <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
+                                <div class="comment-content">{{item.content}}</div>
+                            </div>
+
+                            <!-- 回复评论 -->
+                            <div class="comments" v-if="item.child.length > 0">
+                                <div 
+                                    class="item" 
+                                    v-for="(items, indexs) in item.child" 
+                                    :key="indexs"
+                                    :data-id="items.id"
+                                >
+                                    <div class="head">
+                                        <div class="img">
+                                            <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                        </div>
+                                        <div class="name">
+                                            <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                            <div class="r">
+                                                <div class="reply" @click="reply(item, 2, items)">reply</div>
+                                                <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </transition-group>
                 </div>
             </template>
         </div>
@@ -184,7 +187,7 @@ export default {
         // 开启回复
         reply(item, type, items){
             // 设置滚动条位置
-            // this.$setScroll('.comment', -200, true);
+            this.$setScroll('.comment', -200, true);
 
             this.isReply = true;
             this.replyObj = {
@@ -221,14 +224,25 @@ export default {
                 type: this.isReply ? 1 : 2,
                 data: Object.assign({}, this.replyObj, this.form),
             }
-
             
-
-            return;
-
             this.$axios.post('comment', formData)
                 .then(res => {
                     if(res.data.status === 1){
+
+                        /**
+                         * 动态添加到页面
+                         */
+                        const data = res.data.body;
+                        if(data.type === 1){
+                            this.comment.data.unshift(data)
+                        }else{
+                            const id = data.parent_id;
+                            this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
+                        }
+
+                        /**
+                         * 恢复默认状态
+                         */
                         this.form = {};
                         this.replyObj = {};
                         this.isReply = false;
@@ -249,6 +263,42 @@ export default {
         },
         // 提交验证
         submitVerify(){
+
+            const data = {
+                "status": 1,
+                "type": 1,
+                "_id": "5ed5ecdb849d0f5cac2bcd00",
+                "name": "上百个啊",
+                "time": {
+                "date": "2020/06/02 14:08",
+                "time": "14:08",
+                "year": "2020",
+                "month": {
+                    "on": "06",
+                    "cn": "六",
+                    "en": "Jun"
+                },
+                "day": {
+                    "on": "02",
+                    "en": "2nd"
+                },
+                "week": {
+                    "on": "二",
+                    "en": "Tuesday"
+                }
+                },
+                "email": "324253@qq.com",
+                "image": 2,
+                "content": "asf",
+                "topic_id": 1125,
+                "id": 333,
+                "__v": 0,
+                "child": []
+            }
+
+            this.comment.data.unshift(data)
+
+            return
             // loading 状态
             if(this.status == 6) return;
 
@@ -316,6 +366,23 @@ export default {
 
 
 <style lang="scss" scoped>
+.move-enter, .move-leave-to
+/* .list-complete-leave-active for below version 2.1.8 */ {
+  animation: bounce-in .5s;
+}
+.move-leave-to, .move-leave-active{
+  animation: bounce-in .5s;
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .comment{
     width: 800px;
     margin: auto;
