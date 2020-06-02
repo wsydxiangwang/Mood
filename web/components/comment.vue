@@ -121,7 +121,7 @@
 <script>
 import PuzzleVerification from '@/components/puzzleVerification'
 export default {
-    props: ['id'],
+    props: ['id', 'title'],
     components: { 
         PuzzleVerification 
     },
@@ -215,13 +215,23 @@ export default {
              */
             if(this.form.email == '1915398623@qq.com') this.form.image = 1;
 
-            const data = Object.assign({}, this.replyObj, this.form);
+            const formData = {
+                title: this.title,
+                url: window.location.href,
+                type: this.isReply ? 1 : 2,
+                data: Object.assign({}, this.replyObj, this.form),
+            }
 
-            this.$axios.post('comment', data)
+            
+
+            return;
+
+            this.$axios.post('comment', formData)
                 .then(res => {
                     if(res.data.status === 1){
                         this.form = {};
                         this.replyObj = {};
+                        this.isReply = false;
                         this.status = 7;
 
                         setTimeout(() => {

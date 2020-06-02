@@ -69,7 +69,7 @@
 
         <!-- <div :style="{visibility: isVerification?'visible':'hidden'}"> -->
         <!-- comment -->
-        <Comment :id="data.id" @total="total"></Comment>
+        <Comment :id="data.id" :title="data.title" @total="total"></Comment>
     </div>
 </template>
 

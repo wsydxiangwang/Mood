@@ -16,7 +16,7 @@ function sendMail(data, call) {
     let mailOptions = {
         from: '"你好，我是李白!" <wsydxiangwang@qq.com>',
         to: data.email,
-        subject: data.title,
+        subject: data.title + ' | 白茶',
         html: data.content,
     };
     transporter.sendMail(mailOptions, (error, response) => {
@@ -29,6 +29,4 @@ function sendMail(data, call) {
     transporter.close(); // 如果没用，关闭连接池
 }
 
-module.exports = {
-    sendMail
-}
+module.exports = sendMail
