@@ -20,6 +20,7 @@
                 >
                     <i :class="item.icon"></i>
                     {{item.title}}
+                    <span v-if="item.title == 'Comment'" class="unread">31</span>
                 </el-menu-item>
             </el-menu>    
         </div>
@@ -56,6 +57,16 @@ export default {
                     icon: 'el-icon-cloudy-and-sunny',
                     title: 'New letter',
                     path: '/envelope/info',
+                },
+                {
+                    icon: 'el-icon-cloudy-and-sunny',
+                    title: 'Comment',
+                    path: '/comment',
+                },
+                {
+                    icon: 'el-icon-cloudy-and-sunny',
+                    title: 'Setting',
+                    path: '/setting',
                 },
                 {
                     icon: 'el-icon-moon-night',
@@ -144,6 +155,20 @@ export default {
                 i{
                     color: #0084ff;
                 }
+            }
+            .unread{
+                background: #fff;
+                color: #0e8bff;
+                font-size: 12px;
+                border-radius: 50%;
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                margin-left: 4px;
+                transform: scale(0.9);
+                vertical-align: super;
             }
         }
     }

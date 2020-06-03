@@ -26,6 +26,7 @@
             <!-- 文章进度条 -->
             <div class="scrollbar" :style="{width: postProgress}"></div>
         </header>
+
         <section>
             <h1 class="title">{{data.title}}</h1>
             <div class="stuff">
@@ -35,13 +36,12 @@
                 <span>评论 {{commentTotal}}</span>
                 <span>喜欢 {{data.like}}</span>
             </div>
+
             <div class="content">
                 <client-only>
                     <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
                 </client-only>
             </div>
-
-            
 
             <!-- music -->
             <audio id="music" loop="loop" preload="auto" ref="audio"></audio>
@@ -67,7 +67,6 @@
 
         </section>
 
-        <!-- <div :style="{visibility: isVerification?'visible':'hidden'}"> -->
         <!-- comment -->
         <Comment :id="data.id" :title="data.title" @total="total"></Comment>
     </div>

@@ -1,5 +1,9 @@
 <template>
-	<div class="puzzle-container" :class="isVerificationShow?'show':'exit'">
+	<!-- 避免初始化在页面显示，若有更好的方法，发我邮件，我想学习 /笑哭 -->
+	<div 
+		class="puzzle-container" 
+		:class="[isVerificationShow === true?'show':'', isVerificationShow === false?'exit':'',]"
+	>
 		<div class="puzzle-header">
 			<span class="puzzle-header-left">拖动下方滑块完成拼图</span>
 			<div>
@@ -48,7 +52,7 @@ export default {
 	name: "puzzleVerification",
 	data() {
 		return {
-			isVerificationShow: false,
+			isVerificationShow: '',
 			moveStart: "",
 			displayTips: false,
 			verification: false,
@@ -74,6 +78,7 @@ export default {
 			this.$emit('setVisible', val);
 		},
 		verificationShow(val) {
+			console.log(val)
 			this.isVerificationShow = val;
 		}
 	},
@@ -457,6 +462,8 @@ export default {
 	box-shadow: 0 0 10px #dbdbdb;
 	margin: 0 0 0 -145px;
 	z-index: 99999;
+	opacity: 0;
+	visibility: hidden;
 	&.show{
 		animation: fadeInTop 0.6s both;
 	}

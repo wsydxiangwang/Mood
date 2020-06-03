@@ -31,7 +31,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="content" :style="{paddingBottom: loadingType == 'nomore'?'100px':'200px'}">
+		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
 					<img :src="item.image">
@@ -57,6 +57,7 @@
 					<div class="dot"></div>
 				</div>
 				<div class="btn" @click="loadMore" v-if="loadingType == 'more'">加载更多</div>
+				<div class="btn" v-if="loadingType == 'nomore'">呜呜，没有更多了~~</div>
 			</div>
 		</div>
 		<div class="foot">

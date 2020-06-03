@@ -35,6 +35,16 @@ const routes = [
 				name: "envelopeInfo",
 				component: resolve => require(['@/views/envelope/info'], resolve)
 			},
+			{
+				path: '/comment',
+				name: "comment",
+				component: resolve => require(['@/views/comment'], resolve)
+			},
+			{
+				path: '/setting',
+				name: "setting",
+				component: resolve => require(['@/views/setting'], resolve)
+			},
 		]
 	},
 	{

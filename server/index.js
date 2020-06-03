@@ -44,6 +44,7 @@ app.use(function(err, req, res, next) {
 
 
 require('./routes/admin/login')(app)
+require('./routes/admin/comment')(app)
 require('./routes/admin/article')(app)
 require('./routes/admin/envelope')(app)
 

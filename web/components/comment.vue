@@ -1,6 +1,6 @@
 <template>
     <div class="comment">
-        <div :class="isVerification?'verify':''" style="transition:all .3s">
+        <section class="comment-section" style="transition:all .3s">
             <div class="comment-form">
                 <div class="input-box">
                     <input type="text" placeholder="Name" v-model="form.name">
@@ -109,14 +109,15 @@
                     </transition-group>
                 </div>
             </template>
-        </div>
+        </section>
+        
         <!-- 验证 -->
         <div>
             <PuzzleVerification 
                 blockType="puzzle" 
-                :onSuccess="handleSuccess"
+                :onSuccess="verifyResult"
                 :verificationShow="isVerification"
-                @clone="isVerificationClone"
+                @clone="verifyResult"
             ></PuzzleVerification>
         </div>
     </div>
@@ -135,7 +136,7 @@ export default {
             form: {},           // 表单数据
 
             status: 10,          // 提交状态
-            hint: [              // 提示信息
+            hint: [              // 状态提示信息
                 '您的名字是第一印象哦～',
                 '胆敢冒充站长，来人，拉出去砍了！！',
                 '请输入正确的邮箱，有惊喜的哦～',
@@ -146,13 +147,11 @@ export default {
                 '提交成功, Nice.'
             ],
 
-            isVerification: false,      // 验证状态
+            isVerification: false,      // 开启状态
             verificationSuccess: false, // 验证成功
 
-            loading: true,              // 页面loading
-
+            isReply: false,     // 开启回复
             replyObj: {},       // 回复的信息
-            isReply: false,     // 回复
         }
     },
     mounted(){
@@ -160,26 +159,23 @@ export default {
         this.$axios.get(`comment/${this.id}`).then(res => {
             if(res.data.status === 1){
                 this.comment = res.data.body
-                this.$emit('total', this.comment.total)
+                this.$emit('total', this.comment.total) // 评论总数
             }
         })
     },
     methods: {
-        // 取消验证
-        isVerificationClone(){
-            this.status = 5;
+        verifyResult(type){
+            ['header', 'section', '.comment-section'].map(item => {
+                document.querySelector(item).classList.remove('verify')
+            })
             this.isVerification = false;
-            ['header', 'section'].map(item => document.querySelector(item).classList.remove('verify'))
-        },
-        // 验证通过
-        handleSuccess(){
-            this.isVerification = false;
-            this.verificationSuccess = true;
-            ['header', 'section'].map(item => document.querySelector(item).classList.remove('verify'))
-            // 提交评论
             setTimeout(() => {
-                this.status = 6; // Submitting
-                this.submit();
+                if(type){
+                    this.status = 5;
+                }else{
+                    this.status = 6;
+                    this.submit(); // Submitting
+                }
             }, 600)
         },
         //取消回复
@@ -199,70 +195,6 @@ export default {
                 reply_name: type == 1 ? item.name : items.name,
                 reply_email: type == 1 ? item.email : items.email,
             }
-        },
-        // 提交评论
-        submit(){
-            /**
-             * 去掉前后空格
-             * 过滤script
-             * 添加当前时间
-             * 添加随机头像
-             */
-            this.form = {
-                name: this.form.name.trim(),
-                time: this.dateFormat(),
-                email: this.form.email.trim(),
-                image: Math.floor(Math.random() * 10 + 1),
-                content: this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, ''),
-                topic_id: this.id,
-            }
-            /**
-             * 指定管理员头像
-             */
-            if(this.form.email == '1915398623@qq.com') this.form.image = 1;
-
-            const formData = {
-                title: this.title,
-                url: window.location.href,
-                type: this.isReply ? 1 : 2,
-                data: Object.assign({}, this.replyObj, this.form),
-            }
-            
-            this.$axios.post('comment', formData)
-                .then(res => {
-                    if(res.data.status === 1){
-
-                        /**
-                         * 动态添加到页面
-                         */
-                        const data = res.data.body;
-                        if(data.type === 1){
-                            this.comment.data.unshift(data)
-                        }else{
-                            const id = data.parent_id;
-                            this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
-                        }
-
-                        /**
-                         * 恢复默认状态
-                         */
-                        this.form = {};
-                        this.replyObj = {};
-                        this.isReply = false;
-                        this.status = 7;
-
-                        setTimeout(() => {
-                            this.status = 10;
-                        }, 3000)
-                    }else{
-                        this.status = 4;
-                    }
-                    this.verificationSuccess = false;
-                })
-                .catch(err => {
-                    this.verificationSuccess = false;
-                    this.status = 4;
-                })
         },
         // 提交验证
         submitVerify(){
@@ -305,11 +237,72 @@ export default {
                 }
             }
 
-            // 滑动验证 最后一步验证
-            if(!this.verificationSuccess){
-                ['header', 'section'].map(item => document.querySelector(item).classList.add('verify'))
-                this.isVerification = true;
+            // 开启滑动验证
+            ['header', 'section', '.comment-section'].map(item => {
+                document.querySelector(item).classList.add('verify')
+            })
+            this.isVerification = true;
+        },
+        // 提交评论
+        submit(){
+            /**
+             * 去掉前后空格
+             * 过滤script
+             * 添加当前时间
+             * 添加随机头像
+             */
+            this.form = {
+                name: this.form.name.trim(),
+                time: this.dateFormat(),
+                email: this.form.email.trim(),
+                image: Math.floor(Math.random() * 10 + 1),
+                content: this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, ''),
+                topic_id: this.id,
             }
+            /**
+             * 指定管理员头像
+             */
+            if(this.form.email == '1915398623@qq.com') this.form.image = 1;
+
+            const formData = {
+                title: this.title,
+                url: window.location.href,
+                type: this.isReply ? 1 : 2,
+                data: Object.assign({}, this.replyObj, this.form),
+            }
+            
+            this.$axios.post('comment', formData)
+                .then(res => {
+                    if(res.data.status === 1){
+                        /**
+                         * 动态添加到页面
+                         */
+                        const data = res.data.body;
+                        if(data.type === 1){
+                            this.comment.data.unshift(data)
+                        }else{
+                            const id = data.parent_id;
+                            this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
+                        }
+
+                        /**
+                         * 恢复默认状态
+                         */
+                        this.form = {};
+                        this.replyObj = {};
+                        this.isReply = false;
+                        this.status = 7;
+
+                        setTimeout(() => {
+                            this.status = 10;
+                        }, 3000)
+                    }else{
+                        this.status = 4;
+                    }
+                })
+                .catch(err => {
+                    this.status = 4;
+                })
         },
         // 时间
         dateFormat(){
@@ -344,6 +337,9 @@ export default {
     opacity: 0;
 }
 
+.verify{
+    filter: blur(5px);
+}
 .comment{
     width: 800px;
     margin: auto;
@@ -360,9 +356,6 @@ export default {
                 border-bottom:1px solid #666;
             }
         }
-    }
-    .verify{
-        filter: blur(5px);
     }
     .comment-form{
         border:1px solid #eee;

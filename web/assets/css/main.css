@@ -11,17 +11,14 @@ html, body, p, input, textarea, button, div, span {
 	font-family: 'eafont';
 	src: url('../../static/font/eafont.ttf') format('truetype');
 }
-.test-enter-active, .test-leave-active{
-	transition: all 1s;
-  }
-  .test-enter,.test-leave-active{
+.test-enter-active, .test-leave-active {
+	transition: all .5s;
+	}
+	.test-enter, .test-leave-active {
 	/* opacity: 0; */
 	transform: translateX(-100%);
-  }
-  .test-leave-to{
-	transform: translateX(-100%);
-  }
-
+	}
+	
   .fold-left-enter-active {
     animation-name: fold-left-in;
     animation-duration: .3s;

@@ -7,8 +7,6 @@ const http = axios.create({
     timeout: 5000
 })
 
-let loading;
-
 // request 拦截器
 http.interceptors.request.use(
     config => {
@@ -16,12 +14,6 @@ http.interceptors.request.use(
         // 设置token
         const token = localStorage.getItem("Authorization");
         config.headers.Authorization = `Bearer ${token}`;
-
-        // loading
-        loading = Loading.service({
-            target: '.container',
-            background: '#fff'
-        });
 
         return config;
     }, 
@@ -33,10 +25,6 @@ http.interceptors.request.use(
 // response 拦截器
 http.interceptors.response.use(
     response => {
-        setTimeout(() => {
-            loading.close();
-            loading = null;
-        }, 500)
         return response;
     },
     error => {
