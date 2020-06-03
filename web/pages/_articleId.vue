@@ -63,7 +63,7 @@
             </div>
 
             <!-- loading -->
-            <Loading v-if="loading"></Loading>
+            <!-- <Loading v-if="loading"></Loading> -->
 
         </section>
 
@@ -76,6 +76,7 @@
 <script>
 import Comment from '@/components/comment'
 export default {
+    transition: 'test',
 	components: { Comment },
     data(){
         return{
@@ -254,6 +255,8 @@ export default {
 
 <style lang="scss" scoped>
 .articleld {
+    position: absolute;
+    width: 100%;
     section{
         width: 800px;
         margin: auto;

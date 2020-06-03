@@ -56,12 +56,11 @@
             <template v-if="comment.total > 0">
                 <h2><span>Comment List</span><span>({{comment.total}})</span></h2>
                 <div class="comment-list">
-
-                    <transition-group name="move">
+                    <transition-group name="comment-item">
                         <!-- 评论列表 -->
                         <div 
                             class="comment-item" 
-                            v-for="(item, index) in comment.data" 
+                            v-for="item in comment.data" 
                             :key="item.id"
                             :data-id="item.id"
                         >
@@ -83,26 +82,28 @@
 
                             <!-- 回复评论 -->
                             <div class="comments" v-if="item.child.length > 0">
-                                <div 
-                                    class="item" 
-                                    v-for="(items, indexs) in item.child" 
-                                    :key="indexs"
-                                    :data-id="items.id"
-                                >
-                                    <div class="head">
-                                        <div class="img">
-                                            <img :src="require('../static/image/comment/'+items.image+'.jpg')">
-                                        </div>
-                                        <div class="name">
-                                            <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
-                                            <div class="r">
-                                                <div class="reply" @click="reply(item, 2, items)">reply</div>
-                                                <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                <transition-group name="comment-child">
+                                    <div 
+                                        class="item" 
+                                        v-for="items in item.child" 
+                                        :key="items.id"
+                                        :data-id="items.id"
+                                    >
+                                        <div class="head">
+                                            <div class="img">
+                                                <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                            </div>
+                                            <div class="name">
+                                                <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                                <div class="r">
+                                                    <div class="reply" @click="reply(item, 2, items)">reply</div>
+                                                    <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
                                     </div>
-                                    <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
-                                </div>
+                                </transition-group>
                             </div>
                         </div>
                     </transition-group>
@@ -144,8 +145,10 @@ export default {
                 'Submitting...',
                 '提交成功, Nice.'
             ],
+
             isVerification: false,      // 验证状态
             verificationSuccess: false, // 验证成功
+
             loading: true,              // 页面loading
 
             replyObj: {},       // 回复的信息
@@ -263,45 +266,9 @@ export default {
         },
         // 提交验证
         submitVerify(){
-
-            const data = {
-                "status": 1,
-                "type": 1,
-                "_id": "5ed5ecdb849d0f5cac2bcd00",
-                "name": "上百个啊",
-                "time": {
-                "date": "2020/06/02 14:08",
-                "time": "14:08",
-                "year": "2020",
-                "month": {
-                    "on": "06",
-                    "cn": "六",
-                    "en": "Jun"
-                },
-                "day": {
-                    "on": "02",
-                    "en": "2nd"
-                },
-                "week": {
-                    "on": "二",
-                    "en": "Tuesday"
-                }
-                },
-                "email": "324253@qq.com",
-                "image": 2,
-                "content": "asf",
-                "topic_id": 1125,
-                "id": 333,
-                "__v": 0,
-                "child": []
-            }
-
-            this.comment.data.unshift(data)
-
-            return
             // loading 状态
             if(this.status == 6) return;
-
+            
             const map = {
                 name: () => {
                     return {
@@ -366,21 +333,15 @@ export default {
 
 
 <style lang="scss" scoped>
-.move-enter, .move-leave-to
-/* .list-complete-leave-active for below version 2.1.8 */ {
-  animation: bounce-in .5s;
-}
-.move-leave-to, .move-leave-active{
-  animation: bounce-in .5s;
-}
-
-@keyframes bounce-in {
-  0% {
+/**
+ * 过渡   
+ */
+.comment-item-enter, .comment-item-leave-to{
     opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+    margin-top: -118px;
+}
+.comment-child-enter, .comment-child-leave-to{
+    opacity: 0;
 }
 
 .comment{
@@ -467,10 +428,12 @@ export default {
         }
     }
     .comment-list{
-        padding:0 0 60px;
+        padding: 0 0 60px;
+        overflow: hidden;
         .comment-item{
-            padding:25px 0;
-            border-bottom:1px solid #f6f7f8;
+            padding: 25px 0;
+            border-bottom: 1px solid #f6f7f8;
+            transition : margin 1s, opacity 2s;
             .comment-item-box:hover{
                 .head .name .r .reply{
                     opacity: 1;
@@ -561,7 +524,8 @@ export default {
             padding-left:45px;
             margin-top:38px;
             .item{
-                margin-top:32px;
+                margin-top: 32px;
+                transition: all 2s;
                 &:hover{
                     .head .name .r .reply{
                         opacity: 1;

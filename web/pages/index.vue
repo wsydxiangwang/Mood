@@ -64,7 +64,7 @@
 		</div>
 
 		<!-- loading -->
-		<Loading v-if="loading"></Loading>
+		<!-- <Loading v-if="loading"></Loading> -->
 	</div>
 </template>
 
@@ -116,7 +116,6 @@ export default {
 		this.loading = true;
 	},
 	mounted(){
-		console.log(this.articleList)
 		this.$nextTick(() => {
 			// 微信分享
             this.$wxShare(this, 1);
@@ -268,6 +267,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .index{
+	position: absolute;
+	width: 100%;
 	#scene{
 		height: 100%;
 		position: relative;
