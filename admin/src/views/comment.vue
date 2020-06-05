@@ -1,7 +1,7 @@
 <template>
     <div class="phrase">
         <div class="header">
-            <h1>评论列表</h1>
+            <h1>评论列表{{total}}</h1>
         </div>
 
         <el-table :data="data" style="width: 100%">
@@ -12,7 +12,7 @@
             </el-table-column>
             <el-table-column label="Date" width=180>
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.time}} {{scope.row.time.month.en}} {{scope.row.time.day.on}}, {{scope.row.time.year}}</span>
+                    <span>{{scope.row.time.time}} {{scope.row.time.month.en}} {{scope.row.time.day.on}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="options" width=180>
@@ -24,6 +24,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+            :page-size="size"
+            :pager-count="11"
+            :total="total"
+            @current-change="page"
+            layout="prev, pager, next"
+        >
+        </el-pagination>
     </div>
 </template>
 
@@ -32,15 +40,21 @@ export default {
     data() {
         return {
             data: [],
+            total: 0,
+            size: 10
         }
     },
     created(){
         this.load();
     },
     methods: {
+        page(val){
+            console.log(val)
+        },
         async load(){
             const res = await this.$http.get('/comment');
             this.data = res.data.body.data;
+            this.total = res.data.body.total;
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {
