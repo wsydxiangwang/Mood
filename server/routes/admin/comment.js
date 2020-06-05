@@ -2,12 +2,13 @@ module.exports = app => {
     const express = require('express');
     const router = express.Router();
 
+    const Article = require('../../models/article')
     const Comment = require('../../models/comment')        
     const Counter = require('../../models/counter')
     const dateFormat = require('../../plugins/dateFormat')
     const requestResult = require('../../plugins/requestResult')
 
-    const email = require('../../plugins/email')
+    const sendEmail = require('../../plugins/email')
 
     // Get comment
     router.get('/comment', async (req, res) => {
@@ -46,8 +47,15 @@ module.exports = app => {
         const result = await Comment.create(req.body)
         res.send(requestResult(result))
         
-        // 发送通知邮件
-        // email(req.body)
+        const articleData = await Article.findOne({id: req.body.topic_id})
+
+        const title = articleData.title,
+              url = req.body.url,
+              name = req.body.reply_name,
+              email = req.body.reply_email;
+
+        // 发送邮件
+        sendEmail(title, url, name, email)
     })
 
     app.use('/admin/api', router)

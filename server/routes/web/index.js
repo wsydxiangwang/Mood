@@ -7,7 +7,7 @@ module.exports = app => {
     const Counter = require('../../models/counter')
     const Envelope = require('../../models/envelope')
 
-    const email = require('../../plugins/email')
+    const sendEmail = require('../../plugins/email')
     const dateFormat = require('../../plugins/dateFormat')
     const requestResult = require('../../plugins/requestResult')
 
@@ -95,8 +95,13 @@ module.exports = app => {
 
         res.send(requestResult(result))
         
-        // 发送通知邮件
-        // email(req.body)
+        const title = req.body.title,
+              url = req.body.url,
+              name = req.body.data.reply_name,
+              email = req.body.data.reply_email;
+
+        // 发送邮件
+        // sendEmail(title, url, name, email)
     })
 
     // like +1

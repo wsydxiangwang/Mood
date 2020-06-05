@@ -1,6 +1,4 @@
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production') {
-  console.log('baidu')
   var _hmt = _hmt || [];
   (function() {
     var hm = document.createElement("script");
@@ -14,7 +12,6 @@ if (process.env.NODE_ENV === 'production') {
 export default ({ app: { router }, store }) => {
   router.afterEach((to, from) => {
     if (process.env.NODE_ENV === 'production') {
-      console.log('baidu2')
       var _hmt = _hmt || [];
       (function() {
         document.getElementById('baidu_tj') && document.getElementById('baidu_tj').remove();

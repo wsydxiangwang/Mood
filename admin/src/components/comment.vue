@@ -42,7 +42,7 @@ export default {
                 parent_id: this.message.parent_id || this.message.id,
             }
             data.type = this.message.type == 1 ? 2 : 3;
-            
+
             this.$http.post('comment', data).then(res => {
                 if(res.data.status === 1){
                     this.$message({
@@ -56,7 +56,6 @@ export default {
                 this.$message.error('出错了，刷新重试一下');
                 this.close()
             })
-
         },
         close(){
             this.content = ''
