@@ -4,6 +4,14 @@
 	</div>
 </template>
 
+<script>
+export default {
+	created(){
+		console.log(3)
+	}
+}
+</script>
+
 <style>
 * {
 	margin: 0;

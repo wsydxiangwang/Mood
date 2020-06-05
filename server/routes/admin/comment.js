@@ -3,34 +3,51 @@ module.exports = app => {
     const router = express.Router();
 
     const Comment = require('../../models/comment')        
+    const Counter = require('../../models/counter')
     const dateFormat = require('../../plugins/dateFormat')
     const requestResult = require('../../plugins/requestResult')
+
+    const email = require('../../plugins/email')
 
     // Get comment
     router.get('/comment', async (req, res) => {
         const p = req.query.page || 1;
-        const s = req.query.count || 2;
+        const s = req.query.count || 10;
         const result = await Promise.all([
-            Comment.count(),
-            Comment.find().limit(Number(s)).skip(Number(s)*(p-1))
+            Comment.countDocuments(),
+            Comment.find().sort({"time":-1}).limit(Number(s)).skip(Number(s)*(p-1))
         ])
 
-        const data = result[1].reduce((total, item, index, arr) => {    
-            item._doc['time'] = dateFormat(item.time)
-            if(item.type === 1){
-                item._doc['child'] = []
-                total.push(item)
-            }else{
-                total.forEach(i => {
-                    if(i.id === item.parent_id){
-                        i._doc['child'].push(item)
-                    }
-                })
-            }
-            return total
-        }, []).reverse()
+        result[1].forEach(item => item._doc['time'] = dateFormat(item.time) )
 
-        res.send(requestResult({total: result[0], data, page: p}))
+        res.send(requestResult({total: result[0], data: result[1], page: p}))
+    })
+
+    // Delete
+    router.delete('/comment/:id', async (req, res) => {
+        const data = await Comment.findByIdAndDelete(req.params.id)
+        res.send(requestResult(data))
+    })
+
+    // Reply
+    router.post('/comment', async (req, res) => {
+        const commentCount = await Counter.findOneAndUpdate({
+            name: 'comment'
+        }, {
+            $inc: { 'count' : 1 }
+        }, {
+            new: true
+        }, (err, doc) => {
+            return doc;
+        })
+
+        // 添加评论id
+        req.body.id = commentCount.count;
+        const result = await Comment.create(req.body)
+        res.send(requestResult(result))
+        
+        // 发送通知邮件
+        // email(req.body)
     })
 
     app.use('/admin/api', router)

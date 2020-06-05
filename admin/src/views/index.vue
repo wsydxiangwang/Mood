@@ -12,9 +12,7 @@
 <script>
 import sidebar from "@/components/sidebar";
 export default {
-	components: {
-		sidebar
-	}
+	components: { sidebar },
 }
 </script>
 
@@ -41,7 +39,7 @@ export default {
         .content{
             width: 100%;
             height: 100%;
-            padding: 30px 60px;
+            padding: 0 60px;
             overflow: auto;
             &::-webkit-scrollbar-track {
                 background: #fff;
