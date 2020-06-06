@@ -9,7 +9,6 @@ const schema = new mongoose.Schema({
     email_pass: String,     // 邮箱pass
 
 
-    baidu: String,          // 百度统计
     address: String,        // 域名
 
 })
