@@ -1,6 +1,7 @@
 const express = require('express');
 const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
+const router = express.Router();
 
 const app = express();
 
@@ -12,11 +13,18 @@ app.use(require('cors')())
 app.use(express.json())
 
 app.use('/admin', express.static(__dirname + '/admin'))
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
-
+// app.get('/uploads/*', function (req, res) {
+//     console.log( __dirname + "/" + req.url )
+//     res.sendFile( __dirname + "/" + req.url );
+// })
+// app.get('/', function (req, res) {
+//     res.send('Hello World');
+//   })
 /**
  * 验证token是否过期 
- * 并规定不用验证路由
+ * 前台无需验证路由
  */
 app.use(expressJwt({
     secret: "Libai"
@@ -47,6 +55,7 @@ require('./routes/admin/login')(app)
 require('./routes/admin/comment')(app)
 require('./routes/admin/article')(app)
 require('./routes/admin/envelope')(app)
+require('./routes/admin/upload')(app)
 
 require('./routes/web')(app)
 require('./routes/web/jssdk')(app)
