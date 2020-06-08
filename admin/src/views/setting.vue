@@ -3,7 +3,6 @@
         <div class="header">
             <h1>网站信息</h1>
         </div>
-<img src="/uploads/image/1591522810649.jpg" alt="">
         <el-form ref="form" :model="form" label-width="100px">
             <template v-for="(item, index) in formList[0]">
                 <el-form-item :label="item.value" v-if="!item.show" :key="index">
@@ -14,9 +13,9 @@
                             class="avatar-uploader"
                             :auto-upload="false"
                             :show-file-list="false"
-                            :on-change="avatar"
+                            :on-change="avatarUpload"
                         >
-                            <img v-if="image[0].url" :src="form.avatar || image[0].url">
+                            <img v-if="avatar['url'] || form.avatar" :src="form.avatar || avatar['url']">
                             <i v-else class="el-icon-user"></i>
                         </el-upload>
                     </template>
@@ -62,9 +61,9 @@
                             class="cover"
                             :auto-upload="false"
                             :show-file-list="false"
-                            :on-change="cover"
+                            :on-change="coverUpload"
                         >
-                            <img v-if="image[1].url" :src="form.cover['image'] || image[1].url">
+                            <img v-if="cover['url'] || form.cover['image']" :src="form.cover['image'] || cover['url']">
                             <i v-else class="el-icon-plus"></i>
                         </el-upload>
                     </template>
@@ -96,7 +95,8 @@
 export default {
     data() {
         return {
-            image: [{}, {}],
+            avatar: {},
+            cover: {},
             formList: [
                 [
                     {
@@ -154,13 +154,20 @@ export default {
                         key: 'color',
                         value: '色调'
                     },
+                    {
+                        key: 'icp_txt',
+                        value: '备案号'
+                    },
+                    {
+                        key: 'icp_link',
+                        value: '备案链接'
+                    },
                 ]
             ],
             form: {
                 cover: {},
                 upload_type: '服务器',
             },
-            url: ''
         }
     },
     watch: {
@@ -172,35 +179,64 @@ export default {
     },
     methods: {
         onSubmit(){
-            this.image.map(item => Object.keys(item).length === 0)
-            console.log(this.image.map(item => Object.keys(item).length === 0))
-        },
-        avatar(file){
-            const formData = new FormData();
-            formData.append('file', file.raw);
 
-            const data = {
-                type: 'avatar',
-                url: URL.createObjectURL(file.raw),
-                formData
-            }
-            this.$set(this.image, 0, data)
 
-            this.$http.post('/upload', formData).then(res => {
-                this.url = res.data.imageUrl
-                console.log(this.url)
+
+
+
+
+
+            const img = ['avatar', 'cover']
+            const upload = img.reduce((total, item) => {
+                if(this[item].url){
+                    total.push(new Promise((resolve, reject) => {
+                        this.$http.post('/upload', this[item].formData).then(res => {
+                            if(res.data.status == 100){
+                                resolve({
+                                    type: item, 
+                                    data: res.data.imageUrl
+                                })
+                            }else{
+                                reject()
+                            }
+                        })
+                    }))
+                }
+                return total
+            }, [])
+
+            Promise.all(upload).then(res => {
+                if(res.length > 0){
+                    res.map(item => {
+                        if(item.type === 'avatar'){
+                            this.form['avatar'] = item.data
+                        }else{
+                            this.form.cover['image'] = item.data
+                        }
+                    })
+                }
+            }).catch(err => {
+                this.$message.error('图片上传失败，请检查网络是否正常!')
             })
         },
-        cover(file){
+        // 保存临时图片
+        upload(type, file){
+            if (!file.raw.type.includes('image')) {
+                this.$message.error('只能上传图片格式的文件!')
+                return
+            }
             const formData = new FormData();
-            formData.append('files', file.raw);
-
-            const data = {
-                type: 'cover',
+            formData.append('file', file.raw);
+            this[type] = {
                 url: URL.createObjectURL(file.raw),
                 formData
             }
-            this.$set(this.image, 1, data)
+        },
+        avatarUpload(file){
+            this.upload('avatar', file)
+        },
+        coverUpload(file){
+            this.upload('cover', file)
         },
     }
 }

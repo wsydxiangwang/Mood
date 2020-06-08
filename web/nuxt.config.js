@@ -41,13 +41,16 @@ module.exports = {
     credentials: true,
   },
   proxy: {
-    // 开启代理 跨域
     '/api': {
       target: process.env.BASE_URL || 'http://localhost:3000/web/api',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '/'
       },
+    },
+    '/uploads': {
+      target: 'http://localhost:3000/',
+      changeOrigin: true,
     },
   }, 
   /*

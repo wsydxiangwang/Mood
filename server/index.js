@@ -12,16 +12,12 @@ app.use(history({
 app.use(require('cors')())
 app.use(express.json())
 
+/**
+ * 静态文件
+ */
 app.use('/admin', express.static(__dirname + '/admin'))
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
-// app.get('/uploads/*', function (req, res) {
-//     console.log( __dirname + "/" + req.url )
-//     res.sendFile( __dirname + "/" + req.url );
-// })
-// app.get('/', function (req, res) {
-//     res.send('Hello World');
-//   })
 /**
  * 验证token是否过期 
  * 前台无需验证路由

@@ -38,10 +38,10 @@ module.exports = app => {
     const upload = multer({ storage })
 
     router.post('/upload', upload.single('file'), (req, res, next) => {
+        const filePath = (req.file.path).replace(/\\/g,"\/");
 
-        console.log(req.file)
-
-        res.json({status:'100',msg:'上传成功',imageUrl: '/'+req.file.path }); 
+        res.json({status:'100', msg:'上传成功', imageUrl: `/${filePath}` });
+        
 
         //  文件路径
         // const filePath = './' + req.file.path;  
