@@ -22,19 +22,22 @@
                     <template v-else-if="item.key == 'upload_type'">
                         <el-radio-group v-model="form.upload_type">
                             <el-radio label="服务器"></el-radio>
-                            <el-radio label="七牛云"></el-radio>
+                            <!-- <el-radio label="七牛云"></el-radio> -->
                             <el-radio label="阿里云OSS"></el-radio>
                         </el-radio-group>
-                        <template v-if="form.resource == '阿里云OSS'">
-                            <el-input v-model="form.email_pass" placeholder="bucket"></el-input>
-                            <el-input v-model="form.email_pass" placeholder="region"></el-input>
-                            <el-input v-model="form.email_pass" placeholder="endPoint"></el-input>
-                            <el-input v-model="form.email_pass" placeholder="accessKeySecret"></el-input>
-                            <el-input v-model="form.email_pass" placeholder="accessKeyId"></el-input>
+                        <template v-if="form.upload_type == '阿里云OSS'">
+                            <template v-for="(item, index) in formList[2]">
+                                <el-input 
+                                    v-model="form['upload_oss'][item]" 
+                                    :placeholder="item == 'domain' ? '自定义图片域名, 需解析至oss' : item" 
+                                    :key="index"
+                                    style="margin-top:10px;"
+                                ></el-input>
+                            </template>
                         </template>
                     </template>
                     <template v-else-if="item.key == 'email_message'">
-                        <el-switch v-model="form.email_message"></el-switch>
+                        <el-switch @change="emailChange" v-model="form.email_message"></el-switch>
                     </template>
                     <template v-else>
                         <el-input v-model="form[item.key]"></el-input>
@@ -68,21 +71,21 @@
                         </el-upload>
                     </template>
                     <template v-else-if="item.key == 'color'">
-                        <el-color-picker v-model="form.cover['color']" show-alpha></el-color-picker>
+                        <el-color-picker v-model="form['cover']['color']" show-alpha></el-color-picker>
                     </template>
                     <template v-else>
-                        <el-input v-model="form.cover[item.key]"></el-input>
+                        <el-input v-model="form['cover'][item.key]"></el-input>
                     </template>
                 </el-form-item>
             </template>
-
+<!-- 
             <h1>修改密码</h1>
             <el-form-item label="原密码">
                 <el-input v-model="form.password"></el-input>
             </el-form-item>
             <el-form-item label="新密码">
                 <el-input v-model="form.passwords"></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item>
                 <el-button type="primary" @click="onSubmit">立即保存</el-button>
@@ -162,26 +165,27 @@ export default {
                         key: 'icp_link',
                         value: '备案链接'
                     },
-                ]
+                ],
+                ['bucket', 'region', 'endPoint', 'accessKeySecret', 'accessKeyId', 'domain']
             ],
             form: {
                 cover: {},
+                upload_oss: {},
                 upload_type: '服务器',
             },
         }
     },
-    watch: {
-        'form.email_message': {
-            handler(val) {
-                this.formList[0][7].show = !val
-            },
+    mounted(){
+        // 默认值
+        if(Object.keys(this.$store.state.info).length > 0){
+            const info = this.$store.state.info;
+            for(let i in info){
+                this.$set(this.form, i, info[i])
+            }
         }
     },
     methods: {
         onSubmit(){
-
-
-
 
 
 
@@ -194,7 +198,7 @@ export default {
                             if(res.data.status == 100){
                                 resolve({
                                     type: item, 
-                                    data: res.data.imageUrl
+                                    data: res.data.image
                                 })
                             }else{
                                 reject()
@@ -215,14 +219,27 @@ export default {
                         }
                     })
                 }
+
+                this.$http.post('/info', this.form).then(res => {
+                    if(res.data.status === 1){
+                        // 成功
+
+                        
+                    }
+                })
+
+                console.log(res)
             }).catch(err => {
                 this.$message.error('图片上传失败，请检查网络是否正常!')
             })
         },
+        emailChange(e){
+            this.formList[0][7].show = !e
+        },
         // 保存临时图片
         upload(type, file){
             if (!file.raw.type.includes('image')) {
-                this.$message.error('只能上传图片格式的文件!')
+                this.$message.error('请选择图片格式的文件!')
                 return
             }
             const formData = new FormData();
@@ -289,7 +306,7 @@ h1{
     padding-left: 16px;
     font-size: 18px;
     font-weight: 400;
-    margin: 20px 0 30px;
+    margin: 50px 0 30px;
     color: #0084ff;
     span{
         font-size: 12px;

@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		comment: {},
-		commentTotal: 0
+        commentTotal: 0,
+        info: {}
 	},
 	mutations: {
 		setComment(state, payload){
@@ -16,7 +17,10 @@ const store = new Vuex.Store({
 		resetComment(state){
 			state.comment = {};
 			state.commentTotal = 0;
-		}
+        },
+        adminInfo(state, data){
+            state.info = data
+        }
 	},
 	actions: {
 	},

@@ -14,14 +14,23 @@ const schema = new mongoose.Schema({
     }, 
 
     upload_type: String,    // 文件上传方式
-
+    upload_oss: {           // 阿里云OSS
+        bucket: String,
+        region: String,
+        endPoint: String,
+        accessKeyId: String,
+        accessKeySecret: String,
+        domain: String
+    },
     cover: {                // 首屏效果
         date: String,
         link: String,
         color: String,
         image: String,
         describe: String,
+        icp_txt: String,
+        icp_link: String
     },
 })
 
-module.exports = mongoose.model('info', schema)
+module.exports = mongoose.model('Info', schema)
