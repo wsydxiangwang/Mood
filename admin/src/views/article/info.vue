@@ -29,15 +29,11 @@
             <el-input
                 placeholder="文章摘要"
                 v-model="data.describe"
+                prefix-icon="el-icon-document"
                 clearable>
             </el-input>
-            <!-- <el-input
-                placeholder="音乐地址"
-                v-model="data.music"
-                clearable>
-            </el-input> -->
 
-            <div>
+            <div class="upload-box" v-if="!uploadToggle">
                 <el-upload
                     class="upload-demo"
                     :auto-upload="false"
@@ -46,9 +42,14 @@
                     action=""
                     drag
                 >
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <template v-if="data.music.url">
+                        <i class="el-icon-headset"></i>
+                        <div class="el-upload__text">{{upload['music'].name}}</div>
+                    </template>
+                    <template v-else>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">背景音乐</div>
+                    </template>
                 </el-upload>
                 <el-upload
                     class="upload-demo"
@@ -58,15 +59,36 @@
                     action=""
                     drag
                 >
-                    <img v-if="data.image" :src="data.image">
+                    <img v-if="data.image.name" :src="data.image.url">
                     <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <div class="el-upload__text">封面图片 (680*440)</div>
                 </el-upload>
             </div>
+            <template v-else>
+                <el-input
+                    placeholder="音乐地址"
+                    v-model="data.music.url"
+                    prefix-icon="el-icon-headset"
+                    clearable>
+                </el-input>
+                <el-input
+                    placeholder="封面图片"
+                    prefix-icon="el-icon-picture-outline-round"
+                    v-model="data.image.url"
+                    clearable>
+                </el-input>
+            </template>
+
+            <el-switch
+                v-model="uploadToggle"
+                active-text="输入链接"
+                inactive-text="文件上传"
+            >
+            </el-switch>
 
             <el-switch
                 v-model="data.hide"
+                inactive-text="发布文章"
                 active-text="隐藏文章">
             </el-switch>
         </section>
@@ -93,14 +115,15 @@ export default {
                 contentHtml: '',        // 内容解析html
                 describe: '',           // 文章摘要
                 time: '',               // 时间
-                image: '',              // 图片
-                music: '',              // 音乐
+                image: {},              // 图片
+                music: {},              // 音乐
                 hide: false,            // 文章是否隐藏
             },
             isReset: true,
             id: '',                     // 当前文章id（编辑）
 
-            upload: []
+            upload: {},
+            uploadToggle: false
         }
     },
     computed: {
@@ -108,34 +131,31 @@ export default {
     },
     methods: {
         musicUpload(file){
-            if (!file.raw.type.includes('audio')) {
-                this.$message.error('请选择音频格式的文件!')
-                return
-            }
-            const formData = new FormData();
-            formData.append('file', file.raw);            
-            this.data.music = URL.createObjectURL(file.raw)
-            
-            this.upload.push({
-                image: URL.createObjectURL(file.raw),
-                formData
-            })
-            console.log(file)
+            this.uploads('music', file)
         },
         imgUpload(file){
-            if (!file.raw.type.includes('image')) {
-                this.$message.error('请选择图片格式的文件!')
+            this.uploads('image', file)
+        },
+        // 保存临时文件
+        uploads(type, file){
+            const name = type == 'music' ? 'audio' : 'image';
+            if (!file.raw.type.includes(name)) {
+                this.$message.error(`请选择${name}格式的文件!`)
                 return
             }
             const formData = new FormData();
-            formData.append('file', file.raw);            
-            this.data.image = URL.createObjectURL(file.raw)
-            
-            this.upload.push({
-                image: URL.createObjectURL(file.raw),
+            formData.append('file', file.raw);        
+            formData.append('type', this.info.upload_type);    
+
+            this.data[type] = {
+                url: URL.createObjectURL(file.raw),
+                name: file.name
+            }
+            this.$set(this.upload, type, {
+                url: URL.createObjectURL(file.raw),
+                name: file.name,
                 formData
             })
-            console.log(file)
         },
         $imgAdd(pos, $file){
            var formdata = new FormData();
@@ -143,7 +163,7 @@ export default {
            formdata.append('type', this.info.upload_type);
 
            this.$http.post('/upload', formdata).then(res => {           
-               this.$refs.md.$img2Url(pos, res.data.image);
+               this.$refs.md.$img2Url(pos, res.data.url);
             })
         },
         $imgDel(pos){
@@ -158,7 +178,7 @@ export default {
             this.data.content = value;          // 输入的内容
             this.data.words = value.length;     // 字数
         },
-        submit(){
+        async submit(){
             const map = {
                 'title': '请输入标题',
                 'content': '请输入内容',
@@ -170,7 +190,19 @@ export default {
                     return;
                 }
             }
+            
+            // 上传文件
+            if(!this.uploadToggle){
+                for(let i in this.upload){
+                    const result = await this.$http.post('/upload', this.upload[i].formData);
+                    this.data[i].url = result.data.url;
+                }
+            }
 
+            console.log(this.data)
+            console.log(3)
+
+            return
             // 摘要默认内容
             const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
@@ -241,6 +273,27 @@ h2{
     margin: 10px 0 15px;
     font-size: 16px;
     color: #606060;
+}
+.upload-box{
+    display: flex;
+    margin-top: 10px;
+    .upload-demo{
+        margin-right: 15px;
+        /deep/ .el-upload-dragger{
+            .el-icon-headset{
+                font-size: 40px;
+                color: #c0c4cc;
+                margin: 40px 0 16px;
+                line-height: 50px;
+            }
+        }
+    }
+    img{
+        width: 100%;
+    }
+}
+.upload-toggle{
+
 }
 .cover{
     // overflow: hidden;

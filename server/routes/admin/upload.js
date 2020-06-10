@@ -90,13 +90,13 @@ module.exports = app => {
                 const result = yield client.put(key, localFile);
 
                 // 自定义使用域名访问图片，（别忘记把域名解析至oss）
-                const image = oss.domain ? `${oss.domain}/${result.name}` : result.url ;
+                const url = oss.domain ? `${oss.domain}/${result.name}` : result.url ;
 
                 fs.unlinkSync(localFile);   // 上传之后删除本地文件
                 res.json({
                     status:  100,
                     msg: '上传成功',
-                    image: image
+                    url: url
                 }); 
             }).catch(function (err) {
                 fs.unlinkSync(localFile);
@@ -111,7 +111,7 @@ module.exports = app => {
             res.json({
                 status: 100, 
                 msg:'上传成功', 
-                image: `/${filePath}` 
+                url: `/${filePath}` 
             });
         }
     })

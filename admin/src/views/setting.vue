@@ -200,7 +200,7 @@ export default {
                                 this[item] = {};
                                 resolve({
                                     type: item, 
-                                    data: res.data.image
+                                    url: res.data.url
                                 })
                             }else{
                                 reject()
@@ -217,9 +217,9 @@ export default {
                 if(res.length > 0){
                     res.map(item => {
                         if(item.type === 'avatar'){
-                            this.form['avatar'] = item.data
+                            this.form['avatar'] = item.url
                         }else{
-                            this.form.cover['image'] = item.data
+                            this.form.cover['image'] = item.url
                         }
                     })
                 }
