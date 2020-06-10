@@ -6,7 +6,6 @@
         <el-form ref="form" :model="form" label-width="100px">
             <template v-for="(item, index) in formList[0]">
                 <el-form-item :label="item.value" v-if="!item.show" :key="index">
-                    <!-- 头像 -->
                     <template v-if="item.key == 'avatar'">
                         <el-upload
                             action=""
@@ -15,21 +14,20 @@
                             :show-file-list="false"
                             :on-change="avatarUpload"
                         >
-                            <img v-if="avatar['url'] || form.avatar" :src="form.avatar || avatar['url']">
+                            <img v-if="avatar['url'] || form.avatar" :src="avatar['url'] || form.avatar">
                             <i v-else class="el-icon-user"></i>
                         </el-upload>
                     </template>
                     <template v-else-if="item.key == 'upload_type'">
                         <el-radio-group v-model="form.upload_type">
                             <el-radio label="服务器"></el-radio>
-                            <!-- <el-radio label="七牛云"></el-radio> -->
                             <el-radio label="阿里云OSS"></el-radio>
                         </el-radio-group>
                         <template v-if="form.upload_type == '阿里云OSS'">
                             <template v-for="(item, index) in formList[2]">
                                 <el-input 
                                     v-model="form['upload_oss'][item]" 
-                                    :placeholder="item == 'domain' ? '自定义图片域名, 需解析至oss' : item" 
+                                    :placeholder="item == 'domain' ? '自定义图片域名, 需解析至oss (http://img.baidu.com)' : item" 
                                     :key="index"
                                     style="margin-top:10px;"
                                 ></el-input>
@@ -66,7 +64,7 @@
                             :show-file-list="false"
                             :on-change="coverUpload"
                         >
-                            <img v-if="cover['url'] || form.cover['image']" :src="form.cover['image'] || cover['url']">
+                            <img v-if="cover['url'] || form.cover['image']" :src="cover['url'] || form.cover['image']">
                             <i v-else class="el-icon-plus"></i>
                         </el-upload>
                     </template>
@@ -182,20 +180,31 @@ export default {
             for(let i in info){
                 this.$set(this.form, i, info[i])
             }
+            this.formList[0][7].show = !info.email_message
         }
     },
     methods: {
         onSubmit(){
-
-
-
-
+            /**
+             * 图片上传
+             */
             const img = ['avatar', 'cover']
             const upload = img.reduce((total, item) => {
                 if(this[item].url){
                     total.push(new Promise((resolve, reject) => {
+                        
+                        const type = this.form.upload_type === '阿里云OSS' ? 1 : 0;
+
+                        this[item]['formData'].append('type', type)
+
+                        if(type === 1){
+                            const upload_oss = JSON.stringify(this.form.upload_oss);  
+                            this[item]['formData'].append('upload_oss', upload_oss)
+                        }
+
                         this.$http.post('/upload', this[item].formData).then(res => {
                             if(res.data.status == 100){
+                                this[item] = {};
                                 resolve({
                                     type: item, 
                                     data: res.data.image
@@ -203,6 +212,8 @@ export default {
                             }else{
                                 reject()
                             }
+                        }).catch(err => {
+                            reject(err)
                         })
                     }))
                 }
@@ -220,17 +231,18 @@ export default {
                     })
                 }
 
+                console.log(this.form)
+
+                // 提交信息
                 this.$http.post('/info', this.form).then(res => {
                     if(res.data.status === 1){
                         // 成功
-
-                        
+                        this.$store.commit('adminInfo', res.data.body)
                     }
                 })
-
-                console.log(res)
             }).catch(err => {
-                this.$message.error('图片上传失败，请检查网络是否正常!')
+
+                this.$message.error('图片上传失败，请检查网络是否正常 or 文件上传信息是否填写正确!')
             })
         },
         emailChange(e){
@@ -243,7 +255,7 @@ export default {
                 return
             }
             const formData = new FormData();
-            formData.append('file', file.raw);
+            formData.append('file', file.raw);            
             this[type] = {
                 url: URL.createObjectURL(file.raw),
                 formData

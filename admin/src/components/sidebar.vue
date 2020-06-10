@@ -3,9 +3,9 @@
         <div class="sidebar" :class="show?'show':''">
             <div class="info">
                 <div class="photo">
-                    <img src="../assets/logo.png">
+                    <img :src="$store.state.info.avatar">
                 </div>
-                <p class="name">李白不吃茶</p>
+                <p class="name">{{$store.state.info.name}}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 

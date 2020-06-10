@@ -14,8 +14,8 @@
             :ishljs="true" 
             @change="change" 
             v-model="data.content" 
-            ref="md" 
             :subfield="false"
+            ref="md" 
         />
 
         <section>
@@ -41,7 +41,7 @@
             </el-input>
             <el-switch
                 v-model="data.hide"
-                inactive-text="文章是否隐藏">
+                active-text="隐藏文章">
             </el-switch>
         </section>
 
@@ -92,8 +92,9 @@ export default {
                     return;
                 }
             }
+
             // 摘要默认内容
-            let describe = this.data.describe;
+            const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
 
             for(let key in this.data){
@@ -141,13 +142,10 @@ export default {
 <style lang="scss" scoped>
 section{
     margin: 15px 0;
-    .el-input{
+    .el-switch, .el-input{
         width: 100%;
         height: 38px;
-        margin: 5px 0;
-        /deep/ input{
-            border-color: #eee !important;
-        }
+        margin: 8px 0;
     }
 }
 .markdown-body{

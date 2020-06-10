@@ -2,6 +2,7 @@ const express = require('express');
 const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
 const router = express.Router();
+const bodyParser = require('body-parser')
 
 const app = express();
 
@@ -11,6 +12,9 @@ app.use(history({
 
 app.use(require('cors')())
 app.use(express.json())
+app.use(bodyParser.json());//数据JSON类型
+app.use(bodyParser.urlencoded({ extended: false }));//解析post请求数据
+
 
 /**
  * 静态文件
