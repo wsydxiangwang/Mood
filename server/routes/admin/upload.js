@@ -48,14 +48,16 @@ module.exports = app => {
       
     const upload = multer({ storage })
 
-    router.post('/upload', upload.single('file'), (req, res, next) => {
+    // 上传文件
+    router.post('/upload', upload.single('file'), async (req, res, next) => {
         const type = req.body.type;
-        if(type == 1){
+        if(type == '阿里云OSS'){
             /**
              * 阿里云OSS
              */
-            const oss = JSON.parse(req.body.upload_oss);
-
+            const result = await Info.find()
+            const oss = result[0].upload_oss
+            
             const OSS = require('ali-oss');
             const client = new OSS({
                 region: oss.region,//填写你开通的oss
@@ -111,6 +113,49 @@ module.exports = app => {
                 msg:'上传成功', 
                 image: `/${filePath}` 
             });
+        }
+    })
+
+    // 删除文件
+    router.post('/delete_file', async (req, res, next) => {
+        const type = req.body.type;
+        const localFile = `./${req.body.url}`;
+        if(type == '阿里云OSS'){
+            /**
+             * 阿里云OSS
+             */
+            const result = await Info.find()
+            const oss = result[0].upload_oss
+
+            const OSS = require('ali-oss');
+            const client = new OSS({
+                region: oss.region,//填写你开通的oss
+                accessKeyId: oss.accessKeyId,
+                accessKeySecret: oss.accessKeySecret
+            });
+            const ali_oss = {
+                bucket: oss.bucket,  // bucket name
+                endPoint: oss.endPoint, // oss地址
+            }
+    
+            //  文件路径
+            const key = localFile.slice(localFile.indexOf('Mood'));
+
+            // 删除文件
+            co(function* () {
+                client.useBucket(ali_oss.bucket);
+                const result = yield client.delete(key);
+                res.json({
+                    status:  100,
+                    msg: '删除成功'
+                }); 
+            })
+        }else{
+            fs.unlinkSync(localFile);
+            res.json({
+                status:  100,
+                msg: '删除成功'
+            }); 
         }
     })
 

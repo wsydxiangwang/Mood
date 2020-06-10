@@ -193,14 +193,7 @@ export default {
                 if(this[item].url){
                     total.push(new Promise((resolve, reject) => {
                         
-                        const type = this.form.upload_type === '阿里云OSS' ? 1 : 0;
-
-                        this[item]['formData'].append('type', type)
-
-                        if(type === 1){
-                            const upload_oss = JSON.stringify(this.form.upload_oss);  
-                            this[item]['formData'].append('upload_oss', upload_oss)
-                        }
+                        this[item]['formData'].append('type', this.form.upload_type)
 
                         this.$http.post('/upload', this[item].formData).then(res => {
                             if(res.data.status == 100){

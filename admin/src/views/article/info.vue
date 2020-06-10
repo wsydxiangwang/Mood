@@ -15,6 +15,8 @@
             @change="change" 
             v-model="data.content" 
             :subfield="false"
+            @imgAdd="$imgAdd"
+            @imgDel="$imgDel"
             ref="md" 
         />
 
@@ -29,16 +31,40 @@
                 v-model="data.describe"
                 clearable>
             </el-input>
-            <el-input
+            <!-- <el-input
                 placeholder="音乐地址"
                 v-model="data.music"
                 clearable>
-            </el-input>
-            <el-input
-                placeholder="封面图片"
-                v-model="data.image"
-                clearable>
-            </el-input>
+            </el-input> -->
+
+            <div>
+                <el-upload
+                    class="upload-demo"
+                    :auto-upload="false"
+                    :show-file-list="false"
+                    :on-change="musicUpload"
+                    action=""
+                    drag
+                >
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+                <el-upload
+                    class="upload-demo"
+                    :auto-upload="false"
+                    :show-file-list="false"
+                    :on-change="imgUpload"
+                    action=""
+                    drag
+                >
+                    <img v-if="data.image" :src="data.image">
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+            </div>
+
             <el-switch
                 v-model="data.hide"
                 active-text="隐藏文章">
@@ -51,6 +77,7 @@
 
 <script>
 import date from '@/components/date'
+import { mapState } from 'vuex'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
@@ -71,10 +98,61 @@ export default {
                 hide: false,            // 文章是否隐藏
             },
             isReset: true,
-            id: ''                      // 当前文章id（编辑）
+            id: '',                     // 当前文章id（编辑）
+
+            upload: []
         }
     },
+    computed: {
+        ...mapState(['info'])
+    },
     methods: {
+        musicUpload(file){
+            if (!file.raw.type.includes('audio')) {
+                this.$message.error('请选择音频格式的文件!')
+                return
+            }
+            const formData = new FormData();
+            formData.append('file', file.raw);            
+            this.data.music = URL.createObjectURL(file.raw)
+            
+            this.upload.push({
+                image: URL.createObjectURL(file.raw),
+                formData
+            })
+            console.log(file)
+        },
+        imgUpload(file){
+            if (!file.raw.type.includes('image')) {
+                this.$message.error('请选择图片格式的文件!')
+                return
+            }
+            const formData = new FormData();
+            formData.append('file', file.raw);            
+            this.data.image = URL.createObjectURL(file.raw)
+            
+            this.upload.push({
+                image: URL.createObjectURL(file.raw),
+                formData
+            })
+            console.log(file)
+        },
+        $imgAdd(pos, $file){
+           var formdata = new FormData();
+           formdata.append('file', $file);
+           formdata.append('type', this.info.upload_type);
+
+           this.$http.post('/upload', formdata).then(res => {           
+               this.$refs.md.$img2Url(pos, res.data.image);
+            })
+        },
+        $imgDel(pos){
+            const data = {
+                url: pos[0],
+                type: this.info.upload_type
+            }
+            this.$http.post('/delete_file', data)
+        },
         change(value, render){
             this.data.contentHtml = render;     // 解析的html
             this.data.content = value;          // 输入的内容
@@ -164,7 +242,26 @@ h2{
     font-size: 16px;
     color: #606060;
 }
-
+.cover{
+    // overflow: hidden;
+    /deep/ .el-upload{
+        width: 300px;
+        height: 170px;
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img{
+            width: 100%;
+        }
+        i{
+            font-size: 30px;
+            color: #dcdfe6;
+            vertical-align: middle;
+        }
+    }
+}
 @media screen and (max-width: 600px) {
     .markdown-body{
         height: 100vh !important;
