@@ -56,6 +56,7 @@ require('./routes/admin/comment')(app)
 require('./routes/admin/article')(app)
 require('./routes/admin/envelope')(app)
 require('./routes/admin/upload')(app)
+require('./routes/admin/info')(app)
 
 require('./routes/web')(app)
 require('./routes/web/jssdk')(app)

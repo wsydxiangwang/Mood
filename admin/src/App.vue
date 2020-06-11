@@ -9,7 +9,7 @@ export default {
 	created(){
 		this.$http.get('/info').then(res => {
 			const data = res.data.body;
-			if(data[0]) this.$store.commit('adminInfo', data[0])
+			this.$store.commit('allData', data)
 		})
 	}
 }

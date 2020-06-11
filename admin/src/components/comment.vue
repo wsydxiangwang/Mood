@@ -9,12 +9,13 @@
                 v-model="content">
             </el-input>
             <el-button type="primary" @click="submit">提交评论</el-button>
-            <i class="el-icon-close" @click="close"></i>
+            <i class="el-icon-circle-close" @click="close"></i>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     props: ['message'],
     data(){
@@ -23,6 +24,9 @@ export default {
             isShow: false
         }
     },
+    computed: {
+        ...mapState(['$data'])
+    },
     methods: {
         submit(){
             if(!this.content){
@@ -30,8 +34,8 @@ export default {
                 return;
             }
             const data = {
-                name: 'Libai',
-                email: '1915398623@qq.com',
+                name: this.$data.info.email_name,
+                email: this.$data.info.email,
                 content: this.content,
                 time: this.dateFormat(),
                 image: 1,
@@ -90,7 +94,7 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,.4);
+        background: rgba(0,0,0,.65);
         transition: all .6s;
         z-index: 9;
         opacity: 0;
@@ -103,13 +107,13 @@ export default {
         bottom: 0;
         right: 0;
         margin: auto;
-        height: 260px;
+        height: 300px;
         width: 500px;
-        padding: 20px;
+        padding: 30px 22px;
         background: white;
         border-radius: 4px;
         border: 1px solid #EBEEF5;
-        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+        box-shadow: 0 0 10px 0 rgba(0,0,0,.35);
         z-index: 10;
         opacity: 0;
         visibility: hidden;
@@ -117,22 +121,23 @@ export default {
         transform: translateY(20px);
     }
     p{
-        color: #666;
+        color: #409eff;
+        font-size: 16px;
         margin-bottom: 14px;
     }
     /deep/ textarea{
-        height: 130px !important;
+        height: 150px !important;
         padding: 12px !important;
     }
     button{
-        margin-top: 15px;
+        margin-top: 18px;
     }
-    .el-icon-close{
+    .el-icon-circle-close{
         position: absolute;
-        right: 10px;
-        top: 10px;
-        color: #999;
-        font-size: 13px;
+        right: 16px;
+        top: 15px;
+        color: #c7c7c7;
+        font-size: 22px;
         padding: 2px;
         cursor: pointer;
         &:hover{

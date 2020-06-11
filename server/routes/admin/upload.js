@@ -7,28 +7,6 @@ module.exports = app => {
     const multer  = require('multer')
 
     const Info = require('../../models/info')
-    const requestResult = require('../../plugins/requestResult')
-
-    router.get('/info', async (req, res) => {
-        const result = await Info.find()
-        res.send(requestResult(result))
-    })
-
-    router.post('/info', async (req, res) => {
-        if(req.body._id){
-            const result = await Info.findByIdAndUpdate(
-                req.body._id, 
-                req.body, 
-                (err, doc) => {
-                    return doc
-                })
-            res.send(requestResult(result))
-        }else{
-            const result = await Info.create(req.body)
-            res.send(requestResult(result))
-        }
-    })
-
 
     /**
      * 指定文件名和路径

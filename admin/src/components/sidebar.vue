@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <div class="sidebar" :class="show?'show':''">
+    <div class="sidebar hide">
+        <div :class="show?'show':''">
             <div class="info">
                 <div class="photo">
-                    <img :src="$store.state.info.avatar">
+                    <img :src="$data.info.avatar">
                 </div>
-                <p class="name">{{$store.state.info.name}}</p>
+                <p class="name">{{$data.info.name}}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 
@@ -19,8 +19,8 @@
                     @click="toPage(item.title)"
                 >
                     <i :class="item.icon"></i>
-                    {{item.title}}
-                    <span v-if="item.title == 'Comment'" class="unread">31</span>
+                    <span>{{item.title}}</span>
+                    <span v-if="item.title=='Comment' && $data.unread" class="unread">{{$data.unread}}</span>
                 </el-menu-item>
             </el-menu>    
         </div>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
@@ -80,6 +81,9 @@ export default {
     mounted(){
         this.activeIndex = this.$route.path;
     },
+    computed: {
+        ...mapState(['$data'])
+    },
     methods: {
         toggle(){
             this.show = !this.show;
@@ -121,6 +125,7 @@ export default {
     width: 240px;
     color: #fff;
     background: #0e8bff;
+    transition: all .3s;
     .el-menu{
         border: none;
         margin-top: 40px;
@@ -138,6 +143,7 @@ export default {
             padding: 0 0  0 22px;
             text-align: left;
             border-radius: 20px 0 0 20px;
+            transition: all .3s;
             i{
                 color: #fff;
                 vertical-align: text-bottom;
@@ -191,6 +197,38 @@ export default {
         .name{
             margin-top: 15px;
             color: #fff;
+        }
+    }
+    &.hide{
+        width: 80px;
+        .info{
+            .photo{
+                width: 50px;
+                height: 50px;
+            }
+            .name{
+                display: none;
+            }
+        }
+        .el-menu{
+            padding: 0 8px;
+            text-align: center;
+            .el-menu-item{
+                border-radius: 6px;
+                padding: 0;
+                text-align: center;
+                width: 48px;
+                line-height: 48px;
+                height: 42px;
+                padding-left: 2px;
+                display: inline-block;
+                i{
+                    font-size: 26px;
+                }
+                span{
+                    display: none;
+                }
+            }
         }
     }
 }

@@ -86,6 +86,16 @@ module.exports = app => {
         const result = await Comment.create(req.body.data)
         
         /**
+         * 未读+1
+         */
+        const total = await Counter.findOneAndUpdate({
+            name: 'comment_read'
+        }, {
+            $inc: { 'count' : 1 }
+        })
+        if(!total) await Counter.create({name: 'comment_read', count: 1})
+
+        /**
          * 返回评论数据，页面展示
          */
         if(result.type === 1){

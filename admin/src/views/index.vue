@@ -36,6 +36,7 @@ export default {
         background: #fff;
         overflow: hidden;
         transition: all .3s;
+        flex: 1;
         .content{
             width: 100%;
             height: 100%;

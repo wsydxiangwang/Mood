@@ -7,7 +7,7 @@ const store = new Vuex.Store({
 	state: {
 		comment: {},
         commentTotal: 0,
-        info: {}
+        $data: {}
 	},
 	mutations: {
 		setComment(state, payload){
@@ -18,8 +18,8 @@ const store = new Vuex.Store({
 			state.comment = {};
 			state.commentTotal = 0;
         },
-        adminInfo(state, data){
-            state.info = data
+        allData(state, data){
+            state.$data = data
         }
 	},
 	actions: {

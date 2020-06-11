@@ -3,7 +3,7 @@
         <div class="header">
             <h1>
                 评论列表 ({{total}}) 
-                <span @click="onRead" class="read-btn">
+                <span @click="onRead" class="read-btn" v-if="$data.unread">
                     <i class="el-icon-refresh"></i>
                     一键已读
                 </span>
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Comment from '@/components/comment'
 export default {
     components: { Comment },
@@ -68,7 +69,7 @@ export default {
         this.load();
     },
     computed: {
-        // ...mapState(['hasLogin', 'currencyData', 'userInfo', 'isHomePage'])
+        ...mapState(['$data'])
     },
     methods: {
         // 回复

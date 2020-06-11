@@ -34,7 +34,7 @@ export default {
             if(this.data){
                 // 添加时间
                 this.data.forEach(item => {
-                    let time = this.dateDiff(item.time.date);
+                    let time = this.dateDiff(item.time);
                     item['newTime'] = time;
                 })
                 return this.data;
@@ -56,66 +56,48 @@ export default {
         
     },
     methods: {
-        dateDiff(timestamp) {
-            
-            var Time = new Date(timestamp);
-            var timestemp = Time.getTime();
-            
-            // 补全为13位
-            var arrTimestamp = (timestemp + '').split('');
-            for (var start = 0; start < 13; start++) {
-                if (!arrTimestamp[start]) {
-                    arrTimestamp[start] = '0';
-                }
-            }
-            timestemp = arrTimestamp.join('') * 1;
-            var minute = 1000 * 60;
-            var hour = minute * 60;
-            var day = hour * 24;
-            var halfamonth = day * 15;
-            var month = day * 30;
-            var now = new Date().getTime();
-            var diffValue = now - timestemp;
+        dateDiff(time) {
+            const timestemp = new Date(time).getTime();
+ 
+            const minute = 1000 * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+            const halfamonth = day * 15;
+            const month = day * 30;
+            const now = new Date().getTime();
+            const diffValue = now - timestemp;
 
             // 如果本地时间反而小于变量时间
             if (diffValue < 0) {
-                return '不久前';
+                return 'Just Now';
             }
+
             // 计算差异时间的量级
-            var monthC = diffValue / month;
-            var weekC = diffValue / (7 * day);
-            var dayC = diffValue / day;
-            var hourC = diffValue / hour;
-            var minC = diffValue / minute;
+            const monthC = diffValue / month;
+            const weekC = diffValue / (7 * day);
+            const dayC = diffValue / day;
+            const hourC = diffValue / hour;
+            const minC = diffValue / minute;
 
-            // 数值补0方法
-            var zero = function (value) {
-                if (value < 10) {
-                    return '0' + value;
-                }
-                return value;
-            };
-
-            // 使用
             if (monthC > 4) {
-                return (function () {
-                    var date = new Date(timestemp);
-                    var mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                    return mon[date.getMonth()] + ' ' + zero(date.getDate()) + ', ' + date.getFullYear();
-                })();
-            } else if (monthC >= 1) {
-                return parseInt(monthC) + " months ago";
-            } else if (weekC >= 1) {
-                return parseInt(weekC) + " weeks ago";
-            } else if (dayC >= 1) {
-                return parseInt(dayC) + " days ago";
-            } else if (hourC >= 1) {
-                return parseInt(hourC) + " hours ago";
-            } else if (minC >= 1) {
-                return parseInt(minC) + " minutes ago";
+                const date = new Date(timestemp);
+                const mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                return mon[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
             } else {
-                return 'Just';
-            }   
+                const map = {
+                    [monthC]: "months ago",
+                    [weekC]: "weeks ago",
+                    [dayC]: "days ago",
+                    [hourC]: "hours ago",
+                    [minC]: "minutes ago",
+                }
+                for(let i in map){
+                    if(i >= 1){
+                        return `${parseInt(i)} ${map[i]}`
+                    }
+                }
+                return 'Just Now';
+            }
         }
     },
     async asyncData(context){
