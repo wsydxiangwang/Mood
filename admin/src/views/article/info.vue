@@ -44,10 +44,10 @@
                 >
                     <template v-if="data.music.url">
                         <i class="el-icon-headset"></i>
-                        <div class="el-upload__text">{{upload['music'].name}}</div>
+                        <div class="el-upload__text">{{data['music'].name}}</div>
                     </template>
                     <template v-else>
-                        <i class="el-icon-upload"></i>
+                        <i class="el-icon-headset"></i>
                         <div class="el-upload__text">背景音乐</div>
                     </template>
                 </el-upload>
@@ -60,7 +60,7 @@
                     drag
                 >
                     <img v-if="data.image.name" :src="data.image.url">
-                    <i class="el-icon-upload"></i>
+                    <i class="el-icon-picture-outline-round"></i>
                     <div class="el-upload__text">封面图片 (680*440)</div>
                 </el-upload>
             </div>
@@ -124,6 +124,26 @@ export default {
 
             upload: {},
             uploadToggle: false
+        }
+    },
+    created(){
+        this.id = this.$route.query.id;
+        if(this.id) this.loadData(this.id);
+    },
+    watch: {
+        'data.image.url': {
+            handler(val) {
+                if(!val){
+                    delete this.upload['image']
+                }
+            }
+        },
+        'data.music.url': {
+            handler(val) {
+                if(!val){
+                    delete this.upload['music']
+                }
+            }
         }
     },
     computed: {
@@ -199,10 +219,6 @@ export default {
                 }
             }
 
-            console.log(this.data)
-            console.log(3)
-
-            return
             // 摘要默认内容
             const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
@@ -238,13 +254,12 @@ export default {
         async loadData(id){
             const res = await this.$http.get(`article/${id}`)
             this.data = res.data.body;
+
+            console.log(this.data)
+
             this.isReset = false;
             this.$nextTick(() => { this.isReset = true; })
         },
-    },
-    created(){
-        this.id = this.$route.query.id;
-        if(this.id) this.loadData(this.id);
     }
 }
 </script>
@@ -259,7 +274,7 @@ section{
     }
 }
 .markdown-body{
-    height: 70vh;
+    height: 65vh;
     box-shadow: none !important;
     border: 1px solid #eee !important;
 }
@@ -280,10 +295,11 @@ h2{
     .upload-demo{
         margin-right: 15px;
         /deep/ .el-upload-dragger{
+            .el-icon-picture-outline-round,
             .el-icon-headset{
-                font-size: 40px;
+                font-size: 46px;
                 color: #c0c4cc;
-                margin: 40px 0 16px;
+                margin: 42px 0 14px;
                 line-height: 50px;
             }
         }
@@ -294,26 +310,6 @@ h2{
 }
 .upload-toggle{
 
-}
-.cover{
-    // overflow: hidden;
-    /deep/ .el-upload{
-        width: 300px;
-        height: 170px;
-        border-radius: 4px;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        img{
-            width: 100%;
-        }
-        i{
-            font-size: 30px;
-            color: #dcdfe6;
-            vertical-align: middle;
-        }
-    }
 }
 @media screen and (max-width: 600px) {
     .markdown-body{

@@ -50,14 +50,37 @@ module.exports = app => {
 
     // 上传文件
     router.post('/upload', upload.single('file'), async (req, res, next) => {
-        const type = req.body.type;
-        if(type == '阿里云OSS'){
+        if(req.body.type == '阿里云OSS'){
+
             /**
              * 阿里云OSS
              */
-            const result = await Info.find()
-            const oss = result[0].upload_oss
-            
+
+            let oss = {};
+            /**
+             * 获取oss
+             */
+            if(req.body.upload_oss){
+                oss = JSON.parse(req.body.upload_oss)
+            }else{
+                const result = await Info.find()
+                oss = result[0].upload_oss
+            }
+
+            //  文件路径
+            const localFile = `./${req.file.path}`;
+            const filename = req.file.mimetype.includes('image') ? 'image' : 'music';
+            const key = `Mood/${filename}/${req.file.filename}`;
+
+            if(Object.keys(oss).length < 5){
+                fs.unlinkSync(localFile);
+                res.json({
+                    status: '101',
+                    msg: '请填写正确的OSS'
+                }); 
+                return;
+            }
+
             const OSS = require('ali-oss');
             const client = new OSS({
                 region: oss.region,//填写你开通的oss
@@ -79,10 +102,6 @@ module.exports = app => {
             //     bucket: 'img-wsydxiangwang',  // bucket name
             //     endPoint: 'oss-cn-shenzhen.aliyuncs.com', // oss地址
             // }
-
-            //  文件路径
-            const localFile = `./${req.file.path}`;
-            const key = `Mood/image/${req.file.filename}`;
 
             // 阿里云 上传文件 
             co(function* () {

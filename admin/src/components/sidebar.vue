@@ -24,7 +24,7 @@
                 </el-menu-item>
             </el-menu>    
         </div>
-        <span class="btn el-icon-heavy-rain" @click="toggle"></span>
+        <span class="btn" :class="[show ? 'el-icon-close' : 'el-icon-heavy-rain']" @click="toggle"></span>
     </div>
 </template>
 

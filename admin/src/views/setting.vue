@@ -195,6 +195,9 @@ export default {
                         
                         this[item]['formData'].append('type', this.form.upload_type)
 
+                        // 默认添加页面填写的oss信息, 其他地方上传以获取数据库为主
+                        this[item]['formData'].append('upload_oss', JSON.stringify(this.form.upload_oss))
+
                         this.$http.post('/upload', this[item].formData).then(res => {
                             if(res.data.status == 100){
                                 this[item] = {};
@@ -224,8 +227,6 @@ export default {
                     })
                 }
 
-                console.log(this.form)
-
                 // 提交信息
                 this.$http.post('/info', this.form).then(res => {
                     if(res.data.status === 1){
@@ -235,7 +236,7 @@ export default {
                 })
             }).catch(err => {
 
-                this.$message.error('图片上传失败，请检查网络是否正常 or 文件上传信息是否填写正确!')
+                this.$message.error('图片上传失败，请检查网络是否正常 or OSS信息是否填写正确!')
             })
         },
         emailChange(e){

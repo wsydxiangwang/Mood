@@ -25,7 +25,7 @@ export default {
     border-radius: 20px;
     background: #fff;
     box-shadow: 0 5px 40px #d2eaff;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: auto;
     background: #0e8bff;
     .container{
@@ -41,6 +41,7 @@ export default {
             height: 100%;
             padding: 0 60px;
             overflow: auto;
+            position: relative;
             &::-webkit-scrollbar-track {
                 background: #fff;
             }

@@ -14,6 +14,7 @@ module.exports = app => {
     router.get('/comment', async (req, res) => {
         const p = req.query.page || 1;
         const s = req.query.count || 10;
+        
         const result = await Promise.all([
             Comment.countDocuments(),
             Comment.find().sort({"time":-1}).limit(Number(s)).skip(Number(s)*(p-1))
@@ -55,8 +56,30 @@ module.exports = app => {
               email = req.body.reply_email;
 
         // 发送邮件
-        sendEmail(title, url, name, email)
+        // sendEmail(title, url, name, email)
     })
 
+    // 一键已读
+    router.post('/comment_read', async (req, res) => {
+        const commentCount = await Counter.findOneAndUpdate({
+            name: 'comment_read'
+        }, { 'count' : 0 }, {
+            new: true
+        }, (err, doc) => {
+            return doc;
+        })
+
+        const comment = await Comment.updateMany({
+            status: 1
+        }, {
+            $set: { status : 2 }
+        }, {
+            multi: true
+        }, (err, doc) => {
+            return doc;
+        })
+
+        res.send(requestResult(comment))
+    })
     app.use('/admin/api', router)
 }
