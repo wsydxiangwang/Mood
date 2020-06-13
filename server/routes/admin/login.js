@@ -4,45 +4,69 @@ module.exports = app => {
     const jwt = require('jsonwebtoken');
 
     const router = express.Router();
+
     const User = require('../../models/user')
 
     // 登录
-    router.post('/login', (req, res) => {
-        let pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
-        let info = {
+    router.post('/login', async (req, res) => {
+        const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
+        const info = {
             username: req.body.username,
             password: pwd
         }
-
-        let token = jwt.sign(info, 'Libai', {
-            expiresIn: 60 * 60 * 24  // 24小时过期
-        }); 
-        res.json({
-            status: 1,
-            message: 'ok',
-            token: token
-        })
         /**
          * 查找数据库是否有此用户
          */
-        // User.find(info, (err, docs) => {
-        //     if(docs.length != 0){
-        //         // 生成token
-        //         let token = jwt.sign(info, 'Libai', {
-        //             expiresIn: 60 * 60 * 24  // 24小时过期
-        //         }); 
-        //         res.json({
-        //             status: 1,
-        //             message: 'ok',
-        //             token: token
-        //         })
-        //     }else{
-        //         res.json({
-        //             status: 2,
-        //             message: '用户名或密码错误！'
-        //         })
-        //     }
-        // })
+        User.find(info, (err, docs) => {
+            if(docs.length != 0){
+                // 生成token
+                const token = jwt.sign(info, 'Libai', {
+                    expiresIn: 60 * 60 * 24  // 24小时过期
+                    // expiresIn: 10  // 10秒
+                }); 
+                res.json({
+                    status: 1,
+                    message: '登录成功',
+                    token: token
+                })
+            }else{
+                res.json({
+                    status: 2,
+                    message: '用户名或密码错误！'
+                })
+            }
+        })
+    })
+
+    // 创建账号
+    router.post('/user', async (req, res) => {
+        const len = await User.find().countDocuments()
+        const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
+        const info = {
+            username: req.body.username,
+            password: pwd
+        }
+        if(len){
+            res.json({
+                status: 2,
+                message: '请勿重复注册, 如遗忘密码, 自行操作数据库处理!',
+            })
+        }else{
+            // 创建账号
+            await User.create(info, (err, docs) => {
+                if(docs.length != 0){
+                    res.json({
+                        status: 1,
+                        message: '账号创建成功'
+                    })
+                }else{
+                    res.json({
+                        status: 2,
+                        message: '创建失败,请检查数据库or服务器是否正常'
+                    })
+                }
+            })
+        }
     })
     app.use('/admin/api', router)
 }

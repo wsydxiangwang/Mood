@@ -1,11 +1,11 @@
 <template>
-    <div class="sidebar hide">
+    <div class="sidebar" :class="{hide:scale}">
         <div :class="show?'show':''">
             <div class="info">
                 <div class="photo">
-                    <img :src="$data.info.avatar">
+                    <img :src="$info.avatar || ''">
                 </div>
-                <p class="name">{{$data.info.name}}</p>
+                <p class="name">{{$info.name}}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 
@@ -22,7 +22,8 @@
                     <span>{{item.title}}</span>
                     <span v-if="item.title=='Comment' && $data.unread" class="unread">{{$data.unread}}</span>
                 </el-menu-item>
-            </el-menu>    
+            </el-menu> 
+            <span @click="hide" :class="[scale?'el-icon-right':'el-icon-back']"></span>
         </div>
         <span class="btn" :class="[show ? 'el-icon-close' : 'el-icon-heavy-rain']" @click="toggle"></span>
     </div>
@@ -60,12 +61,12 @@ export default {
                     path: '/envelope/info',
                 },
                 {
-                    icon: 'el-icon-cloudy-and-sunny',
+                    icon: 'el-icon-sunrise-1',
                     title: 'Comment',
                     path: '/comment',
                 },
                 {
-                    icon: 'el-icon-cloudy-and-sunny',
+                    icon: 'el-icon-sunset',
                     title: 'Setting',
                     path: '/setting',
                 },
@@ -75,16 +76,23 @@ export default {
                 }
             ],
             activeIndex: '',
-            show: false
+            show: false,
+            scale: false
         }
     },
     mounted(){
         this.activeIndex = this.$route.path;
     },
     computed: {
-        ...mapState(['$data'])
+        ...mapState(['$data']),
+        $info(){
+            return Object.keys(this.$data).length > 0 ? this.$data.info : {}
+        }
     },
     methods: {
+        hide(){
+            this.scale = !this.scale
+        },
         toggle(){
             this.show = !this.show;
             if(this.show){
@@ -96,6 +104,7 @@ export default {
             }
         },
         toPage(data){
+            console.log(data)
             this.show = false;
             document.getElementsByClassName('container')[0].style.filter = ''
             document.getElementsByClassName('content')[0].style.overflowY = ''
@@ -126,6 +135,7 @@ export default {
     color: #fff;
     background: #0e8bff;
     transition: all .3s;
+    position: relative;
     .el-menu{
         border: none;
         margin-top: 40px;
@@ -140,7 +150,7 @@ export default {
             color: #fff;
             font-size: 14px;
             margin-bottom: 5px;
-            padding: 0 0  0 22px;
+            padding: 0 0  0 32px;
             text-align: left;
             border-radius: 20px 0 0 20px;
             transition: all .3s;
@@ -148,16 +158,14 @@ export default {
                 color: #fff;
                 vertical-align: text-bottom;
             }
+            &:focus{
+                color: #fff;
+                background-color: #0e8bff;
+            }
             &:hover, &.is-active{
                 color: #0084ff;
                 background: #fff;
                 position: relative;
-                &:before{
-                    content: '';
-                }
-                &:after{
-                    content: '';
-                }
                 i{
                     color: #0084ff;
                 }
@@ -189,6 +197,7 @@ export default {
             border-radius: 50%;
             background: #fff;
             overflow: hidden;
+            transition: all .3s;
             img{
                 width: 100%;
                 height: 100%;
@@ -229,6 +238,21 @@ export default {
                     display: none;
                 }
             }
+        }
+    }
+    .el-icon-back, .el-icon-right{
+        font-size: 20px;
+        position: absolute;
+        bottom: 6px;
+        right: 6px;
+        cursor: pointer;
+        color: #83c3ff;
+        &:hover{
+            color: #fff;
+        }
+        &.el-icon-right{
+            right: 50%;
+            transform: translateX(50%);
         }
     }
 }

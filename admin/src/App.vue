@@ -7,9 +7,12 @@
 <script>
 export default {
 	created(){
+		// 保存数据到状态
 		this.$http.get('/info').then(res => {
-			const data = res.data.body;
-			this.$store.commit('allData', data)
+			if(res && res.data.status == 1){
+				const data = res.data.body;
+				this.$store.commit('allData', data)
+			}
 		})
 	}
 }

@@ -5,7 +5,7 @@ module.exports = app => {
     const Article = require('../../models/article')
     const Comment = require('../../models/comment')        
     const Counter = require('../../models/counter')
-    const dateFormat = require('../../plugins/dateFormat')
+    const getPage = require('../../plugins/getPage')
     const requestResult = require('../../plugins/requestResult')
 
     const sendEmail = require('../../plugins/email')
@@ -14,20 +14,21 @@ module.exports = app => {
     router.get('/comment', async (req, res) => {
         const p = req.query.page || 1;
         const s = req.query.count || 10;
-        
-        const result = await Promise.all([
-            Comment.countDocuments(),
-            Comment.find().sort({"time":-1}).limit(Number(s)).skip(Number(s)*(p-1))
-        ])
 
-        result[1].forEach(item => item._doc['time'] = dateFormat(item.time) )
-
-        res.send(requestResult({total: result[0], data: result[1], page: p}))
+        const data = await getPage(Comment, p, s)
+        res.send(requestResult(data))
     })
 
     // Delete
-    router.delete('/comment/:id', async (req, res) => {
-        const data = await Comment.findByIdAndDelete(req.params.id)
+    router.delete('/comment', async (req, res) => {
+        const id = req.body.id;
+        const data = await Comment.deleteOne({id})
+        /**
+         * 删除所有子评论
+         */
+        if(!req.body.parent_id){
+            await Comment.deleteMany({parent_id:id})
+        }
         res.send(requestResult(data))
     })
 
@@ -61,13 +62,9 @@ module.exports = app => {
 
     // 一键已读
     router.post('/comment_read', async (req, res) => {
-        const commentCount = await Counter.findOneAndUpdate({
+        await Counter.findOneAndUpdate({
             name: 'comment_read'
-        }, { 'count' : 0 }, {
-            new: true
-        }, (err, doc) => {
-            return doc;
-        })
+        }, { 'count' : 0 })
 
         const comment = await Comment.updateMany({
             status: 1

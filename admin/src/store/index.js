@@ -5,21 +5,26 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-		comment: {},
-        commentTotal: 0,
+        comment: {},
+        article: {},
         $data: {}
 	},
 	mutations: {
-		setComment(state, payload){
-			state.commentTotal = payload.total;
-			state.comment[payload.page] = payload.data;
+		setCache(state, payload){
+            state.$data[`${payload.type}Qty`] = payload.total;
+			state[payload.type][payload.page] = payload.data;
 		},
-		resetComment(state){
-			state.comment = {};
-			state.commentTotal = 0;
+		resetCache(state, type){
+			state[type] = {};
         },
         allData(state, data){
             state.$data = data
+        },
+        updateUnread(state){
+            state.$data.unread = 0;
+        },
+        updataInfo(state, data){
+            state.$data.info = data
         }
 	},
 	actions: {

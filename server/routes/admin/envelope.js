@@ -7,7 +7,10 @@ module.exports = app => {
         
 
     router.get('/envelope', async (req, res) => {
-        const data = await Envelope.find({}).sort({time: -1}).limit(20)
+        const data = await Envelope.find({}).sort({time: -1}).limit(100)
+
+        data.forEach(item => item._doc['time'] = dateFormat(item.time) )
+
         res.send(data)
     })
 

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import router from './router'
-import { Loading } from 'element-ui'
 
 const http = axios.create({
     baseURL: process.env.VUE_APP_URL || '/admin/api',

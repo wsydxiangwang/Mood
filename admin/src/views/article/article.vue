@@ -1,55 +1,110 @@
 <template>
     <div class="article">
         <div class="header">
-            <h1>文章列表</h1>
+            <h1>文章列表 ({{total}})</h1>
         </div>
         
-        <el-table :data="articleList" style="width: 100%">
+        <el-table :data="data" style="width: 100%" height="calc(100vh - 340px)">
             <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.title}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="Date" :width="Width" class="hidden">
+            <el-table-column label="Date" width=140 class="hidden">
                 <template slot-scope="scope">
-                    <span>{{(scope.row.time).slice(0, 10)}}</span>
+                    <span>{{scope.row.time.time}} {{scope.row.time.month.en}} {{scope.row.time.day.on}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="options" :width="Width">
+
+            <el-table-column label="options" width=100>
                 <template slot-scope="scope">
-                    <i class="el-icon-edit" @click="edit(scope.row.id)"></i>
-                    <i class="el-icon-delete" @click="remove(scope.row)"></i>
-                    <el-button size="mini" @click="edit(scope.row.id)">Edit</el-button>
-                    <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
+                    <el-tooltip class="item" effect="dark" content="View Article" placement="top">
+                        <i class="el-icon-view" @click="view(scope.row.id)"></i>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="Edit Article" placement="top">
+                        <i class="el-icon-edit" @click="edit(scope.row.id)"></i>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="Delete" placement="top">
+                        <i class="el-icon-delete" @click="remove(scope.row)"></i>
+                    </el-tooltip>
                 </template>
             </el-table-column>
+
         </el-table>
+
+        <el-pagination
+            background
+            :page-size="count"
+            :pager-count="11"
+            :total="total"
+            :current-page="page"
+            @current-change="load"
+            layout="prev, pager, next"
+        >
+        </el-pagination>
     </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
-            articleList: [],
-            Width: 180
+            data: [],
+            count: 10,
+            total: 0,
+            page: 1
         }
     },
+    computed: {
+        ...mapState(['$data'])
+    },
     created(){
-        this.loadData();
+        this.count = this.$data.info.page_size
+        this.total = this.$data.articleQty
+        this.load();
     },
     methods: {
-        async loadData(){
-            const res = await this.$http.get('article');
-            if(res.data.status === 1){
-                this.articleList = res.data.body;
+        load(page){
+            /**
+             * vuex 存在当前页数据
+             */
+            const article = this.$store.state.article;
+            if(article[page]){
+                this.data = article[page];
+                return
             }
+
+            this.$http.get('/article', {
+                params: {
+                    page, 
+                    count: this.count
+                }
+            }).then(res => {
+                const data = res.data.body;
+                const item = ['data', 'total', 'page']
+
+                item.map(i => this[i] = data[i])
+                /**
+                 * 添加数据到vuex，请求优化
+                 */
+                this.$store.commit('setCache', {
+                    type: 'article',
+                    page: page || 1,
+                    data: this.data,
+                    total: this.total
+                })
+            })
         },
         edit(id){
             this.$router.push({
                 name: 'info',
                 query: { id: id }
             })
+        },
+        // 新窗口打开文章
+        view(id){
+            window.open(`${window.location.host}/${id}`)
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {
@@ -59,7 +114,8 @@ export default {
             }).then(() => {
                 this.$http.delete(`article/${item._id}`).then(res => {
                     setTimeout(() => {
-                        this.loadData()
+                        this.$store.commit('resetCache', 'article')
+                        this.load()
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -72,7 +128,6 @@ export default {
                     message: '已取消删除'
                 });
             });
-            
         }
     }
 }
@@ -80,7 +135,7 @@ export default {
 
 <style lang="scss">
 .article{
-    padding: 20px;
+    padding: 0 20px;
     .header{
         h1{
             border-left: 2px solid #0084ff;
@@ -107,14 +162,21 @@ export default {
             tr{
                 height: 50px;
             }
-            .edit{
-                color: red;
-                cursor: pointer;
-            }
         }
     }
-    .el-icon-edit, .el-icon-delete{
-        display: none;
+    i[class*=el-icon-]{
+        cursor: pointer;
+        margin: 2px;
+        padding: 2px;
+        font-size: 14px;
+        color: #cfcfcf;
+        transition: all .2s;
+        &:hover{
+            color: #0e8bff;
+        }
+        &.el-icon-delete:hover{
+            color: red;
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading.fullscreen.lock="fullscreenLoading">
         <div class="header">
             <h1>网站信息</h1>
         </div>
@@ -37,6 +37,16 @@
                     <template v-else-if="item.key == 'email_message'">
                         <el-switch @change="emailChange" v-model="form.email_message"></el-switch>
                     </template>
+
+                    <template v-else-if="item.key == 'page_size'">
+                        <el-select v-model="form.page_size" placeholder="请选择">
+                            <el-option label=5 value=5></el-option>
+                            <el-option label=10 value=10></el-option>
+                            <el-option label=15 value=15></el-option>
+                            <el-option label=20 value=20></el-option>
+                        </el-select>
+                    </template>
+
                     <template v-else>
                         <el-input v-model="form[item.key]"></el-input>
                     </template>
@@ -133,6 +143,10 @@ export default {
                         value: '邮箱PASS',
                         show: true
                     },
+                    {
+                        key: 'page_size',
+                        value: '页码数量'
+                    },
                 ],
                 [
                     {
@@ -170,21 +184,26 @@ export default {
                 cover: {},
                 upload_oss: {},
                 upload_type: '服务器',
+                page_size: 10
             },
+            fullscreenLoading: false
         }
     },
     mounted(){
         // 默认值
-        if(Object.keys(this.$store.state.info).length > 0){
-            const info = this.$store.state.info;
-            for(let i in info){
-                this.$set(this.form, i, info[i])
+        const data = this.$store.state.$data.info;
+        if(Object.keys(data).length > 0){
+            for(let i in data){
+                this.$set(this.form, i, data[i])
             }
-            this.formList[0][7].show = !info.email_message
+            this.formList[0][7].show = !data.email_message
         }
     },
     methods: {
         onSubmit(){
+
+            this.fullscreenLoading = true;
+
             /**
              * 图片上传
              */
@@ -230,12 +249,19 @@ export default {
                 // 提交信息
                 this.$http.post('/info', this.form).then(res => {
                     if(res.data.status === 1){
-                        // 成功
-                        this.$store.commit('adminInfo', res.data.body)
+                        setTimeout(() => {
+                            this.$message({
+                                message: `更新成功`,
+                                type: 'success'
+                            });
+                            this.$store.commit('updataInfo', res.data.body)
+                            this.fullscreenLoading = false
+                            this.$router.push('/')
+                        }, 500)
                     }
                 })
             }).catch(err => {
-
+                this.fullscreenLoading = false
                 this.$message.error('图片上传失败，请检查网络是否正常 or OSS信息是否填写正确!')
             })
         },

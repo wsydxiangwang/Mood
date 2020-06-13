@@ -22,6 +22,9 @@ const schema = new mongoose.Schema({
         accessKeySecret: String,
         domain: String
     },
+
+    page_size: Number,       // 数据数量
+
     cover: {                // 首屏效果
         date: String,
         link: String,

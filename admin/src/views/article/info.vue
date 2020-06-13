@@ -1,5 +1,5 @@
 <template>
-    <div class="article-new">
+    <div class="article-new" v-loading.fullscreen.lock="fullscreenLoading">
 
         <section>
             <h2>无人问津的心情，在黑纸白字间游荡！</h2>
@@ -42,7 +42,7 @@
                     action=""
                     drag
                 >
-                    <template v-if="data.music.url">
+                    <template v-if="data.music && data.music.url">
                         <i class="el-icon-headset"></i>
                         <div class="el-upload__text">{{data['music'].name}}</div>
                     </template>
@@ -59,7 +59,7 @@
                     action=""
                     drag
                 >
-                    <img v-if="data.image.name" :src="data.image.url">
+                    <img v-if="data.image && data.image.name" :src="data.image.url">
                     <i class="el-icon-picture-outline-round"></i>
                     <div class="el-upload__text">封面图片 (680*440)</div>
                 </el-upload>
@@ -117,13 +117,15 @@ export default {
                 time: '',               // 时间
                 image: {},              // 图片
                 music: {},              // 音乐
-                hide: false,            // 文章是否隐藏
+                hide: false,            // 隐藏
             },
             isReset: true,
             id: '',                     // 当前文章id（编辑）
 
             upload: {},
-            uploadToggle: false
+            uploadToggle: false,
+
+            fullscreenLoading: false
         }
     },
     created(){
@@ -147,7 +149,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['info'])
+        ...mapState(['$data'])
     },
     methods: {
         musicUpload(file){
@@ -165,7 +167,7 @@ export default {
             }
             const formData = new FormData();
             formData.append('file', file.raw);        
-            formData.append('type', this.info.upload_type);    
+            formData.append('type', this.$data.info.upload_type);    
 
             this.data[type] = {
                 url: URL.createObjectURL(file.raw),
@@ -180,7 +182,7 @@ export default {
         $imgAdd(pos, $file){
            var formdata = new FormData();
            formdata.append('file', $file);
-           formdata.append('type', this.info.upload_type);
+           formdata.append('type', this.$data.info.upload_type);
 
            this.$http.post('/upload', formdata).then(res => {           
                this.$refs.md.$img2Url(pos, res.data.url);
@@ -189,7 +191,7 @@ export default {
         $imgDel(pos){
             const data = {
                 url: pos[0],
-                type: this.info.upload_type
+                type: this.$data.info.upload_type
             }
             this.$http.post('/delete_file', data)
         },
@@ -210,12 +212,20 @@ export default {
                     return;
                 }
             }
+
+            this.fullscreenLoading = true;
             
             // 上传文件
             if(!this.uploadToggle){
                 for(let i in this.upload){
                     const result = await this.$http.post('/upload', this.upload[i].formData);
-                    this.data[i].url = result.data.url;
+                    if(result.data.status == 100){
+                        this.data[i].url = result.data.url;
+                    }else{
+                        // 错误
+                        this.$message.error('图片上传失败, 请检查网络!');
+                        this.fullscreenLoading = false;
+                    }
                 }
             }
 
@@ -243,6 +253,7 @@ export default {
                     }else{
                         this.$message.error(`${mesg}失败，请检查网络问题!`);
                     }
+                    this.fullscreenLoading = false;
                 }, 500)
             })
         },
@@ -254,9 +265,6 @@ export default {
         async loadData(id){
             const res = await this.$http.get(`article/${id}`)
             this.data = res.data.body;
-
-            console.log(this.data)
-
             this.isReset = false;
             this.$nextTick(() => { this.isReset = true; })
         },
@@ -291,16 +299,34 @@ h2{
 }
 .upload-box{
     display: flex;
-    margin-top: 10px;
+    margin: 10px -7px 6px;
     .upload-demo{
-        margin-right: 15px;
-        /deep/ .el-upload-dragger{
-            .el-icon-picture-outline-round,
-            .el-icon-headset{
-                font-size: 46px;
-                color: #c0c4cc;
-                margin: 42px 0 14px;
-                line-height: 50px;
+        width: 50%;
+        max-width: 360px;
+        margin: 0 7px;
+        /deep/ .el-upload{
+            width: 100%;
+            .el-upload-dragger{
+                width: 100%;
+                .el-icon-picture-outline-round,
+                .el-icon-headset{
+                    font-size: 46px;
+                    color: #c0c4cc;
+                    margin: 42px 0 14px;
+                    line-height: 50px;
+                    transition: all .3s;
+                }
+                .el-upload__text{
+                    color: #98999c;
+                    transition: all .3s;
+                }
+                &:hover{
+                    .el-icon-picture-outline-round, 
+                    .el-upload__text, 
+                    .el-icon-headset{
+                        color: #409EFF;
+                    }
+                }
             }
         }
     }
@@ -308,8 +334,12 @@ h2{
         width: 100%;
     }
 }
-.upload-toggle{
-
+/deep/ .el-switch__label{
+    color: #98999c;
+    font-weight: 400;
+    &.is-active{
+        color: #409EFF;
+    }
 }
 @media screen and (max-width: 600px) {
     .markdown-body{

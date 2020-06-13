@@ -1,18 +1,25 @@
 /**
  * 
- * @param {*} pageNo 
- * @param {*} pageSize 
- * @param {*} query 
+ * @param {集合} db 
+ * @param {页码} page 
+ * @param {数量} size 
  */
-async function getPage(pageNo, pageSize, query) {
-    result = await Promise.all([
-        db.count(query),
-        db.find(query).skip((pageNo - 1)*pageSize).limit(pageSize)
-    ]);
+
+const dateFormat = require('./dateFormat');
+
+async function getPage(db, page, size) {
+    const result = await Promise.all([
+        db.countDocuments(),
+        db.find().sort({time:-1}).limit(Number(size)).skip(Number(size)*(page-1))
+    ])
+
+    result[1].forEach(item => item._doc['time'] = dateFormat(item.time))
+
     return {
-        count: result[0],
-        list: result[1]
-    };
+        total: result[0],
+        data: result[1],
+        page: Number(page)
+    }
 }
 
 module.exports = getPage

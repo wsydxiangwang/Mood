@@ -4,26 +4,29 @@
             <h1>短语列表</h1>
         </div>
 
-        <el-table :data="data" style="width: 100%">
+        <el-table :data="data" style="width: 100%" height="calc(100vh - 340px)">
             <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.content}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="Date" width=180>
+            <el-table-column label="Date" width=140>
                 <template slot-scope="scope">
-                    <span>{{(scope.row.time).slice(0, 10)}}</span>
+                    <span>{{scope.row.time.month.en}} {{scope.row.time.day.on}}, {{scope.row.time.year}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="options" width=180>
+            <el-table-column label="options" width=100>
                 <template slot-scope="scope">
-                    <i class="el-icon-edit" @click="edit(scope.row._id)"></i>
-                    <i class="el-icon-delete" @click="remove(scope.row)"></i>
-                    <el-button size="mini" @click="edit(scope.row._id)">Edit</el-button>
-                    <el-button size="mini" type="danger" @click="remove(scope.row)">Delete</el-button>
+                    <el-tooltip effect="dark" content="Edit" placement="top">
+                        <i class="el-icon-edit" @click="edit(scope.row._id)"></i>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="Delete" placement="top">
+                        <i class="el-icon-delete" @click="remove(scope.row)"></i>
+                    </el-tooltip>
                 </template>
             </el-table-column>
         </el-table>
+
     </div>
 </template>
 
@@ -76,7 +79,7 @@ export default {
 
 <style lang="scss" scoped>
 .phrase{
-    padding: 20px;
+    padding: 0 20px;
     .header{
         h1{
             border-left: 2px solid #0084ff;
@@ -105,8 +108,19 @@ export default {
             }
         }
     }
-    .el-icon-edit, .el-icon-delete{
-        display: none;
+    i[class*=el-icon-]{
+        cursor: pointer;
+        margin: 2px;
+        padding: 2px;
+        font-size: 14px;
+        color: #cfcfcf;
+        transition: all .2s;
+        &:hover{
+            color: #0e8bff;
+        }
+        &.el-icon-delete:hover{
+            color: red;
+        }
     }
 }
 @media screen and (max-width: 600px) {

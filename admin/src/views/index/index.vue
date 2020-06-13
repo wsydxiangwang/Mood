@@ -20,33 +20,14 @@
 
         <section>
             字里行间
-            
+
         </section>
 
         <section>
             过故人庄
             收获了多少评论 {{$data.commentQty}}
         </section>
-        <section class="book">
-            三味书屋
-            <div class="book-list">
-                <span>
-                    <img src="https://lh3.googleusercontent.com/proxy/KCeCEuhH_XxQMcSd_gZynUS2puAEy1Sef0qf9Dkss17w4kk86gnABb5tk2i5dttBOD1y592aM6qXzaA-YSOL-FiI_uFyx4LfLtRjTM3QlRv1N8AnJ3O79A" alt="">
-                </span>
-                <span>
-                    <img src="https://lh3.googleusercontent.com/proxy/KCeCEuhH_XxQMcSd_gZynUS2puAEy1Sef0qf9Dkss17w4kk86gnABb5tk2i5dttBOD1y592aM6qXzaA-YSOL-FiI_uFyx4LfLtRjTM3QlRv1N8AnJ3O79A" alt="">
-                </span>
-                <span>
-                    <img src="https://lh3.googleusercontent.com/proxy/KCeCEuhH_XxQMcSd_gZynUS2puAEy1Sef0qf9Dkss17w4kk86gnABb5tk2i5dttBOD1y592aM6qXzaA-YSOL-FiI_uFyx4LfLtRjTM3QlRv1N8AnJ3O79A" alt="">
-                </span>
-                <span>
-                    <img src="https://lh3.googleusercontent.com/proxy/KCeCEuhH_XxQMcSd_gZynUS2puAEy1Sef0qf9Dkss17w4kk86gnABb5tk2i5dttBOD1y592aM6qXzaA-YSOL-FiI_uFyx4LfLtRjTM3QlRv1N8AnJ3O79A" alt="">
-                </span>
-                <span>
-                    <img src="https://lh3.googleusercontent.com/proxy/KCeCEuhH_XxQMcSd_gZynUS2puAEy1Sef0qf9Dkss17w4kk86gnABb5tk2i5dttBOD1y592aM6qXzaA-YSOL-FiI_uFyx4LfLtRjTM3QlRv1N8AnJ3O79A" alt="">
-                </span>
-            </div>
-        </section>
+       
     </div>
 </template>
 
@@ -59,9 +40,6 @@ export default {
 	},
     computed: {
         ...mapState(['$data'])
-    },
-    mounted(){
-        console.log(this.$data)
     },
     methods: {
         dateDiff(time) {

@@ -4,12 +4,15 @@ module.exports = app => {
 
     const Article = require('../../models/article')
     const Counter = require('../../models/counter')
-    const dateFormat = require('../../plugins/dateFormat');
+    const getPage = require('../../plugins/getPage');
     const requestResult = require('../../plugins/requestResult');
 
     // 获取文章
     router.get('/article', async (req, res) => {
-        const data = await Article.find({}).sort({time: -1}).limit(20)
+        const p = req.query.page || 1;
+        const s = req.query.count || 10;
+
+        const data = await getPage(Article, p, s)
         res.send(requestResult(data))
     })
 

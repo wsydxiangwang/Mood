@@ -9,7 +9,7 @@
                 </span>
             </h1>
         </div>
-        <el-table :data="data" style="width: 100%">
+        <el-table :data="data" style="width: 100%;" height="calc(100vh - 340px)">
             <el-table-column label="Name" width=140>
                 <template slot-scope="scope">
                     <p><span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}</p>
@@ -34,15 +34,17 @@
                     <el-tooltip class="item" effect="dark" content="Reply" placement="top">
                         <i class="el-icon-chat-line-round" @click="reply(scope.row)"></i>
                     </el-tooltip>
-                    <i class="el-icon-delete" @click="remove(scope.row._id)"></i>
+                    <i class="el-icon-delete" @click="remove(scope.row)"></i>
                 </template>
             </el-table-column>
         </el-table>
+
         <el-pagination
             background
             :page-size="count"
             :pager-count="11"
             :total="total"
+            :current-page="page"
             @current-change="load"
             layout="prev, pager, next"
         >
@@ -62,10 +64,12 @@ export default {
             data: [],
             total: 0,
             count: 10,
+            page: 1,
             replyData: ''
         }
     },
     created(){
+        this.count = this.$data.info.page_size
         this.load();
     },
     computed: {
@@ -77,7 +81,7 @@ export default {
             this.replyData = data;
             this.$refs.comment.close();
         },
-        async load(page, count){
+        load(page){
             /**
              * vuex 存在当前页数据
              */
@@ -86,39 +90,53 @@ export default {
                 this.data = comment[page];
                 return
             }
+            
+            this.$http.get('/comment', {
+                params: {
+                    page, 
+                    count: this.count
+                }
+            }).then(res => {
+                const data = res.data.body;
+                const item = ['data', 'total', 'page']
 
-            const res = await this.$http.get('/comment', {params: {page}});
-            const data = ['data', 'total'];
-
-            data.forEach(item => this[item] = res.data.body[item])
-
-            /**
-             * 添加数据到vuex，请求优化
-             */
-            this.$store.commit('setComment', {
-                page: page || 1,
-                data: this.data,
-                total: this.total
+                item.map(i => this[i] = data[i])
+                /**
+                 * 添加数据到vuex，请求优化
+                 */
+                this.$store.commit('setCache', {
+                    type: 'comment',
+                    page: page || 1,
+                    data: this.data,
+                    total: this.total
+                })
             })
         },
         resetLoad(){
-            this.$store.commit('resetComment')
+            this.$store.commit('resetCache', 'comment')
             this.load()
         },
         // 新窗口打开文章
         view(id){
             window.open(`${window.location.host}/${id}`)
         },
-        remove(id){
-            this.$confirm('删除该评论, 是否继续?', '提示', {
+        remove(item){
+           
+            const message = item.parent_id ? '删除该评论, 是否继续?' : '当前为一级评论, 会连同子评论一块删除哦~'
+
+            this.$confirm(message, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.delete(`comment/${id}`).then(res => {
+                const data = {
+                    id: item.id,
+                    parent_id: item.parent_id
+                }
+                this.$http.delete(`/comment`, { data }).then(res => {
                     if(res.data.status === 1){
                         setTimeout(() => {
-                            this.$store.commit('resetComment')
+                            this.$store.commit('resetCache', 'comment')
                             this.load()
                             this.$message({
                                 type: 'success',
@@ -137,7 +155,8 @@ export default {
         // 一键已读
         onRead(){
             this.$http.post(`comment_read`).then(res => {
-                
+                this.load()
+                this.$store.commit('updateUnread')
             })
         }
     }
@@ -187,13 +206,6 @@ export default {
             tr{
                 height: 50px;
             }
-        }
-    }
-    .el-pagination{
-        margin: 20px 0;
-        text-align: center;
-        /deep/ .el-pager li{
-            font-weight: 400;
         }
     }
     i[class*=el-icon-]{

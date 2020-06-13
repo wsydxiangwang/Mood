@@ -21,7 +21,7 @@ export default {
     data(){
         return{
             content: '',
-            isShow: false
+            isShow: false,
         }
     },
     computed: {
@@ -33,6 +33,7 @@ export default {
                 this.$message.error('请填写回复的内容');
                 return;
             }
+
             const data = {
                 name: this.$data.info.email_name,
                 email: this.$data.info.email,
@@ -44,6 +45,7 @@ export default {
                 reply_name: this.message.name,
                 reply_email: this.message.email,
                 parent_id: this.message.parent_id || this.message.id,
+                admin: true
             }
             data.type = this.message.type == 1 ? 2 : 3;
 

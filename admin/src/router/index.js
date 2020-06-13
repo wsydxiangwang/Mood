@@ -69,7 +69,7 @@ router.beforeEach((to, from, next) => {
 	 */
 	if (!to.meta.requireAuth) {  
 		/**
-		 * 获取当前的token是否存在
+		 * 获取当前的token
 		 * 不存在则进入登录页面
 		 */
 		if (localStorage.getItem("Authorization")) {

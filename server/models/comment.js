@@ -22,6 +22,8 @@ const schema = new mongoose.Schema({
     parent_id: Number,   // 一级评论id 
     reply_name: String,  // 回复对象
     reply_email: String, // 回复邮箱
+
+    admin: Boolean,      // 管理员
 })
 
 module.exports = mongoose.model('Comment', schema)
