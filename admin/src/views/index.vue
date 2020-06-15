@@ -15,16 +15,9 @@ export default {
     components: { sidebar },
     created() {
         /**
-         * 登录成功 无数据则获取
+         * 刷新时,加载数据 保存
          */
-        const data = this.$store.state.$data;
-        if(Object.keys(data).length > 0){
-            return
-        }
-        this.$http.get('/info').then(res => {
-            const data = res.data.body;
-            this.$store.commit('allData', data)
-		})
+        this.$infoUpdate()
     }
 }
 </script>
@@ -34,12 +27,13 @@ export default {
     display: flex;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    border-radius: 20px;
-    background: #fff;
-    box-shadow: 0 5px 40px #d2eaff;
+    max-height: 800px;
     max-width: 1200px;
+    border-radius: 20px;
     margin: auto;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 5px 40px #d2eaff;
     background: #0e8bff;
     .container{
         flex: 1;
@@ -54,7 +48,7 @@ export default {
         .content{
             width: 100%;
             height: 100%;
-            padding: 0 60px;
+            padding: 0 80px;
             overflow: auto;
             &::-webkit-scrollbar-track {
                 background: #fff;

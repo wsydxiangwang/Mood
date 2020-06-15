@@ -56,13 +56,21 @@ export default {
             page: 1
         }
     },
-    computed: {
-        ...mapState(['$data'])
-    },
     created(){
-        this.count = this.$data.info.page_size
         this.total = this.$data.articleQty
         this.load();
+    },
+    watch: {
+        $page_size(val){
+            this.count = val
+            this.load();
+        }
+    },
+    computed: {
+        ...mapState(['$data']),
+        $page_size(){
+            return Object.keys(this.$data).length > 0 ? this.$data.info.page_size : 10
+        }
     },
     methods: {
         load(page){
@@ -119,7 +127,8 @@ export default {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
-                        });
+                        })
+                        this.$infoUpdate() // 刷新状态
                     }, 1000)
                 })
             }).catch(() => {
@@ -135,7 +144,6 @@ export default {
 
 <style lang="scss">
 .article{
-    padding: 0 20px;
     .header{
         h1{
             border-left: 2px solid #0084ff;

@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '../store'
 import VueRouter from 'vue-router'
 import index from '../views/index.vue'
 
@@ -64,6 +65,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+	// 激活选中路由
+	store.commit('setMenu', to.path)
+
 	/**
 	 * 判断路由是否需要登录权限
 	 */

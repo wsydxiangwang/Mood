@@ -6,6 +6,32 @@ module.exports = app => {
     const router = express.Router();
 
     const User = require('../../models/user')
+    const requestResult = require('../../plugins/requestResult')
+
+    // 修改密码
+    router.post('/password', async (req, res) => {
+        const password = crypto.createHash('sha256').update(req.body.password.one).digest('hex');
+        const passwords = crypto.createHash('sha256').update(req.body.password.two).digest('hex');
+
+        /**
+         * 原密码正确 再更换新密码
+         */
+        User.findOne({password}, (err, docs) => {
+            if(docs){
+                User.findOneAndUpdate({
+                    password
+                }, {
+                    $set: { 
+                        password : passwords 
+                    }
+                }, (err, doc) => {
+                    res.send(requestResult(doc))
+                })
+            }else{
+                res.send(requestResult(docs))
+            }
+        })
+    })
 
     // 登录
     router.post('/login', async (req, res) => {

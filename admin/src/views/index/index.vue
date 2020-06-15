@@ -1,50 +1,100 @@
 <template>
-    <div>
-        <h4>原本这个世界就有很多东西是并没有什么意义</h4>
+    <div class="index">
+        <h2><span class="el-icon-magic-stick"></span> 愿所有的美好如约而至，愿所有的黑暗都能看到希望。</h2>
 
-        <section>
-            重新认识一下自己吧，你觉得你是个怎样的人
+        <p class="time">{{time}}</p>
+
+        <section class="info">
+            <h4>Hello，你好，我是李白！</h4>
+            <div>
+                <p>重新认识、审视、定义一下自己吧。</p>
+                <ul>
+                    <li><span class="el-icon-ice-drink"></span>现在的你，是个怎样的人？</li>
+                    <li><span class="el-icon-lollipop"></span>你希望以后成为怎样的人？</li>
+                    <li><span class="el-icon-lollipop"></span>你心中的未来是怎样的？</li>
+                    <li><span class="el-icon-lollipop"></span>最想做的一件事是什么？</li>
+                    <li><span class="el-icon-lollipop"></span>你现在的生活，开心吗？</li>
+                    <li><span class="el-icon-hot-water"></span>心如止水，淡中得味，加油。</li>
+                </ul>
+            </div>
         </section>
 
         <section>
-            <template v-if="$data.article">
-                文章数量: {{$data.articleQty}}
-                <br>
-                {{dateDiff($data.article.time)}} 发布了新文章
-
-            </template>
+            <h3>article</h3>
+            <div class="box" v-if="$data.article">
+                <p>
+                    <span class="total">{{$data.articleQty}}</span>
+                    <span>篇</span>
+                </p>
+                <p>{{dateDiff($data.article.time)}} 发布了新的心情，继续加油哦！</p>
+            </div>
             <template v-else>
                 快来写文章啦
             </template>
         </section>
 
         <section>
-            字里行间
-
+            <h3>comment</h3>
+            <div class="box" v-if="$data.commentQty">
+                <p>
+                    <span class="total">{{$data.commentQty}}</span>
+                    <span>条</span>
+                </p>
+                <p>过去的时间里，收获了些许陌生的美好。</p>
+            </div>
         </section>
 
         <section>
-            过故人庄
-            收获了多少评论 {{$data.commentQty}}
+            <h3>envelope</h3>
+            <div class="envelope">
+                <p v-for="(item, index) in $envelope" :key="index"><span>{{index + 1}}</span>{{item.content}}</p>
+            </div>
         </section>
        
     </div>
 </template>
 
 <script>
-import sidebar from "@/components/sidebar"
 import { mapState } from 'vuex'
 export default {
-	components: {
-		sidebar
-	},
+    data(){
+        return {
+            time: '',
+            timer: null
+        }
+    },
     computed: {
-        ...mapState(['$data'])
+        ...mapState(['$data']),
+        $envelope(){
+            return this.$data ? this.$data.envelope : {}
+        }
+    },
+    mounted(){
+        this.timer = setInterval(this.date, 1000)
+        document.querySelector('.container').style.background = '#f9fcff'
+    },
+    destroyed(){
+        // 清除倒计时
+        clearInterval(this.timer)
+        document.querySelector('.container').style.background = '#fff'
     },
     methods: {
+        date(){
+            const date = new Date();
+            const year = date.getFullYear();
+            const target = new Date(year, 11, 31, 23, 59, 59);
+            const time = (target - date)/1000;
+
+            const day = Math.floor(time/(24*60*60));
+            const hour = Math.floor(time%(24*60*60)/(60*60));
+            const minute = Math.floor(time%(24*60*60)%(60*60)/60);
+            const second = Math.floor(time%(24*60*60)%(60*60)%60);
+
+            this.time = `${day}天${hour}时${minute}分${second}秒 (${year}年倒计时)`;
+        },
+
         dateDiff(time) {
             const timestemp = new Date(time).getTime();
- 
             const minute = 1000 * 60;
             const hour = minute * 60;
             const day = hour * 24;
@@ -84,44 +134,157 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-section{
-    width: 300px;
-    display: inline-block;
-    height: 300px;
-    box-shadow: 0 2px 20px #eee;
-    border-radius: 8px;
-    margin: 10px;
-    background: #fff;
-    padding: 10px;
-}
-.book{
-    .book-list{
+.index{
+    margin: 0 -20px;
+    color: #3b4b5a;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    h2{
+        width: 100%;
+        font-size: 16px;
+        font-weight: 400;
+        margin: 10px 0 30px;
+        letter-spacing: 1px;
+        color: #5182b3;
         span{
-            width: 50px;
-            height: 50px;
-            display: inline-block;
-            border-radius: 4px;
-            margin-right: 6px;
-            border: 2px solid #c5e3ff;
-            transition: all .3s;
-            cursor: pointer;
-            img{
-                width: 100%;
-                border-radius: 2px;
-            }
+            color: #0e8bff;
+            font-size: 20px;
         }
     }
-}
-.main{
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    .content{
-        width: 100%;
-        height: 100vh;
-        overflow: auto;
+    .time{
+        position: absolute;
+        right: 30px;
+        top: 50px;
+        color: #fff;
+        background: #c4d7e8;
+        padding: 2px 6px 1px;
+        border-radius: 4px;
+    }
+    section{
+        width: calc(50% - 15px);
+        display: inline-block;
+        height: 300px;
+        box-shadow: 0 2px 20px #e0f0ff;
+        border-radius: 20px;
+        background: #fff;
         padding: 20px;
+        margin-bottom: 24px;
+        position: relative;
+        h3{
+            font-size: 18px;
+            color: #c6dcf3;
+            font-weight: 400;
+            text-transform: uppercase;
+            position: relative;
+            height: 20px;
+            margin-bottom: 20px;
+            &::before{
+                content: '';
+                height: 1px;
+                width: 26px;
+                background: #c7dcf3;
+                position: absolute;
+                bottom: -2px;
+            }
+        }
+        .total{
+            font-size: 40px;
+            color: #0e8bff;
+            margin-right: 8px;
+            font-style: oblique;
+        }
+        .box{
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100% - 40px);
+            & > p:last-child{
+                margin-top: 30px;
+                color: #c4ccd4;
+            }
+        }
+        .envelope{
+            p{
+                width: 100%;
+                height: 28px;
+                line-height: 28px;
+                color: #909399;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                font-size: 13px;
+                &:hover{
+                    color: #0e8bff;
+                    span{
+                        background: #6cb8ff;
+                    }
+                }
+                span{
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    background: #dae6fd;
+                    color: #fff;
+                    border-radius: 50%;
+                    text-align: center;
+                    line-height: 18px;
+                    margin-right: 6px;
+                    font-size: 12px;
+                    vertical-align: text-bottom;
+                }
+            }
+        }
+        &.info{
+            h4{
+                font-size: 16px;
+                font-weight: 400;
+                margin: 22px 0 10px;
+                color: #0e8bff;
+                padding-left: 15px;
+                &::after{
+                    content: "\e6a4";
+                    font-family: element-icons!important;
+                    speak: none;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-variant: normal;
+                    text-transform: none;
+                    line-height: 1;
+                    vertical-align: baseline;
+                    display: inline-block;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                    position: absolute;
+                    left: 14px;
+                    top: 10px;
+                    font-size: 30px;
+                    color: #c7dcf3;
+                }
+            }
+            p{
+                font-size: 13px;
+                color: #909399;
+                padding-left: 15px;
+            }
+            ul{
+                margin: 10px 0;
+                padding: 14px 15px 12px;
+                border-radius: 10px;
+                border: 1px solid #edf3f9;
+                li{
+                    position: relative;
+                    color: #5182b3;
+                    line-height: 24px;
+                    font-size: 13px;
+                    letter-spacing: 1px;
+                    span{
+                        margin-right: 4px;
+                    }
+                }
+            }
+        }
     }
 }
 </style>

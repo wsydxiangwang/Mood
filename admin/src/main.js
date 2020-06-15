@@ -11,6 +11,16 @@ Vue.use(ElementUI);
 Vue.prototype.$http = http
 Vue.config.productionTip = false
 
+// 保存更新状态数据
+Vue.prototype.$infoUpdate = () => {
+  http.get('/info').then(res => {
+    if(res && res.data.status == 1){
+      const data = res.data.body;
+      store.commit('allData', data)
+    }
+  })
+}
+
 new Vue({
   store,
   router,

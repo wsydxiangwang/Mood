@@ -45,19 +45,23 @@ module.exports = app => {
         })
 
         // 添加评论id
-        req.body.id = commentCount.count;
-        const result = await Comment.create(req.body)
+        req.body.data.id = commentCount.count;
+        const result = await Comment.create(req.body.data)
         res.send(requestResult(result))
         
-        const articleData = await Article.findOne({id: req.body.topic_id})
-
-        const title = articleData.title,
-              url = req.body.url,
-              name = req.body.reply_name,
-              email = req.body.reply_email;
-
-        // 发送邮件
-        // sendEmail(title, url, name, email)
+        const articleData = await Article.findOne({id: req.body.data.topic_id})
+        
+        if(req.body.email.email_message){
+            const obj = {
+                title: articleData.title,
+                url: req.body.email.address + '/' + req.body.data.topic_id,
+                name: req.body.data.reply_name,
+                email: req.body.data.reply_email
+            }
+            
+            // 发送邮件
+            sendEmail(obj, req.body.email)
+        }
     })
 
     // 一键已读

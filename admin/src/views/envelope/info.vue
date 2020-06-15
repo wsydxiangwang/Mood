@@ -1,7 +1,7 @@
 <template>
     <div v-loading.fullscreen.lock="fullscreenLoading">
         
-        <h2>无人问津的心情，在黑纸白字间游荡！</h2>
+        <h2 class="tit">无人问津的心情，在黑纸白字间游荡！</h2>
 
         <mavon-editor 
             @change="change" 
@@ -76,6 +76,9 @@ export default {
         this.id = this.$route.query.id;
         if(this.id) this.loadData(this.id);
     },
+    mounted(){
+        this.$store.commit('setMenu', this.$route.path)
+    },
     methods: {
         async loadData(id){
             let res = await this.$http.get(`envelope/${id}`)
@@ -112,6 +115,7 @@ export default {
                     });
                     this.$router.push('/envelope')
                     this.fullscreenLoading = false;
+                    this.$infoUpdate() // 刷新状态
                 }, 500)
             })
         }
@@ -142,12 +146,6 @@ section{
     font-size: 14px;
     color: #fff;
 }
-h2{
-    margin: 10px 0 20px;
-    font-size: 16px;
-    color: #606060;
-}
-
 @media screen and (max-width: 600px) {
     .markdown-body{
         height: 80vh !important;

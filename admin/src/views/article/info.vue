@@ -2,7 +2,7 @@
     <div class="article-new" v-loading.fullscreen.lock="fullscreenLoading">
 
         <section>
-            <h2>无人问津的心情，在黑纸白字间游荡！</h2>
+            <h2 class="tit">无人问津的心情，在黑纸白字间游荡！</h2>
             <el-input
                 placeholder="标题"
                 v-model="data.title"
@@ -169,10 +169,11 @@ export default {
             formData.append('file', file.raw);        
             formData.append('type', this.$data.info.upload_type);    
 
-            this.data[type] = {
+            this.$set(this.data, type, {
                 url: URL.createObjectURL(file.raw),
                 name: file.name
-            }
+            })
+
             this.$set(this.upload, type, {
                 url: URL.createObjectURL(file.raw),
                 name: file.name,
@@ -250,6 +251,7 @@ export default {
                             type: 'success'
                         });
                         this.$router.push('/article')
+                        this.$infoUpdate() // 刷新状态
                     }else{
                         this.$message.error(`${mesg}失败，请检查网络问题!`);
                     }
@@ -291,11 +293,6 @@ section{
     height: 40px;
     font-size: 14px;
     color: #fff;
-}
-h2{
-    margin: 10px 0 15px;
-    font-size: 16px;
-    color: #606060;
 }
 .upload-box{
     display: flex;

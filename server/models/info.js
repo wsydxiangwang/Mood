@@ -4,6 +4,7 @@ const schema = new mongoose.Schema({
     name: String,           // 管理员昵称
     avatar: String,         // 管理员头像
     address: String,        // 网站地址
+    website_name: String,   // 网站名
 
     email: String,          // 邮箱
     email_name: String,     // 邮箱名

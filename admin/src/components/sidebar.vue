@@ -23,7 +23,7 @@
                     <span v-if="item.title=='Comment' && $data.unread" class="unread">{{$data.unread}}</span>
                 </el-menu-item>
             </el-menu> 
-            <span @click="hide" :class="[scale?'el-icon-right':'el-icon-back']"></span>
+            <span @click="hide" :class="[!scale?'el-icon-open':'el-icon-turn-off']"></span>
         </div>
         <span class="btn" :class="[show ? 'el-icon-close' : 'el-icon-heavy-rain']" @click="toggle"></span>
     </div>
@@ -80,8 +80,16 @@ export default {
             scale: false
         }
     },
-    mounted(){
-        this.activeIndex = this.$route.path;
+    watch: {
+        /**
+         * 激活菜单导航
+         */
+        '$store.state.menu': {
+            handler(val) {
+                this.activeIndex = val
+            },
+            immediate: true
+        }
     },
     computed: {
         ...mapState(['$data']),
@@ -95,19 +103,13 @@ export default {
         },
         toggle(){
             this.show = !this.show;
-            if(this.show){
-                document.getElementsByClassName('container')[0].style.filter = 'blur(1px)'
-                document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
-            }else{
-                document.getElementsByClassName('container')[0].style.filter = ''
-                document.getElementsByClassName('content')[0].style.overflowY = ''
-            }
+            const i = this.show ? 'blur(1px)' : '';
+            const t = this.show ? 'hidden' : '';
+            this.filter(i, t)
         },
         toPage(data){
-            console.log(data)
             this.show = false;
-            document.getElementsByClassName('container')[0].style.filter = ''
-            document.getElementsByClassName('content')[0].style.overflowY = ''
+            this.filter('', '')
             /**
              * 清除token
              * 回到登录页
@@ -120,8 +122,12 @@ export default {
                 }).then(() => {
                     localStorage.removeItem('Authorization');
                     this.$router.push('/login');
-                }).catch(() => {})
+                })
             }
+        },
+        filter(i, t){
+            document.getElementsByClassName('container')[0].style.filter = i
+            document.getElementsByClassName('content')[0].style.overflowY = t
         }
     }
 }
@@ -156,7 +162,7 @@ export default {
             transition: all .3s;
             i{
                 color: #fff;
-                vertical-align: text-bottom;
+                vertical-align: middle;
             }
             &:focus{
                 color: #fff;
@@ -165,7 +171,7 @@ export default {
             &:hover, &.is-active{
                 color: #0084ff;
                 background: #fff;
-                position: relative;
+                position: static;
                 i{
                     color: #0084ff;
                 }
@@ -191,13 +197,14 @@ export default {
         margin: 40px 0;
         text-align: center;
         .photo{
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             margin: auto;
             border-radius: 50%;
             background: #fff;
             overflow: hidden;
             transition: all .3s;
+            border: 5px solid #389fff;
             img{
                 width: 100%;
                 height: 100%;
@@ -227,7 +234,7 @@ export default {
                 padding: 0;
                 text-align: center;
                 width: 48px;
-                line-height: 48px;
+                line-height: 42px;
                 height: 42px;
                 padding-left: 2px;
                 display: inline-block;
@@ -237,22 +244,33 @@ export default {
                 span{
                     display: none;
                 }
+                &.is-active::before{
+                    content: '';
+                    height: 24px;
+                    width: 3px;
+                    position: absolute;
+                    left: 0;
+                    z-index: 999;
+                    background: #fff;
+                    transform: translateY(8px);
+                    border-radius: 0 15px 15px 0;
+                }
             }
         }
     }
-    .el-icon-back, .el-icon-right{
+    .el-icon-open, .el-icon-turn-off{
         font-size: 20px;
         position: absolute;
-        bottom: 6px;
-        right: 6px;
+        bottom: 10px;
+        left: 30px;
         cursor: pointer;
         color: #83c3ff;
         &:hover{
             color: #fff;
         }
-        &.el-icon-right{
-            right: 50%;
-            transform: translateX(50%);
+        &.el-icon-turn-off{
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
 }

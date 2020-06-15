@@ -24,7 +24,6 @@ module.exports = app => {
 
     // 发布文章
     router.post('/article', async (req, res) => {
-        console.log(req.body)
         /**
          * 获取计数器,每次自增11
          */

@@ -1,7 +1,7 @@
 <template>
     <div v-loading.fullscreen.lock="fullscreenLoading">
         <div class="header">
-            <h1>网站信息</h1>
+            <h2 class="tit">网站信息</h2>
         </div>
         <el-form ref="form" :model="form" label-width="100px">
             <template v-for="(item, index) in formList[0]">
@@ -53,7 +53,7 @@
                 </el-form-item> 
             </template>
 
-            <h1 class="hint-tit">首屏效果 
+            <h2 class="tit hint-tit">首屏效果 
                   <el-popover
                     placement="top-start"
                     width="300"
@@ -63,7 +63,7 @@
                     <img src="../assets/cover.png">
                     <span slot="reference">(view)</span>
                 </el-popover>
-            </h1>
+            </h2>
             <template v-for="(item, index) in formList[1]">
                 <el-form-item :label="item.value" :key="index+22">
                     <template v-if="item.key == 'image'">
@@ -86,23 +86,25 @@
                     </template>
                 </el-form-item>
             </template>
-<!-- 
-            <h1>修改密码</h1>
+
+            <h2 class="tit">修改密码</h2>
             <el-form-item label="原密码">
-                <el-input v-model="form.password"></el-input>
+                <el-input v-model="password.one"></el-input>
             </el-form-item>
             <el-form-item label="新密码">
-                <el-input v-model="form.passwords"></el-input>
-            </el-form-item> -->
+                <el-input v-model="password.two"></el-input>
+            </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">立即保存</el-button>
+                <el-button class="submit" type="primary" @click="onSubmit">立即保存</el-button>
+                <span class="hint"><i class="el-icon-warning"></i>请填写完善所有信息!</span>
             </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
@@ -121,6 +123,10 @@ export default {
                     {
                         key: 'address',
                         value: '网站地址'
+                    },
+                    {
+                        key: 'website_name',
+                        value: '网站别名'
                     },
                     {
                         key: 'email',
@@ -186,21 +192,56 @@ export default {
                 upload_type: '服务器',
                 page_size: 10
             },
-            fullscreenLoading: false
+            fullscreenLoading: false,
+
+            password: {}
         }
     },
     mounted(){
-        // 默认值
-        const data = this.$store.state.$data.info;
-        if(Object.keys(data).length > 0){
-            for(let i in data){
-                this.$set(this.form, i, data[i])
-            }
-            this.formList[0][7].show = !data.email_message
+        if(Object.keys(this.$info).length > 0){
+            this.update()
+        }
+    },
+    watch: {
+        $info(){
+            this.update()
+        }
+    },
+    computed: {
+        ...mapState(['$data']),
+        $info(){
+            return Object.keys(this.$data).length > 0 ? this.$data.info : {}
         }
     },
     methods: {
-        onSubmit(){
+        update(){
+            for(let i in this.$info){
+                this.$set(this.form, i, this.$info[i])
+            }
+            this.$set(this.formList[0][8], 'show', !this.$info['email_message'])
+        },
+        async onSubmit(){
+            /**
+             * 修改密码
+             */
+            if(Object.keys(this.password).length > 0){
+                if(!this.password['one']){
+                    this.$message.error('请输入原密码!')
+                    return;
+                }else if(!this.password['two']){
+                    this.$message.error('请填写新密码!')
+                    return
+                }
+
+                this.fullscreenLoading = true;
+
+                const result = await this.$http.post('/password', {password: this.password})
+                if(result.data.status === 2){
+                    this.fullscreenLoading = false;
+                    this.$message.error('原密码输入有误!')
+                    return;
+                }
+            }
 
             this.fullscreenLoading = true;
 
@@ -257,6 +298,9 @@ export default {
                             this.$store.commit('updataInfo', res.data.body)
                             this.fullscreenLoading = false
                             this.$router.push('/')
+
+                            
+
                         }, 500)
                     }
                 })
@@ -266,7 +310,7 @@ export default {
             })
         },
         emailChange(e){
-            this.formList[0][7].show = !e
+            this.formList[0][8].show = !e
         },
         // 保存临时图片
         upload(type, file){
@@ -279,6 +323,12 @@ export default {
             this[type] = {
                 url: URL.createObjectURL(file.raw),
                 formData
+            }
+
+            if(type === 'avatar'){
+                this.form['avatar'] = URL.createObjectURL(file.raw)
+            }else{
+                this.form['cover']['image'] = URL.createObjectURL(file.raw)
             }
         },
         avatarUpload(file){
@@ -333,13 +383,8 @@ export default {
         }
     }
 }
-h1{
-    border-left: 2px solid #0084ff;
-    padding-left: 16px;
-    font-size: 18px;
-    font-weight: 400;
+h2.tit{
     margin: 50px 0 30px;
-    color: #0084ff;
     span{
         font-size: 12px;
         color: #b3b3b3;
@@ -354,5 +399,16 @@ h1{
         width: 100%;
         border-radius: 4px;
     }
+}
+.submit:hover + .hint{
+    opacity: 1;
+}
+.hint{
+    font-size: 12px;
+    color: #ff4444;
+    margin-left: 10px;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all .3s;
 }
 </style>

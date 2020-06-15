@@ -69,11 +69,19 @@ export default {
         }
     },
     created(){
-        this.count = this.$data.info.page_size
         this.load();
     },
+    watch: {
+        $page_size(val){
+            this.count = val
+            this.load();
+        }
+    },
     computed: {
-        ...mapState(['$data'])
+        ...mapState(['$data']),
+        $page_size(){
+            return Object.keys(this.$data).length > 0 ? this.$data.info.page_size : 10
+        }
     },
     methods: {
         // 回复
@@ -141,7 +149,8 @@ export default {
                             this.$message({
                                 type: 'success',
                                 message: '删除成功!'
-                            });
+                            })
+                            this.$infoUpdate() // 刷新状态
                         }, 1000)
                     }
                 })
@@ -168,7 +177,6 @@ export default {
     position: relative;
 }
 .comment{
-    padding: 0 20px;
     .header{
         h1{
             border-left: 2px solid #0084ff;

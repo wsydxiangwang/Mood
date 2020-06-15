@@ -5,16 +5,19 @@
         </div>
 
         <el-table :data="data" style="width: 100%" height="calc(100vh - 340px)">
+            
             <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.content}}</p>
                 </template>
             </el-table-column>
+
             <el-table-column label="Date" width=140>
                 <template slot-scope="scope">
                     <span>{{scope.row.time.month.en}} {{scope.row.time.day.on}}, {{scope.row.time.year}}</span>
                 </template>
             </el-table-column>
+
             <el-table-column label="options" width=100>
                 <template slot-scope="scope">
                     <el-tooltip effect="dark" content="Edit" placement="top">
@@ -25,6 +28,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
+
         </el-table>
 
     </div>
@@ -58,6 +62,7 @@ export default {
                             type: 'success',
                             message: '删除成功!'
                         });
+                        this.$infoUpdate() // 刷新状态
                     }, 1000)
                 })
             }).catch(() => {
@@ -79,7 +84,6 @@ export default {
 
 <style lang="scss" scoped>
 .phrase{
-    padding: 0 20px;
     .header{
         h1{
             border-left: 2px solid #0084ff;

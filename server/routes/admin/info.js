@@ -1,6 +1,7 @@
 module.exports = app => {
     const express = require('express');
     const router = express.Router();
+    const dateFormat = require('../../plugins/dateFormat'); 
     const requestResult = require('../../plugins/requestResult')
 
     const Info = require('../../models/info')
@@ -10,13 +11,14 @@ module.exports = app => {
     const Envelope = require('../../models/envelope')
 
     router.get('/info', async (req, res) => {
-        console.log(2)
         const info = await Info.findOne()
         const unread = await Counter.findOne({name: 'comment_read'})
         const articleQty = await Article.countDocuments()
         const commentQty = await Comment.countDocuments()
         const article = await Article.findOne().sort({time: -1})
-        const envelope = await Envelope.find().sort({time: -1}).limit(10)
+        const envelope = await Envelope.find().sort({time: -1}).limit(8)
+
+        envelope.forEach(item => item._doc['time'] = dateFormat(item.time) )
 
         const data = {
             info,
