@@ -13,7 +13,7 @@
                     <img src="../assets/login-2.png" alt="">
                 </div>
                 <img src="../assets/login-0.png" alt="">
-                <button @click="login">sign in</button>
+                <button @click="login" @keyup.enter="login">sign in</button>
                 <span @click="isCreate" class="add">(sign up)</span>
             </div>
         </div>
@@ -110,7 +110,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .create{
     position: fixed;
     left: 0;

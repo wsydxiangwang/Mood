@@ -4,7 +4,7 @@
 	</div>
 </template>
 
-<style>
+<style lang="scss">
 * {
 	margin: 0;
 	padding: 0;
@@ -24,11 +24,11 @@ a{
 	text-decoration: none;
 }
 #app{
-    padding: 70px;
+    padding: 0 15px;
     border-radius: 10px;
     height: 100vh;
     width: 100vw;
-	display: flex;
+	display: flex;	
 }
 h2.tit{
     border-left: 2px solid #0084ff;
@@ -38,6 +38,7 @@ h2.tit{
     margin: 20px 0 30px;
     color: #0084ff;
 }
+
 @media screen and (max-width: 600px) {
 	#app{
 		padding: 0;

@@ -186,6 +186,17 @@ export default {
             color: red;
         }
     }
+    /deep/ .el-table__body-wrapper{
+        &::-webkit-scrollbar-track {
+            background: #fff;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #eef7ff;
+        }
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+    }
 }
 
 @media screen and (max-width: 600px) {

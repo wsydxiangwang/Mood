@@ -27,7 +27,7 @@ export default {
     display: flex;
     width: 100%;
     height: 100%;
-    max-height: 800px;
+    height: 800px;
     max-width: 1200px;
     border-radius: 20px;
     margin: auto;

@@ -97,7 +97,7 @@
 
             <el-form-item>
                 <el-button class="submit" type="primary" @click="onSubmit">立即保存</el-button>
-                <span class="hint"><i class="el-icon-warning"></i>请填写完善所有信息!</span>
+                <span class="hint"><i class="el-icon-warning"></i>信息需填写完整才能正常使用</span>
             </el-form-item>
         </el-form>
     </div>
@@ -348,7 +348,7 @@ export default {
         height: 100px;
         width: 100px;
         overflow: hidden;
-        border: 1px solid #dcdfe6;
+        border: 4px solid #dce7ff;
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -369,12 +369,14 @@ export default {
         height: 170px;
         border-radius: 4px;
         overflow: hidden;
-        border: 1px solid #dcdfe6;
+        border: 6px solid #dce7ff;
         display: flex;
         justify-content: center;
         align-items: center;
         img{
             width: 100%;
+            height: 100%;
+            border-radius: 2px;
         }
         i{
             font-size: 30px;

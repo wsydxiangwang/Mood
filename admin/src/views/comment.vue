@@ -9,7 +9,7 @@
                 </span>
             </h1>
         </div>
-        <el-table :data="data" style="width: 100%;" height="calc(100vh - 340px)">
+        <el-table :data="data" style="width: 100%;" height="calc(800px - 220px)">
             <el-table-column label="Name" width=140>
                 <template slot-scope="scope">
                     <p><span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}</p>
@@ -240,6 +240,17 @@ export default {
         display: inline-block;
         text-align: center;
         line-height: 15px;
+    }
+    /deep/ .el-table__body-wrapper{
+        &::-webkit-scrollbar-track {
+            background: #fff;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #eef7ff;
+        }
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
     }
 }
 @media screen and (max-width: 600px) {

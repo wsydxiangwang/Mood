@@ -2,7 +2,11 @@
     <div class="index">
         <h2><span class="el-icon-magic-stick"></span> 愿所有的美好如约而至，愿所有的黑暗都能看到希望。</h2>
 
-        <p class="time">{{time}}</p>
+        <p class="time">
+            <span>{{time.year || '请珍惜时间'}}</span>
+            <span>{{time.date || '一寸光阴一寸金'}}</span>
+        </p>
+        <!-- <p class="time">{{time}}</p> -->
 
         <section class="info">
             <h4>Hello，你好，我是李白！</h4>
@@ -59,7 +63,7 @@ import { mapState } from 'vuex'
 export default {
     data(){
         return {
-            time: '',
+            time: {},
             timer: null
         }
     },
@@ -90,7 +94,10 @@ export default {
             const minute = Math.floor(time%(24*60*60)%(60*60)/60);
             const second = Math.floor(time%(24*60*60)%(60*60)%60);
 
-            this.time = `${day}天${hour}时${minute}分${second}秒 (${year}年倒计时)`;
+            this.time = {
+                year: `${year}年倒计时`,
+                date: `${day}天${hour}时${minute}分${second}秒`
+            }
         },
 
         dateDiff(time) {
@@ -146,7 +153,7 @@ export default {
         font-weight: 400;
         margin: 10px 0 30px;
         letter-spacing: 1px;
-        color: #5182b3;
+        color: #0e8dff;
         span{
             color: #0e8bff;
             font-size: 20px;
@@ -154,12 +161,28 @@ export default {
     }
     .time{
         position: absolute;
-        right: 30px;
-        top: 50px;
+        right: 0;
+        top: 30px;
         color: #fff;
-        background: #c4d7e8;
-        padding: 2px 6px 1px;
-        border-radius: 4px;
+        background: #ff8a8a;
+        padding: 4px 8px 3px;
+        border-radius: 4px 0 0 4px;
+        display: flex;
+        text-align: right;
+        flex-direction: column;
+        &::after{
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            right: 0;
+            border: 4px solid transparent;
+            border-top-color: #c87878;
+            border-right-color: #c87878;
+        }
+        span:first-child{
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
     }
     section{
         width: calc(50% - 15px);
@@ -173,7 +196,7 @@ export default {
         position: relative;
         h3{
             font-size: 18px;
-            color: #c6dcf3;
+            color: #7fc3ff;
             font-weight: 400;
             text-transform: uppercase;
             position: relative;
@@ -260,7 +283,7 @@ export default {
                     left: 14px;
                     top: 10px;
                     font-size: 30px;
-                    color: #c7dcf3;
+                    color: #7fc3ff;
                 }
             }
             p{
