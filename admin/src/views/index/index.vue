@@ -310,4 +310,26 @@ export default {
         }
     }
 }
+@media screen and (max-width: 600px) {
+    .index{
+        margin: 0;
+        section{
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        h2{
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .time{
+            position: static;
+            flex-direction: row;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            span:first-child{
+                margin-right: 4px;
+            }
+        }
+    }
+}
 </style>

@@ -148,7 +148,7 @@ section{
 }
 @media screen and (max-width: 600px) {
     .markdown-body{
-        height: 80vh !important;
+        height: 60vh !important;
         box-shadow: none !important;
     }
     section{
@@ -158,7 +158,9 @@ section{
     .submit{
         width: 150px;
         height: 36px;
-        margin: 0;
+        margin: 0 0 20px;
+        line-height: 36px;
+        padding: 0;
     }
 }
 

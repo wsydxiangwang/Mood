@@ -340,7 +340,7 @@ section{
 }
 @media screen and (max-width: 600px) {
     .markdown-body{
-        height: 100vh !important;
+        height: 90vh !important;
         box-shadow: none !important;
     }
     section{
@@ -350,7 +350,16 @@ section{
     .submit{
         width: 150px;
         height: 36px;
-        margin: 0;
+        margin: 0 0 20px;
+        line-height: 36px;
+        padding: 0;
+    }
+    .upload-box .upload-demo /deep/ .el-upload .el-upload-dragger{
+        height: 130px;
+        .el-icon-picture-outline-round, .el-icon-headset{
+            font-size: 36px;
+            margin: 22px 0 10px;
+        }
     }
 }
 </style>

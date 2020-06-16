@@ -1,6 +1,6 @@
 <template>
-    <div class="sidebar" :class="{hide:scale}">
-        <div :class="show?'show':''">
+    <div>
+        <div class="sidebar" :class="{hide:scale, show:show}">
             <div class="info">
                 <div class="photo">
                     <img :src="$info.avatar || ''">
@@ -23,7 +23,11 @@
                     <span v-if="item.title=='Comment' && $data.unread" class="unread">{{$data.unread}}</span>
                 </el-menu-item>
             </el-menu> 
-            <span @click="hide" :class="[!scale?'el-icon-open':'el-icon-turn-off']"></span>
+
+            <transition name="fade" mode="out-in">
+                <span v-if="scale" @click="hide" class="el-icon-open"></span>
+                <span v-else @click="hide" class="el-icon-turn-off"></span>
+            </transition>
         </div>
         <span class="btn" :class="[show ? 'el-icon-close' : 'el-icon-heavy-rain']" @click="toggle"></span>
     </div>
@@ -135,10 +139,21 @@ export default {
 
 
 <style lang="scss" scoped>
+.fade-enter-active {
+  transition: all .3s ease;
+}
+.fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.fade-enter, .fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+}
 .sidebar{
     height: 100%;
     width: 240px;
     color: #fff;
+    padding-top: 40px;
     background: #0e8bff;
     transition: all .3s;
     position: relative;
@@ -194,7 +209,6 @@ export default {
     }
 
     .info{
-        margin: 40px 0;
         text-align: center;
         .photo{
             width: 70px;
@@ -288,6 +302,10 @@ export default {
     font-size: 24px;
     z-index: 999999;
     display: none;
+    &.el-icon-close{
+        font-size: 20px;
+        line-height: 42px;
+    }
 }
 @media screen and (max-width: 600px) {
     .sidebar{

@@ -147,6 +147,9 @@ export default {
             margin: 10px 0 20px;
         }
     }
+    /deep/ .el-table__body-wrapper, .table__body{
+        height: 100vh !important;
+    }
     .el-table__header, .el-table__body{
         width: 100% !important;
         display: block;

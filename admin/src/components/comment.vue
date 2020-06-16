@@ -1,7 +1,7 @@
 <template>
     <div class="comment-form" :class="isShow?'active':''">
         <div class="content">
-            <div class="img"><img src="/uploads/image/1592016134235.png"></div>
+            <div class="img"><img :src="$data.info ? $data.info.avatar : ''"></div>
             <p>回复：{{message.name}}</p>
             <el-input
                 type="textarea"
@@ -192,4 +192,9 @@ export default {
     }
 }
 
+@media screen and (max-width: 600px) {
+    .comment-form .content{
+        max-width: 90%;
+    }
+}
 </style>

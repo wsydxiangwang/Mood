@@ -23,6 +23,9 @@ div, p, li, ol, span, a, input,textarea{
 a{
 	text-decoration: none;
 }
+body{
+	overflow: hidden;
+}
 #app{
     padding: 0 15px;
     border-radius: 10px;
@@ -43,5 +46,11 @@ h2.tit{
 	#app{
 		padding: 0;
 	}
+	.el-message-box__wrapper .el-message-box{
+		width: 90%;
+	}
+	.el-tooltip__popper{
+        display: none !important;
+    }
 }
 </style>

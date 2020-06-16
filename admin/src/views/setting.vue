@@ -298,9 +298,6 @@ export default {
                             this.$store.commit('updataInfo', res.data.body)
                             this.fullscreenLoading = false
                             this.$router.push('/')
-
-                            
-
                         }, 500)
                     }
                 })
@@ -412,5 +409,16 @@ h2.tit{
     letter-spacing: 2px;
     opacity: 0;
     transition: all .3s;
+}
+@media screen and (max-width: 600px) {
+    .cover{
+        /deep/ .el-upload{
+            width: 100%;
+        }
+    }
+    .hint{
+        opacity: 1;
+        display: block;
+    }
 }
 </style>

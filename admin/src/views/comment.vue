@@ -9,7 +9,7 @@
                 </span>
             </h1>
         </div>
-        <el-table :data="data" style="width: 100%;" height="calc(800px - 220px)">
+        <el-table :data="data" style="width: 100%;" height="calc(800px - 240px)">
             <el-table-column label="Name" width=140>
                 <template slot-scope="scope">
                     <p><span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}</p>
@@ -205,17 +205,6 @@ export default {
             }
         }
     }
-    .phrase-list{
-        width: 100%;
-        thead tr{
-            height: 40px;
-        }
-        tbody{
-            tr{
-                height: 50px;
-            }
-        }
-    }
     i[class*=el-icon-]{
         cursor: pointer;
         margin: 2px;
@@ -250,16 +239,84 @@ export default {
         }
         &::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
     }
 }
 @media screen and (max-width: 600px) {
-    .phrase{
+    .comment{
         padding: 0;
         box-shadow: none;
-        .header h1{
-            font-size: 16px;
-            margin: 10px 0 20px;
+        i[class*=el-icon-]{
+            display: block;
+            text-align: right;
+        }
+        .el-pagination{
+            bottom: 5px !important;
+        }
+        /deep/ .el-table__header{
+            width: 100% !important;
+            display: block;
+            thead{
+                display: block;
+                tr{
+                    display: flex;
+                    th{
+                        padding: 6px 0;
+                        &:nth-of-type(2){
+                            flex: 1;
+                        }
+                        &:nth-of-type(1){
+                            display: none;
+                        }
+                        &:nth-of-type(3){
+                            width: 100px;
+                            text-align: center;
+                        }
+                        .cell{
+                            padding: 0;
+                        }
+                    } 
+                }
+            }
+        }
+        /deep/ .el-table__body-wrapper{
+            height: calc(100% - 90px) !important;
+        }
+        /deep/ .el-table__body{
+            width: 100% !important;
+            display: block;
+            tbody{
+                display: block;
+                tr{
+                    display: flex;
+                    align-items: center;
+                    transition: all .3s;
+                    border-bottom: 1px solid #ebeef5;
+                    &:hover{
+                        background: #F5F7FA;
+                        td{
+                            background: none;
+                        }
+                    }
+                    td{
+                        border: none;
+                        &:nth-of-type(1){
+                            display: none;
+                        }
+                        &:nth-of-type(2){
+                            flex: 1;
+                        }
+                        &:nth-of-type(3){
+                            width: 100px;
+                            text-align: center;
+                        }
+                        &:nth-of-type(4){
+                            width: 46px;
+                        }
+                    }
+                } 
+            } 
         }
     }
 }

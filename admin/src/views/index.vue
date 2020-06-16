@@ -26,8 +26,8 @@ export default {
 .main{
     display: flex;
     width: 100%;
-    height: 100%;
     height: 800px;
+    max-height: 100vh;
     max-width: 1200px;
     border-radius: 20px;
     margin: auto;
@@ -58,6 +58,7 @@ export default {
             }
             &::-webkit-scrollbar {
                 width: 6px;
+                height: 6px;
             }
             /deep/ .el-pagination{
                 position: absolute;
@@ -76,14 +77,14 @@ export default {
 
 
 @media screen and (max-width: 600px) {
-.main{
-    background: none;
-    .container{
-        padding: 10px 0;
-        .content{
-            padding: 20px;
+    .main{
+        background: none;
+        .container{
+            padding: 0;
+            .content{
+                padding: 20px;
+            }
         }
     }
-}
 }
 </style>
