@@ -51,6 +51,10 @@ h2.tit{
 	}
 	.el-tooltip__popper{
         display: none !important;
-    }
+	}
+	h2.tit{
+		font-size: 16px;
+		margin: 10px 0 20px;
+	}
 }
 </style>

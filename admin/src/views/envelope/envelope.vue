@@ -1,10 +1,8 @@
 <template>
     <div class="phrase">
-        <div class="header">
-            <h1>短语列表</h1>
-        </div>
+        <h2 class="tit">短语列表 ({{data.length}})</h2>
 
-        <el-table :data="data" style="width: 100%" height="calc(100vh - 340px)">
+        <el-table :data="data" style="width: 100%"  height="calc(800px - 240px)">
             
             <el-table-column label="Title">
                 <template slot-scope="scope">
@@ -146,9 +144,6 @@ export default {
             font-size: 16px;
             margin: 10px 0 20px;
         }
-    }
-    /deep/ .el-table__body-wrapper, .table__body{
-        height: 100vh !important;
     }
     .el-table__header, .el-table__body{
         width: 100% !important;

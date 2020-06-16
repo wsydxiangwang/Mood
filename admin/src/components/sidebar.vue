@@ -29,6 +29,7 @@
                 <span v-else @click="hide" class="el-icon-turn-off"></span>
             </transition>
         </div>
+        <div class="misk"></div>
         <span class="btn" :class="[show ? 'el-icon-close' : 'el-icon-heavy-rain']" @click="toggle"></span>
     </div>
 </template>
@@ -288,6 +289,14 @@ export default {
         }
     }
 }
+.misk{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 8;
+    background: rgba(255, 255, 255, 0);
+    display: none;
+}
 .btn{
     position: fixed;
     bottom: 20px;
@@ -321,6 +330,9 @@ export default {
         &.show{
             opacity: 1;
             transform: translateX(0);
+        }
+        &.show + .misk{
+            display: block;
         }
     }
     .btn{

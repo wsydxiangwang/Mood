@@ -9,7 +9,7 @@
                 </span>
             </h1>
         </div>
-        <el-table :data="data" style="width: 100%;" height="calc(800px - 240px)">
+        <el-table :data="data" style="width: 100%;"  height="calc(800px - 240px)">
             <el-table-column label="Name" width=140>
                 <template slot-scope="scope">
                     <p><span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}</p>
@@ -242,6 +242,7 @@ export default {
             height: 6px;
         }
     }
+    //  height="calc(800px - 240px)"
 }
 @media screen and (max-width: 600px) {
     .comment{
@@ -254,6 +255,9 @@ export default {
         .el-pagination{
             bottom: 5px !important;
         }
+        /deep/ .el-table__body-wrapper{
+            height: calc(100vh - 212px) !important;
+        }
         /deep/ .el-table__header{
             width: 100% !important;
             display: block;
@@ -263,11 +267,11 @@ export default {
                     display: flex;
                     th{
                         padding: 6px 0;
-                        &:nth-of-type(2){
-                            flex: 1;
-                        }
                         &:nth-of-type(1){
                             display: none;
+                        }
+                        &:nth-of-type(2){
+                            flex: 1;
                         }
                         &:nth-of-type(3){
                             width: 100px;
@@ -279,9 +283,6 @@ export default {
                     } 
                 }
             }
-        }
-        /deep/ .el-table__body-wrapper{
-            height: calc(100% - 90px) !important;
         }
         /deep/ .el-table__body{
             width: 100% !important;

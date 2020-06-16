@@ -1,10 +1,8 @@
 <template>
     <div class="article">
-        <div class="header">
-            <h1>文章列表 ({{total}})</h1>
-        </div>
+        <h2 class="tit">文章列表 ({{total}})</h2>
         
-        <el-table :data="data" style="width: 100%" height="calc(100vh - 340px)">
+        <el-table :data="data" style="width: 100%" height="calc(800px - 240px)">
             <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.title}}</p>
@@ -208,6 +206,9 @@ export default {
             margin: 10px 0 20px;
         }
     }
+    /deep/ .el-table__body-wrapper{
+        height: calc(100vh - 212px) !important;
+    }
     .el-table__header, .el-table__body{
         width: 100% !important;
         display: block;
@@ -253,18 +254,6 @@ export default {
                 }
                 div{
                     padding: 0;
-                }
-            }
-            .el-button{
-                display: none;
-            } 
-            .el-icon-edit, .el-icon-delete{
-                display: inline-block;
-                margin: 4px;
-                color: #0084ff;
-                font-size: 16px;
-                &.el-icon-delete{
-                    color: red;
                 }
             }
         } 
