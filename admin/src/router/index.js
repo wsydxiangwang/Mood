@@ -42,6 +42,11 @@ const routes = [
 				component: resolve => require(['@/views/comment'], resolve)
 			},
 			{
+				path: '/myself',
+				name: "myself",
+				component: resolve => require(['@/views/myself'], resolve)
+			},
+			{
 				path: '/setting',
 				name: "setting",
 				component: resolve => require(['@/views/setting'], resolve)

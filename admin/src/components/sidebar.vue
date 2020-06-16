@@ -71,6 +71,11 @@ export default {
                     path: '/comment',
                 },
                 {
+                    icon: 'el-icon-sunrise-1',
+                    title: 'Myself',
+                    path: '/myself',
+                },
+                {
                     icon: 'el-icon-sunset',
                     title: 'Setting',
                     path: '/setting',
