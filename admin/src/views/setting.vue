@@ -160,6 +160,10 @@ export default {
                         value: '封面图'
                     },
                     {
+                        key: 'title',
+                        value: '标题'
+                    },
+                    {
                         key: 'describe',
                         value: '描述'
                     },

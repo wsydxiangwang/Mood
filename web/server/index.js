@@ -20,7 +20,7 @@ async function start () {
   } else {
     await nuxt.ready()
   }
-
+  
   // Give nuxt middleware to express
   app.use(nuxt.render)
 

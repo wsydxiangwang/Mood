@@ -28,6 +28,7 @@ const schema = new mongoose.Schema({
 
     cover: {                // 首屏效果
         date: String,
+        title: String,
         link: String,
         color: String,
         image: String,
