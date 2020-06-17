@@ -1,5 +1,5 @@
 <template>
-    <div v-loading.fullscreen.lock="fullscreenLoading">
+    <div v-loading.fullscreen.lock="loading">
         
         <h2 class="tit">个人信息页，来让陌生人认识一下自己吧！！</h2>
 
@@ -28,7 +28,7 @@ export default {
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
             },
-            fullscreenLoading: false
+            loading: false
         }
     },
     mounted(){
@@ -45,7 +45,7 @@ export default {
             this.data.content = value;          // 输入的内容
         },
         submit(){
-            this.fullscreenLoading = true;
+            this.loading = true;
             this.$http.post('myself', this.data).then(res => {
                 setTimeout(() => {
                     this.$message({
@@ -53,7 +53,7 @@ export default {
                         type: 'success'
                     });
                     this.$router.push('/')
-                    this.fullscreenLoading = false;
+                    this.loading = false;
                 }, 500)
             })
         }
@@ -83,6 +83,7 @@ section{
     height: 40px;
     font-size: 14px;
     color: #fff;
+    margin-top: 15px;
 }
 @media screen and (max-width: 600px) {
     .markdown-body{

@@ -6,10 +6,17 @@ module.exports = app => {
     const Article = require('../../models/article')
     const Counter = require('../../models/counter')
     const Envelope = require('../../models/envelope')
+    const Info = require('../../models/info')
 
     const sendEmail = require('../../plugins/email')
     const dateFormat = require('../../plugins/dateFormat')
     const requestResult = require('../../plugins/requestResult')
+
+    router.get('/info', async (req, res) => {
+        const info = await Info.findOne()
+
+        res.send(requestResult(info))
+    })
 
     // All articles
     router.get('/article', async (req, res) => {

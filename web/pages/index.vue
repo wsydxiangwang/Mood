@@ -101,12 +101,19 @@ export default {
 			loading: false,
 			loadingType: 'more',
 			page: 1,
-			timerScroll: null
+			timerScroll: null,
+			info: {}
 		}
 	},
+
+	async fetch({ app, store, params}) {
+		console.log(store)
+		let { data } = await app.$axios.get('info')
+        // store.commit('setToken', data)
+    },
     head () {
         return {
-            title: '白茶'
+            title: this.info.website_name
         }
 	},
 	async asyncData(context){
