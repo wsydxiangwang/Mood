@@ -1,10 +1,22 @@
 <template>
-    <div class="cover-loading"><span></span></div>
+    <div class="cover-loading" v-if="loading">
+        <span></span>
+    </div>
 </template>
 
 <script>
 export default {
-
+  data: () => ({
+    loading: false
+  }),
+  methods: {
+    start () {
+      this.loading = true
+    },
+    finish () {
+      this.loading = false
+    }
+  }
 }
 </script>
 

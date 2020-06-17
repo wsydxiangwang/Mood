@@ -38,15 +38,6 @@
                         <el-switch @change="emailChange" v-model="form.email_message"></el-switch>
                     </template>
 
-                    <template v-else-if="item.key == 'page_size'">
-                        <el-select v-model="form.page_size" placeholder="请选择">
-                            <el-option label=5 value=5></el-option>
-                            <el-option label=10 value=10></el-option>
-                            <el-option label=15 value=15></el-option>
-                            <el-option label=20 value=20></el-option>
-                        </el-select>
-                    </template>
-
                     <template v-else>
                         <el-input v-model="form[item.key]"></el-input>
                     </template>
@@ -121,12 +112,16 @@ export default {
                         value: '管理员昵称'
                     },
                     {
-                        key: 'address',
-                        value: '网站地址'
+                        key: 'web_name',
+                        value: '网站昵称'
                     },
                     {
-                        key: 'website_name',
-                        value: '网站别名'
+                        key: 'web_describe',
+                        value: '网站描述'
+                    },
+                    {
+                        key: 'address',
+                        value: '网站地址'
                     },
                     {
                         key: 'email',
@@ -148,10 +143,6 @@ export default {
                         key: 'email_pass',
                         value: '邮箱PASS',
                         show: true
-                    },
-                    {
-                        key: 'page_size',
-                        value: '页码数量'
                     },
                 ],
                 [
@@ -194,7 +185,6 @@ export default {
                 cover: {},
                 upload_oss: {},
                 upload_type: '服务器',
-                page_size: 10
             },
             fullscreenLoading: false,
 

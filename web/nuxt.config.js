@@ -56,7 +56,7 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: false,
+  loading: '~/components/loading.vue',
   /*
   ** Global CSS
   */
@@ -68,7 +68,7 @@ module.exports = {
     { src: '@/plugins/vue-mavon-editor', ssr: true },
     { src: '@/plugins/common.js', ssr: false },
     { src: '@/plugins/baidu.js', ssr: false },
-    '@/plugins/loading.js'
+    { src: '@/plugins/rem.js', ssr: false },
   ],
   /*
   ** Nuxt.js dev-modules

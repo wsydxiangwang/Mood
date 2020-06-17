@@ -15,7 +15,13 @@ module.exports = app => {
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
 
-        res.send(requestResult(info))
+        const data = {
+            cover: info.cover,
+            avatar: info.avatar,
+            web_name: info.web_name,
+            web_describe: info.web_describe
+        }
+        res.send(requestResult(data))
     })
 
     // All articles
@@ -145,6 +151,13 @@ module.exports = app => {
     router.get('/envelope', async (req, res) => {
         var data = await Envelope.find().sort({time: -1}).limit(20)
         res.send(data)
+    })
+
+    const Myself = require('../../models/myself')
+    
+    router.get('/myself', async (req, res) => {
+        const result = await Myself.findOne()
+        res.send(requestResult(result))
     })
 
     app.use('/web/api', router)

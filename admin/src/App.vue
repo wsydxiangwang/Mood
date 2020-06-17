@@ -41,7 +41,9 @@ h2.tit{
     margin: 20px 0 30px;
     color: #0084ff;
 }
-
+.markdown-body *{
+	list-style: initial;
+}
 @media screen and (max-width: 600px) {
 	#app{
 		padding: 0;

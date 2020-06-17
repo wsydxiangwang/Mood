@@ -15,7 +15,7 @@
                 <span class="iconfont icon-github"></span>
             </a>
             <span class="myself" @click="myself">
-                <img src="../static/image/myself.png">
+                <img :src="$store.state.data.avatar">
             </span>
         </div>
         <!-- 音乐进度条 -->

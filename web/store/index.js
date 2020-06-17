@@ -1,24 +1,16 @@
-import Vuex from 'vuex'
+export const state = () => ({
+    data: {}
+})
 
-Vue.use(Vuex)
-
-let store = () => new Vuex.store({
-    state: {
-        token: ''
-    },
-    mutations: {
-        setToken (state, token) {
-           state.token = token
-        }
-    },
-    actions: {
-        nuxtServerInit({ commit}, { req }) {
-            console.log(3)
-            let cookie = req.headers.cookie
-            console.log(commit)
-            // commit('setToken ', cookie.token)
-        }
+export const mutations = {
+    data (state, data) {
+        state.data = data
     }
- })
+}
 
-export default store
+export const actions = {
+    async nuxtServerInit({ commit }, { req }) {
+        const res = await this.$axios.get('info')
+        commit('data', res.data.body);
+    },
+}

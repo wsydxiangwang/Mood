@@ -79,6 +79,9 @@ export default {
         },
     },
     async asyncData(context){
+        if (!process.server) { // 防止重复加载
+			return;
+		}
         let {data} = await context.$axios.get('article', {
                 params: {
                     count: 100

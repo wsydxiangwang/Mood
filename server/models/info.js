@@ -4,7 +4,8 @@ const schema = new mongoose.Schema({
     name: String,           // 管理员昵称
     avatar: String,         // 管理员头像
     address: String,        // 网站地址
-    website_name: String,   // 网站名
+    web_name: String,       // 网站名
+    web_describe: String,   // 网站描述
 
     email: String,          // 邮箱
     email_name: String,     // 邮箱名
@@ -23,9 +24,7 @@ const schema = new mongoose.Schema({
         accessKeySecret: String,
         domain: String
     },
-
-    page_size: Number,       // 数据数量
-
+    
     cover: {                // 首屏效果
         date: String,
         title: String,

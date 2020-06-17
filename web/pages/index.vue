@@ -3,7 +3,8 @@
 		<div class="cover">
 			<div id="scene" :style="{height:boxH}">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
-					<img id="image" :style="imgStyle" src="https://image.yeyucm.cn/Myself-Resources/coverPicture.png" width="1920" height="1080" @load="coverImgLoad">
+					<img id="image" :style="imgStyle" :src="info.cover.image" width="1920" height="1080" @load="coverImgLoad">
+					<!-- <img id="image" :style="imgStyle" src="https://image.yeyucm.cn/Myself-Resources/coverPicture.png" width="1920" height="1080" @load="coverImgLoad"> -->
 				</div>
 			</div>
 			<div class="head">
@@ -12,11 +13,11 @@
 					<span class="iconfont" :class="isNav ? 'icon-close' : 'icon-menu'"></span>
 				</div>
 			</div>
-			<div class="misk"></div>
+			<div class="misk" :style="{backgroundColor: info.cover.color}"></div>
 			<div class="post">
-				<div class="time">十一月 3, 2020</div>
-				<div class="title"><a @click="article(1103)">你好，我是李白！</a></div>
-				<div class="describe">愿所有的美好如约而至，愿所有的黑暗都能看到希望，我们都能微笑前行，人生没有完美，也许有些遗憾才美...</div>
+				<div class="time">{{info.cover.date}}</div>
+				<div class="title"><a @click="article(info.cover.link)">{{info.cover.title}}</a></div>
+				<div class="describe">{{info.cover.describe}}</div>
 			</div>
 			<!-- menu -->
 			<div class="nav">
@@ -26,20 +27,20 @@
 					</li>
 				</ul>
 				<div class="world">
-					<!-- <span>©2020 白茶.</span> -->
 					<span>Everywhere in the world has a similar life.</span>
 				</div>
 			</div>
 		</div>
+
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img :src="item.image">
+					<img :src="item.image.url" :alt="item.image.name">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
 					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
-					<div class="describe">{{item.describe}}</div>
+					<div class="desc	ribe">{{item.describe}}</div>
 					<div class="stuff">
 						<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
 						<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
@@ -60,8 +61,9 @@
 				<div class="btn" v-if="loadingType == 'nomore'">呜呜，没有更多了~~</div>
 			</div>
 		</div>
-		<div class="foot">
-			<a href="http://www.beian.miit.gov.cn/" target="_blank">粤ICP备18132517号</a>
+
+		<div class="foot" v-if="info.cover.icp_txt">
+			<a :href="info.cover.icp_link" target="_blank">{{info.cover.icp_txt}}</a>
 		</div>
 
 		<!-- loading -->
@@ -75,7 +77,7 @@ export default {
 	data(){
 		return{
 			layerStyle: {},
-			imgStyle: {},
+			imgStyle: {},		// 图片大小
 			timer: null,
 			boxH: '100%',
 			boxW: '100%',
@@ -93,71 +95,65 @@ export default {
 					url: 'envelope'
 				},
 				{
-					title: "I'm Libai",
-					url: 'Libai'
+					title: "About",
+					url: 'about'
 				}
 			],
 			isNav: false,
 			loading: false,
 			loadingType: 'more',
 			page: 1,
+			
 			timerScroll: null,
-			info: {}
 		}
 	},
-
-	async fetch({ app, store, params}) {
-		console.log(store)
-		let { data } = await app.$axios.get('info')
-        // store.commit('setToken', data)
-    },
     head () {
         return {
-            title: this.info.website_name
+			title: this.info.web_name,
+			meta: [
+                { hid: 'description', name: 'description', content: this.info.web_describe }
+            ]
         }
 	},
 	async asyncData(context){
+		if (!process.server) { // 防止重复加载
+			return;
+		}
 		const {data} = await context.$axios.get('article')
 		return {articleList: data}
 	},
 	created(){
-		this.loading = true;
+		this.$nextTick(() => {
+			// this.$nuxt.$loading.start()
+		})
+	},
+	computed: {
+		info(){
+			return this.$store.state.data
+		}
 	},
 	mounted(){
+
+		
 		this.$nextTick(() => {
-			// 微信分享
+			// 微信分享	
             this.$wxShare(this, 1);
 		})
 		
 		// start loading
 		document.body.style.overflowY = 'hidden';
-		/**
-		 * Cover Picture Start
-		 */
-		var scene = document.getElementById('scene');
-		var parallaxInstance = new Parallax(scene, {
+
+		// 封面图特效开启
+		const scene = document.getElementById('scene');
+		const parallaxInstance = new Parallax(scene, {
 			relativeInput: true,
 			clipRelativeInput: true,
-		});
-		setTimeout(() => {
-			this.boxH = document.documentElement.clientHeight + 'px';
-			this.boxW = document.documentElement.clientWidth + 'px';
-			this.coverLayer()
-		}, 10)	
-		/**
-		 * Cover Picture End
-		 */
-		// Browser window event
-		window.onresize = () => {
-			if(this.timer) clearTimeout(this.timer)
-			this.timer = setTimeout(() => {
-				setTimeout(() => {
-					this.boxH = document.documentElement.clientHeight + 'px';
-					this.boxW = document.documentElement.clientWidth + 'px';
-					this.coverLayer()
-				})
-			}, 100)
-		}
+		})
+
+		this.init()
+
+		// 监听浏览器窗口变化
+		window.onresize = () => this.init()
 	},
 	destroyed(){
 		window.onresize = null;
@@ -165,6 +161,69 @@ export default {
 		document.removeEventListener('touchmove', this.on, {passive: false})
     },
 	methods: {
+		// 初始化封面图
+		init(){
+			if(this.timer){
+				clearTimeout(this.timer)
+			}
+			this.timer = setTimeout(() => {
+				setTimeout(() => {
+					this.boxH = document.documentElement.clientHeight + 'px';
+					this.boxW = document.documentElement.clientWidth + 'px';
+					this.coverLayer()
+				})
+			}, 100)
+		},
+		// 封面图盒子
+		coverLayer(){
+			let id = document.getElementById('scene'),
+				_w = parseInt(this.boxW), 
+                _h = parseInt(this.boxH), 
+				x, y, i, e;
+
+			e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
+
+            if (_w >= _h) {
+                i = _w / e * 50;
+                y = i;
+                x = i * _w / _h;
+            } else {
+                i = _h / e * 50;
+                x = i;
+                y = i * _h / _w;
+            }
+
+			let style = {
+                width: _w + x + 'px',
+                height: _h + y + 'px',
+                marginLeft: - 0.5 * x + 'px',
+                marginTop: - 0.5 * y + 'px'
+			}
+
+			this.layerStyle = Object.assign({}, this.layerStyle, style);
+
+            this.coverImg()
+		},
+		// 封面图大小计算
+		coverImg(){
+			let width = parseInt(this.layerStyle.width), 
+                height = parseInt(this.layerStyle.height), 
+				ratio = 1080 / 1920,
+				style = {};
+
+			if (height / width > ratio) {
+				style['height'] = height + 'px';
+				style['width'] = height / ratio + 'px';
+			} else {
+				style['height'] = width * ratio + 'px';
+				style['width'] = width + 'px';
+			}
+
+			style['left'] = (width - parseInt(style.width)) / 2 +'px';
+			style['top'] = (height - parseInt(style.height)) / 2 +'px';
+
+			this.imgStyle = Object.assign({}, this.imgStyle, style);
+		},
 		loadMore(){
 			if(this.loadingType == 'nomore') return;
 			this.page++;
@@ -216,57 +275,7 @@ export default {
 		on(e){
 			e.preventDefault()
 		},
-		// Cover Picture
-		coverLayer(){
-			var id = document.getElementById('scene'),
-				_w = parseInt(this.boxW), 
-                _h = parseInt(this.boxH), 
-				x, y, i, e;
-
-			e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
-
-            if (_w >= _h) {
-                i = _w / e * 50;
-                y = i;
-                x = i * _w / _h;
-            } else {
-                i = _h / e * 50;
-                x = i;
-                y = i * _h / _w;
-            }
-
-			let style = {
-                width: _w + x + 'px',
-                height: _h + y + 'px',
-                marginLeft: - 0.5 * x + 'px',
-                marginTop: - 0.5 * y + 'px'
-			}
-
-			this.layerStyle = Object.assign({}, this.layerStyle, style);
-
-            this.coverImg() // Cover image calculation
-		},
-		// Cover image calculation
-		coverImg(){
-			var _width = parseInt(this.layerStyle.width), 
-                _height = parseInt(this.layerStyle.height), 
-				ratio = 1080 / 1920,
-				style = {};
-
-			if (_height / _width > ratio) {
-				style['height'] = _height + 'px';
-				style['width'] = _height / ratio + 'px';
-			} else {
-				style['height'] = _width * ratio + 'px';
-				style['width'] = _width + 'px';
-			}
-
-			style['left'] = (_width - parseInt(style.width)) / 2 +'px';
-			style['top'] = (_height - parseInt(style.height)) / 2 +'px';
-
-			this.imgStyle = Object.assign({}, this.imgStyle, style);
-		},
-		// To view the article
+		// 查看文章
 		article(id){
 			this.$router.push(`/${id}`)
 		},
