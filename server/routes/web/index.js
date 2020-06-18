@@ -150,14 +150,27 @@ module.exports = app => {
 
     // envelope
     router.get('/envelope', async (req, res) => {
-        const p = req.query.page || 1;
-        const s = req.query.count || 10;
-        const data = await Envelope.find().sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
 
-        data.forEach(item => {
+        const page = req.query.page || 1;
+
+        const result = await Promise.all([
+            Envelope.countDocuments(),
+            Envelope.find().sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
+        ])
+        
+        result[1].forEach(item => {
             item._doc['time'] = addTime(item.time)
-        })    
-
+        })
+        /**
+         * 数据
+         * 当前页
+         * 总页数
+         */
+        const data = {
+            data: result[1],
+            page: Number(page),
+            totalPage: Math.ceil(result[0] / 10),
+        }
         res.send(requestResult(data))
     })
 

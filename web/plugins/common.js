@@ -3,6 +3,8 @@ import Vue from 'vue'
 var comsys = {
 
     install(Vue, option){
+
+        
         // 设置滚动条位置
         Vue.prototype.$setScroll = (domObj, number, type) => {
             let t = document.querySelector(domObj).offsetTop;
@@ -164,6 +166,44 @@ var comsys = {
                 })
             } 
         }
+
+        let loadingType = 'more';
+        
+        Vue.prototype.$load = (type, page) => {
+            
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+
+            if(scrollTop + windowHeight >= scrollHeight){
+
+                if(loadingType == 'nomore' || loadingType == 'loading'){
+                    return
+                }
+
+                page++;
+                loadingType = 'loading';
+
+                const axios = Vue.prototype.$nuxt.$options.$axios;
+                
+                return new Promise((resolve, reject) => {
+                    axios.get(type, {
+                        params: { 
+                            page: page
+                        }
+                    }).then(res => {
+                        setTimeout(() => {
+                            resolve(res.data)
+                            loadingType = res.data.length < 10 ? 'nomore' : 'more'
+                        }, 1000)
+                    }).catch(err => {
+                        loadingType = 'more';
+                        reject()
+                    })
+                })
+            }
+        }
+
     }
 
 }

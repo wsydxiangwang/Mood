@@ -205,12 +205,12 @@ export default {
                 this.mobileMusic = this.mobileMusic ? 'exit' : '';
             }
 
-            var h1 = document.getElementsByClassName('content')[0];
-            var h2 = document.getElementsByClassName('stuff')[0];
-            var h3 = document.getElementsByTagName('h1')[0];
+            const h1 = document.getElementsByClassName('content')[0];
+            const h2 = document.getElementsByClassName('stuff')[0];
+            const h3 = document.getElementsByTagName('h1')[0];
 
-            var h = h1.offsetHeight + h2.offsetHeight + h3.offsetHeight - document.documentElement.clientHeight - 100;
-            var n = (100 * (this.scrollTop / h)).toFixed(4);
+            const h = h1.offsetHeight + h2.offsetHeight + h3.offsetHeight - document.documentElement.clientHeight - 100;
+            const n = (100 * (this.scrollTop / h)).toFixed(4);
 
             if(n < 110) this.postProgress = n + '%';
 

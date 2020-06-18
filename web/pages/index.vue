@@ -130,7 +130,6 @@ export default {
 		}
 	},
 	mounted(){
-
 		
 		this.$nextTick(() => {
 			// 微信分享	

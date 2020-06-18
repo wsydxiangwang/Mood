@@ -5,17 +5,23 @@
             :music="music" 
             title="好好学习, 天天向上!"
         ></Header>
+
         <section class="content">
             <div v-for="(item, index) in data" :key="index" class="item">
                 <div class="text" v-html="item.contentHtml"></div>
                 <div class="time">{{item.time}}</div>
             </div>
+            <LoadMore></LoadMore>
         </section>
     </div>
 </template>
 
 <script>
+import LoadMore from '@/components/loadMore.vue'
 export default {
+    components: {
+        LoadMore
+    },
     data(){
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
@@ -36,43 +42,47 @@ export default {
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }
+
+        if(this.data.length === 10){
+            
+        }
+        // window.addEventListener('scroll', this.load)
+    },
+    destroyed(){
+        // window.removeEventListener('scroll', this.load)
+    },
+    methods: {
+        load(){
+            // const data = this.$load('envelope', this.page)
+
+            // if(data){
+            //     data.then(res => {
+            //         if(res.status === 1){
+            //             const result = res.body;
+            //             this.data = this.data.concat(result.data)
+            //         }else{
+                        
+            //         }
+            //         console.log(res)
+            //     })
+            // }
+            // p.then(res => {
+            //     console.log(res)
+            // }).catch(err => {
+            //     console.log(err)
+            // })
+        }
     },
     computed: {
 		info(){
 			return this.$store.state.data
 		}
     },
-    methods: {
-        loadMore(){
-            if(this.loadingType == 'nomore'){
-				return
-			}
-            this.page++;
-            this.loadingType = 'loading';
-
-            this.$axios.get(`envelope`, {
-				params: {
-					page: this.page
-				}
-			}).then(res => {
-				setTimeout(() => {
-					this.data = this.data.concat(res.data)
-
-					if(res.data.length < 10){
-						this.loadingType = 'nomore';
-					}else{
-						this.loadingType = 'more';
-					}
-				}, 1000)
-			}).catch(err => {
-				this.loadingType = 'more';
-			})
-        },
-    },
     async asyncData(context){
         let {data} = await context.$axios.get('envelope')
         if(data.status === 1){
-            return {data: data.body}
+            console.log(data)
+            return {data: data.body.data}
         }else{
             return {data: ''}
         }

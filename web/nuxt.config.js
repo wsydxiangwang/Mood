@@ -66,7 +66,7 @@ module.exports = {
   */
   plugins: [
     { src: '@/plugins/vue-mavon-editor', ssr: true },
-    { src: '@/plugins/common.js', ssr: false },
+    { src: '@/plugins/common.js', ssr: true },
     { src: '@/plugins/baidu.js', ssr: false },
     { src: '@/plugins/rem.js', ssr: false },
     { src: '@/plugins/component.js', ssr: true },
