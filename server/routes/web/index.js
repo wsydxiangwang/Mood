@@ -19,7 +19,8 @@ module.exports = app => {
             cover: info.cover,
             avatar: info.avatar,
             web_name: info.web_name,
-            web_describe: info.web_describe
+            web_describe: info.web_describe,
+            bg: info.bg,
         }
         res.send(requestResult(data))
     })
@@ -149,16 +150,71 @@ module.exports = app => {
 
     // envelope
     router.get('/envelope', async (req, res) => {
-        var data = await Envelope.find().sort({time: -1}).limit(20)
-        res.send(data)
+        const p = req.query.page || 1;
+        const s = req.query.count || 10;
+        const data = await Envelope.find().sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
+
+        data.forEach(item => {
+            item._doc['time'] = addTime(item.time)
+        })    
+
+        res.send(requestResult(data))
     })
+
 
     const Myself = require('../../models/myself')
     
     router.get('/myself', async (req, res) => {
         const result = await Myself.findOne()
+
         res.send(requestResult(result))
     })
+
+
+    const addTime = (time) => {
+
+        const timestemp = new Date(time).getTime();
+
+        const minute = 1000 * 60;
+        const hour = minute * 60;
+        const day = hour * 24;
+        const halfamonth = day * 15;
+        const month = day * 30;
+        const now = new Date().getTime();
+        const diffValue = now - timestemp;
+
+        // 如果本地时间反而小于变量时间
+        if (diffValue < 0) {
+            return 'Just Now';
+        }
+
+        // 计算差异时间的量级
+        const monthC = diffValue / month;
+        const weekC = diffValue / (7 * day);
+        const dayC = diffValue / day;
+        const hourC = diffValue / hour;
+        const minC = diffValue / minute;
+
+        if (monthC > 4) {
+            const date = new Date(timestemp);
+            const mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return mon[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+        } else {
+            const map = {
+                [monthC]: "months ago",
+                [weekC]: "weeks ago",
+                [dayC]: "days ago",
+                [hourC]: "hours ago",
+                [minC]: "minutes ago",
+            }
+            for(let i in map){
+                if(i >= 1){
+                    return `${parseInt(i)} ${map[i]}`
+                }
+            }
+            return 'Just Now';
+        }
+    }
 
     app.use('/web/api', router)
 }

@@ -75,7 +75,7 @@ export default {
             this.$router.push('/')
         }, 
         myself(){
-            this.$router.push('/Libai')
+            this.$router.push('/about')
         },
         // 滚动条位置
         handleScroll(){

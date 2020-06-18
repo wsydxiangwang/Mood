@@ -1,51 +1,48 @@
 <template>
     <div class="container">
-        <Header :music="music" :github="true" title="嘿，陌生人，你今天笑了么 (≖ᴗ≖)✧"></Header>
-
-        <div class="about" v-html="data"></div>
-        <!-- loading -->
-		<!-- <Loading v-if="loading"></Loading> -->
+        <Header 
+            v-if="refresh" 
+            :music="music" 
+            title="嘿，陌生人，你今天笑了么 (≖ᴗ≖)✧"
+        ></Header>
+        <div v-if="data" class="about" v-html="data"></div>
+        <div v-else>此人还没有介绍, 明天再来吧!</div>
     </div>
 </template>
 
 <script>
-import Header from "../components/header";
 export default {
-	components: {
-		Header
-    },
     data(){
         return{
             title: false,
             music: 'https://image.raindays.cn/Myself-Resources/music/qianbaidu.mp3',
-            loading: true
+            refresh: true
         }
     },
     head () {
         return {
-            title: 'Libai | 白茶'
+            title: `Hello ${this.info.web_name}`
         }
     },
-    mounted() {
-        //loading
-        // document.body.style.overflowY = 'hidden';
-        // setTimeout(() => {
-        //     this.loading = false;
-        //     document.body.style.overflowY = '';
-        // }, 800)
-
-        this.$nextTick(() => {
-			// 微信分享
-            this.$wxShare(this, 6);
-		})
+    mounted(){
+        // 背景音乐
+        if(this.info.bg.bg_about){
+            this.music = this.info.bg.bg_about
+            this.refresh = false
+            this.$nextTick(() => this.refresh = true )
+        }
+    },
+    computed: {
+		info(){
+			return this.$store.state.data
+        }
     },
     async asyncData(context){
-        if (!process.server) { // 防止重复加载
-			return;
-		}
         const {data} = await context.$axios.get('/myself')
         if(data.status === 1){
             return {data: data.body.contentHtml}
+        }else{
+            return {data: ''}
         }
     },
 }

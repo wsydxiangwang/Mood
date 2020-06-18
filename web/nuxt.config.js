@@ -69,6 +69,7 @@ module.exports = {
     { src: '@/plugins/common.js', ssr: false },
     { src: '@/plugins/baidu.js', ssr: false },
     { src: '@/plugins/rem.js', ssr: false },
+    { src: '@/plugins/component.js', ssr: true },
   ],
   /*
   ** Nuxt.js dev-modules

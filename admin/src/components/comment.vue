@@ -2,14 +2,17 @@
     <div class="comment-form" :class="isShow?'active':''">
         <div class="content">
             <div class="img"><img :src="$data.info ? $data.info.avatar : ''"></div>
-            <p>回复：{{message.name}}</p>
+            <p class="name">回复：{{message.name}}</p>
             <el-input
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 4}"
                 placeholder="请输入内容"
                 v-model="content">
             </el-input>
-            <el-button type="primary" @click="submit">提交评论</el-button>
+            <div class="bottom-btn">
+                <el-button type="primary" @click="submit">提交评论</el-button>
+                <p><span class="el-icon-phone-outline"></span> 文明用语, 弘扬中华文明传统美德</p>
+            </div>
             <i class="el-icon-circle-close" @click="close"></i>
         </div>
     </div>
@@ -146,7 +149,7 @@ export default {
             }
         }
     }
-    p{
+    .name{
         color: #409eff;
         font-size: 16px;
         margin-bottom: 14px;
@@ -160,12 +163,21 @@ export default {
         border-radius: 10px;
         padding-left: 16px !important;
     }
-    button{
+    .bottom-btn{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         margin-top: 18px;
-        border-radius: 20px;
-        height: 38px;
-        padding: 0 30px;
-        line-height: 38px;
+        button{
+            border-radius: 20px;
+            height: 38px;
+            padding: 0 30px;
+            line-height: 38px;
+        }
+        p{
+            font-size: 12px;
+            color: #ff8282;
+        }
     }
     .el-icon-circle-close{
         position: absolute;

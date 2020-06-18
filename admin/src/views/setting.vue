@@ -78,6 +78,13 @@
                 </el-form-item>
             </template>
 
+            <h2 class="tit">页面音乐</h2>
+            <template v-for="(item, index) in formList[3]">
+                <el-form-item :label="item.value" :key="index+222">
+                    <el-input v-model="form['bg'][item.key]"></el-input>
+                </el-form-item>
+            </template>
+
             <h2 class="tit">修改密码</h2>
             <el-form-item label="原密码">
                 <el-input v-model="password.one"></el-input>
@@ -179,12 +186,27 @@ export default {
                         value: '备案链接'
                     },
                 ],
-                ['bucket', 'region', 'endPoint', 'accessKeySecret', 'accessKeyId', 'domain']
+                ['bucket', 'region', 'endPoint', 'accessKeySecret', 'accessKeyId', 'domain'],
+                [
+                    {
+                        key: 'bg_mood',
+                        value: '文章列表'
+                    },
+                    {
+                        key: 'bg_letter',
+                        value: '短语列表'
+                    },
+                    {
+                        key: 'bg_about',
+                        value: '个人介绍'
+                    },
+                ],
             ],
             form: {
                 cover: {},
                 upload_oss: {},
                 upload_type: '服务器',
+                bg: {},
             },
             fullscreenLoading: false,
 

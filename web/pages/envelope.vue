@@ -1,111 +1,81 @@
 <template>
     <div class="container">
-        <Header :music="music" title="原本这个世界就有很多东西是没有什么意义的！"></Header>
+        <Header 
+            v-if="refresh" 
+            :music="music" 
+            title="好好学习, 天天向上!"
+        ></Header>
         <section class="content">
-            <div v-for="(item, index) in newData" :key="index" class="item">
+            <div v-for="(item, index) in data" :key="index" class="item">
                 <div class="text" v-html="item.contentHtml"></div>
-                <div class="time">{{item.newTime}}</div>
+                <div class="time">{{item.time}}</div>
             </div>
         </section>
-        <!-- loading -->
-		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
 <script>
-import Header from "../components/header";
 export default {
-	components: {
-		Header
-    },
     data(){
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
-            loading: true
+            refresh: true,
+			loadingType: 'more',
+            page: 1,
         }
     },
     head () {
         return {
-            title: 'Envelope | 白茶'
+            title: `一封信 | ${this.info.web_name}`
+        }
+    },
+    mounted(){
+        // 背景音乐
+        if(this.info.bg.bg_about){
+            this.music = this.info.bg.bg_about
+            this.refresh = false
+            this.$nextTick(() => this.refresh = true )
         }
     },
     computed: {
-        newData(){
-            if(this.data){
-                // 添加时间
-                this.data.forEach(item => {
-                    let time = this.dateDiff(item.time);
-                    item['newTime'] = time;
-                })
-                return this.data;
-            }
-        }
-    },
-    mounted() {
-        //loading
-        document.body.style.overflowY = 'hidden';
-        setTimeout(() => {
-            this.loading = false;
-            document.body.style.overflowY = '';
-        }, 800)
-
-        this.$nextTick(() => {
-			// 微信分享
-            this.$wxShare(this, 4);
-        })
-        
+		info(){
+			return this.$store.state.data
+		}
     },
     methods: {
-        dateDiff(time) {
-            const timestemp = new Date(time).getTime();
- 
-            const minute = 1000 * 60;
-            const hour = minute * 60;
-            const day = hour * 24;
-            const halfamonth = day * 15;
-            const month = day * 30;
-            const now = new Date().getTime();
-            const diffValue = now - timestemp;
+        loadMore(){
+            if(this.loadingType == 'nomore'){
+				return
+			}
+            this.page++;
+            this.loadingType = 'loading';
 
-            // 如果本地时间反而小于变量时间
-            if (diffValue < 0) {
-                return 'Just Now';
-            }
+            this.$axios.get(`envelope`, {
+				params: {
+					page: this.page
+				}
+			}).then(res => {
+				setTimeout(() => {
+					this.data = this.data.concat(res.data)
 
-            // 计算差异时间的量级
-            const monthC = diffValue / month;
-            const weekC = diffValue / (7 * day);
-            const dayC = diffValue / day;
-            const hourC = diffValue / hour;
-            const minC = diffValue / minute;
-
-            if (monthC > 4) {
-                const date = new Date(timestemp);
-                const mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                return mon[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
-            } else {
-                const map = {
-                    [monthC]: "months ago",
-                    [weekC]: "weeks ago",
-                    [dayC]: "days ago",
-                    [hourC]: "hours ago",
-                    [minC]: "minutes ago",
-                }
-                for(let i in map){
-                    if(i >= 1){
-                        return `${parseInt(i)} ${map[i]}`
-                    }
-                }
-                return 'Just Now';
-            }
-        }
+					if(res.data.length < 10){
+						this.loadingType = 'nomore';
+					}else{
+						this.loadingType = 'more';
+					}
+				}, 1000)
+			}).catch(err => {
+				this.loadingType = 'more';
+			})
+        },
     },
     async asyncData(context){
-        if (!process.server) { // 防止重复加载
-			return;
-		}
         let {data} = await context.$axios.get('envelope')
-		return {data: data}
+        if(data.status === 1){
+            return {data: data.body}
+        }else{
+            return {data: ''}
+        }
     },
 }
 </script>

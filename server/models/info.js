@@ -24,6 +24,12 @@ const schema = new mongoose.Schema({
         accessKeySecret: String,
         domain: String
     },
+
+    bg: {
+        bg_mood: String,
+        bg_about: String,
+        bg_letter: String,
+    },
     
     cover: {                // 首屏效果
         date: String,

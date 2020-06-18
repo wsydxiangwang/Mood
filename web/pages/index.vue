@@ -35,12 +35,13 @@
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img :src="item.image.url" :alt="item.image.name">
+					<img v-if="item.image" :src="item.image.url" :alt="item.image.name">
+					<img v-else >
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
 					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
-					<div class="desc	ribe">{{item.describe}}</div>
+					<div class="describe">{{item.describe}}</div>
 					<div class="stuff">
 						<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
 						<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
@@ -116,16 +117,12 @@ export default {
         }
 	},
 	async asyncData(context){
-		if (!process.server) { // 防止重复加载
-			return;
-		}
+		// console.log(process.server)
+		// if (!process.server) { // 防止重复加载
+		// 	return;
+		// }
 		const {data} = await context.$axios.get('article')
 		return {articleList: data}
-	},
-	created(){
-		this.$nextTick(() => {
-			// this.$nuxt.$loading.start()
-		})
 	},
 	computed: {
 		info(){
@@ -225,7 +222,9 @@ export default {
 			this.imgStyle = Object.assign({}, this.imgStyle, style);
 		},
 		loadMore(){
-			if(this.loadingType == 'nomore') return;
+			if(this.loadingType == 'nomore'){
+				return
+			}
 			this.page++;
 			this.loadingType = 'loading';
 			this.$axios.get(`article`, {
@@ -446,7 +445,11 @@ export default {
 					a{
 						font-size: 24px;
 						cursor: pointer;
-						display: inline;
+						word-break: break-all;
+						display: -webkit-box;
+						-webkit-line-clamp: 2;
+						-webkit-box-orient: vertical;
+						overflow: hidden;
 						&:hover{
 							text-decoration: underline;
 						}
