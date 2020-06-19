@@ -50,17 +50,7 @@
 				</div>
 			</div>
 
-			<div class="bottom-loading">
-				<div class="loader" v-if="loadingType == 'loading'">
-					<div class="dot"></div>
-					<div class="dot"></div>
-					<div class="dot"></div>
-					<div class="dot"></div>
-					<div class="dot"></div>
-				</div>
-				<div class="btn" @click="loadMore" v-if="loadingType == 'more'">加载更多</div>
-				<div class="btn" v-if="loadingType == 'nomore'">呜呜，没有更多了~~</div>
-			</div>
+			<div @click="loadMore" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
 		</div>
 
 		<div class="foot" v-if="info.cover.icp_txt">
@@ -74,7 +64,11 @@
 
 <script>
 import Parallax from 'parallax-js'
+import LoadMore from '@/components/loadMore.vue'
 export default {
+    components: {
+        LoadMore
+    },
 	data(){
 		return{
 			layerStyle: {},
@@ -122,7 +116,8 @@ export default {
 		// 	return;
 		// }
 		const {data} = await context.$axios.get('article')
-		return {articleList: data}
+		console.log(data.body.data)
+		return { articleList: data.status == 1 ? data.body.data : {}}
 	},
 	computed: {
 		info(){
@@ -130,14 +125,6 @@ export default {
 		}
 	},
 	mounted(){
-		
-		this.$nextTick(() => {
-			// 微信分享	
-            this.$wxShare(this, 1);
-		})
-		
-		// start loading
-		document.body.style.overflowY = 'hidden';
 
 		// 封面图特效开启
 		const scene = document.getElementById('scene');
@@ -376,7 +363,8 @@ export default {
 		width: 1200px;
 		margin: auto;
 		position: relative;
-		padding-bottom: 200px;
+		padding-bottom: 80px;
+		text-align: center;
 		&:after{
 			content: '';
 			width: 1px;
@@ -387,27 +375,17 @@ export default {
 			background: #eaeaea;
 			z-index: 0;
 		}
-		.bottom-loading{
+		.more{
+			margin-top: 90px;
+			display: inline-block;
+		}
+		/deep/ .bottom-loading{
+			position: relative;
+			z-index: 999;
 			.btn{
-				position: absolute;
-				left: 50%;
-				bottom: 80px;
-				transform: translateX(-50%);
-				background: #fff;
+				border-radius: 0;
+				display: inline-block;
 				border: 1px solid #eaeaea;
-				padding: 0 36px;
-				height: 34px;
-				line-height: 36px;
-				color: #666;
-				z-index: 9;
-				cursor: pointer;
-				letter-spacing: 2px;
-				transition: all .3s;
-				&:hover{
-					color: #fff;
-					background: var(--colorActive);
-					border-color: var(--colorActive);
-				}
 			}
 		}
 		

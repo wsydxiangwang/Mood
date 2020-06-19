@@ -50,7 +50,7 @@ export default {
     }
 }
 .loader {
-    height: 50px;
+    height: 34px;
     width: 100px;
     display: flex;
     align-items: center;

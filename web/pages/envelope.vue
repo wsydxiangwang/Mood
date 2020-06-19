@@ -26,8 +26,7 @@ export default {
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
             refresh: true,
-			loadingType: 'more',
-            page: 1,
+			loadingType: 'more'
         }
     },
     head () {
@@ -37,8 +36,8 @@ export default {
     },
     mounted(){
         // 背景音乐
-        if(this.info.bg.bg_about){
-            this.music = this.info.bg.bg_about
+        if(this.info.bg.bg_letter){
+            this.music = this.info.bg.bg_letter
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }
@@ -81,11 +80,7 @@ export default {
     },
     async asyncData(context){
         let {data} = await context.$axios.get('envelope')
-        if(data.status === 1){
-            return {data: data.body}
-        }else{
-            return {data: ''}
-        }
+        return {data: data.status === 1 ? data.body : ''}
     },
 }
 </script>

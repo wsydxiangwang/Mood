@@ -27,22 +27,53 @@ module.exports = app => {
 
     // All articles
     router.get('/article', async (req, res) => {
-        const p = req.query.page || 1;
-        const s = req.query.count || 10;
-        const data = await Article.find({hide:false}).sort({time: -1}).limit(Number(s)).skip(Number(s)*(p-1))
+        const page = req.query.page || 1;
 
-        data.forEach(item => {
+        const result = await Promise.all([
+            Article.countDocuments(),
+            Article.find({hide:false}).sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
+        ])
+
+        result[1].forEach(item => {
             item._doc['time'] = dateFormat(item.time)
         })
-        
-        res.send(data)
+
+        // 列表页 分组
+        if(req.query.from){ 
+            console.log(2)
+            result[1] = result[1].reduce((total, item)=>{
+                const [ , year, date] = /(\d+)\/(\d+)/.exec(item.time.date);                
+                total['_'+year] = total['_'+year] || {};
+                total['_'+year][date] = total['_'+year][date] || [];
+                total['_'+year][date].push(item);
+                return total
+            }, {})         
+        }
+
+        /**
+         * 数据
+         * 当前页
+         * 总页数
+         */
+        const data = {
+            data: result[1],
+            page: Number(page),
+            totalPage: Math.ceil(result[0] / 10),
+        }
+        res.send(requestResult(data))
     })
 
     // Get article
     router.get('/article/:id', async (req, res) => {
         const id = Number(req.params.id)
         const data = await Article.findOne({id: id})
+
         data._doc['time'] = dateFormat(data.time)
+
+
+        console.log(data)
+
+
         res.send(data)
     })
 

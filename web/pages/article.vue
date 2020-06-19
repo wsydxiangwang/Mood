@@ -1,96 +1,121 @@
 <template>
     <div class="container">
-        <Header :music="music" title="加油啦"></Header>
+        <Header :music="music" title="加油啦" v-if="refresh"></Header>
         <section class="list">
-            <div class="year-list" v-for="(val, key, idx) in newData" :key="idx">
+            <div class="year-list" v-if="Object.keys(data.data).length == 0">
+                空无一物，就像你我一样。
+            </div>
+            <div class="year-list" v-for="(val, key, idx) in data.data" :key="idx" v-else>
 
                 <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
-
-                    <li class="month">{{keys.charAt(0) == 0 ? enMon[keys.slice(1, 2)] : enMon[keys]}}, {{key.slice(1, 5)}}</li>
+                    <li class="month">{{enMon[Number(keys) - 1]}}, {{key.slice(1, 5)}}</li>
 
                     <ul class="day-list">
-                        <li v-for="(valss, keyss, idxss) in vals" :key="idxss">
+                        <li v-for="(child_val, child_key, child_idx) in vals" :key="child_idx">
                             <div class="item-l">
-                                <div class="img" @click="viewArticle(valss.id)">
-                                    <img :src="valss.image">
+                                <div class="img" @click="viewArticle(child_val.id)">
+                                    <img :src="child_val.image ? child_val.image.url : ''">
                                 </div>
                                 <div class="tit">
-                                    <span @click="viewArticle(valss.id)">{{valss.title}}</span>
-                                    <span>{{valss.like}} LIKE / {{valss.read}} READ</span>
+                                    <span @click="viewArticle(child_val.id)">{{child_val.title}}</span>
+                                    <span>{{child_val.like}} LIKE / {{child_val.read}} READ</span>
                                 </div>
                             </div>
-
-                            <span class="item-r">{{valss.time.dayEn}}</span>
-                            
+                            <span class="item-r">{{child_val.time.day.en}}</span>
                         </li>
                     </ul>
                 </ul>
             </div>
-        </section>
-        
-        <!-- loading -->
-		<Loading v-if="loading"></Loading>
+            <LoadMore :loadingType="loadingType"></LoadMore>
+        </section>        
     </div>
 </template>
 
 <script>
-import Header from "../components/header";
+import LoadMore from '@/components/loadMore.vue'
 export default {
-	components: {
-		Header
+    components: {
+        LoadMore
     },
     data(){
         return{
             newData: '',
             music: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3',
             enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-            loading: true
+            loadingType: 'more',
+            refresh: true
         }
     },
     head () {
         return {
-            title: 'Article | 白茶'
+            title: `Article | ${this.info.web_name}`
         }
     },
+    computed: {
+		info(){
+			return this.$store.state.data
+		}
+    },
     mounted(){
-        this.$nextTick(() => {
-            // 微信分享
-            this.$wxShare(this, 3);
-        })
-        
-        this.newData = this.data.reduce((a, b)=>{
-            var [ , year, date] = /(\d+)\/(\d+)/.exec(b.time.date);
-            a['_'+year] = a['_'+year] || {};
-            a['_'+year][date] = a['_'+year][date] || [];
-            a['_'+year][date].push(b);
-            return a;
-        }, {})
+        // 背景音乐
+        if(this.info.bg.bg_mood){
+            this.music = this.info.bg.bg_mood
+            this.refresh = false
+            this.$nextTick(() => this.refresh = true )
+        }
 
-        //loading
-        document.body.style.overflowY = 'hidden';
-        setTimeout(() => {
-            this.loading = false;
-            document.body.style.overflowY = '';
-        }, 800)
+        if(this.data.totalPage > 1){
+            window.addEventListener('scroll', this.load)
+        }
+    },
+    destroyed(){
+        window.removeEventListener('scroll', this.load)
     },
     methods: {
+        load(){
+            const data = this.$load('article', { params: { from: 'list' }})
+
+            if(typeof data === 'object'){
+                this.loadingType = 'loading'
+            }
+
+            data && data.then(res => {
+                if(res.status === 1){
+                    const result = res.body.data;
+                    // 合并数据
+                    Object.keys(result).map(item => {
+                        let childA = this.data.data[item], 
+                            childB = result[item];
+                        if(childA){
+                            Object.keys(childB).map(i => {
+                                this.data.data[item][i] = childA[i] ? childA[i].concat(childB[i]) : childB[i]
+                            })
+                        }else{
+                            this.data.data[item] = childB
+                        }
+                    })
+                }
+                // 最后一页
+                if(res.body.page == res.body.totalPage){
+                    this.loadingType = 'nomore';
+                    window.removeEventListener('scroll', this.load)
+                }else{
+                    this.loadingType = 'more';
+                }
+            }).catch(err => {
+                this.loadingType = 'nomore';
+            })
+        },
         viewArticle(id){
             this.$router.push(`/${id}`)
         },
     },
     async asyncData(context){
-        if (!process.server) { // 防止重复加载
-			return;
-		}
-        let {data} = await context.$axios.get('article', {
-                params: {
-                    count: 100
-                }
-            })
-        return {
-            data: data
-        }
-	},
+        const {data} = await context.$axios.get('article', { 
+            params: { from: 'list' }
+        })
+        return { data: data.status == 1 ? data.body : {}}
+	}
 }
 </script>
 
@@ -145,7 +170,7 @@ header{
 }
 .list{
     width: 640px;
-    padding: 120px 0 0;
+    padding: 120px 0 40px;
     margin: auto;
     .year-list{
         padding: 10px 20px;

@@ -167,32 +167,39 @@ var comsys = {
             } 
         }
 
-        let loadingType = 'more';
         let page = 1;
+        let loadingFrom = '';
+        let loadingType = 'more';
         
-        Vue.prototype.$load = (type) => {
+        // 滚动到底部 加载下一页数据
+        Vue.prototype.$load = (type, from) => {
             
+            // 初始化
+            if(type != loadingFrom){
+                loadingFrom = type;
+                loadingType = 'more';
+                page = 1;
+            }
+                            
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
             const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
 
             if(scrollTop + windowHeight >= scrollHeight){
 
-                if(loadingType == 'nomore' || loadingType == 'loading'){
-                    return
-                }
+                if(loadingType == 'nomore' || loadingType == 'loading') return;
 
                 page++;
                 loadingType = 'loading';
 
                 const axios = Vue.prototype.$nuxt.$options.$axios;
                 
+                const data = {
+                    page: page,
+                    from: from ? 'list' : ''
+                }
                 return new Promise((resolve, reject) => {
-                    axios.get(type, {
-                        params: { 
-                            page: page
-                        }
-                    }).then(res => {
+                    axios.get(type, { params: data }).then(res => {
                         setTimeout(() => {
                             loadingType = res.data.body.page == res.data.body.totalPage ? 'nomore' : 'more'                        
                             resolve(res.data)
@@ -204,8 +211,6 @@ var comsys = {
                 })
             }
         }
-
     }
-
 }
 Vue.use(comsys)
