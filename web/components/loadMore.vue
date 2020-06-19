@@ -14,10 +14,10 @@
 
 <script>
 export default {
-    props: ['type'],
+    props: ['loadingType'],
     data(){
         return {
-            loadingType: 'more'
+          
         }
     },
     methods: {

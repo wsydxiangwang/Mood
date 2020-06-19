@@ -168,8 +168,9 @@ var comsys = {
         }
 
         let loadingType = 'more';
+        let page = 1;
         
-        Vue.prototype.$load = (type, page) => {
+        Vue.prototype.$load = (type) => {
             
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
@@ -193,8 +194,8 @@ var comsys = {
                         }
                     }).then(res => {
                         setTimeout(() => {
+                            loadingType = res.data.body.page == res.data.body.totalPage ? 'nomore' : 'more'                        
                             resolve(res.data)
-                            loadingType = res.data.length < 10 ? 'nomore' : 'more'
                         }, 1000)
                     }).catch(err => {
                         loadingType = 'more';

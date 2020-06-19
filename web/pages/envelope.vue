@@ -7,11 +7,11 @@
         ></Header>
 
         <section class="content">
-            <div v-for="(item, index) in data" :key="index" class="item">
+            <div v-for="(item, index) in data.data" :key="index" class="item">
                 <div class="text" v-html="item.contentHtml"></div>
                 <div class="time">{{item.time}}</div>
             </div>
-            <LoadMore></LoadMore>
+            <LoadMore :loadingType="loadingType"></LoadMore>
         </section>
     </div>
 </template>
@@ -43,34 +43,35 @@ export default {
             this.$nextTick(() => this.refresh = true )
         }
 
-        if(this.data.length === 10){
-            
+        if(this.data.totalPage > 1){
+            window.addEventListener('scroll', this.load)
         }
-        // window.addEventListener('scroll', this.load)
     },
     destroyed(){
-        // window.removeEventListener('scroll', this.load)
+        window.removeEventListener('scroll', this.load)
     },
     methods: {
         load(){
-            // const data = this.$load('envelope', this.page)
+            const data = this.$load('envelope')
 
-            // if(data){
-            //     data.then(res => {
-            //         if(res.status === 1){
-            //             const result = res.body;
-            //             this.data = this.data.concat(result.data)
-            //         }else{
-                        
-            //         }
-            //         console.log(res)
-            //     })
-            // }
-            // p.then(res => {
-            //     console.log(res)
-            // }).catch(err => {
-            //     console.log(err)
-            // })
+            if(typeof data === 'object'){
+                this.loadingType = 'loading'
+            }
+
+            data && data.then(res => {
+                if(res.status === 1){
+                    const result = res.body;
+                    this.data.data = this.data.data.concat(result.data)
+                }
+                if(res.body.page == res.body.totalPage){
+                    this.loadingType = 'nomore';
+                    window.removeEventListener('scroll', this.load)
+                }else{
+                    this.loadingType = 'more';
+                }
+            }).catch(err => {
+                this.loadingType = 'nomore';
+            })
         }
     },
     computed: {
@@ -81,8 +82,7 @@ export default {
     async asyncData(context){
         let {data} = await context.$axios.get('envelope')
         if(data.status === 1){
-            console.log(data)
-            return {data: data.body.data}
+            return {data: data.body}
         }else{
             return {data: ''}
         }
