@@ -40,7 +40,6 @@ module.exports = app => {
 
         // 列表页 分组
         if(req.query.from){ 
-            console.log(2)
             result[1] = result[1].reduce((total, item)=>{
                 const [ , year, date] = /(\d+)\/(\d+)/.exec(item.time.date);                
                 total['_'+year] = total['_'+year] || {};
@@ -241,7 +240,7 @@ module.exports = app => {
 
         if (monthC > 4) {
             const date = new Date(timestemp);
-            const mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
             return mon[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
         } else {
             const map = {

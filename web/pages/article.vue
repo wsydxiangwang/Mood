@@ -84,21 +84,22 @@ export default {
                     const result = res.body.data;
                     // 合并数据
                     Object.keys(result).map(item => {
-                        let childA = this.data.data[item], 
-                            childB = result[item];
-                        if(childA){
-                            Object.keys(childB).map(i => {
-                                this.data.data[item][i] = childA[i] ? childA[i].concat(childB[i]) : childB[i]
-                            })
+                        const [child_A, child_B] = [this.data.data[item], result[item]]
+                        if(child_A){
+                            Object.keys(child_B).map(i => this.data.data[item][i] = child_A[i] ? child_A[i].concat(child_B[i]) : child_B[i])
                         }else{
-                            this.data.data[item] = childB
+                            this.data.data[item] = child_B
                         }
                     })
-                }
-                // 最后一页
-                if(res.body.page == res.body.totalPage){
-                    this.loadingType = 'nomore';
-                    window.removeEventListener('scroll', this.load)
+                    // 最后一页
+                    if(res.body.page == res.body.totalPage){
+                        this.loadingType = 'nomore';
+                        window.removeEventListener('scroll', this.load)
+                    }else{
+                        this.loadingType = 'more';
+                    }
+                    // 设置滚动条位置
+                    this.$setScroll('.bottom-loading');
                 }else{
                     this.loadingType = 'more';
                 }
@@ -211,8 +212,7 @@ header{
             border-left: 1px solid #f3fafd;
             margin-left: 6px;
             li{
-                margin: 0 0 25px;
-                padding-bottom: 25px;
+                padding: 25px 0;
                 border-bottom: 1px solid #F3FAFD;
                 display: flex;
                 justify-content: space-between;
@@ -240,15 +240,23 @@ header{
                             color: #5b6773;
                             cursor: pointer;
                             font-size: 15px;
-                            transition: all .3s;
-                            &:hover{
+                            padding-bottom: 5px;
+                            &:hover, &:focus{
                                 color: #024180;
+                                background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
+                                radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;
+                                background-size: 20px 20px;
+                                background-position: -10px calc(100% + 16px), 0 calc(100% - 4px);
+                                animation: waveFlow 1s infinite linear;
+                            }
+                            @keyframes waveFlow {
+                                from { background-position-x: -10px, 0; }
+                                to { background-position-x: -30px, -20px; }
                             }
                         }
                         span:last-child{
                             color: #a1a0d6;
                             font-size: 13px;
-                            margin-top: 4px;
                             letter-spacing: 0;
                         }
                     }

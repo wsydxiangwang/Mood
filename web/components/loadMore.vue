@@ -7,22 +7,14 @@
             <div class="dot"></div>
             <div class="dot"></div>
         </div>
-        <div class="btn more" @click="loadMore" v-if="loadingType == 'more'">加载更多</div>
+        <div class="btn more" v-if="loadingType == 'more'">加载更多</div>
         <div class="btn" v-if="loadingType == 'nomore'">呜呜，没有更多了~~</div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['loadingType'],
-    data(){
-        return {
-          
-        }
-    },
-    methods: {
-        loadMore(){}
-    }
+    props: ['loadingType']
 }
 </script>
 

@@ -18,7 +18,7 @@
                 ></span>
                 <!-- <span class="iconfont iconwechat" @click="wechat"></span> -->
                 <span class="myself" @click="myself">
-                    <img src="../static/image/myself.png">
+                    <!-- <img src="../static/image/myself.png"> -->
                 </span>
             </div>
             <!-- 音乐进度条 -->

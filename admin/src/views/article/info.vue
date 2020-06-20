@@ -59,7 +59,7 @@
                     action=""
                     drag
                 >
-                    <img v-if="data.image && data.image.name" :src="data.image.url">
+                    <img v-if="data.image && data.image.url" :src="data.image.url">
                     <i class="el-icon-picture-outline-round"></i>
                     <div class="el-upload__text">封面图片 (680*440)</div>
                 </el-upload>
@@ -234,12 +234,6 @@ export default {
             const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
 
-            for(let key in this.data){
-                if(this.data[key] === ''){
-                    this.$delete(this.data, key)
-                }
-            }
-
             const type = this.id ? `article/${this.data._id}` : 'article';
             const mesg = this.id ? '更新' : '发表';
 
@@ -267,6 +261,7 @@ export default {
         async loadData(id){
             const res = await this.$http.get(`article/${id}`)
             this.data = res.data.body;
+            console.log(this.data)
             this.isReset = false;
             this.$nextTick(() => { this.isReset = true; })
         },

@@ -3,72 +3,42 @@ import Vue from 'vue'
 var comsys = {
 
     install(Vue, option){
-
-        
         // 设置滚动条位置
-        Vue.prototype.$setScroll = (domObj, number, type) => {
-            let t = document.querySelector(domObj).offsetTop;
-            let d = document.documentElement.clientHeight;
-            let target;
-
-            if(type){
-                target = t + number;
-            }else{
-                target = t + d + number;
-            }
+        Vue.prototype.$setScroll = (dom, type) => {
+            // 计算滚动距离
+            const t = document.querySelector(dom).offsetTop;
+            const h = document.documentElement.clientHeight || document.body.clientHeight;
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            
+            const index = type == 'index' ? 200 : 0
+            const target = type == 'comment' ? t - 200 : scrollTop + h / 2 - 100 + index
 
 			this.timerScroll = setInterval(() => {
-				var cur = document.body.scrollTop + document.documentElement.scrollTop;  // 当前位置
-				var speed = (target - cur) / 10;
+                /**
+                 * 滚动条顶部距离
+                 * 浏览器视口高度
+                 * 文档的总高度
+                 */
+                const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+                const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+
+				let speed = (target - scrollTop) / 10;
 				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
 
-				if(((cur + speed) >= target && !type) || (cur + speed) <= target && type){
+				if(((scrollTop + speed) >= target && type !== 'comment') || (scrollTop + speed) <= target && type == 'comment'){
 					clearInterval(this.timerScroll)
 					document.body.scrollTop = document.documentElement.scrollTop = target;
 				}else{
-					document.body.scrollTop = document.documentElement.scrollTop = cur + speed;
+					document.body.scrollTop = document.documentElement.scrollTop = scrollTop + speed;
 				}
 
-				if(Vue.prototype.$getScrollTop() + Vue.prototype.$getWindowHeight() == Vue.prototype.$getScrollHeight()){
+				if(scrollTop + windowHeight == scrollHeight){
 					clearInterval(this.timerScroll)
 				}
 			}, 25)
         },
-        //滚动条在Y轴上的滚动距离
-        Vue.prototype.$getScrollTop = () => {
-            var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
-            if(document.body){
-                bodyScrollTop = document.body.scrollTop;
-            }
-            if(document.documentElement){
-                documentScrollTop = document.documentElement.scrollTop;
-            }
-            scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
-            return scrollTop;
-        },
-        //文档的总高度
-        Vue.prototype.$getScrollHeight = () => {
-            var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
-            if(document.body){
-                bodyScrollHeight = document.body.scrollHeight;
-            }
-            if(document.documentElement){
-                documentScrollHeight = document.documentElement.scrollHeight;
-            }
-            scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight;
-            return scrollHeight;
-        },
-        //浏览器视口的高度
-        Vue.prototype.$getWindowHeight = () => {
-            var windowHeight = 0;
-        　　if(document.compatMode == "CSS1Compat"){
-        　　　　windowHeight = document.documentElement.clientHeight;
-        　　}else{
-        　　　　windowHeight = document.body.clientHeight;
-        　　}
-        　　return windowHeight;
-        }  
-        
+
         // 微信分享
         Vue.prototype.$wxShare = (_this, type, dataAll) => {
             if (navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
@@ -167,11 +137,9 @@ var comsys = {
             } 
         }
 
-        let page = 1;
-        let loadingFrom = '';
-        let loadingType = 'more';
-        
+
         // 滚动到底部 加载下一页数据
+        let [page, loadingFrom, loadingType] = [1, '', 'more'];
         Vue.prototype.$load = (type, from) => {
             
             // 初始化
@@ -211,6 +179,64 @@ var comsys = {
                 })
             }
         }
+
+        const throttle = (fn, interval) => {
+            let flag = true;
+            return function(...args) {
+                if (flag){
+                    flag = false;
+                    setTimeout(() => {
+                        fn.apply(this, args);
+                        flag = true;
+                    }, interval);
+                }
+            }
+        }
+
+        /**
+         * 判断元素可见
+         */
+        function isVisible(el){
+            let windowHeight = window.innerHeight
+            let position = el.getBoundingClientRect()
+            // 当元素的top偏移量小于页面大小并且大于高度的负数
+            if(position.top<windowHeight && position.top>-position.height){
+                return true
+            }
+            return false
+        }
+        
+        /**
+         * 对图片进行懒加载
+         */
+        function lazyLoad(img, src){
+            if(img && src && isVisible(img)){ // 元素存在，元素未被加载，元素可见
+                setTimeout(function(){
+                    img.setAttribute('src', src)
+                }, 1000) // 模拟网络请求慢的情况
+            }
+        }
+
+        Vue.directive('lazy', {
+            bind: (el, binding, vnode) => {
+                console.log(el, binding.value)
+                el.setAttribute('src', require('../static/image/404.png'))
+                window.addEventListener('scroll', () => {
+                    console.log(3)
+                    throttle(lazyLoad(el, binding.value), 50)
+                })
+            },
+            // 首屏初始化
+            inserted: (el, binding, vnode) => {
+                lazyLoad(el, binding.value)
+            },
+            unbind: (el, binding) => {
+                window.removeEventListener('scroll', () => {
+                    throttle(lazyLoad(el, binding.value), 50)
+                })
+            }
+        })
+  
     }
 }
 Vue.use(comsys)

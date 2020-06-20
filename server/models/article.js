@@ -23,8 +23,26 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    music: Object,                      // 音乐
-    image: Object,                      // 封面
+    music: {
+        url: {
+            type: String,
+            default: ''
+        },
+        name: {
+            type: String,
+            default: ''
+        }
+    },                      // 音乐
+    image: {
+        url: {
+            type: String,
+            default: ''
+        },
+        name: {
+            type: String,
+            default: ''
+        }
+    },                      // 封面
 })
 
 module.exports = mongoose.model('Article', schema)

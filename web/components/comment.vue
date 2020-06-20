@@ -186,7 +186,7 @@ export default {
         // 开启回复
         reply(item, type, items){
             // 设置滚动条位置
-            this.$setScroll('.comment', -200, true);
+            this.$setScroll('.comment', 'comment');
 
             this.isReply = true;
             this.replyObj = {

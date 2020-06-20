@@ -61,10 +61,16 @@ export default {
                 if(res.status === 1){
                     const result = res.body;
                     this.data.data = this.data.data.concat(result.data)
-                }
-                if(res.body.page == res.body.totalPage){
-                    this.loadingType = 'nomore';
-                    window.removeEventListener('scroll', this.load)
+
+                    if(result.page == result.totalPage){
+                        this.loadingType = 'nomore';
+                        window.removeEventListener('scroll', this.load)
+                    }else{
+                        this.loadingType = 'more';
+                    }
+
+                    // 设置滚动条位置
+                    this.$setScroll('.bottom-loading');
                 }else{
                     this.loadingType = 'more';
                 }
@@ -99,6 +105,10 @@ export default {
         background: #fff;
         padding: 30px 30px 20px;
         border-radius: 6px;
+        transition: all .3s;
+        &:hover{
+            box-shadow: 0 1px 8px rgba(0, 132, 255, 0.3);
+        }
         .text{
             color: #333;
             /deep/ .hljs-right{

@@ -35,7 +35,8 @@
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img v-if="item.image" :src="item.image.url" :alt="item.image.name">
+					<!-- 图片懒加载 -->
+					<img v-if="item.image" v-lazy="item.image.url" :alt="item.image.name">
 					<img v-else >
 				</div>
 				<div class="info">
@@ -50,7 +51,7 @@
 				</div>
 			</div>
 
-			<div @click="loadMore" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
+			<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
 		</div>
 
 		<div class="foot" v-if="info.cover.icp_txt">
@@ -116,7 +117,6 @@ export default {
 		// 	return;
 		// }
 		const {data} = await context.$axios.get('article')
-		console.log(data.body.data)
 		return { articleList: data.status == 1 ? data.body.data : {}}
 	},
 	computed: {
@@ -207,10 +207,11 @@ export default {
 
 			this.imgStyle = Object.assign({}, this.imgStyle, style);
 		},
-		loadMore(){
-			if(this.loadingType == 'nomore'){
+		loadMoreData(){
+			if(this.loadingType == 'nomore' || this.loadingType == 'loading'){
 				return
 			}
+
 			this.page++;
 			this.loadingType = 'loading';
 			this.$axios.get(`article`, {
@@ -219,18 +220,20 @@ export default {
 				}
 			})
 			.then(res => {
-				setTimeout(() => {
-					this.articleList = this.articleList.concat(res.data)
+				const result = res.data.body;
+				if(res.data.status == 1){
+					setTimeout(() => {
+						this.articleList = this.articleList.concat(result.data)
 
-					// 设置滚动条位置
-					this.$setScroll('.bottom-loading', -100);
+						// 设置滚动条位置
+						this.$setScroll('.bottom-loading', 'index');
 
-					if(res.data.length < 5){
-						this.loadingType = 'nomore';
-					}else{
-						this.loadingType = 'more';
-					}
-				}, 1500)
+						this.loadingType = result.page == result.totalPage ? 'nomore' : 'more';
+
+					}, 1000)
+				}else{
+					this.loadingType = 'more';
+				}
 			}).catch(err => {
 				this.loadingType = 'more';
 			})
@@ -401,9 +404,13 @@ export default {
 				position: relative;
 				cursor: pointer;
 				z-index: 3;
+				overflow: hidden;
 				img{
 					width: 100%;
 					height: 100%;
+				}
+				&:hover img{
+					opacity: 0.95;
 				}
 			}
 			.info{
@@ -418,18 +425,28 @@ export default {
 					font-size: 12px;
 				}
 				.title{
-					margin-top: 5px;
+					margin-top: 8px;
+					word-break: break-all;
+					display: -webkit-box;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
 					a{
 						font-size: 24px;
+						line-height: 30px;
 						cursor: pointer;
-						word-break: break-all;
-						display: -webkit-box;
-						-webkit-line-clamp: 2;
-						-webkit-box-orient: vertical;
-						overflow: hidden;
 						&:hover{
-							text-decoration: underline;
+							background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
+							radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;
+							background-size: 20px 20px;
+							background-position: -10px calc(100% + 16px), 0 calc(100% - 4px);
+							animation: waveFlow 1s infinite linear;
 						}
+						@keyframes waveFlow {
+							from { background-position-x: -10px, 0; }
+							to { background-position-x: -30px, -20px; }
+						}
+
 					}
 				}
 				.describe{
@@ -451,10 +468,21 @@ export default {
 					left: 80px;
 					display: flex;
 					div{
+						padding: 6px;
 						font-size: 12px;
-						margin-right: 12px;
 						display: flex;
 						align-items: center;
+						position: relative;
+						transition: all .3s;
+						&:nth-of-type(1):hover{
+							color: #0084ff;
+						}
+						&:nth-of-type(2):hover{
+							color: #50bcb6;
+						}
+						&:nth-of-type(3):hover{
+							color: #EF6D57;
+						}
 						.iconfont{
 							margin-right: 4px;
 							margin-top: -4px;
@@ -465,10 +493,53 @@ export default {
 							}
 							&.icon-text{
 								font-size: 17px;
+								margin-top: -2px;
 							}
 						}
 						span{
 							display: inline-block;
+						}
+						&::before, &::after{
+							position: absolute;
+							bottom: 100%;
+							left: 50%;
+							transition: all .3s;
+							opacity: 0;
+							visibility: hidden;
+						}
+						&::before{
+							content: '坚持';
+							transform: translate(-50%, -5px);
+							background: #0084ff;
+							white-space: nowrap;
+							color: #fff;
+							font-size: 12px;
+							border-radius: 10px;
+							padding: 5px 14px;
+						}
+						&::after{
+							content: '';
+							border: 5px solid transparent;
+							border-top-color: #0084ff;
+							transform: translate(-50%, 5px);
+						}
+						&:nth-of-type(2)::before{
+							content: '善良';
+							background: #50bcb6;
+						}
+						&:nth-of-type(3)::before{
+							content: '勇敢';
+							background: #EF6D57;
+						}
+						&:nth-of-type(2)::after{
+							border-top-color: #50bcb6;
+						}
+						&:nth-of-type(3)::after{
+							border-top-color: #EF6D57;
+						}
+						&:hover::before, &:hover::after{
+							opacity: 1;
+							visibility: visible;
 						}
 					}
 				}
