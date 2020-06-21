@@ -135,9 +135,7 @@ export default {
         this.$nextTick(() => {
             // music src
             this.$refs.audio.src = this.data.music;
-            
-            // 微信分享
-            this.$wxShare(this, 2, this.data);
+
         })
 
         // 监听滚动条事件
