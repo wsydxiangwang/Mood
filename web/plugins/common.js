@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-var comsys = {
+var common = {
 
     install(Vue, option){
         // 设置滚动条位置
@@ -81,19 +81,6 @@ var comsys = {
             }
         }
 
-        const throttle = (fn, interval) => {
-            let flag = true;
-            return function(...args) {
-                if (flag){
-                    flag = false;
-                    setTimeout(() => {
-                        fn.apply(this, args);
-                        flag = true;
-                    }, interval);
-                }
-            }
-        }
-
         /**
          * 首页图片懒加载
          */
@@ -101,19 +88,18 @@ var comsys = {
 
         Vue.directive('lazy', {
             bind: (el, binding, vnode) => {
+                const url = binding.value;
                 // 默认图
-                const imageDefult = require('../static/image/404.png')
-                el.setAttribute('src', imageDefult)
-                listenList.push({ el, src: binding.value || imageDefult})
+                el.setAttribute('src', url.default)
+                listenList.push({ el, src: url.url || url.default})
                 window.addEventListener('scroll', watch)
             },
             // 首屏初始化
             inserted: (el, binding, vnode) => {
-                const imageDefult = require('../static/image/404.png')
-                lazyLoad({ el, src: binding.value || imageDefult})
+                const url = binding.value;
+                lazyLoad({ el, src: url.url || url.default})
             },
             unbind: (el, binding) => {
-                // 离开路由, 取消监听
                 window.removeEventListener('scroll', watch)
             }
         })
@@ -147,6 +133,20 @@ var comsys = {
                 }
             }
         }
+
+        const throttle = (fn, interval) => {
+            let flag = true;
+            return function(...args) {
+                if (flag){
+                    flag = false;
+                    setTimeout(() => {
+                        fn.apply(this, args);
+                        flag = true;
+                    }, interval);
+                }
+            }
+        }
     }
 }
-Vue.use(comsys)
+
+Vue.use(common)

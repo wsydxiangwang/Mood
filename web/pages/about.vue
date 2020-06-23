@@ -5,7 +5,7 @@
             :music="music" 
             title="嘿，陌生人，你今天笑了么 (≖ᴗ≖)✧"
         ></Header>
-        <div v-if="data" class="about" v-html="data"></div>
+        <div v-if="data" class="about" v-html="data.contentHtml"></div>
         <div v-else>此人还没有介绍, 明天再来吧!</div>
     </div>
 </template>
@@ -26,11 +26,11 @@ export default {
     },
     mounted(){
         // 背景音乐
-        if(this.info.bg.bg_about){
-            this.music = this.info.bg.bg_about
-            this.refresh = false
-            this.$nextTick(() => this.refresh = true )
-        }
+        // if(this.info.bg.bg_about){
+        //     this.music = this.info.bg.bg_about
+        //     this.refresh = false
+        //     this.$nextTick(() => this.refresh = true )
+        // }
     },
     computed: {
 		info(){
@@ -38,9 +38,10 @@ export default {
         }
     },
     async asyncData(context){
-        const {data} = await context.$axios.get('/myself')
+        const {data} = await context.$axios.get('myself')
+        console.log(data)
         if(data.status === 1){
-            return {data: data.body.contentHtml}
+            return {data: data.body}
         }else{
             return {data: ''}
         }

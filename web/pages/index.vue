@@ -4,7 +4,6 @@
 			<div id="scene" :style="{height:boxH}">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
 					<img id="image" :style="imgStyle" :src="info.cover.image" width="1920" height="1080" @load="coverImgLoad">
-					<!-- <img id="image" :style="imgStyle" src="https://image.yeyucm.cn/Myself-Resources/coverPicture.png" width="1920" height="1080" @load="coverImgLoad"> -->
 				</div>
 			</div>
 			<div class="head">
@@ -36,7 +35,7 @@
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
 					<!-- 图片懒加载 -->
-					<img v-if="item.image" v-lazy="item.image.url" :alt="item.image.name">
+					<img v-if="item.image" v-lazy="{url: item.image.url, default: require('../static/image/404.png')}" :alt="item.image.name">
 					<img v-else >
 				</div>
 				<div class="info">
@@ -475,13 +474,13 @@ export default {
 						position: relative;
 						transition: all .3s;
 						&:nth-of-type(1):hover{
-							color: #0084ff;
+							color: #EF6D57;
 						}
 						&:nth-of-type(2):hover{
 							color: #50bcb6;
 						}
 						&:nth-of-type(3):hover{
-							color: #EF6D57;
+							color: #ffa800;
 						}
 						.iconfont{
 							margin-right: 4px;
@@ -508,9 +507,9 @@ export default {
 							visibility: hidden;
 						}
 						&::before{
-							content: '坚持';
+							content: '善良';
 							transform: translate(-50%, -5px);
-							background: #0084ff;
+							background: #EF6D57;
 							white-space: nowrap;
 							color: #fff;
 							font-size: 12px;
@@ -520,22 +519,22 @@ export default {
 						&::after{
 							content: '';
 							border: 5px solid transparent;
-							border-top-color: #0084ff;
+							border-top-color: #EF6D57;
 							transform: translate(-50%, 5px);
 						}
 						&:nth-of-type(2)::before{
-							content: '善良';
+							content: '勇敢';
 							background: #50bcb6;
 						}
 						&:nth-of-type(3)::before{
-							content: '勇敢';
-							background: #EF6D57;
+							content: '坚持';
+							background: #ffa800;
 						}
 						&:nth-of-type(2)::after{
 							border-top-color: #50bcb6;
 						}
 						&:nth-of-type(3)::after{
-							border-top-color: #EF6D57;
+							border-top-color: #ffa800;
 						}
 						&:hover::before, &:hover::after{
 							opacity: 1;

@@ -28,6 +28,7 @@ module.exports = app => {
             envelope,
             unread: unread.count,
         }
+        
         res.send(requestResult(data))
     })
 
