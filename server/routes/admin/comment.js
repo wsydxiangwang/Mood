@@ -47,8 +47,10 @@ module.exports = app => {
         // 添加评论id
         req.body.data.id = commentCount.count;
         const result = await Comment.create(req.body.data)
+
         res.send(requestResult(result))
         
+        // 邮件信息
         const articleData = await Article.findOne({id: req.body.data.topic_id})
         
         if(req.body.email.email_message){

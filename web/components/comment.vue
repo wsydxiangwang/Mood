@@ -259,10 +259,14 @@ export default {
                 content: this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, ''),
                 topic_id: this.id,
             }
+
             /**
              * 指定管理员头像
              */
-            if(this.form.email == '1915398623@qq.com') this.form.image = 1;
+            if(this.form.email == '1915398623@qq.com'){
+                this.form.image = 1;
+                this.form.admin = true;
+            }
 
             const formData = {
                 title: this.title,

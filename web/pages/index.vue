@@ -35,8 +35,7 @@
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
 					<!-- 图片懒加载 -->
-					<img v-if="item.image" v-lazy="{url: item.image.url, default: require('../static/image/404.png')}" :alt="item.image.name">
-					<img v-else >
+					<img v-lazy="item.image.url" src="../static/image/404.png" :alt="item.image.name">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>

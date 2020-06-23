@@ -3,7 +3,7 @@
 */
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({  
+const schema = new mongoose.Schema({
     id: Number,         // 评论id
     topic_id: Number,   // 主题id
     name: String,       // 昵称

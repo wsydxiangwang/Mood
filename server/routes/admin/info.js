@@ -11,23 +11,23 @@ module.exports = app => {
     const Envelope = require('../../models/envelope')
 
     router.get('/info', async (req, res) => {
-        const info = await Info.findOne()
-        const unread = await Counter.findOne({name: 'comment_read'})
-        const articleQty = await Article.countDocuments()
-        const commentQty = await Comment.countDocuments()
-        const article = await Article.findOne().sort({time: -1})
-        const envelope = await Envelope.find().sort({time: -1}).limit(8)
+        const result = await Promise.all([
+            Info.findOne(),
+            Article.findOne().sort({time: -1}),
+            Envelope.find().sort({time: -1}).limit(8),
+            Article.countDocuments(),
+            Comment.countDocuments(),
+            Counter.findOne({name: 'comment_read'}),
+        ])
 
-        envelope.forEach(item => item._doc['time'] = dateFormat(item.time) )
+        result[2].forEach(item => item._doc['time'] = dateFormat(item.time) )
 
-        const data = {
-            info,
-            article,
-            articleQty,
-            commentQty,
-            envelope,
-            unread: unread.count,
-        }
+        const key = ['info', 'article', 'envelope', 'articleQty', 'commentQty', 'unread']
+
+        const data = key.reduce((total, item, index) => {
+            total[item] = item == 'unread' ? result[index].count : result[index]
+            return total
+        }, {})
         
         res.send(requestResult(data))
     })

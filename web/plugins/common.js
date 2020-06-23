@@ -87,45 +87,36 @@ var common = {
         let listenList = []; // 需加载图片
 
         Vue.directive('lazy', {
-            bind: (el, binding, vnode) => {
-                const url = binding.value;
-                // 默认图
-                el.setAttribute('src', url.default)
-                listenList.push({ el, src: url.url || url.default})
-                window.addEventListener('scroll', watch)
-            },
-            // 首屏初始化
             inserted: (el, binding, vnode) => {
-                const url = binding.value;
-                lazyLoad({ el, src: url.url || url.default})
+                const url = binding.value
+                listenList.push({ el, src: url})
+                window.addEventListener('scroll', watch)
+                // 首屏初始化
+                lazyLoad({ el, src: url})
             },
             unbind: (el, binding) => {
                 window.removeEventListener('scroll', watch)
             }
         })
 
+        // 使用函数，切换路由，可清除监听事件
         const watch = () => {
-            throttle(() => {
-                console.log(2)
-                for (let i = 0; i < listenList.length; i++){
-                    lazyLoad(listenList[i])
-                }
-            }, 50)()
+            throttle(() => listenList.map(i => lazyLoad(i)) , 50)()
         }
 
         // 加载图片
         const lazyLoad = (item) => {
             const {el, src} = item;
-            const windowHeight = window.innerHeight
-            const position = el.getBoundingClientRect()
-            const show = position.top < windowHeight && position.top > -position.height
+            const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            const position = el.getBoundingClientRect().top;
+            const show = position <= windowHeight + 500
 
             // 元素存在，元素可见
             if(src && show){ 
                 let img = new Image();
                 img.src = src;
 
-                // 加载成功后, 删除需加载的对象
+                // 加载成功后, 删除对象
                 img.onload = () =>{
                     el.src = src;
                     const index = listenList.indexOf(item);
@@ -134,6 +125,7 @@ var common = {
             }
         }
 
+        // 节流
         const throttle = (fn, interval) => {
             let flag = true;
             return function(...args) {
