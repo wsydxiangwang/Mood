@@ -1,7 +1,8 @@
 <template>
     <header :class="{qrccode}">
 
-        <canvas id="qrccode"></canvas>
+        <!-- Article Page -->
+        <canvas v-if="like" id="qrccode"></canvas>
 
         <div class="l icon">
             <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
@@ -15,20 +16,24 @@
         <div class="title" :class="{active: isTitle}">{{title}}</div>
 
         <div class="r icon">
-            <span class="iconfont icon-wechat" @click="wechat"></span>
-            <span 
-                class="iconfont icon-like" 
-                :class="{like: isLike}"
-                @click="likeClick"
-                v-if="like"
-            ></span>
+
+            <!-- Article Page -->
+            <template v-if="like">
+                <span class="iconfont icon-wechat" @click="wechat"></span>
+                <span 
+                    class="iconfont icon-like" 
+                    :class="{like: isLike}"
+                    @click="likeClick"
+                ></span>
+            </template>
+
             <span class="myself" @click="myself">
                 <img :src="$store.state.data.avatar">
             </span>
         </div>
 
         <!-- liked hint -->
-        <div class="like-hint-box" :class="{likeHint}">
+        <div class="like-hint-box" :class="{likeHint}" v-if="like">
             <div class="like-hint">只能点赞一次哦, 感谢支持</div>
             <span></span>
             <span></span>
@@ -88,11 +93,13 @@ export default {
         window.removeEventListener('scroll', this.handleScroll, true)
     },
     mounted(){
-        this.$nextTick(() => {
-            const canvas = document.getElementById('qrccode')
-            QRCode.toCanvas(canvas, window.location.href)
-        })
-        
+        if(this.like){
+            this.$nextTick(() => {
+                const canvas = document.getElementById('qrccode')
+                QRCode.toCanvas(canvas, window.location.href)
+            })
+        }        
+
         // isLike
         const like = localStorage.getItem(`like-${this.like}`);
         this.isLike = Boolean(like)

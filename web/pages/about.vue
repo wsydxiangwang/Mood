@@ -43,7 +43,6 @@ export default {
     },
     async asyncData(context){
         const {data} = await context.$axios.get('myself')
-        console.log(data)
         if(data.status === 1){
             return {data: data.body}
         }else{

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
     name: String,           // 管理员昵称
     avatar: String,         // 管理员头像
+    comment_mark: String,   // 管理员标识
     address: String,        // 网站地址
     web_name: String,       // 网站名
     web_describe: String,   // 网站描述

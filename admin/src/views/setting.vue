@@ -4,8 +4,11 @@
             <h2 class="tit">网站信息</h2>
         </div>
         <el-form ref="form" :model="form" label-width="100px">
+
             <template v-for="(item, index) in formList[0]">
+
                 <el-form-item :label="item.value" v-if="!item.show" :key="index">
+                    
                     <template v-if="item.key == 'avatar'">
                         <el-upload
                             action=""
@@ -18,6 +21,7 @@
                             <i v-else class="el-icon-user"></i>
                         </el-upload>
                     </template>
+
                     <template v-else-if="item.key == 'upload_type'">
                         <el-radio-group v-model="form.upload_type">
                             <el-radio label="服务器"></el-radio>
@@ -34,6 +38,7 @@
                             </template>
                         </template>
                     </template>
+
                     <template v-else-if="item.key == 'email_message'">
                         <el-switch @change="emailChange" v-model="form.email_message"></el-switch>
                     </template>
@@ -42,6 +47,7 @@
                         <el-input v-model="form[item.key]"></el-input>
                     </template>
                 </el-form-item> 
+
             </template>
 
             <h2 class="tit hint-tit">首屏效果 
@@ -55,9 +61,12 @@
                     <span slot="reference">(view)</span>
                 </el-popover>
             </h2>
-            <template v-for="(item, index) in formList[1]">
-                <el-form-item :label="item.value" :key="index+22">
-                    <template v-if="item.key == 'image'">
+
+            <template v-for="(v, k, i) in formList[1]">
+
+                <el-form-item :label="v" :key="i+22">
+
+                    <template v-if="k == 'image'">
                         <el-upload
                             action=""
                             class="cover"
@@ -69,26 +78,32 @@
                             <i v-else class="el-icon-plus"></i>
                         </el-upload>
                     </template>
-                    <template v-else-if="item.key == 'color'">
+                    
+                    <template v-else-if="k == 'color'">
                         <el-color-picker v-model="form['cover']['color']" show-alpha></el-color-picker>
                     </template>
+
                     <template v-else>
-                        <el-input v-model="form['cover'][item.key]"></el-input>
+                        <el-input v-model="form['cover'][k]"></el-input>
                     </template>
                 </el-form-item>
+
             </template>
 
             <h2 class="tit">页面音乐</h2>
-            <template v-for="(item, index) in formList[3]">
-                <el-form-item :label="item.value" :key="index+222">
-                    <el-input v-model="form['bg'][item.key]"></el-input>
+
+            <template v-for="(v, k, i) in formList[3]">
+                <el-form-item :label="v" :key="i+222">
+                    <el-input v-model="form['bg'][k]"></el-input>
                 </el-form-item>
             </template>
 
             <h2 class="tit">修改密码</h2>
+
             <el-form-item label="原密码">
                 <el-input v-model="password.one"></el-input>
             </el-form-item>
+
             <el-form-item label="新密码">
                 <el-input v-model="password.two"></el-input>
             </el-form-item>
@@ -117,6 +132,10 @@ export default {
                     {
                         key: 'name',
                         value: '管理员昵称'
+                    },
+                    {
+                        key: 'comment_mark',
+                        value: '管理员标识'
                     },
                     {
                         key: 'web_name',
@@ -152,55 +171,22 @@ export default {
                         show: true
                     },
                 ],
-                [
-                    {
-                        key: 'image',
-                        value: '封面图'
-                    },
-                    {
-                        key: 'title',
-                        value: '标题'
-                    },
-                    {
-                        key: 'describe',
-                        value: '描述'
-                    },
-                    {
-                        key: 'date',
-                        value: '时间'
-                    },
-                    {
-                        key: 'link',
-                        value: '链接'
-                    },
-                    {
-                        key: 'color',
-                        value: '色调'
-                    },
-                    {
-                        key: 'icp_txt',
-                        value: '备案号'
-                    },
-                    {
-                        key: 'icp_link',
-                        value: '备案链接'
-                    },
-                ],
+                {
+                    image: '封面图',
+                    title: '标题',
+                    describe: '描述',
+                    date: '时间',
+                    link: '链接',
+                    color: '色调',
+                    icp_txt: '备案号',
+                    icp_link: '备案链接',
+                },
                 ['bucket', 'region', 'endPoint', 'accessKeySecret', 'accessKeyId', 'domain'],
-                [
-                    {
-                        key: 'bg_mood',
-                        value: '文章列表'
-                    },
-                    {
-                        key: 'bg_letter',
-                        value: '短语列表'
-                    },
-                    {
-                        key: 'bg_about',
-                        value: '个人介绍'
-                    },
-                ],
+                {
+                    bg_mood: '文章列表',
+                    bg_letter: '短语列表',
+                    bg_about: '个人介绍',
+                }
             ],
             form: {
                 cover: {},
@@ -234,7 +220,7 @@ export default {
             for(let i in this.$info){
                 this.$set(this.form, i, this.$info[i])
             }
-            this.$set(this.formList[0][8], 'show', !this.$info['email_message'])
+            this.$set(this.formList[0][10], 'show', !this.$info['email_message'])
         },
         async onSubmit(){
             /**
@@ -323,7 +309,7 @@ export default {
             })
         },
         emailChange(e){
-            this.formList[0][8].show = !e
+            this.formList[0][10].show = !e
         },
         // 保存临时图片
         upload(type, file){

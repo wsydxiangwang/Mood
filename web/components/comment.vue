@@ -57,7 +57,7 @@
                 <h2><span>Comment List</span><span>({{comment.total}})</span></h2>
                 <div class="comment-list">
                     <transition-group name="comment-item">
-                        <!-- 评论列表 -->
+                        <!-- Comment List -->
                         <div 
                             class="comment-item" 
                             v-for="item in comment.data" 
@@ -70,7 +70,7 @@
                                         <img :src="require('../static/image/comment/'+item.image+'.jpg')">
                                     </div>
                                     <div class="name">
-                                        <a>{{item.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                        <a>{{item.name}}<span v-if="item.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
                                             <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
@@ -80,7 +80,7 @@
                                 <div class="comment-content">{{item.content}}</div>
                             </div>
 
-                            <!-- 回复评论 -->
+                            <!-- Reply to list -->
                             <div class="comments" v-if="item.child.length > 0">
                                 <transition-group name="comment-child">
                                     <div 
@@ -94,7 +94,7 @@
                                                 <img :src="require('../static/image/comment/'+items.image+'.jpg')">
                                             </div>
                                             <div class="name">
-                                                <a>{{items.name}}<span v-if="item.email==='1915398623@qq.com'">行人</span></a>
+                                                <a>{{items.name}}<span v-if="items.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
                                                 <div class="r">
                                                     <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                     <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
@@ -111,7 +111,6 @@
             </template>
         </section>
         
-        <!-- 验证 -->
         <div>
             <PuzzleVerification 
                 blockType="puzzle" 
@@ -132,11 +131,11 @@ export default {
     },
     data() {
         return {
-            comment: {},        // 评论列表
-            form: {},           // 表单数据
+            comment: {},
+            form: {},
 
-            status: 10,          // 提交状态
-            hint: [              // 状态提示信息
+            status: 10,
+            hint: [
                 '您的名字是第一印象哦～',
                 '胆敢冒充站长，来人，拉出去砍了！！',
                 '请输入正确的邮箱，有惊喜的哦～',
@@ -147,23 +146,24 @@ export default {
                 '提交成功, Nice.'
             ],
 
-            isVerification: false,      // 开启状态
-            verificationSuccess: false, // 验证成功
+            isVerification: false,
+            verificationSuccess: false,
 
-            isReply: false,     // 开启回复
-            replyObj: {},       // 回复的信息
+            isReply: false,
+            replyObj: {},
         }
     },
     mounted(){
-        // 获取评论
         this.$axios.get(`comment/${this.id}`).then(res => {
             if(res.data.status === 1){
                 this.comment = res.data.body
-                this.$emit('total', this.comment.total) // 评论总数
+                console.log(this.comment)
+                this.$emit('total', this.comment.total)
             }
         })
     },
     methods: {
+        // Validation results
         verifyResult(type){
             ['header', 'section', '.comment-section'].map(item => {
                 document.querySelector(item).classList.remove('verify')
@@ -174,20 +174,18 @@ export default {
                     this.status = 5;
                 }else{
                     this.status = 6;
-                    this.submit(); // Submitting
+                    this.submit(); // start submit
                 }
             }, 600)
         },
-        //取消回复
+        // Cancel reply
         cancel(){
             this.replyObj = {};
             this.isReply = false;
         },
-        // 开启回复
+        // Reply Mode
         reply(item, type, items){
-            // 设置滚动条位置
             this.$setScroll('.comment', 'comment');
-
             this.isReply = true;
             this.replyObj = {
                 parent_id: item.id,
@@ -196,9 +194,9 @@ export default {
                 reply_email: type == 1 ? item.email : items.email,
             }
         },
-        // 提交验证
+        // Verification
         submitVerify(){
-            // loading 状态
+            // loading
             if(this.status == 6) return;
             
             const data = this.$store.state.data
@@ -230,7 +228,7 @@ export default {
                 }
             }
 
-            // 验证
+            // Content Verification
             for(let i in map){
                 const result = map[i]();
                 if(result.type){
@@ -239,7 +237,7 @@ export default {
                 }
             }
 
-            // 开启滑动验证
+            // Puzzle Verification
             ['header', 'section', '.comment-section'].map(item => {
                 document.querySelector(item).classList.add('verify')
             })
@@ -279,12 +277,17 @@ export default {
                          * To Append Data
                          */
                         const data = res.data.body;
+
                         if(data.type === 1){
                             this.comment.data.unshift(data)
                         }else{
                             const id = data.parent_id;
                             this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
                         }
+
+                        // Comment total +1 
+                        this.$set(this.comment, 'total', this.comment.total + 1)
+                        this.$emit('total', this.comment.total)
 
                         /**
                          * Reset State
@@ -293,7 +296,6 @@ export default {
                         this.replyObj = {};
                         this.isReply = false;
                         this.status = 7;
-
                         setTimeout(() => {
                             this.status = 10;
                         }, 3000)

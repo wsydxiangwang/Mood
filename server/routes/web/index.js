@@ -25,6 +25,7 @@ module.exports = app => {
             bg: info.bg,
             email: info.email,
             email_name: info.email_name,
+            admin_mark: info.comment_mark,
         }
         res.send(requestResult(data))
     })

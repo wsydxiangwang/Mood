@@ -1,7 +1,7 @@
 <template>
     <div class="articleld">
 
-        <!-- 文章进度条 -->
+        <!-- Article Progress -->
         <div class="scrollbar" :style="{width: postProgress}"></div>
 
         <Header 
@@ -29,10 +29,9 @@
 
             <!-- loading -->
             <!-- <Loading v-if="loading"></Loading> -->
-
         </section>
 
-        <!-- comment -->
+        <!-- Comment -->
         <Comment :id="data.id" :title="data.title" @total="totalComment"></Comment>
     </div>
 </template>
@@ -67,7 +66,6 @@ export default {
         }
     },
     beforeRouteLeave(to,from,next){
-        // 销毁滚动条事件
         window.removeEventListener('scroll', this.handleScroll, true)
         next();
     },
@@ -93,8 +91,7 @@ export default {
         },
         handleScroll(){
             /**
-             * 顶部进度条
-             * 音乐播放控制 (Mobile)
+             * Article Progress
              */
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
