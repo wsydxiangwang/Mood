@@ -201,6 +201,7 @@ export default {
             // loading 状态
             if(this.status == 6) return;
             
+            const data = this.$store.state.data
             const map = {
                 name: () => {
                     return {
@@ -208,10 +209,11 @@ export default {
                         type: !this.form.name
                     }
                 },
+                // Administrator
                 admin: () => {
                     return {
                         code: 1,
-                        type: this.form.name == '李白' && this.form.email != '1915398623@qq.com'
+                        type: (this.form.name == data.email_name && this.form.email != data.email) || (this.form.name != data.email_name && this.form.email == data.email)
                     }
                 },
                 email: ()=>{
@@ -243,14 +245,8 @@ export default {
             })
             this.isVerification = true;
         },
-        // 提交评论
+        // Submit Comment
         submit(){
-            /**
-             * 去掉前后空格
-             * 过滤script
-             * 添加当前时间
-             * 添加随机头像
-             */
             this.form = {
                 name: this.form.name.trim(),
                 time: this.dateFormat(),
@@ -261,9 +257,10 @@ export default {
             }
 
             /**
-             * 指定管理员头像
+             * Administrator Mark
              */
-            if(this.form.email == '1915398623@qq.com'){
+            const data = this.$store.state.data
+            if(this.form.email == data.email && this.form.name == data.email_name){
                 this.form.image = 1;
                 this.form.admin = true;
             }
@@ -279,7 +276,7 @@ export default {
                 .then(res => {
                     if(res.data.status === 1){
                         /**
-                         * 动态添加到页面
+                         * To Append Data
                          */
                         const data = res.data.body;
                         if(data.type === 1){
@@ -290,7 +287,7 @@ export default {
                         }
 
                         /**
-                         * 恢复默认状态
+                         * Reset State
                          */
                         this.form = {};
                         this.replyObj = {};
@@ -308,15 +305,15 @@ export default {
                     this.status = 4;
                 })
         },
-        // 时间
+        // FormatTime
         dateFormat(){
             const date = new Date();
             const opt = {
-                "Y": date.getFullYear().toString(),        // 年
-                "M": (date.getMonth() + 1).toString(),     // 月
-                "D": date.getDate().toString(),            // 日
-                "H": date.getHours().toString(),           // 时
-                "m": date.getMinutes().toString(),         // 分
+                "Y": date.getFullYear().toString(),     
+                "M": (date.getMonth() + 1).toString(),  
+                "D": date.getDate().toString(),         
+                "H": date.getHours().toString(),        
+                "m": date.getMinutes().toString(),      
             }
             for(let i in opt){
                 opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]

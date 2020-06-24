@@ -24,6 +24,7 @@
     "mavon-editor": "^2.7.7",
     "nuxt": "^2.0.0",
     "parallax-js": "^3.1.0",
+    "qrcode": "^1.4.4",
     "vue-puzzle-verification": "^1.0.2"
   },
   "devDependencies": {

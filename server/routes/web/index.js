@@ -23,6 +23,8 @@ module.exports = app => {
             web_name: info.web_name,
             web_describe: info.web_describe,
             bg: info.bg,
+            email: info.email,
+            email_name: info.email_name,
         }
         res.send(requestResult(data))
     })

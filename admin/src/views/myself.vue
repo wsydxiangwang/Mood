@@ -6,9 +6,11 @@
         <mavon-editor 
             @change="change" 
             v-model="data.content" 
-            ref="md" 
             style="height: 69vh" 
             :subfield="false"
+            @imgAdd="$imgAdd"
+            @imgDel="$imgDel"
+            ref="md" 
         />
 
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
@@ -16,6 +18,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
@@ -31,6 +34,9 @@ export default {
             loading: false
         }
     },
+    computed: {
+        ...mapState(['$data'])
+    },
     mounted(){
         this.$http.get('myself').then(res => {
             if(res.data.status == 1){
@@ -43,6 +49,22 @@ export default {
         change(value, render){
             this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
             this.data.content = value;          // 输入的内容
+        },
+        $imgAdd(pos, $file){
+           var formdata = new FormData();
+           formdata.append('file', $file);
+           formdata.append('type', this.$data.info.upload_type);
+
+           this.$http.post('/upload', formdata).then(res => {           
+               this.$refs.md.$img2Url(pos, res.data.url);
+            })
+        },
+        $imgDel(pos){
+            const data = {
+                url: pos[0],
+                type: this.$data.info.upload_type
+            }
+            this.$http.post('/delete_file', data)
         },
         submit(){
             this.loading = true;

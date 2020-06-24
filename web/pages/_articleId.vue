@@ -1,31 +1,15 @@
 <template>
     <div class="articleld">
-        <header>
-            <div class="l icon">
-                <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
-                <span 
-                    class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
-                    @click="changeMusic"
-                ></span>
-            </div>
-            <div class="title" :class="{active: title}">{{data.title}}</div>
-            <div class="r icon">
-                <span 
-                    class="iconfont icon-like" 
-                    :class="{like: isLike}"
-                    @click="like"
-                ></span>
-                <!-- <span class="iconfont iconwechat" @click="wechat"></span> -->
-                <span class="myself" @click="myself">
-                    <!-- <img src="../static/image/myself.png"> -->
-                </span>
-            </div>
-            <!-- 音乐进度条 -->
-            <div class="musicBar" :style="{width: changeProgress}"></div>
-            <!-- 文章进度条 -->
-            <div class="scrollbar" :style="{width: postProgress}"></div>
-        </header>
+
+        <!-- 文章进度条 -->
+        <div class="scrollbar" :style="{width: postProgress}"></div>
+
+        <Header 
+            :music="data.music.url" 
+            :title="data.title"
+            :like="data._id"
+            @liked="liked"
+        ></Header>
 
         <section>
             <h1 class="title">{{data.title}}</h1>
@@ -43,32 +27,13 @@
                 </client-only>
             </div>
 
-            <!-- music -->
-            <audio id="music" loop="loop" preload="auto" ref="audio"></audio>
-
-            <!-- mobile music -->
-            <div 
-                class="music-btn" 
-                @click="changeMusic"
-                :class="[mobileMusic]"
-            >
-                <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
-                    <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray" :stroke-dashoffset="dashOffset"/>
-                </svg>
-                <span 
-                    class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
-                ></span>
-            </div>
-
             <!-- loading -->
             <!-- <Loading v-if="loading"></Loading> -->
 
         </section>
 
         <!-- comment -->
-        <Comment :id="data.id" :title="data.title" @total="total"></Comment>
+        <Comment :id="data.id" :title="data.title" @total="totalComment"></Comment>
     </div>
 </template>
 
@@ -81,28 +46,21 @@ export default {
         return{
             title: false,
             isLike: false,
-            isStore: false,
-            ss: false,
 
             timer: null,
             postProgress: 0,
-            changeProgress: 0,
-
-            percent: 0,
-            mobileMusic: '',
-            dashArray: Math.PI * 100,
 
             scrollTop: 0,
             timerTop: null,
             scrollTopBtn: false,
             loading: true,
 
-            commentTotal: 0,            // 评论数量
+            commentTotal: 0,
         }
     },
     head () {
         return {
-            title: `${this.data.title} | 白茶`,
+            title: `${this.data.title} | ${this.info.web_name}`,
             meta: [
                 { hid: 'description', name: 'description', content: this.data.describe }
             ]
@@ -110,98 +68,35 @@ export default {
     },
     beforeRouteLeave(to,from,next){
         // 销毁滚动条事件
-        this.isPuzzle = false;
         window.removeEventListener('scroll', this.handleScroll, true)
         next();
     },
     destroyed(){
-        this.isPuzzle = false;
         document.body.style.overflowY = '';
     },
     computed: {
-        // mobile music progress
-        dashOffset() {
-            return (1 - this.percent) * this.dashArray;
+		info(){
+			return this.$store.state.data
         }
     },
     mounted(){
-        //loading
-        document.body.style.overflowY = 'hidden';
-        setTimeout(() => {
-            this.loading = false;
-            document.body.style.overflowY = '';
-        }, 800)
-
-        this.$nextTick(() => {
-            // music src
-            this.$refs.audio.src = this.data.music;
-
-        })
-
-        // 监听滚动条事件
         window.addEventListener('scroll', this.handleScroll, true)
-
-        // 是否点赞
-        const like = localStorage.getItem(`like-${this.data._id}`);
-        if(like) this.isLike = true;
-
-        // 阅读量+1
-        this.$axios.put(`article_read/${this.data._id}`).then(res => {
-            this.data.read++;
-        })
+        // read +1
+        this.$axios.put(`article_read/${this.data._id}`).then(res => this.data.read++)
     },
     methods: {
-        total(val){
+        liked(){
+            this.data.like++
+        },
+        totalComment(val){
             this.commentTotal = val;
-        },
-        // 音乐播放
-        changeMusic(){
-            let music = document.getElementById("music");
-            this.isStore = !this.isStore;
-            // 播放
-            if(this.isStore){
-                music.play();
-                // 进度条
-                this.timer = setInterval(() => {
-                    var n = (100 * (music.currentTime / music.duration)).toFixed(2);
-                    var ns = (1 * (music.currentTime / music.duration));
-                    // 循环
-                    if(n >= 100) clearInterval(this.timer);
-                    this.changeProgress = n + '%';
-                    this.percent = ns;
-                }, 50)
-            } else {
-                music.pause();
-                clearInterval(this.timer);
-            }
-        },
-        // 点赞
-        like(){
-            if(this.isLike){
-                alert("已点过赞了哦！")
-            }else{
-                this.$axios.put(`article_like/${this.data._id}`).then(res => {
-                    this.data.like++;
-                    this.isLike = true;
-                    localStorage.setItem(`like-${this.data._id}`, true);
-                })
-            }
         },
         handleScroll(){
             /**
              * 顶部进度条
-             * title显示 (PC)
              * 音乐播放控制 (Mobile)
              */
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-            if(this.scrollTop >= 100){
-                this.title = true;
-                this.mobileMusic = 'show';
-            }else{
-                this.title = false;
-                this.mobileMusic = this.mobileMusic ? 'exit' : '';
-            }
 
             const h1 = document.getElementsByClassName('content')[0];
             const h2 = document.getElementsByClassName('stuff')[0];
@@ -259,91 +154,15 @@ export default {
         margin: auto;
         transition: all .3s;
     }
-    header{
+    .scrollbar{
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        border-bottom: 1px solid #f6f7f8;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: #666;
-        padding: 0 15px;
-        background: #fff;
-        z-index:9999;
-        transition: all .3s;
-        .musicBar{
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 0;
-            height: 50px;
-            z-index: -1;
-            background: #eee;
-        }
-        .scrollbar{
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #50bcb6;
-            transition: width .5s ease;
-        }
-        .title{
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: all .8s;
-            text-align: center;
-            opacity: 0;
-            &.active{
-                opacity: 1;
-            }
-        }
-        .iconfont{
-            color: #888;
-            font-size: 20px;
-            cursor: pointer;
-            margin: 4px 5px 0;
-            transition: all .3s;
-            vertical-align: middle;
-            display: inline-block;
-            &.logo{
-                color: #444;
-                font-size: 30px;
-            }
-            &:hover{
-                color: #555;
-            }
-            &.like, &.like:hover{
-                color: #EF6D57;
-            }
-        }
-        .myself{
-            width: 26px;
-            height: 26px;
-            display: inline-block;
-            border-radius: 50%;
-            overflow: hidden;
-            vertical-align: bottom;
-            margin-left: 8px;
-            cursor: pointer;
-            img{
-                width: 100%;
-                height: 100%;
-            }
-        }
-        .r{
-            display: flex;
-            align-items: center;
-            margin-top: 4px;
-            .iconfont{
-                margin: 0 8px 0;
-            }
-        }
+        width: 0;
+        height: 2px;
+        background: #50bcb6;
+        transition: width .5s ease;
+        z-index: 999999;
     }
     h1.title{
         font-size: 30px;
@@ -387,6 +206,9 @@ export default {
                 }
                 strong{
                     font-weight: bold;
+                    font-size: 16px;
+                }
+                ins{
                     font-size: 16px;
                 }
             }
@@ -470,49 +292,7 @@ export default {
         padding: 0 5px;
         color: #fff;
     }
-    .music-btn{
-        position: fixed;
-        right: 30px;
-        bottom: 30px;
-        width: 36px;
-        padding: 3px;
-        height: 36px;
-        color: #fff;
-        opacity: 0.8;
-        cursor: pointer;
-        z-index: 9999999;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        .progress-circle{
-            height: 30px;
-            width: 30px;
-            circle{
-                stroke-width: 10px;
-                transform-origin: center;
-                &.progress-background{
-                    transform: scale(0.9);
-                    stroke: #fff;
-                }
-                &.progress-bar{
-                    transform: scale(0.9) rotate(-90deg);
-                    stroke: #50bcb6;
-                }
-            }
-        }
-        .iconfont{
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: inline-block;
-            padding: 1px 0 0 3px;
-            font-size: 14px;
-            &.icon-pause{
-                padding-left: 1px;
-            }
-        }
-    }
+    
 }
 
 @media screen and (max-width: 800px) {
@@ -539,45 +319,8 @@ export default {
     }
 }
 
-@keyframes fadeInTop{
-    from {
-        opacity: 0;
-        -webkit-transform: translate(0, 30px); 
-        transform: translate(0, 30px);
-    }
-    to {
-        opacity:1;
-        -webkit-transform: translate(0,0);
-        transform: translate(0,0);
-    }
-}
-@keyframes fadeInDown{
-    from {
-        opacity: 1;
-        -webkit-transform: translate(0,0px);
-        transform: translate(0,0px);
-    } 
-    to {    
-        opacity: 0;
-        visibility: hidden;
-        -webkit-transform: translate(0,30px); 
-        transform: translate(0,30px);
-    }
-}
-
 @media screen and (max-width: 600px) {
 .articleld{
-    header{
-        position: absolute;
-        .scrollbar{
-            position: fixed;
-            height: 1px;
-        }
-        .iconfont.logo{
-            font-size: 28px;
-            margin: 4px 0 0;
-        }
-    }
     .content{
         /deep/ 
         .markdown-body{
@@ -593,20 +336,6 @@ export default {
                     font-size: 14px;
                 }
             }
-        }
-    }
-    .music-btn{
-        opacity: 0;
-        display: none;
-        &.show{
-            display: block;
-            visibility: visible;
-            animation: fadeInTop 0.6s both;
-        }
-        &.exit{
-            display: block;
-            opacity: 0;
-            animation: fadeInDown 0.6s both;
         }
     }
 }
@@ -634,10 +363,6 @@ export default {
     }
 }
 
-.articleld{
-    // loading
-    
-}
 .verify{
     filter: blur(5px);
 }
