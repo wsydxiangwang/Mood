@@ -157,7 +157,6 @@ export default {
         this.$axios.get(`comment/${this.id}`).then(res => {
             if(res.data.status === 1){
                 this.comment = res.data.body
-                console.log(this.comment)
                 this.$emit('total', this.comment.total)
             }
         })

@@ -42,7 +42,14 @@ var common = {
         // 加载下一页数据
         let [page, loadingFrom, loadingType] = [1, '', 'more'];
         Vue.prototype.$load = (type, from) => {
-            
+            // 离开路由 初始化
+            if(type == 'none'){
+                loadingFrom = '';
+                loadingType = 'more';
+                page = 1;
+                return;
+            }
+
             // 初始化
             if(type != loadingFrom){
                 loadingFrom = type;

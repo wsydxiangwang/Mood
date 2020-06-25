@@ -105,7 +105,7 @@ export default {
                 &:last-child{
                     margin: 0;
                 }
-                &:after{
+                &::before{
                     content: '☼';
                     font-size: 8px;
                     position: absolute;

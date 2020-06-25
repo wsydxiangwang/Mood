@@ -47,6 +47,7 @@ export default {
         }
     },
     destroyed(){
+        this.$load('none')
         window.removeEventListener('scroll', this.load)
     },
     methods: {

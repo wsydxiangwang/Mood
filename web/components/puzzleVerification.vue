@@ -78,7 +78,7 @@ export default {
 			this.$emit('setVisible', val);
 		},
 		verificationShow(val) {
-			console.log(val)
+			// console.log(val)
 			this.isVerificationShow = val;
 		}
 	},

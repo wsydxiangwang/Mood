@@ -89,9 +89,6 @@ export default {
             likeHint: false
         }
     },
-    destroyed(){
-        window.removeEventListener('scroll', this.handleScroll, true)
-    },
     mounted(){
         if(this.like){
             this.$nextTick(() => {
@@ -99,7 +96,6 @@ export default {
                 QRCode.toCanvas(canvas, window.location.href)
             })
         }        
-
         // isLike
         const like = localStorage.getItem(`like-${this.like}`);
         this.isLike = Boolean(like)
@@ -135,11 +131,10 @@ export default {
             this.isStore = !this.isStore;
             if(this.isStore){
                 music.play();
-                // 进度条
                 this.timer = setInterval(() => {
                     const n = (100 * (music.currentTime / music.duration)).toFixed(2);
                     const ns = (1 * (music.currentTime / music.duration));
-                    // 循环
+                    // Loop 
                     if(n >= 100) clearInterval(this.timer);
                     this.changeProgress = n + '%';
                     this.percent = ns;
@@ -155,8 +150,9 @@ export default {
         myself(){
             this.$router.push('/about')
         },
-        // 滚动条位置
+        // Scroll Change
         handleScroll(){
+            console.log(4)
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
             if(this.scrollTop >= 100){

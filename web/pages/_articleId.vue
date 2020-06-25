@@ -39,7 +39,6 @@
 <script>
 import Comment from '@/components/comment'
 export default {
-    transition: 'test',
 	components: { Comment },
     data(){
         return{
@@ -55,6 +54,8 @@ export default {
             loading: true,
 
             commentTotal: 0,
+
+            header: true
         }
     },
     head () {
@@ -68,9 +69,6 @@ export default {
     beforeRouteLeave(to,from,next){
         window.removeEventListener('scroll', this.handleScroll, true)
         next();
-    },
-    destroyed(){
-        document.body.style.overflowY = '';
     },
     computed: {
 		info(){
@@ -131,11 +129,10 @@ export default {
                 data: data
             }
         }catch(err){
-            //修改成这样就可以跳到错误提示页面
             context.error({ statusCode: 404, message: '页面未找到或无数据' })
         }
     },
-    // 回到error错误页面
+    // error page
     validate({params}){
         return /^\d+$/.test(params.articleId)
     }

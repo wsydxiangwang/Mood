@@ -1,10 +1,14 @@
 export const state = () => ({
-    data: {}
+    data: {},
+    index: false
 })
 
 export const mutations = {
     data (state, data) {
         state.data = data
+    },
+    isIndex (state) {
+        state.index = true
     }
 }
 

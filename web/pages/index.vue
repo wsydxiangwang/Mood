@@ -34,7 +34,6 @@
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<!-- 图片懒加载 -->
 					<img v-lazy="item.image.url" src="../static/image/404.png" :alt="item.image.name">
 				</div>
 				<div class="info">
@@ -57,7 +56,7 @@
 		</div>
 
 		<!-- loading -->
-		<!-- <Loading v-if="loading"></Loading> -->
+		<Loading v-if="loading"></Loading>
 	</div>
 </template>
 
@@ -71,7 +70,7 @@ export default {
 	data(){
 		return{
 			layerStyle: {},
-			imgStyle: {},		// 图片大小
+			imgStyle: {},
 			timer: null,
 			boxH: '100%',
 			boxW: '100%',
@@ -94,7 +93,7 @@ export default {
 				}
 			],
 			isNav: false,
-			loading: false,
+			loading: true,
 			loadingType: 'more',
 			page: 1,
 			
@@ -109,40 +108,42 @@ export default {
             ]
         }
 	},
-	async asyncData(context){
-		// console.log(process.server)
-		// if (!process.server) { // 防止重复加载
-		// 	return;
-		// }
-		const {data} = await context.$axios.get('article')
-		return { articleList: data.status == 1 ? data.body.data : {}}
-	},
 	computed: {
 		info(){
 			return this.$store.state.data
 		}
 	},
 	mounted(){
+		document.body.style.overflowY = 'hidden';
 
-		// 封面图特效开启
+		// Homepage loaded
+		this.$store.commit('isIndex')
+
+		// Cover image init
 		const scene = document.getElementById('scene');
 		const parallaxInstance = new Parallax(scene, {
 			relativeInput: true,
 			clipRelativeInput: true,
 		})
-
 		this.init()
-
-		// 监听浏览器窗口变化
 		window.onresize = () => this.init()
 	},
-	destroyed(){
+	async asyncData(context){
+		if(context.store.state.index){ // 防止重复加载 
+			return;
+		}
+		const {data} = await context.$axios.get('article')
+		return { articleList: data.status == 1 ? data.body.data : {}}
+	},
+	beforeRouteLeave(to,from,next){
 		window.onresize = null;
 		document.body.style.overflowY = '';
 		document.removeEventListener('touchmove', this.on, {passive: false})
+		setTimeout(() => this.isNav = false, 500)
+        next();
     },
 	methods: {
-		// 初始化封面图
+		// Cover image init
 		init(){
 			if(this.timer){
 				clearTimeout(this.timer)
@@ -155,7 +156,7 @@ export default {
 				})
 			}, 100)
 		},
-		// 封面图盒子
+		// Cover image box calculation
 		coverLayer(){
 			let id = document.getElementById('scene'),
 				_w = parseInt(this.boxW), 
@@ -174,7 +175,7 @@ export default {
                 y = i * _h / _w;
             }
 
-			let style = {
+			const style = {
                 width: _w + x + 'px',
                 height: _h + y + 'px',
                 marginLeft: - 0.5 * x + 'px',
@@ -185,30 +186,25 @@ export default {
 
             this.coverImg()
 		},
-		// 封面图大小计算
+		// Cover image size calculation
 		coverImg(){
-			let width = parseInt(this.layerStyle.width), 
-                height = parseInt(this.layerStyle.height), 
-				ratio = 1080 / 1920,
-				style = {};
+			const width = parseInt(this.layerStyle.width), 
+                  height = parseInt(this.layerStyle.height), 
+				  ratio = 1080 / 1920,
+				  style = {};
 
-			if (height / width > ratio) {
-				style['height'] = height + 'px';
-				style['width'] = height / ratio + 'px';
-			} else {
-				style['height'] = width * ratio + 'px';
-				style['width'] = width + 'px';
-			}
+			const compute = height / width > ratio;
 
+			style['width'] = compute ? (height / ratio + 'px') : `${width}px`;
+			style['height'] = compute ? `${height}px` : (width * ratio + 'px');
+			
 			style['left'] = (width - parseInt(style.width)) / 2 +'px';
 			style['top'] = (height - parseInt(style.height)) / 2 +'px';
 
 			this.imgStyle = Object.assign({}, this.imgStyle, style);
 		},
 		loadMoreData(){
-			if(this.loadingType == 'nomore' || this.loadingType == 'loading'){
-				return
-			}
+			if(this.loadingType == 'nomore' || this.loadingType == 'loading') return;
 
 			this.page++;
 			this.loadingType = 'loading';
@@ -223,7 +219,6 @@ export default {
 					setTimeout(() => {
 						this.articleList = this.articleList.concat(result.data)
 
-						// 设置滚动条位置
 						this.$setScroll('.bottom-loading', 'index');
 
 						this.loadingType = result.page == result.totalPage ? 'nomore' : 'more';
@@ -239,9 +234,9 @@ export default {
 		// Cover image loading is complete
 		coverImgLoad(e){
 			setTimeout(() => {
-				this.loading = false,
+				this.loading = false;
 				document.body.style.overflowY = '';
-			}, 1000)
+			}, 500)
 		},
 		// Other pages
 		toPage(url){
@@ -261,10 +256,9 @@ export default {
 		on(e){
 			e.preventDefault()
 		},
-		// 查看文章
 		article(id){
 			this.$router.push(`/${id}`)
-		},
+		}
 	}
 };
 </script>
@@ -681,7 +675,7 @@ export default {
 					height: auto;
 					.stuff{
 						position: static;
-						margin: 20px 0 0;
+						margin: 20px 0 0 -6px;
 					}
 				}
 			}
@@ -773,95 +767,5 @@ export default {
 	.nav{
 		top: 0;
 	}
-}
-
-.loader {
-	position: absolute;
-    width: 100px;
-    left: 50%;
-    bottom: 76px;
-    transform: translateX(-50%);
-    z-index: 99;
-    background: #fff;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.dot {
-  width: 15px;
-  height: 15px;
-  background: #3ac;
-  border-radius: 100%;
-  display: inline-block;
-  animation: slide 1s infinite;
-}
-.dot:nth-child(1) {
-  animation-delay: 0.1s;
-  background: #32aacc;
-}
-.dot:nth-child(2) {
-  animation-delay: 0.2s;
-  background: #64aacc;
-}
-.dot:nth-child(3) {
-  animation-delay: 0.3s;
-  background: #96aacc;
-}
-.dot:nth-child(4) {
-  animation-delay: 0.4s;
-  background: #c8aacc;
-}
-.dot:nth-child(5) {
-  animation-delay: 0.5s;
-  background: #faaacc;
-}
-@-moz-keyframes slide {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@-webkit-keyframes slide {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@-o-keyframes slide {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes slide {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 </style>
