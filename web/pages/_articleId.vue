@@ -27,8 +27,6 @@
                 </client-only>
             </div>
 
-            <!-- loading -->
-            <!-- <Loading v-if="loading"></Loading> -->
         </section>
 
         <!-- Comment -->
@@ -66,9 +64,8 @@ export default {
             ]
         }
     },
-    beforeRouteLeave(to,from,next){
+    destroyed(){
         window.removeEventListener('scroll', this.handleScroll, true)
-        next();
     },
     computed: {
 		info(){

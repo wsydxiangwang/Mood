@@ -15,7 +15,7 @@
 			<div class="misk" :style="{backgroundColor: info.cover.color}"></div>
 			<div class="post">
 				<div class="time">{{info.cover.date}}</div>
-				<div class="title"><a @click="article(info.cover.link)">{{info.cover.title}}</a></div>
+				<div class="title"><nuxt-link :to="info.cover.link">{{info.cover.title}}</nuxt-link></div>
 				<div class="describe">{{info.cover.describe}}</div>
 			</div>
 			<!-- menu -->
@@ -62,11 +62,8 @@
 
 <script>
 import Parallax from 'parallax-js'
-import LoadMore from '@/components/loadMore.vue'
 export default {
-    components: {
-        LoadMore
-    },
+	name: 'index',
 	data(){
 		return{
 			layerStyle: {},
@@ -342,6 +339,8 @@ export default {
 				margin: 15px 0 30px;
 				a{
 					font-size: 28px;
+					color: #fff;
+					text-decoration: none;
 					cursor: pointer;
 					transition: all .3s;
 					&:hover{

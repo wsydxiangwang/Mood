@@ -14,20 +14,20 @@ html, body, p, input, textarea, button, div, span {
 
 
 
-/* .page-enter, .page-leave-active{
+.test-enter, .test-leave-active{
 	will-change: transform;
 	transition: all 500ms;
 	position: absolute;
-}  */
+} 
 
-/* .page-enter {
+.test-enter {
 	opacity: 0;
 	transform: translate3d(100%, 0, 0);
 }
-.page-leave-active {
+.test-leave-active {
 	opacity: 0;
 	transform: translate3d(-100%, 0, 0);
-} */
+}
 
 /* .page-enter, .slide-right-leave-active {
   opacity: 0;

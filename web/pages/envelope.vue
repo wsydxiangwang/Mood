@@ -17,11 +17,7 @@
 </template>
 
 <script>
-import LoadMore from '@/components/loadMore.vue'
 export default {
-    components: {
-        LoadMore
-    },
     data(){
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',

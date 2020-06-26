@@ -89,6 +89,9 @@ export default {
             likeHint: false
         }
     },
+    destroyed (){
+        window.removeEventListener('scroll', this.handleScroll, true)
+    },
     mounted(){
         if(this.like){
             this.$nextTick(() => {
@@ -152,7 +155,6 @@ export default {
         },
         // Scroll Change
         handleScroll(){
-            console.log(4)
             this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 
             if(this.scrollTop >= 100){

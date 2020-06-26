@@ -32,11 +32,7 @@
 </template>
 
 <script>
-import LoadMore from '@/components/loadMore.vue'
 export default {
-    components: {
-        LoadMore
-    },
     data(){
         return{
             newData: '',
@@ -69,7 +65,6 @@ export default {
         }
     },
     destroyed(){
-        console.log(3)
         this.$load('none')
         window.removeEventListener('scroll', this.load)
     },

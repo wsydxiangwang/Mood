@@ -1,7 +1,15 @@
 <template>
 	<div>
-		<keep-alive include="/">
-			<nuxt />
-		</keep-alive>
+		<nuxt keep-alive :keep-alive-props="{include: includeArr}"/>
 	</div>
 </template>
+
+<script>
+export default {
+	data() {
+		return {
+			includeArr: ['index', 'about'] // 组件的 name
+		}
+	}
+}
+</script>

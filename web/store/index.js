@@ -13,6 +13,7 @@ export const mutations = {
 }
 
 export const actions = {
+    // 默认加载信息
     async nuxtServerInit({ commit }, { req }) {
         const res = await this.$axios.get('info')
         commit('data', res.data.body);
