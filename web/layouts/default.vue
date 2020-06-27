@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<nuxt keep-alive :keep-alive-props="{include: includeArr}"/>
+		<nuxt class="page" keep-alive :keep-alive-props="{include: includeArr}"/>
 	</div>
 </template>
 

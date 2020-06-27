@@ -58,12 +58,12 @@ export default {
     font-size: initial;
 }
 .container{
-    padding: 100px 20px 50px;
+    /deep/ 
+    .markdown-body{
     width: 100%;
     max-width: 800px;
     margin: auto;
-    /deep/ 
-    .markdown-body{
+    padding: 100px 20px 50px;
         box-shadow: none !important;
         min-height: auto;
         p{
@@ -191,9 +191,6 @@ export default {
                 }
             }
         }
-    }
-    @media screen and (max-width: 600px) {
-
     }
 }
 </style>

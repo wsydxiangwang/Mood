@@ -61,7 +61,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ["~assets/css/main.css", "~static/css/iconfont.css"],
+  css: ["~assets/css/main.css", "~assets/css/iconfont.css"],
   /*
   ** Plugins to load before mounting the App
   */

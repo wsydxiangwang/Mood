@@ -3,7 +3,7 @@
 		<div class="cover">
 			<div id="scene" :style="{height:boxH}">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
-					<img id="image" :style="imgStyle" :src="info.cover.image" width="1920" height="1080" @load="coverImgLoad">
+					<img id="image" :style="imgStyle" :src="image" width="1920" height="1080">
 				</div>
 			</div>
 			<div class="head">
@@ -34,7 +34,7 @@
 		<div class="content">
 			<div class="post" v-for="(item, index) in articleList" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img v-lazy="item.image.url" src="../static/image/404.png" :alt="item.image.name">
+					<img v-lazy="item.image.url" src="/image/404.png" :alt="item.image.name">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
@@ -47,13 +47,14 @@
 					</div>
 				</div>
 			</div>
-
 			<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
 		</div>
 
 		<div class="foot" v-if="info.cover.icp_txt">
 			<a :href="info.cover.icp_link" target="_blank">{{info.cover.icp_txt}}</a>
 		</div>
+
+		<BackTop v-if="isBack"></BackTop>
 
 		<!-- loading -->
 		<Loading v-if="loading"></Loading>
@@ -68,7 +69,6 @@ export default {
 		return{
 			layerStyle: {},
 			imgStyle: {},
-			timer: null,
 			boxH: '100%',
 			boxW: '100%',
 			navList: [
@@ -94,7 +94,10 @@ export default {
 			loadingType: 'more',
 			page: 1,
 			
-			timerScroll: null,
+			isBack: true,
+
+			image: null,
+            windowChange: () => {}
 		}
 	},
     head () {
@@ -103,7 +106,7 @@ export default {
 			meta: [
                 { hid: 'description', name: 'description', content: this.info.web_describe }
             ]
-        }
+		}
 	},
 	computed: {
 		info(){
@@ -112,6 +115,17 @@ export default {
 	},
 	mounted(){
 		document.body.style.overflowY = 'hidden';
+
+		// Cover image loading is complete
+		let img = new Image()
+		img.src = this.info.cover.image
+		img.onload = () => {
+			this.image = this.info.cover.image
+			setTimeout(() => {
+				this.loading = false;
+				document.body.style.overflowY = '';
+			}, 2000)
+		}
 
 		// Homepage loaded
 		this.$store.commit('isIndex')
@@ -122,8 +136,7 @@ export default {
 			relativeInput: true,
 			clipRelativeInput: true,
 		})
-		this.init()
-		window.onresize = () => this.init()
+		
 	},
 	async asyncData(context){
 		if(context.store.state.index){ // 防止重复加载 
@@ -132,35 +145,36 @@ export default {
 		const {data} = await context.$axios.get('article')
 		return { articleList: data.status == 1 ? data.body.data : {}}
 	},
+	beforeRouteEnter(to,from,next){
+		next(vm => {
+			vm.init()
+			vm.windowChange = vm.$debounce(vm.init, 100)
+			window.onresize = () => vm.windowChange()
+			vm.isBack = true
+		})
+	},
 	beforeRouteLeave(to,from,next){
-		window.onresize = null;
-		document.body.style.overflowY = '';
-		document.removeEventListener('touchmove', this.on, {passive: false})
+		document.body.style.overflowY = ''
+		window.onresize = null
+		this.isBack = false
 		setTimeout(() => this.isNav = false, 500)
+		document.removeEventListener('touchmove', this.on, {passive: false})
         next();
     },
 	methods: {
 		// Cover image init
 		init(){
-			if(this.timer){
-				clearTimeout(this.timer)
-			}
-			this.timer = setTimeout(() => {
-				setTimeout(() => {
-					this.boxH = document.documentElement.clientHeight + 'px';
-					this.boxW = document.documentElement.clientWidth + 'px';
-					this.coverLayer()
-				})
-			}, 100)
+			this.boxH = document.documentElement.clientHeight + 'px';
+			this.boxW = document.documentElement.clientWidth + 'px';
+			this.coverLayer()
 		},
 		// Cover image box calculation
 		coverLayer(){
 			let id = document.getElementById('scene'),
 				_w = parseInt(this.boxW), 
                 _h = parseInt(this.boxH), 
-				x, y, i, e;
-
-			e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
+				x, y, i,
+				e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
 
             if (_w >= _h) {
                 i = _w / e * 50;
@@ -171,16 +185,13 @@ export default {
                 x = i;
                 y = i * _h / _w;
             }
-
 			const style = {
                 width: _w + x + 'px',
                 height: _h + y + 'px',
                 marginLeft: - 0.5 * x + 'px',
                 marginTop: - 0.5 * y + 'px'
 			}
-
 			this.layerStyle = Object.assign({}, this.layerStyle, style);
-
             this.coverImg()
 		},
 		// Cover image size calculation
@@ -228,13 +239,6 @@ export default {
 				this.loadingType = 'more';
 			})
 		},
-		// Cover image loading is complete
-		coverImgLoad(e){
-			setTimeout(() => {
-				this.loading = false;
-				document.body.style.overflowY = '';
-			}, 500)
-		},
 		// Other pages
 		toPage(url){
 			this.$router.push(`/${url}`)
@@ -243,12 +247,11 @@ export default {
 		menu(){
 			this.isNav = !this.isNav;
 			if(this.isNav){
-				document.body.style.overflowY = 'hidden';
 				document.addEventListener('touchmove', this.on, {passive: false})
 			}else{
-				document.body.style.overflowY = '';
 				document.removeEventListener('touchmove', this.on, {passive: false})
 			}
+			document.body.style.overflowY = this.isNav ? 'hidden' : '';
 		},
 		on(e){
 			e.preventDefault()
@@ -380,6 +383,7 @@ export default {
 				border-radius: 0;
 				display: inline-block;
 				border: 1px solid #eaeaea;
+				border-radius: 4px;
 			}
 		}
 		
@@ -396,6 +400,9 @@ export default {
 				cursor: pointer;
 				z-index: 3;
 				overflow: hidden;
+				border-radius: 6px;
+				border: 1px solid #f3fafd;
+				transition: all .3s;
 				img{
 					width: 100%;
 					height: 100%;
@@ -411,6 +418,7 @@ export default {
 				top: 20px;
 				padding: 80px 100px 0 80px;
 				border: 1px solid #eaeaea;
+				border-radius: 6px;
 				.time{
 					color: #999;
 					font-size: 12px;
@@ -659,6 +667,7 @@ export default {
 					height: auto;
 					display: block;
 					text-align: center;
+					border: none;
 					img{
 						width: 680px;
 						max-width: 100%;
@@ -713,6 +722,7 @@ export default {
 				.img-box{
 					width: 100%;
 					height: auto;
+					border-radius: 0;
 				}
 			}
 		}

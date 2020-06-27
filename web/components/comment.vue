@@ -67,7 +67,7 @@
                             <div class="comment-item-box">
                                 <div class="head">
                                     <div class="img">
-                                        <img :src="require('../static/image/comment/'+item.image+'.jpg')">
+                                        <img :src="'/image/comment/'+item.image+'.jpg'">
                                     </div>
                                     <div class="name">
                                         <a>{{item.name}}<span v-if="item.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
@@ -91,7 +91,7 @@
                                     >
                                         <div class="head">
                                             <div class="img">
-                                                <img :src="require('../static/image/comment/'+items.image+'.jpg')">
+                                                <img :src="'/image/comment/'+items.image+'.jpg'">
                                             </div>
                                             <div class="name">
                                                 <a>{{items.name}}<span v-if="items.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
@@ -138,7 +138,7 @@ export default {
             hint: [
                 '您的名字是第一印象哦～',
                 '胆敢冒充站长，来人，拉出去砍了！！',
-                '请输入正确的邮箱，有惊喜的哦～',
+                '请输入正确的邮箱～',
                 '偷偷告诉我，你作文是不是0分～',
                 '哇哦！遇到错误，要不再试试',
                 '完成验证才可以提交哦～',
@@ -173,7 +173,7 @@ export default {
                     this.status = 5;
                 }else{
                     this.status = 6;
-                    this.submit(); // start submit
+                    setTimeout(this.submit, 500) // start submit
                 }
             }, 600)
         },
@@ -319,8 +319,7 @@ export default {
             for(let i in opt){
                 opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]
             }
-            const time = `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
-            return time
+            return `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
         }
     }
 }
@@ -593,6 +592,8 @@ export default {
         }
     }
     .hint{
+        display: flex;
+        align-items: center;
         &.loading{
             display: flex;
             align-items: center;
@@ -606,6 +607,9 @@ export default {
             font-size: 13px;
             margin-right: -2px;
             display: inline-block;
+            &:first-child{
+                margin-right: 4px;
+            }
         }
         &.success span{
             color: #2fc700;
@@ -769,54 +773,57 @@ export default {
     }   
 }
 @media screen and (max-width: 600px) {
-    .comment .comment-list .comment-item{
-        .head{
-            .img{
-                width: 40px;
-                height: 40px;
-                margin-right: 12px;
-            }
-            .name{
-                flex-direction: column;
-                align-items: baseline;
-                justify-content: space-evenly;
-                margin-top: 2px;
-                a{
-                    font-size: 13px;
-                    span{
-                        margin-top: -2px;
-                    }
+    .comment .comment-list{
+        padding: 0;
+        .comment-item{
+            .head{
+                .img{
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 12px;
                 }
-                .r{
+                .name{
+                    flex-direction: column;
+                    align-items: baseline;
+                    justify-content: space-evenly;
                     margin-top: 2px;
-                    .time{
-                        font-size: 12px;    
+                    a{
+                        font-size: 13px;
+                        span{
+                            margin-top: -2px;
+                        }
                     }
-                    .reply{
-                        opacity: 1;
-                        font-size: 12px;
-                        color: #ef6d57;
-                        position: absolute;
-                        right: 0;
-                        top: 13px;
-                        cursor: pointer;
-                        text-decoration: underline;
-                        text-transform: capitalize;
+                    .r{
+                        margin-top: 2px;
+                        .time{
+                            font-size: 12px;    
+                        }
+                        .reply{
+                            opacity: 1;
+                            font-size: 12px;
+                            color: #ef6d57;
+                            position: absolute;
+                            right: 0;
+                            top: 13px;
+                            cursor: pointer;
+                            text-decoration: underline;
+                            text-transform: capitalize;
+                        }
                     }
                 }
             }
-        }
-        .comment-content{
-            padding: 0;
-            margin-top: 12px;
-        }
-        .comments{
-            margin-top: 32px;
-            padding-left: 24px;
-            .comments-content{
+            .comment-content{
+                padding: 0;
                 margin-top: 12px;
-                line-height: 22px;
-                margin-left: 0px;
+            }
+            .comments{
+                margin-top: 32px;
+                padding-left: 24px;
+                .comments-content{
+                    margin-top: 12px;
+                    line-height: 22px;
+                    margin-left: 0px;
+                }
             }
         }
     }

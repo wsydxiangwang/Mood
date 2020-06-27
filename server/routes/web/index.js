@@ -72,9 +72,12 @@ module.exports = app => {
         const id = Number(req.params.id)
         const data = await Article.findOne({id: id})
 
-        data._doc['time'] = dateFormat(data.time)
-
-        res.send(data)
+        if(data){
+            data._doc['time'] = dateFormat(data.time)
+            res.send(requestResult(data))
+        }else{
+            res.send(requestResult())
+        }
     })
 
     // Get comment

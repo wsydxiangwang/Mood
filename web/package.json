@@ -28,6 +28,7 @@
     "vue-puzzle-verification": "^1.0.2"
   },
   "devDependencies": {
+    "file-loader": "^6.0.0",
     "node-sass": "^4.13.0",
     "nodemon": "^1.18.9",
     "sass-loader": "^8.0.0"

@@ -9,78 +9,21 @@ html, body, p, input, textarea, button, div, span {
 @font-face{
 	font-style: normal;
 	font-family: 'eafont';
-	src: url('../../static/font/eafont.ttf') format('truetype');
+	src: url('../font/eafont.ttf') format('truetype');
 }
 
-
-
-.test-enter, .test-leave-active{
-	will-change: transform;
+.page{
 	transition: all 500ms;
-	position: absolute;
 } 
-
-.test-enter {
+.page-enter{
 	opacity: 0;
-	transform: translate3d(100%, 0, 0);
+	transform: translate(50px, 0);
 }
-.test-leave-active {
-	opacity: 0;
-	transform: translate3d(-100%, 0, 0);
+.page-leave-active {
+  	opacity: 0;
+  	transform: translate(-50px, 0);
 }
 
-/* .page-enter, .slide-right-leave-active {
-  opacity: 0;
-  -webkit-transform: translate(50px, 0);
-  transform: translate(50px, 0);
-}
-.page-leave-active, .slide-right-enter {
-  opacity: 0;
-  -webkit-transform: translate(-50px, 0);
-  transform: translate(-50px, 0);
-} */
-
-/* .test-enter-active, .test-leave-active {
-	transition: all .5s;
-}
-.test-enter, .test-leave-active {
-	transform: translateX(-100%);
-}
-	
-.fold-left-enter-active {
-	animation-name: fold-left-in;
-	animation-duration: .3s;
-}
-.fold-left-leave-active {
-	animation-name: fold-left-out;
-	animation-duration: .3s;
-}
-.fold-right-enter-active {
-    animation-name: fold-right-in;
-    animation-duration: .3s;
-}
-.fold-right-leave-active {
-    animation-name: fold-right-out;
-    animation-duration: .3s;
-} */
-
-
-@keyframes fold-left-in {
-0% {
-	transform: translate3d(100%, 0, 0);
-}
-100% {
-	transform: translate3d(0, 0, 0);
-}
-}
-@keyframes fold-left-out {
-0% {
-	transform: translate3d(0, 0, 0);
-}
-100% {
-	transform: translate3d(-100%, 0, 0);
-}
-}
 
 *{
 	margin: 0;

@@ -1,5 +1,5 @@
 <template>
-    <header :class="{qrccode}">
+    <header :class="{qrccode, isUp}">
 
         <!-- Article Page -->
         <canvas v-if="like" id="qrccode"></canvas>
@@ -84,13 +84,16 @@ export default {
             isLike: false,
             scrollTop: 0,
             qrccode: false,
+            isUp: false,
 
             likeTime: null,
-            likeHint: false
+            likeHint: false,
+
+            fnScroll: () => {}
         }
     },
     destroyed (){
-        window.removeEventListener('scroll', this.handleScroll, true)
+        window.removeEventListener('scroll', this.fnScroll)
     },
     mounted(){
         if(this.like){
@@ -103,7 +106,8 @@ export default {
         const like = localStorage.getItem(`like-${this.like}`);
         this.isLike = Boolean(like)
 
-        window.addEventListener('scroll', this.handleScroll, true)
+        this.fnScroll = this.$throttle(this.handleScroll, 100)
+        window.addEventListener('scroll', this.fnScroll)
     },
     computed: {
         // mobile music progress
@@ -112,6 +116,22 @@ export default {
         },
     },
     methods: {
+        // Scroll Change
+        handleScroll(){
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const relust = scrollTop - this.scrollTop
+            this.scrollTop = scrollTop
+
+            this.isUp = scrollTop > 100 && relust < 0 
+
+            if(scrollTop >= 100){
+                this.isTitle = true;
+                this.mobileMusic = 'show';
+            }else{
+                this.isTitle = false;
+                this.mobileMusic = this.mobileMusic ? 'exit' : '';
+            }
+        },
         wechat(){
             this.qrccode = !this.qrccode
         },
@@ -153,18 +173,6 @@ export default {
         myself(){
             this.$router.push('/about')
         },
-        // Scroll Change
-        handleScroll(){
-            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-            if(this.scrollTop >= 100){
-                this.isTitle = true;
-                this.mobileMusic = 'show';
-            }else{
-                this.isTitle = false;
-                this.mobileMusic = this.mobileMusic ? 'exit' : '';
-            }
-        },
     }
 }
 </script>
@@ -184,6 +192,7 @@ header{
     padding: 0 15px;
     background: #fff;
     z-index: 99999;
+    transition: all .3s;
     .musicBar{
         position: absolute;
         left: 0;
@@ -230,6 +239,9 @@ header{
         }
         &.icon-wechat:hover{
             color: #0cd438;
+        }
+        &:hover{
+            color: var(--colorDefault)
         }
     }
     .myself{
@@ -387,25 +399,21 @@ header{
 @keyframes fadeInTop{
     from {
         opacity: 0;
-        -webkit-transform: translate(0, 30px); 
         transform: translate(0, 30px);
     }
     to {
         opacity:1;
-        -webkit-transform: translate(0,0);
         transform: translate(0,0);
     }
 }
 @keyframes fadeInDown{
     from {
         opacity: 1;
-        -webkit-transform: translate(0,0px);
         transform: translate(0,0px);
     } 
     to {    
         opacity: 0;
         visibility: hidden;
-        -webkit-transform: translate(0,30px); 
         transform: translate(0,30px);
     }
 }

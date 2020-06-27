@@ -118,57 +118,12 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
-// .article-enter, .article-leave-active {
-//   transition: all .3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-// }
-// .article-enter, .article-leave-active {
-//   transform: translateX(100%);
-// }
 header{
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border-bottom: 1px solid #f6f7f8;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #666;
-    padding: 0 15px;
-    background: #fff;
-    z-index: 99999;
-    .logo{
-        display: inline-block;
-        height: 20px;
-        width: 20px;
-        vertical-align: top;
-        margin-right: 15px;
-        margin-left: 4px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
-        }
-    }
-    .myself{
-        width: 26px;
-        height: 26px;
-        display: inline-block;
-        border-radius: 50%;
-        overflow: hidden;
-        vertical-align: bottom;
-        margin-left: 8px;
-        cursor: pointer;
-        img{
-            width: 100%;
-            height: 100%;
-        }
-    }
 }
 .list{
     width: 640px;
-    padding: 120px 0 40px;
+    padding: 80px 0 40px;
     margin: auto;
     .year-list{
         padding: 10px 20px;
@@ -184,7 +139,7 @@ header{
             color: #6e7ab5;
             font-weight: 400;
             font-size: 18px;
-            margin: 22px 0;
+            margin: 30px 0 10px;
             list-style: none;
             position: relative;
             &:before{
@@ -224,6 +179,7 @@ header{
                         cursor: pointer;
                         display: flex;
                         justify-content: center;
+                        border: 1px solid #f3fafd;
                         img{
                             height: 100%;
                         }
@@ -274,22 +230,18 @@ header{
 }
 @media screen and (max-width: 500px){
     .list{
-        padding: 80px 10px 20px;
+        padding: 60px 10px 20px;
         .year-list{
             padding: 10px 10px 10px 6px;
         }
         .mon-list {
-            .month{
-                margin: 0 0 30px;
-                &:before{
-                    margin-right: 10px;
-                }
+            .month:before{
+                margin-right: 10px;
             }
             .day-list{
                 padding-left: 18px;
                 li{
-                    margin-bottom: 18px;
-                    padding-bottom: 18px;
+                    padding: 18px 0;
                     .item-l {
                         .img{
                             margin-right: 12px;

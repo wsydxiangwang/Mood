@@ -19,21 +19,21 @@ var common = {
                  * 浏览器视口高度
                  * 文档的总高度
                  */
-                const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-                const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+                let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+                let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
 
 				let speed = (target - scrollTop) / 10;
 				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
 
 				if(((scrollTop + speed) >= target && type !== 'comment') || (scrollTop + speed) <= target && type == 'comment'){
 					clearInterval(this.timerScroll)
-					document.body.scrollTop = document.documentElement.scrollTop = target;
+					scrollTop = document.body.scrollTop = document.documentElement.scrollTop = target;
 				}else{
-					document.body.scrollTop = document.documentElement.scrollTop = scrollTop + speed;
-				}
-
-				if(scrollTop + windowHeight == scrollHeight){
+					scrollTop = document.body.scrollTop = document.documentElement.scrollTop = scrollTop + speed;
+                }
+                
+				if(scrollTop + windowHeight >= scrollHeight){
 					clearInterval(this.timerScroll)
 				}
 			}, 25)
@@ -60,8 +60,8 @@ var common = {
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
             const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-
-            if(scrollTop + windowHeight >= scrollHeight){
+            
+            if(scrollTop + windowHeight >= scrollHeight - 10){
 
                 if(loadingType == 'nomore' || loadingType == 'loading') return;
 
@@ -108,7 +108,7 @@ var common = {
 
         // 使用函数，切换路由，可清除监听事件
         const watch = () => {
-            throttle(() => listenList.map(i => lazyLoad(i)) , 50)()
+            Vue.prototype.$throttle(() => listenList.map(i => lazyLoad(i)) , 50)()
         }
 
         // 加载图片
@@ -132,8 +132,7 @@ var common = {
             }
         }
 
-        // 节流
-        const throttle = (fn, interval) => {
+        Vue.prototype.$throttle = (fn, interval) => {
             let flag = true;
             return function(...args) {
                 if (flag){
@@ -143,6 +142,15 @@ var common = {
                         flag = true;
                     }, interval);
                 }
+            }
+        }
+        Vue.prototype.$debounce = (fn, interval) => {
+            let timer = null;
+            return function (...args) {
+                if(timer) clearTimeout(timer);
+                    timer = setTimeout(() => {
+                    fn.apply(this, args);
+                }, interval);
             }
         }
     }

@@ -26,7 +26,6 @@
                     <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
                 </client-only>
             </div>
-
         </section>
 
         <!-- Comment -->
@@ -100,17 +99,6 @@ export default {
             if(n < 110) this.postProgress = n + '%';
 
         },
-        // Back Top
-        backTop(){
-            this.timerTop = setInterval(() => {
-                let osTop = document.documentElement.scrollTop || document.body.scrollTop;
-                let ispeed = Math.floor(-osTop / 5);
-                document.documentElement.scrollTop = document.body.scrollTop = osTop + ispeed;
-                if (osTop === 0) {
-                    clearInterval(this.timerTop)
-                }
-            }, 30)
-        },
         myself(){
             this.$router.push('/Libai')
         },
@@ -119,13 +107,12 @@ export default {
         },
     },
     async asyncData(context){
-        try{
-            const id = context.params.articleId;
-            const {data} = await context.$axios.get(`article/${id}`)
-            return {
-                data: data
-            }
-        }catch(err){
+        const id = context.params.articleId;
+        const {data} = await context.$axios.get(`article/${id}`)
+        
+        if(data.status == 1){
+            return { data: data.body }
+        }else{
             context.error({ statusCode: 404, message: '页面未找到或无数据' })
         }
     },
@@ -167,6 +154,7 @@ export default {
         span{
             font-size: 13px;
             margin-right: 10px;
+            display: inline-block;
         }
         &:after{
             content: '';
@@ -311,25 +299,36 @@ export default {
 }
 
 @media screen and (max-width: 600px) {
-.articleld{
-    .content{
-        /deep/ 
-        .markdown-body{
-            iframe{
-                height: 310px;
+    .articleld{
+        /deep/ header{
+            &.isUp{
+                position: fixed;
+                box-shadow: 0 1px 8px #f0f9ff;
+                background: rgba(255, 255, 255, 0.9);
+                animation: headShow 0.6s both;
             }
-            blockquote{
-                padding-left: 16px;
+            .myself{
+                display: none;
             }
-            p{
-                font-size: 14px;
-                strong, mark{
+        }
+        .content{
+            /deep/ 
+            .markdown-body{
+                iframe{
+                    height: 310px;
+                }
+                blockquote{
+                    padding-left: 16px;
+                }
+                p{
                     font-size: 14px;
+                    strong, mark{
+                        font-size: 14px;
+                    }
                 }
             }
         }
     }
-}
 }
 @media screen and (max-width: 500px) {
     .articleld{
@@ -356,5 +355,15 @@ export default {
 
 .verify{
     filter: blur(5px);
+}
+@keyframes headShow {
+    from {
+        opacity: 0;
+        top: -50px;
+    }
+    to {
+       top: 0;
+       opacity: 1; 
+    }
 }
 </style>

@@ -89,6 +89,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+header{
+    position: fixed;
+}
 .container{
     min-height: 100vh;
     background: #eef5ff;

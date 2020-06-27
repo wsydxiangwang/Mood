@@ -1,8 +1,10 @@
 <template>
     <div class="rain">
         <span class="logo iconfont icon-logo4" @click="toIndex"></span>
-        <img class="rain-bg" src="https://image.yeyucm.cn/Myself-Resources/rain/rain-bg.gif" draggable="false" @load="handleLoad">
-        <img class="words" src="https://image.yeyucm.cn/Myself-Resources/rain/words.png" draggable="false" @load="handleLoad">
+
+        <img class="rain-bg" :src="img" draggable="false">
+        <img class="words" src="/image/rain/words.png" draggable="false">
+
         <ul class="option">
             <li v-for="(item, index) in rainIcon" :key="index">
                 <span @click="music(index, item.active)">
@@ -27,26 +29,26 @@ export default {
         return{
             rainIcon: [
                 {
-                    on: require('@/static/image/rain/rain_on.png'),
-                    off: require('@/static/image/rain/rain_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/thunder.mp3',
+                    on: '/image/rain/rain_on.png',
+                    off: '/image/rain/rain_off.png',
+                    music: '/image/rain/thunder.mp3',
                     active: false
                 },
                 {
-                    on: require('@/static/image/rain/rain2_on.png'),
-                    off: require('@/static/image/rain/rain2_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/loudThunder.mp3',
+                    on: '/image/rain/rain2_on.png',
+                    off: '/image/rain/rain2_off.png',
+                    music: '/image/rain/loudThunder.mp3',
                     active: false
                 },
                 {
-                    on: require('@/static/image/rain/rain3_on.png'),
-                    off: require('@/static/image/rain/rain3_off.png'),
-                    music: 'https://image.yeyucm.cn/Myself-Resources/rain/rain.mp3',
+                    on: '/image/rain/rain3_on.png',
+                    off: '/image/rain/rain3_off.png',
+                    music: '/image/rain/rain.mp3',
                     active: false
                 }
             ],
-            num: 0,
             loading: true,
+            img: null
         }
     },
     head () {
@@ -58,29 +60,19 @@ export default {
         }
     },
     mounted(){
-        this.$nextTick(() => {
-			// 微信分享
-            this.$wxShare(this, 5);
-		})
-    },
-    watch: {
-        num(val){
-            if(val == 2){
-                setTimeout(() => {
-                    this.loading = false;
-                    this.$nextTick(() => {
-                        this.music(0, false)
-                    })
-                }, 2000)
-            }
+        let img = new Image();
+        img.src = '/image/rain/rain-bg.gif'
+        img.onload = () => {
+            this.loading = false
+            this.img = img.src
         }
+        this.$nextTick(() => {
+            this.music(0, false)
+        })
     },
     methods: {
         toIndex(){
             this.$router.push('/')
-        },
-        handleLoad(e){
-            this.num++;
         },
         music(type, active){
             // icon
@@ -141,6 +133,12 @@ export default {
 }
 @media screen and (max-width: 480px){
     .rain{
+        .rain-bg{
+            position: absolute;
+            left: 60%;
+            top: 50%;
+            transform: translate(-50%, -50% );
+        }
         .words{
             top: 30%;
             left: 50%;
