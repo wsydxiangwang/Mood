@@ -415,7 +415,7 @@ export default {
             padding:15px;
             outline:none;
             resize:none;
-            background: url('~static/image/plbj.png') no-repeat bottom right;
+            background: url('~static/image/comment/plbj.png') no-repeat bottom right;
             &:focus{
                 border-color: #b9b9b9;
             }

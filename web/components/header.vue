@@ -5,7 +5,10 @@
         <canvas v-if="like" id="qrccode"></canvas>
 
         <div class="l icon">
-            <span class="iconfont icon-logo3 logo" @click="toIndex"></span>
+            <!-- <span class="iconfont icon-logo3 logo" @click="toIndex"></span> -->
+            <div class="logo-img" @click="toIndex">
+                <img src="/image/logo/logo3.png">
+            </div>
             <span 
                 class="iconfont" 
                 :class="isStore ? 'icon-pause' : 'icon-play'" 
@@ -211,6 +214,16 @@ header{
         opacity: 0;
         &.active{
             opacity: 1;
+        }
+    }
+    .logo-img{
+        width: 30px;
+        margin-top: 4px;
+        vertical-align: middle;
+        display: inline-block;
+        cursor: pointer;
+        img{
+            width: 100%;
         }
     }
     .icon .iconfont{

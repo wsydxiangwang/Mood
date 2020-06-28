@@ -15,7 +15,7 @@ export default {
     components: { sidebar },
     created() {
         /**
-         * 刷新时,加载数据 保存
+         * 刷新时,加载所需数据
          */
         this.$infoUpdate()
     }
@@ -27,7 +27,7 @@ export default {
     display: flex;
     width: 100%;
     height: 800px;
-    max-height: 100vh;
+    max-height: 90vh;
     max-width: 1200px;
     border-radius: 20px;
     margin: auto;
@@ -79,6 +79,7 @@ export default {
 @media screen and (max-width: 600px) {
     .main{
         background: none;
+        max-height: 100vh;
         .container{
             padding: 0;
             .content{

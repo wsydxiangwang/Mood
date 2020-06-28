@@ -37,6 +37,7 @@ export default {
     data() {
         return {
             data: [],
+            loading: ''
         }
     },
     created(){
@@ -44,8 +45,12 @@ export default {
     },
     methods: {
         async load(){
+            this.loading = this.$loading({target: '.container'})
             const res = await this.$http.get('/envelope');
-            this.data = res.data;
+            setTimeout(() => {
+                this.data = res.data;
+                this.loading.close()
+            }, 500)
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {

@@ -1,9 +1,9 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
-
-    const Myself = require('../../models/myself')
-    const requestResult = require('../../plugins/requestResult')
+    
+    let {Myself} = model
+    let {requestResult} = plugin
 
     router.post('/myself', async (req, res) => {
         if(req.body._id){

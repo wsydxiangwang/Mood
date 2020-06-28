@@ -9,7 +9,7 @@
         <!-- <p class="time">{{time}}</p> -->
 
         <section class="info">
-            <h4>Hello，你好，我是李白！</h4>
+            <h4>Hello，你好，我是谁！</h4>
             <div>
                 <p>重新认识、审视、定义一下自己吧。</p>
                 <ul>
@@ -32,9 +32,13 @@
                 </p>
                 <p>{{dateDiff($data.article.time)}} 发布了新的心情，继续加油哦！</p>
             </div>
-            <template v-else>
-                快来写文章啦
-            </template>
+            <div class="box" v-else>
+                <p>
+                    <span class="total">0</span>
+                    <span>篇</span>
+                </p>
+                <p>快来发布新文章啦!</p>
+            </div>
         </section>
 
         <section>
@@ -46,12 +50,22 @@
                 </p>
                 <p>过去的时间里，收获了些许陌生的美好。</p>
             </div>
+            <div class="box" v-else>
+                <p>
+                    <span class="total">0</span>
+                    <span>条</span>
+                </p>
+                <p>过去的时间里，收获了些许陌生的美好。</p>
+            </div>
         </section>
 
         <section>
             <h3>envelope</h3>
-            <div class="envelope">
+            <div class="envelope" v-if="$envelope">
                 <p v-for="(item, index) in $envelope" :key="index"><span>{{index + 1}}</span>{{item.content}}</p>
+            </div>
+            <div class="envelope" v-else style="display: flex;text-align: center;align-items: center;height: 80%;">
+                <p>空空如也</p>
             </div>
         </section>
        
@@ -70,7 +84,7 @@ export default {
     computed: {
         ...mapState(['$data']),
         $envelope(){
-            return this.$data ? this.$data.envelope : {}
+            return this.$data ? this.$data.envelope : ''
         }
     },
     mounted(){
@@ -80,7 +94,9 @@ export default {
     destroyed(){
         // 清除倒计时
         clearInterval(this.timer)
-        document.querySelector('.container').style.background = '#fff'
+        if(document.querySelector('.container')){
+            document.querySelector('.container').style.background = '#fff'
+        }
     },
     methods: {
         date(){
@@ -170,6 +186,7 @@ export default {
         display: flex;
         text-align: right;
         flex-direction: column;
+        z-index: 999;
         &::after{
             content: '';
             position: absolute;

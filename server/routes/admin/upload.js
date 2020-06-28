@@ -1,12 +1,13 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
+    
+    let {Info} = model
+    
     const fs = require('fs');
     const co = require('co');
 
     const multer  = require('multer')
-
-    const Info = require('../../models/info')
 
     /**
      * 指定文件名和路径
@@ -69,17 +70,6 @@ module.exports = app => {
                 bucket: oss.bucket,  // bucket name
                 endPoint: oss.endPoint, // oss地址
             }
-
-            // const OSS = require('ali-oss');
-            // const client = new OSS({
-            //     region: 'oss-cn-shenzhen',//填写你开通的oss
-            //     accessKeyId: 'LTAI4G3Je77pHXwGZoTriHL6',
-            //     accessKeySecret: 'JfwnNIkcaFIRuZIFw5dtbtrprelUrO'
-            // });
-            // const ali_oss = {
-            //     bucket: 'img-wsydxiangwang',  // bucket name
-            //     endPoint: 'oss-cn-shenzhen.aliyuncs.com', // oss地址
-            // }
 
             // 阿里云 上传文件 
             co(function* () {

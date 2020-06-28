@@ -60,7 +60,16 @@ const routes = [
             requireAuth: true,  // 除此路由外，其他都需登录
         },
 		component: resolve => require(['@/views/login'], resolve)
-	}
+	},
+    {
+      name: '404',
+      path: '/404',
+	  component: resolve => require(['@/views/404'], resolve)
+    },
+    {
+      path: '*',    // 此处需特别注意至于最底部
+      redirect: '/404'
+    }
 ]
 
 const router = new VueRouter({

@@ -125,7 +125,8 @@ export default {
             upload: {},
             uploadToggle: false,
 
-            fullscreenLoading: false
+            fullscreenLoading: false,
+            loading: ''
         }
     },
     created(){
@@ -259,11 +260,17 @@ export default {
         },
         // 获取当前文章的数据
         async loadData(id){
+
+            this.loading = this.$loading({target: '.container'})
+
             const res = await this.$http.get(`article/${id}`)
-            this.data = res.data.body;
-            console.log(this.data)
-            this.isReset = false;
-            this.$nextTick(() => { this.isReset = true; })
+
+            setTimeout(() => {
+                this.data = res.data.body;
+                this.isReset = false;
+                this.$nextTick(() => { this.isReset = true; })
+                this.loading.close()
+            }, 500)
         },
     }
 }

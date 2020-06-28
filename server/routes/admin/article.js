@@ -1,11 +1,9 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
-
-    const Article = require('../../models/article')
-    const Counter = require('../../models/counter')
-    const getPage = require('../../plugins/getPage');
-    const requestResult = require('../../plugins/requestResult');
+    
+    let {Counter, Article} = model
+    let {getPage, requestResult} = plugin
 
     // 获取文章
     router.get('/article', async (req, res) => {

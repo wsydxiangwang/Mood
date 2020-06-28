@@ -5,28 +5,30 @@
             <div class="year-list" v-if="Object.keys(data.data).length == 0">
                 空无一物，就像你我一样。
             </div>
-            <div class="year-list" v-for="(val, key, idx) in data.data" :key="idx" v-else>
+            <template v-else>
+                <div class="year-list" v-for="(val, key, idx) in data.data" :key="idx" >
 
-                <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
-                    <li class="month">{{enMon[Number(keys) - 1]}}, {{key.slice(1, 5)}}</li>
+                    <ul class="mon-list" v-for="(vals, keys, idxs) in val" :key="idxs">
+                        <li class="month">{{enMon[Number(keys) - 1]}}, {{key.slice(1, 5)}}</li>
 
-                    <ul class="day-list">
-                        <li v-for="(child_val, child_key, child_idx) in vals" :key="child_idx">
-                            <div class="item-l">
-                                <div class="img" @click="viewArticle(child_val.id)">
-                                    <img :src="child_val.image ? child_val.image.url : ''">
+                        <ul class="day-list">
+                            <li v-for="(child_val, child_key, child_idx) in vals" :key="child_idx">
+                                <div class="item-l">
+                                    <div class="img" @click="viewArticle(child_val.id)">
+                                        <img :src="child_val.image ? child_val.image.url : ''">
+                                    </div>
+                                    <div class="tit">
+                                        <span @click="viewArticle(child_val.id)">{{child_val.title}}</span>
+                                        <span>{{child_val.like}} LIKE / {{child_val.read}} READ</span>
+                                    </div>
                                 </div>
-                                <div class="tit">
-                                    <span @click="viewArticle(child_val.id)">{{child_val.title}}</span>
-                                    <span>{{child_val.like}} LIKE / {{child_val.read}} READ</span>
-                                </div>
-                            </div>
-                            <span class="item-r">{{child_val.time.day.en}}</span>
-                        </li>
+                                <span class="item-r">{{child_val.time.day.en}}</span>
+                            </li>
+                        </ul>
                     </ul>
-                </ul>
-            </div>
-            <LoadMore :loadingType="loadingType"></LoadMore>
+                </div>
+                <LoadMore :loadingType="loadingType"></LoadMore>
+            </template>
         </section>        
     </div>
 </template>
@@ -62,6 +64,10 @@ export default {
 
         if(this.data.totalPage > 1){
             window.addEventListener('scroll', this.load)
+        }
+
+        if(this.data.page == this.data.totalPage){
+            this.loadingType = 'nomore'
         }
     },
     destroyed(){

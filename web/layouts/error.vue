@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <template v-if="error.statusCode == 404">
-            <img src="/image/404.png">
+            <img src="/image/other/404.png">
             <div class="content">
                 <ul>
                     <li>世界上有什么不会失去的东西吗？我相信有，你最好也相信。</li>
@@ -18,7 +18,7 @@
             </div>
         </template>
         <template v-else>
-            <img src="/image/404.png">
+            <img src="/image/other/404.png">
             <div class="content">
                 <ul>
                     <li>世界上有什么不会失去的东西吗？我相信有，你也最好相信。</li>

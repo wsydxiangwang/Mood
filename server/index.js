@@ -2,7 +2,7 @@ const express = require('express');
 const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
 const bodyParser = require('body-parser')
-
+const fs = require('fs');
 const app = express();
 
 app.use(history({
@@ -13,7 +13,6 @@ app.use(require('cors')())                              // 跨域
 app.use(express.json())                                 // JSON转换
 app.use(bodyParser.json());                             // 数据JSON类型
 app.use(bodyParser.urlencoded({ extended: false }));    // 解析post请求数据
-
 
 /**
  * 静态文件
@@ -50,16 +49,34 @@ app.use((err, req, res, next) => {
 });
 
 
-require('./routes/admin/login')(app)
-require('./routes/admin/comment')(app)
-require('./routes/admin/article')(app)
-require('./routes/admin/envelope')(app)
-require('./routes/admin/upload')(app)
-require('./routes/admin/info')(app)
-require('./routes/admin/myself')(app)
+/**
+ * 全局方法
+ * 接口模块
+ */
+const fileName = ['plugins', 'models'];
+const global = fs.readdirSync(__dirname).filter(i => fileName.includes(i)).reduce((total, item) => {
+    const files = fs.readdirSync(__dirname + '/' + item)
+    files.map(i => {
+        let name = i.replace('.js', '')
+        if(item == 'models'){
+            name = name.replace(/^\S/, s => s.toUpperCase())
+        }
+        total[item][name] = require(  __dirname + '/' + item + '/' +  name)
+    })
+    return total
+}, {'plugins': {}, 'models': {}})
 
-require('./routes/web')(app)
-require('./routes/web/jssdk')(app)
+// 加载所有路由
+const dirname = __dirname + '/routes'
+fs.readdirSync(dirname).forEach((i) => {
+    const file = dirname + '/' + i;
+    if(fs.statSync(file).isDirectory()){
+        fs.readdirSync(file).forEach(item => {
+            const name = item.replace('.js', '');
+            require( file + '/' + name )(app, global['plugins'], global['models'])
+        })
+    }
+})
 
 require('./plugins/db')(app)
 

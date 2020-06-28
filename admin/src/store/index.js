@@ -27,6 +27,7 @@ const store = new Vuex.Store({
         // 已读
         updateUnread(state){
             state.$data.unread = 0;
+            state.comment = {}
         },
         // 更新信息
         updataInfo(state, data){

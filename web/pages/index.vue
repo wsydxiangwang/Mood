@@ -7,7 +7,11 @@
 				</div>
 			</div>
 			<div class="head">
-				<div class="logo"><span class="iconfont icon-logo4"></span></div>
+				<!-- <div class="logo"><span class="iconfont icon-logo4"></span></div> -->
+				<div class="logo-img">
+					<img src="/image/logo/logo1.png">
+					<img src="/image/logo/logo2.png">
+				</div>
 				<div class="menu" @click="menu">
 					<span class="iconfont" :class="isNav ? 'icon-close' : 'icon-menu'"></span>
 				</div>
@@ -31,10 +35,10 @@
 			</div>
 		</div>
 
-		<div class="content">
-			<div class="post" v-for="(item, index) in articleList" :key="index">
+		<div class="content" v-if="Object.keys(articleList.data).length > 0">
+			<div class="post" v-for="(item, index) in articleList.data" :key="index">
 				<div class="img-box" @click="article(item.id)">
-					<img v-lazy="item.image.url" src="/image/404.png" :alt="item.image.name">
+					<img v-lazy="item.image.url" src="/image/other/default.jpg" :alt="item.image.name">
 				</div>
 				<div class="info">
 					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
@@ -120,11 +124,11 @@ export default {
 		let img = new Image()
 		img.src = this.info.cover.image
 		img.onload = () => {
-			this.image = this.info.cover.image
 			setTimeout(() => {
+				this.image = this.info.cover.image
 				this.loading = false;
 				document.body.style.overflowY = '';
-			}, 2000)
+			}, 1500)
 		}
 
 		// Homepage loaded
@@ -136,14 +140,17 @@ export default {
 			relativeInput: true,
 			clipRelativeInput: true,
 		})
-		
+
+		if(this.articleList.page == this.articleList.totalPage){
+			this.loadingType = 'nomore'
+		}
 	},
 	async asyncData(context){
 		if(context.store.state.index){ // 防止重复加载 
 			return;
 		}
 		const {data} = await context.$axios.get('article')
-		return { articleList: data.status == 1 ? data.body.data : {}}
+		return { articleList: data.status == 1 ? data.body : {}}
 	},
 	beforeRouteEnter(to,from,next){
 		next(vm => {
@@ -225,12 +232,11 @@ export default {
 				const result = res.data.body;
 				if(res.data.status == 1){
 					setTimeout(() => {
-						this.articleList = this.articleList.concat(result.data)
+						this.articleList.data = this.articleList.data.concat(result.data)
 
 						this.$setScroll('.bottom-loading', 'index');
 
 						this.loadingType = result.page == result.totalPage ? 'nomore' : 'more';
-
 					}, 1000)
 				}else{
 					this.loadingType = 'more';
@@ -288,14 +294,31 @@ export default {
 			width: 100%;
 			color: #fff;
 			z-index: 99999;
-			padding: 0 30px 0 24px;
+			padding: 0 40px 0 40px;
 			display: flex;
+			align-items: center;
 			justify-content: space-between;
 			.logo{
 				transition: all .3s;
 				.iconfont{
 					font-size: 36px;
 					cursor: pointer;
+				}
+			}
+			.logo-img{
+				width: 100px;
+				height: 44px;
+				position: relative;
+				transition: all .3s;
+				img{
+					opacity: 1;
+					width: 100%;
+					position: absolute;
+					transition: all .3s;
+					cursor: pointer;
+					&:last-child{
+						opacity: 0;
+					}
 				}
 			}
 			.menu{
@@ -336,7 +359,7 @@ export default {
 			width: 30%;
 			transform: translateY(-50%);
 			.time{
-				font-size: 12px;
+				font-size: 14px;
 			}
 			.title{
 				margin: 15px 0 30px;
@@ -652,7 +675,7 @@ export default {
 			.post{
 				width: 40%;
 				.title a{
-					font-size: 20px;
+					font-size: 22px;
 				}
 			}
 		}
@@ -699,7 +722,7 @@ export default {
 				background: rgba(176, 14, 37, 0.35);
 			}
 			.post{
-				bottom: 60px;
+				bottom: 8%;
 				left: 5%;
 				top: auto;
 				width: 70%;
@@ -740,6 +763,15 @@ export default {
 	}
 	@media screen and (max-width: 480px){
 		.cover{
+			.head{
+				padding: 0 24px 0 20px;
+				.logo-img{
+					width: 80px;
+					img{
+						top: 6px
+					}
+				}
+			}
 			.post {
 				.time{
 					display: none;
@@ -757,21 +789,16 @@ export default {
 			font-size: 14px;	
 		}
 	}
-	@media screen and (max-width: 480px){
-		// .nav{
-		// 	.world{
-		// 		display: flex;
-		// 		flex-direction: column;
-		// 		span:first-child{
-		// 			margin-bottom: 8px;
-		// 		}
-		// 	}
-		// }
-	}
 }
 .container.navActive{
 	.logo{
 		color: #333;
+	}
+	.cover .head .logo-img img{
+		opacity: 0;
+		&:last-child{
+			opacity: 1;
+		}
 	}
 	.nav{
 		top: 0;

@@ -1,7 +1,7 @@
 const time = (time) => {
 
     const timestemp = new Date(time).getTime();
-
+console.log(2)
     const minute = 1000 * 60;
     const hour = minute * 60;
     const day = hour * 24;

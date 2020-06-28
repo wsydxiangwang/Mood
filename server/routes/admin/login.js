@@ -1,12 +1,12 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
+    const router = express.Router();
+    
+    let {User} = model
+    let {requestResult} = plugin
+
     const crypto = require('crypto');
     const jwt = require('jsonwebtoken');
-
-    const router = express.Router();
-
-    const User = require('../../models/user')
-    const requestResult = require('../../plugins/requestResult')
 
     // 修改密码
     router.post('/password', async (req, res) => {
@@ -48,7 +48,6 @@ module.exports = app => {
                 // 生成token
                 const token = jwt.sign(info, 'Libai', {
                     expiresIn: 60 * 60 * 24  // 24小时过期
-                    // expiresIn: 10  // 10秒
                 }); 
                 res.json({
                     status: 1,

@@ -9,7 +9,7 @@
                 </span>
             </h1>
         </div>
-        <el-table :data="data" style="width: 100%;"  height="calc(800px - 240px)">
+        <el-table :data="data">
             <el-table-column label="Name" width=140>
                 <template slot-scope="scope">
                     <p><span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}</p>
@@ -65,23 +65,21 @@ export default {
             total: 0,
             count: 10,
             page: 1,
-            replyData: ''
+            replyData: '',
+            loading: ''
         }
     },
     created(){
         this.load();
     },
-    watch: {
-        $page_size(val){
-            this.count = val
-            this.load();
-        }
+    mounted(){
+        document.querySelector('.content').style.overflow = 'hidden'
+    },
+    destroyed(){
+        document.querySelector('.content').style.overflow = 'auto'
     },
     computed: {
         ...mapState(['$data']),
-        $page_size(){
-            return Object.keys(this.$data).length > 0 ? this.$data.info.page_size : 10
-        }
     },
     methods: {
         // 回复
@@ -98,26 +96,28 @@ export default {
                 this.data = comment[page];
                 return
             }
+
+            this.loading = this.$loading({target: '.container'})
             
             this.$http.get('/comment', {
-                params: {
-                    page, 
-                    count: this.count
-                }
+                params: { page }
             }).then(res => {
-                const data = res.data.body;
-                const item = ['data', 'total', 'page']
+                setTimeout(() => {
+                    const data = res.data.body;
+                    const item = ['data', 'total', 'page']
 
-                item.map(i => this[i] = data[i])
-                /**
-                 * 添加数据到vuex，请求优化
-                 */
-                this.$store.commit('setCache', {
-                    type: 'comment',
-                    page: page || 1,
-                    data: this.data,
-                    total: this.total
-                })
+                    item.map(i => this[i] = data[i])
+                    /**
+                     * 添加数据到vuex，请求优化
+                     */
+                    this.$store.commit('setCache', {
+                        type: 'comment',
+                        page: page || 1,
+                        data: this.data,
+                        total: this.total
+                    })
+                    this.loading.close()
+                }, 800)
             })
         },
         resetLoad(){
@@ -177,6 +177,9 @@ export default {
     position: relative;
 }
 .comment{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     .header{
         h1{
             border-left: 2px solid #0084ff;
@@ -230,16 +233,20 @@ export default {
         text-align: center;
         line-height: 15px;
     }
-    /deep/ .el-table__body-wrapper{
-        &::-webkit-scrollbar-track {
-            background: #fff;
-        }
-        &::-webkit-scrollbar-thumb {
-            background: #eef7ff;
-        }
-        &::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+    /deep/ .el-table{
+        .el-table__body-wrapper{
+            height: calc(100% - 80px);
+            overflow: auto;
+            &::-webkit-scrollbar-track {
+                background: #fff;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #eef7ff;
+            }
+            &::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
         }
     }
     //  height="calc(800px - 240px)"
@@ -255,9 +262,6 @@ export default {
         .el-pagination{
             bottom: 5px !important;
         }
-        /deep/ .el-table__body-wrapper{
-            height: calc(100vh - 212px) !important;
-        }
         /deep/ .el-table__header{
             width: 100% !important;
             display: block;
@@ -268,14 +272,15 @@ export default {
                     th{
                         padding: 6px 0;
                         &:nth-of-type(1){
-                            display: none;
+                            // display: none;
+                            width: 100px;
                         }
                         &:nth-of-type(2){
                             flex: 1;
+                            display: block;
                         }
                         &:nth-of-type(3){
-                            width: 100px;
-                            text-align: center;
+                            display: none;
                         }
                         .cell{
                             padding: 0;
@@ -303,14 +308,15 @@ export default {
                     td{
                         border: none;
                         &:nth-of-type(1){
-                            display: none;
+                            // display: none;
+                            width: 100px;
                         }
                         &:nth-of-type(2){
                             flex: 1;
+                            display: block;
                         }
                         &:nth-of-type(3){
-                            width: 100px;
-                            text-align: center;
+                            display: none;
                         }
                         &:nth-of-type(4){
                             width: 46px;

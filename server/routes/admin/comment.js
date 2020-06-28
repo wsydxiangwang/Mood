@@ -1,14 +1,10 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
+    
+    let {Comment, Counter, Article} = model
+    let {sendEmail, getPage, requestResult} = plugin
 
-    const Article = require('../../models/article')
-    const Comment = require('../../models/comment')        
-    const Counter = require('../../models/counter')
-    const getPage = require('../../plugins/getPage')
-    const requestResult = require('../../plugins/requestResult')
-
-    const sendEmail = require('../../plugins/email')
 
     // Get comment
     router.get('/comment', async (req, res) => {
@@ -60,7 +56,6 @@ module.exports = app => {
                 name: req.body.data.reply_name,
                 email: req.body.data.reply_email
             }
-            
             // 发送邮件
             sendEmail(obj, req.body.email)
         }

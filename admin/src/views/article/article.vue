@@ -2,7 +2,7 @@
     <div class="article">
         <h2 class="tit">文章列表 ({{total}})</h2>
         
-        <el-table :data="data" style="width: 100%" height="calc(800px - 240px)">
+        <el-table :data="data">
             <el-table-column label="Title">
                 <template slot-scope="scope">
                     <p>{{scope.row.title}}</p>
@@ -51,24 +51,22 @@ export default {
             data: [],
             count: 10,
             total: 0,
-            page: 1
+            page: 1,
+            loading: ''
         }
     },
     created(){
         this.total = this.$data.articleQty
         this.load();
     },
-    watch: {
-        $page_size(val){
-            this.count = val
-            this.load();
-        }
+    mounted(){
+        document.querySelector('.content').style.overflow = 'hidden'
+    },
+    destroyed(){
+        document.querySelector('.content').style.overflow = 'auto'
     },
     computed: {
-        ...mapState(['$data']),
-        $page_size(){
-            return Object.keys(this.$data).length > 0 ? this.$data.info.page_size : 10
-        }
+        ...mapState(['$data'])
     },
     methods: {
         load(page){
@@ -81,25 +79,27 @@ export default {
                 return
             }
 
-            this.$http.get('/article', {
-                params: {
-                    page, 
-                    count: this.count
-                }
-            }).then(res => {
-                const data = res.data.body;
-                const item = ['data', 'total', 'page']
+            this.loading = this.$loading({target: '.container'})
 
-                item.map(i => this[i] = data[i])
-                /**
-                 * 添加数据到vuex，请求优化
-                 */
-                this.$store.commit('setCache', {
-                    type: 'article',
-                    page: page || 1,
-                    data: this.data,
-                    total: this.total
-                })
+            this.$http.get('/article', {
+                params: {page}
+            }).then(res => {
+                setTimeout(() => {
+                    const data = res.data.body;
+                    const item = ['data', 'total', 'page']
+
+                    item.map(i => this[i] = data[i])
+                    /**
+                     * 添加数据到vuex，请求优化
+                     */
+                    this.$store.commit('setCache', {
+                        type: 'article',
+                        page: page || 1,
+                        data: this.data,
+                        total: this.total
+                    })
+                    this.loading.close()
+                }, 500)
             })
         },
         edit(id){
@@ -142,6 +142,9 @@ export default {
 
 <style lang="scss">
 .article{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     .header{
         h1{
             border-left: 2px solid #0084ff;
@@ -184,7 +187,10 @@ export default {
             color: red;
         }
     }
-    /deep/ .el-table__body-wrapper{
+    /deep/ 
+        .el-table__body-wrapper{
+            height: calc(100% - 80px);
+            overflow: auto;
         &::-webkit-scrollbar-track {
             background: #fff;
         }

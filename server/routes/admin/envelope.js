@@ -1,10 +1,9 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
-
-    const Envelope = require('../../models/envelope')
-    const dateFormat = require('../../plugins/dateFormat'); 
-        
+    
+    let {Envelope} = model
+    let {dateFormat} = plugin        
 
     router.get('/envelope', async (req, res) => {
         const data = await Envelope.find({}).sort({time: -1}).limit(100)

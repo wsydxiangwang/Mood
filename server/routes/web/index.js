@@ -1,32 +1,28 @@
-module.exports = app => {
+module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
-    
-    const Comment = require('../../models/comment')
-    const Article = require('../../models/article')
-    const Counter = require('../../models/counter')
-    const Envelope = require('../../models/envelope')
-    const Myself = require('../../models/myself')
-    const Info = require('../../models/info')
 
-    const time = require('../../plugins/time')
-    const sendEmail = require('../../plugins/email')
-    const dateFormat = require('../../plugins/dateFormat')
-    const requestResult = require('../../plugins/requestResult')
+    let {Info, Comment, Counter, Article, Envelope, Myself} = model
+    let {time, sendEmail, dateFormat, requestResult} = plugin
 
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
 
-        const data = {
-            cover: info.cover,
-            avatar: info.avatar,
-            web_name: info.web_name,
-            web_describe: info.web_describe,
-            bg: info.bg,
-            email: info.email,
-            email_name: info.email_name,
-            admin_mark: info.comment_mark,
+        let data = null;
+
+        if(info){
+            data = {
+                cover: info.cover,
+                avatar: info.avatar,
+                web_name: info.web_name,
+                web_describe: info.web_describe,
+                bg: info.bg,
+                email: info.email,
+                email_name: info.email_name,
+                admin_mark: info.comment_mark,
+            }
         }
+
         res.send(requestResult(data))
     })
 
@@ -64,6 +60,7 @@ module.exports = app => {
             page: Number(page),
             totalPage: Math.ceil(result[0] / 10),
         }
+
         res.send(requestResult(data))
     })
 
@@ -152,14 +149,25 @@ module.exports = app => {
         result._doc['time'] = dateFormat(result.time)
 
         res.send(requestResult(result))
-        
-        const title = req.body.title,
-              url = req.body.url,
-              name = req.body.data.reply_name,
-              email = req.body.data.reply_email;
 
-        // 发送邮件
-        // sendEmail(title, url, name, email)
+        const info = await Info.findOne()
+
+        if(info.email_message){
+            const data = {
+                title: req.body.title,
+                url: req.body.url,
+                name: req.body.data.reply_name || info.email_name,
+                email: req.body.data.reply_email || info.email
+            }
+            const email = {
+                email: info.email,
+                email_name: info.email_name,
+                email_pass: info.email_pass,
+                web_name: info.web_name,
+            }
+            // 发送邮件
+            sendEmail(data, email)
+        }
     })
 
     // like +1

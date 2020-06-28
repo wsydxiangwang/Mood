@@ -1,6 +1,10 @@
 <template>
     <div class="rain">
-        <span class="logo iconfont icon-logo4" @click="toIndex"></span>
+        <div class="logo-img" @click="toIndex">
+            <img src="/image/logo/logo1.png">
+        </div>
+
+        <!-- <span class="logo iconfont icon-logo4" @click="toIndex"></span> -->
 
         <img class="rain-bg" :src="img" draggable="false">
         <img class="words" src="/image/rain/words.png" draggable="false">
@@ -102,6 +106,19 @@ export default {
         z-index: 9999;
         font-size: 30px;
         cursor: pointer;
+    }
+    .logo-img{
+        color: #fff;
+        position: fixed;
+        bottom: 20px;
+        left: 30px;
+        z-index: 9999;
+        cursor: pointer;
+        width: 80px;
+        height: 34px;
+        img{
+            width: 100%;
+        }
     }
     .rain-bg{
         position: absolute;

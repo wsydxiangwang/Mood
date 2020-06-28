@@ -53,7 +53,7 @@ export default {
             }
             data.type = this.message.type == 1 ? 2 : 3;
 
-            const emailArr = ['email', 'email_name', 'email_message', 'email_pass', 'address', 'website_name']
+            const emailArr = ['email', 'email_name', 'email_message', 'email_pass', 'address', 'web_name']
             const email = emailArr.reduce((total, item) => {
                 total[item] = this.$data.info[item]
                 return total

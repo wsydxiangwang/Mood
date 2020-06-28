@@ -422,4 +422,19 @@ input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
 input:-ms-input-placeholder{  /* Internet Explorer 10-1*/
     color:#bbbbbb;
 }
+
+@media screen and (max-width: 600px) {
+    .form{
+        max-width: 90%;
+        width: 400px;
+        .form-item{
+            padding: 0 40px
+        }
+    }
+    .create .create-form{
+        max-width: 90%;
+        width: 400px;
+        padding: 40px 30px 20px;
+    }
+}
 </style>

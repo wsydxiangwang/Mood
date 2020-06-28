@@ -69,7 +69,8 @@ export default {
                 preview: true, // 预览
             },
 
-            fullscreenLoading: false
+            fullscreenLoading: false,
+            loading: ''
         }
     },
     created(){
@@ -81,10 +82,16 @@ export default {
     },
     methods: {
         async loadData(id){
+            this.loading = this.$loading({target: '.container'})
+            
             let res = await this.$http.get(`envelope/${id}`)
-            this.data = res.data;
-            this.hackReset = false;
-            this.$nextTick(() => { this.hackReset = true; })
+
+            setTimeout(() => {
+                this.data = res.data;
+                this.hackReset = false;
+                this.$nextTick(() => { this.hackReset = true; })
+                this.loading.close()
+            }, 500)
         },
         getDate(time){
             this.data.time = time;

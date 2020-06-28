@@ -7,11 +7,16 @@
         ></Header>
 
         <section class="content">
-            <div v-for="(item, index) in data.data" :key="index" class="item">
-                <div class="text" v-html="item.contentHtml"></div>
-                <div class="time">{{item.time}}</div>
+            <div v-if="!data.data || data.data.length == 0">
+                空无一物，就像你我一样。
             </div>
-            <LoadMore :loadingType="loadingType"></LoadMore>
+            <template v-else>
+                <div v-for="(item, index) in data.data" :key="index" class="item">
+                    <div class="text" v-html="item.contentHtml"></div>
+                    <div class="time">{{item.time}}</div>
+                </div>
+                <LoadMore :loadingType="loadingType"></LoadMore>
+            </template>
         </section>
     </div>
 </template>
@@ -40,6 +45,10 @@ export default {
 
         if(this.data.totalPage > 1){
             window.addEventListener('scroll', this.load)
+        }
+
+        if(this.data.page == this.data.totalPage){
+            this.loadingType = 'nomore'
         }
     },
     destroyed(){

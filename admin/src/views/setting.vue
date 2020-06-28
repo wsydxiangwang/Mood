@@ -44,7 +44,7 @@
                     </template>
 
                     <template v-else>
-                        <el-input v-model="form[item.key]"></el-input>
+                        <el-input v-model="form[item.key]" :placeholder="item.placeholder"></el-input>
                     </template>
                 </el-form-item> 
 
@@ -77,10 +77,19 @@
                             <img v-if="cover['url'] || form.cover['image']" :src="cover['url'] || form.cover['image']">
                             <i v-else class="el-icon-plus"></i>
                         </el-upload>
+                        <span class="upload-image-size">(1920*1080)</span>
                     </template>
                     
+                    <template v-else-if="k == 'link'">
+                        <el-input v-model="form['cover'][k]" placeholder="填写文章ID"></el-input>
+                    </template>
+
                     <template v-else-if="k == 'color'">
                         <el-color-picker v-model="form['cover']['color']" show-alpha></el-color-picker>
+                    </template>
+
+                    <template v-else-if="k == 'icp_txt' || k == 'icp_link'">
+                        <el-input v-model="form['cover'][k]" placeholder="网站的备案信息, 有则填写"></el-input>
                     </template>
 
                     <template v-else>
@@ -94,7 +103,7 @@
 
             <template v-for="(v, k, i) in formList[3]">
                 <el-form-item :label="v" :key="i+222">
-                    <el-input v-model="form['bg'][k]"></el-input>
+                    <el-input v-model="form['bg'][k]" placeholder="填写音乐链接地址"></el-input>
                 </el-form-item>
             </template>
 
@@ -151,11 +160,11 @@ export default {
                     },
                     {
                         key: 'email',
-                        value: '邮箱地址'
+                        value: '评论邮箱'
                     },
                     {
                         key: 'email_name',
-                        value: '邮箱昵称'
+                        value: '评论昵称'
                     },
                     {
                         key: 'upload_type',
@@ -168,6 +177,7 @@ export default {
                     {
                         key: 'email_pass',
                         value: '邮箱PASS',
+                        placeholder: '与评论邮箱一致的PASS, 只支持QQ邮箱',
                         show: true
                     },
                 ],
@@ -384,6 +394,13 @@ export default {
         }
     }
 }
+.upload-image-size{
+    position: absolute;
+    top: 20px;
+    font-size: 12px;
+    right: calc(100% + 14px);
+    color: #b3b3b3;
+}
 h2.tit{
     margin: 50px 0 30px;
     span{
@@ -421,6 +438,14 @@ h2.tit{
     .hint{
         opacity: 1;
         display: block;
+    }
+    /deep/ .el-form-item{
+        label{
+            width: 90px !important;
+        }
+        .el-form-item__content{
+            margin-left: 90px !important;
+        }
     }
 }
 </style>

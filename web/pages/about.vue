@@ -3,14 +3,11 @@
         <Header 
             v-if="refresh" 
             :music="music" 
-            title="嘿，陌生人，你今天笑了么 (≖ᴗ≖)✧"
+            title="嘿，你今天笑了么(≖ᴗ≖)✧"
         ></Header>
         <client-only>
             <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
         </client-only>
-<!--         
-        <div v-if="data" class="about" v-html="data.contentHtml"></div>
-        <div v-else>此人还没有介绍, 明天再来吧!</div> -->
     </div>
 </template>
 
