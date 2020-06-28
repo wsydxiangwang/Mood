@@ -14,6 +14,7 @@ module.exports = (app, plugin, model) => {
             data = {
                 cover: info.cover,
                 avatar: info.avatar,
+                web_seo: info.web_seo,
                 web_name: info.web_name,
                 web_describe: info.web_describe,
                 bg: info.bg,

@@ -61,7 +61,7 @@
 
         <section>
             <h3>envelope</h3>
-            <div class="envelope" v-if="$envelope">
+            <div class="envelope" v-if="$envelope && $envelope.length > 0">
                 <p v-for="(item, index) in $envelope" :key="index"><span>{{index + 1}}</span>{{item.content}}</p>
             </div>
             <div class="envelope" v-else style="display: flex;text-align: center;align-items: center;height: 80%;">

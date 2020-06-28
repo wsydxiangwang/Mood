@@ -12,3 +12,16 @@
 
 ## 安装Nginx
 
+## 安装nodejs
+
+## 安装mongodb
+
+## 安装pm2
+
+## 进入目录, 安装node_modules
+## 开启服务
+
+```
+pm2 start index.js --name="server   
+pm2 start npm --name "my-nuxt" -- run start
+```

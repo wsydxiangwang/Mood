@@ -108,7 +108,8 @@ export default {
         return {
 			title: this.info.web_name,
 			meta: [
-                { hid: 'description', name: 'description', content: this.info.web_describe }
+                { hid: 'keywords', name: 'keywords', content: this.info.web_seo },
+                { hid: 'description', name: 'description', content: this.info.web_describe },
             ]
 		}
 	},

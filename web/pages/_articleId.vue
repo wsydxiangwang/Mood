@@ -59,6 +59,7 @@ export default {
         return {
             title: `${this.data.title} | ${this.info.web_name}`,
             meta: [
+                { hid: 'keywords', name: 'keywords', content: this.info.web_seo },
                 { hid: 'description', name: 'description', content: this.data.describe }
             ]
         }

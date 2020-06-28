@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
     address: String,        // 网站地址
     web_name: String,       // 网站名
     web_describe: String,   // 网站描述
+    web_seo: String,        // 网站关键词
 
     email: String,          // 邮箱
     email_name: String,     // 邮箱名

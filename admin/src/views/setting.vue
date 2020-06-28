@@ -151,12 +151,16 @@ export default {
                         value: '网站昵称'
                     },
                     {
+                        key: 'address',
+                        value: '网站地址'
+                    },
+                    {
                         key: 'web_describe',
                         value: '网站描述'
                     },
                     {
-                        key: 'address',
-                        value: '网站地址'
+                        key: 'web_seo',
+                        value: 'SEO关键词'
                     },
                     {
                         key: 'email',
@@ -230,7 +234,7 @@ export default {
             for(let i in this.$info){
                 this.$set(this.form, i, this.$info[i])
             }
-            this.$set(this.formList[0][10], 'show', !this.$info['email_message'])
+            this.$set(this.formList[0][11], 'show', !this.$info['email_message'])
         },
         async onSubmit(){
             /**
@@ -319,7 +323,7 @@ export default {
             })
         },
         emailChange(e){
-            this.formList[0][10].show = !e
+            this.formList[0][11].show = !e
         },
         // 保存临时图片
         upload(type, file){
