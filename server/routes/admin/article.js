@@ -31,8 +31,6 @@ module.exports = (app, plugin, model) => {
             $inc: { 'count' : 11 }
         }, {
             new: true
-        }, (err, doc) => {
-            return doc;
         })
 
         /**

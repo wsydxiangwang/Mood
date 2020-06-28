@@ -111,8 +111,6 @@ module.exports = (app, plugin, model) => {
             $inc: { 'count' : 1 }
         }, {
             new: true
-        }, (err, doc) => {
-            return doc;
         })
 
         if(commentCount){
