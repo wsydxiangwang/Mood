@@ -1,0 +1,55 @@
+html, body, p, input, textarea, button, div, span {
+	font-family: "eafont", "Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+	word-spacing: 1px;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+@font-face{
+	font-style: normal;
+	font-family: 'eafont';
+	src: url('../font/eafont.ttf') format('truetype');
+}
+
+.page{
+	transition: all 500ms;
+} 
+.page-enter{
+	opacity: 0;
+	transform: translate(50px, 0);
+}
+.page-leave-active {
+  	opacity: 0;
+  	transform: translate(-50px, 0);
+}
+
+
+*{
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	letter-spacing: 0.4px;
+	box-sizing: border-box;
+}
+
+body{
+	overflow-x: hidden;
+	background: #fff;
+}
+body::-webkit-scrollbar{
+	width: 6px;
+}
+body::-webkit-scrollbar-thumb{
+	background: #dbdbdb;
+}
+body::-webkit-scrollbar-track{
+	background: #f6f6f6;
+}
+
+:root{
+	--colorBar: #50bcb6;
+	--colorActive: #0084ff;
+	--colorComment: #EF6D57;
+	--colorDefault: #24292e;
+}
