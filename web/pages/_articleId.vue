@@ -179,7 +179,7 @@ export default {
                 margin: 0 0 22px;
                 font-size: 16px;
                 mark{
-                    padding: 0 4px;
+                    padding: 4px 4px 0;
                     line-height: 22px;
                     display: inline-block;
                     font-size: 16px;
