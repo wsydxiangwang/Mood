@@ -3,7 +3,7 @@ import router from './router'
 
 const http = axios.create({
     baseURL: process.env.VUE_APP_URL || '/admin/api',
-    timeout: 30000
+    timeout: 120000
 })
 
 // request 拦截器

@@ -4,7 +4,7 @@ const nodemailer  = require("nodemailer");
  * @param {Object} data 邮箱发送数据
  * @param {Object} adminObj 管理员信息
  */
-const emailFn = (infoObj, adminObj) => {
+const email = (infoObj, adminObj) => {
     const data = {
         name: infoObj.name,
         title: infoObj.title,
@@ -63,4 +63,4 @@ const sendMail = (data, adminObj, transporter, call) => {
     transporter.close(); // 关闭连接池
 }
 
-module.exports = emailFn
+module.exports = email

@@ -3,7 +3,7 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let {Comment, Counter, Article} = model
-    let {sendEmail, getPage, requestResult} = plugin
+    let {email, getPage, requestResult} = plugin
 
 
     // Get comment
@@ -55,7 +55,7 @@ module.exports = (app, plugin, model) => {
                 email: req.body.data.reply_email
             }
             // 发送邮件
-            sendEmail(obj, req.body.email)
+            email(obj, req.body.email)
         }
     })
 

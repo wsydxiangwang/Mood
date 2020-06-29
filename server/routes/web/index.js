@@ -3,7 +3,7 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
 
     let {Info, Comment, Counter, Article, Envelope, Myself} = model
-    let {time, sendEmail, dateFormat, requestResult} = plugin
+    let {time, email, dateFormat, requestResult} = plugin
 
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
@@ -158,14 +158,14 @@ module.exports = (app, plugin, model) => {
                 name: req.body.data.reply_name || info.email_name,
                 email: req.body.data.reply_email || info.email
             }
-            const email = {
+            const emailData = {
                 email: info.email,
                 email_name: info.email_name,
                 email_pass: info.email_pass,
                 web_name: info.web_name,
             }
             // 发送邮件
-            sendEmail(data, email)
+            email(data, emailData)
         }
     })
 
