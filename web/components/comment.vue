@@ -774,7 +774,7 @@ export default {
 }
 @media screen and (max-width: 600px) {
     .comment .comment-list{
-        padding: 0;
+        padding: 0 0 40px;
         .comment-item{
             .head{
                 .img{

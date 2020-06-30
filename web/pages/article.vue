@@ -15,7 +15,7 @@
                             <li v-for="(child_val, child_key, child_idx) in vals" :key="child_idx">
                                 <div class="item-l">
                                     <div class="img" @click="viewArticle(child_val.id)">
-                                        <img :src="child_val.image ? child_val.image.url : ''">
+                                        <img :src="child_val.image.url || '/image/other/default.jpg'">
                                     </div>
                                     <div class="tit">
                                         <span @click="viewArticle(child_val.id)">{{child_val.title}}</span>
