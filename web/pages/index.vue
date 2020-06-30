@@ -61,7 +61,7 @@
 		<BackTop v-if="isBack"></BackTop>
 
 		<!-- loading -->
-		<Loading v-if="loading"></Loading>
+		<Loadings v-if="loading"></Loadings>
 	</div>
 </template>
 
@@ -159,9 +159,13 @@ export default {
 			vm.windowChange = vm.$debounce(vm.init, 100)
 			window.onresize = () => vm.windowChange()
 			vm.isBack = true
+			setTimeout(() => {
+				document.querySelector('.loader').style.display = 'none'
+			}, 1000)
 		})
 	},
 	beforeRouteLeave(to,from,next){
+		document.querySelector('.loader').style.display = 'block'
 		document.body.style.overflowY = ''
 		window.onresize = null
 		this.isBack = false

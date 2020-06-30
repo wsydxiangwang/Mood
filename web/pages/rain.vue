@@ -23,7 +23,7 @@
         </ul>
 
         <!-- loading -->
-		<Loading v-if="loading"></Loading>
+		<Loadings v-if="loading"></Loadings>
     </div>
 </template>
 
@@ -69,10 +69,17 @@ export default {
         img.onload = () => {
             this.loading = false
             this.img = img.src
+			setTimeout(() => {
+				document.querySelector('.loader').style.display = 'none'
+			}, 1000)
         }
         this.$nextTick(() => {
             this.music(0, false)
         })
+    },
+	beforeRouteLeave(to,from,next){
+		document.querySelector('.loader').style.display = 'block'
+        next();
     },
     methods: {
         toIndex(){

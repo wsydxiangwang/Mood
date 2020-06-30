@@ -117,14 +117,14 @@ var common = {
             const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
             const position = el.getBoundingClientRect().top;
             const show = position <= windowHeight + 500
-
+            
             // 元素存在，元素可见
             if(src && show){ 
                 let img = new Image();
                 img.src = src;
 
                 // 加载成功后, 删除对象
-                img.onload = () =>{
+                img.onload = (e) =>{
                     el.src = src;
                     const index = listenList.indexOf(item);
                     index > -1 && listenList.splice(index, 1)
