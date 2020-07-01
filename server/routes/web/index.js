@@ -68,7 +68,13 @@ module.exports = (app, plugin, model) => {
     // Get article
     router.get('/article/:id', async (req, res) => {
         const id = Number(req.params.id)
-        const data = await Article.findOne({id: id})
+        const data = await Article.findOneAndUpdate({
+            id: id
+        }, {
+            $inc: { 'read': 1 }
+        }, {
+            new: true
+        })
 
         if(data){
             data._doc['time'] = dateFormat(data.time)

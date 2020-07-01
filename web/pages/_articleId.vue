@@ -85,8 +85,6 @@ export default {
     },
     mounted(){
         window.addEventListener('scroll', this.handleScroll, true)
-        // read +1
-        this.$axios.put(`article_read/${this.data._id}`).then(res => this.data.read++)
     },
     methods: {
         liked(){
