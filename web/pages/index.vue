@@ -61,7 +61,7 @@
 		<BackTop v-if="isBack"></BackTop>
 
 		<!-- loading -->
-		<Loadings v-if="loading"></Loadings>
+		<Loading v-if="loading"></Loading>
 	</div>
 </template>
 
@@ -171,7 +171,7 @@ export default {
 		this.isBack = false
 		setTimeout(() => this.isNav = false, 500)
 		document.removeEventListener('touchmove', this.on, {passive: false})
-        next();
+        next()
     },
 	methods: {
 		// Cover image init

@@ -5,6 +5,6 @@ import Loading from '@/components/loading.vue'
 import LoadMore from '@/components/loadMore.vue'
 
 Vue.component('Header', Header)
-Vue.component('Loadings', Loading)
+Vue.component('Loading', Loading)
 Vue.component('BackTop', BackTop)
 Vue.component('LoadMore', LoadMore)

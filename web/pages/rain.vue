@@ -23,7 +23,7 @@
         </ul>
 
         <!-- loading -->
-		<Loadings v-if="loading"></Loadings>
+		<Loading v-if="loading"></Loading>
     </div>
 </template>
 
@@ -78,8 +78,8 @@ export default {
         })
     },
 	beforeRouteLeave(to,from,next){
-		document.querySelector('.loader').style.display = 'block'
-        next();
+        document.querySelector('.loader').style.display = 'block'
+        next()
     },
     methods: {
         toIndex(){
