@@ -72,17 +72,6 @@ export default {
 			return this.$store.state.data
         }
     },
-	beforeRouteEnter(to,from,next){
-		next(vm => {
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none'
-            }, 1000)
-        })
-	},
-	beforeRouteLeave(to,from,next){
-        document.querySelector('.loader').style.display = 'block'
-        next()
-    },
     mounted(){
         window.addEventListener('scroll', this.handleScroll, true)
     },
