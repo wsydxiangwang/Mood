@@ -34,17 +34,6 @@ export default {
             this.$nextTick(() => this.refresh = true )
         }
     },
-	beforeRouteEnter(to,from,next){
-		next(vm => {
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none'
-            }, 1000)
-        })
-	},
-	beforeRouteLeave(to,from,next){
-        document.querySelector('.loader').style.display = 'block'
-        next()
-    },
     computed: {
 		info(){
 			return this.$store.state.data

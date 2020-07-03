@@ -28,14 +28,19 @@ export default {
             this.isBack = this.scrollTop >= 2000 ? 'show' : '';
 		},
         backTop(){
+            let osTopCache = 0;
             this.timerTop = setInterval(() => {
                 const osTop = document.documentElement.scrollTop || document.body.scrollTop;
                 const ispeed = Math.floor(-osTop / 6);
-
-                document.documentElement.scrollTop = document.body.scrollTop = osTop + ispeed;
-                if (osTop === 0) {
+                if(osTopCache && osTopCache < osTop){
                     clearInterval(this.timerTop)
-                }
+                    return
+                } else {
+                    osTopCache = document.documentElement.scrollTop = document.body.scrollTop = osTop + ispeed;
+                    if (osTop === 0) {
+                        clearInterval(this.timerTop)
+                    }
+                }  
             }, 30)
         },
     }

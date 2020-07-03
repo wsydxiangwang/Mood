@@ -68,6 +68,7 @@ module.exports = {
     { src: '@/plugins/vue-mavon-editor', ssr: true },
     { src: '@/plugins/common.js', ssr: true },
     { src: '@/plugins/component.js', ssr: true },
+    { src: '@/plugins/router.js', ssr: false },
   ],
   /*
   ** Nuxt.js dev-modules

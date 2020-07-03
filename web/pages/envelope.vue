@@ -55,17 +55,6 @@ export default {
         this.$load('none')
         window.removeEventListener('scroll', this.load)
     },
-	beforeRouteEnter(to,from,next){
-		next(vm => {
-            setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none'
-            }, 1000)
-        })
-	},
-	beforeRouteLeave(to,from,next){
-        document.querySelector('.loader').style.display = 'block'
-        next()
-    },
     methods: {
         load(){
             const data = this.$load('envelope')
