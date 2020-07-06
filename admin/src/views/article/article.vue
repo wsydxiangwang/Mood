@@ -110,7 +110,7 @@ export default {
         },
         // 新窗口打开文章
         view(id){
-            window.open(`${window.location.host}/${id}`)
+            window.open(`${window.location.origin}/${id}`)
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {
