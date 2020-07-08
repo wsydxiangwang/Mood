@@ -6,8 +6,7 @@
         <el-form ref="form" :model="form" label-width="100px">
 
             <template v-for="(item, index) in formList[0]">
-
-                <el-form-item :label="item.value" v-if="!item.show" :key="index">
+                <el-form-item :label="item.value" :key="index">
                     
                     <template v-if="item.key == 'avatar'">
                         <el-upload
@@ -28,7 +27,7 @@
                             <el-radio label="阿里云OSS"></el-radio>
                         </el-radio-group>
                         <template v-if="form.upload_type == '阿里云OSS'">
-                            <template v-for="(item, index) in formList[2]">
+                            <template v-for="(item, index) in formList[3]">
                                 <el-input 
                                     v-model="form['upload_oss'][item]" 
                                     :placeholder="item == 'domain' ? '自定义图片域名, 需解析至oss (http://img.baidu.com)' : item" 
@@ -39,15 +38,37 @@
                         </template>
                     </template>
 
-                    <template v-else-if="item.key == 'email_message'">
-                        <el-switch @change="emailChange" v-model="form.email_message"></el-switch>
-                    </template>
-
                     <template v-else>
                         <el-input v-model="form[item.key]" :placeholder="item.placeholder"></el-input>
                     </template>
                 </el-form-item> 
 
+            </template>
+
+            <!-- 邮箱 -->
+            <template v-for="(item, index) in formList[1]">
+                <el-form-item :label="item.value" v-if="!item.show" :key="index + 999">
+
+                    <template v-if="item.key == 'mode'">
+                        <el-radio-group v-model="form.email['mode']">
+                            <el-radio label="QQ"></el-radio>
+                            <el-radio label="163"></el-radio>
+                        </el-radio-group>
+                    </template>
+
+                    <template v-else-if="item.key == 'comment'">
+                        <el-switch @change="emailChange" v-model="form.email['comment']"></el-switch>
+                    </template>
+
+                    <template v-else-if="item.key == 'subscribe'">
+                        <el-switch @change="emailChange" v-model="form.email['subscribe']"></el-switch>
+                    </template>
+
+                    <template v-else>
+                        <el-input v-model="form.email[item.key]" :placeholder="item.placeholder"></el-input>
+                    </template>
+
+                </el-form-item> 
             </template>
 
             <h2 class="tit hint-tit">首屏效果 
@@ -62,7 +83,7 @@
                 </el-popover>
             </h2>
 
-            <template v-for="(v, k, i) in formList[1]">
+            <template v-for="(v, k, i) in formList[2]">
 
                 <el-form-item :label="v" :key="i+22">
 
@@ -81,7 +102,7 @@
                     </template>
                     
                     <template v-else-if="k == 'link'">
-                        <el-input v-model="form['cover'][k]" placeholder="填写文章ID"></el-input>
+                        <el-input v-model="form['cover'][k]" placeholder="必填, 前台才能正常访问"></el-input>
                     </template>
 
                     <template v-else-if="k == 'color'">
@@ -93,7 +114,7 @@
                     </template>
 
                     <template v-else>
-                        <el-input v-model="form['cover'][k]"></el-input>
+                        <el-input v-model="form['cover'][k]" placeholder="必填, 前台才能正常访问"></el-input>
                     </template>
                 </el-form-item>
 
@@ -101,9 +122,9 @@
 
             <h2 class="tit">页面音乐</h2>
 
-            <template v-for="(v, k, i) in formList[3]">
+            <template v-for="(v, k, i) in formList[4]">
                 <el-form-item :label="v" :key="i+222">
-                    <el-input v-model="form['bg'][k]" placeholder="填写音乐链接地址"></el-input>
+                    <el-input v-model="form['bg'][k]" placeholder="各个页面的背景音乐链接地址"></el-input>
                 </el-form-item>
             </template>
 
@@ -143,16 +164,14 @@ export default {
                         value: '管理员昵称'
                     },
                     {
-                        key: 'comment_mark',
-                        value: '管理员标识'
-                    },
-                    {
                         key: 'web_name',
-                        value: '网站昵称'
+                        value: '网站昵称',
+                        placeholder: '前台网站的网站名'
                     },
                     {
                         key: 'address',
-                        value: '网站地址'
+                        value: '网站地址',
+                        placeholder: '网站的域名, 例如 http://baidu.com'
                     },
                     {
                         key: 'web_describe',
@@ -163,25 +182,45 @@ export default {
                         value: 'SEO关键词'
                     },
                     {
-                        key: 'email',
-                        value: '评论邮箱'
-                    },
-                    {
-                        key: 'email_name',
-                        value: '评论昵称'
-                    },
-                    {
                         key: 'upload_type',
                         value: '文件上传'
                     },
+                ],
+                [
                     {
-                        key: 'email_message',
-                        value: '评论通知'
+                        key: 'mode',
+                        value: '邮箱类型',
+                        placeholder: '管理员评论的邮箱, 必填',
                     },
                     {
-                        key: 'email_pass',
-                        value: '邮箱PASS',
+                        key: 'address',
+                        value: '评论邮箱',
+                        placeholder: '管理员评论的邮箱, 必填',
+                    },
+                    {
+                        key: 'name',
+                        value: '评论昵称',
+                        placeholder: '管理员评论的昵称, 必填',
+                    },
+                    {
+                        key: 'mark',
+                        value: '评论标识',
+                        placeholder: '前台评论的管理员标识, 必填',
+                    },
+                    {
+                        key: 'comment',
+                        value: '评论通知',
                         placeholder: '与评论邮箱一致的PASS, 只支持QQ邮箱',
+                    },
+                    {
+                        key: 'subscribe',
+                        value: '订阅通知',
+                        placeholder: '与评论邮箱一致的PASS, 只支持QQ邮箱',
+                    },
+                    {
+                        key: 'pass',
+                        value: '邮箱PASS',
+                        placeholder: '与邮箱一致的码, 在邮箱设置开启SMTP服务器可获取 (必填)',
                         show: true
                     },
                 ],
@@ -199,6 +238,7 @@ export default {
                 {
                     bg_mood: '文章列表',
                     bg_letter: '短语列表',
+                    bg_subscribe: '订阅页面',
                     bg_about: '个人介绍',
                 }
             ],
@@ -207,20 +247,21 @@ export default {
                 upload_oss: {},
                 upload_type: '服务器',
                 bg: {},
+                email: {}
             },
             fullscreenLoading: false,
 
             password: {}
         }
     },
-    mounted(){
-        if(Object.keys(this.$info).length > 0){
-            this.update()
-        }
-    },
     watch: {
-        $info(){
-            this.update()
+        $info: {
+            handler(val) {
+                if(Object.keys(this.$info).length > 0){
+                    this.update()
+                }
+            },
+            immediate: true
         }
     },
     computed: {
@@ -234,7 +275,8 @@ export default {
             for(let i in this.$info){
                 this.$set(this.form, i, this.$info[i])
             }
-            this.$set(this.formList[0][11], 'show', !this.$info['email_message'])
+            const on = ['comment', 'subscribe'].some(i => this.$info.email[i] == true)
+            this.formList[1][6].show = !on
         },
         async onSubmit(){
             /**
@@ -323,7 +365,9 @@ export default {
             })
         },
         emailChange(e){
-            this.formList[0][11].show = !e
+            // 邮箱通知
+            const on = ['comment', 'subscribe'].some(i => this.form.email[i] == true)
+            this.formList[1][6].show = !on
         },
         // 保存临时图片
         upload(type, file){

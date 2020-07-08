@@ -2,8 +2,8 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
     
-    let {Counter, Article} = model
-    let {getPage, requestResult} = plugin
+    let {Counter, Article, Subscribe} = model
+    let {getPage, requestResult, email} = plugin
 
     // 获取文章
     router.get('/article', async (req, res) => {
@@ -36,11 +36,11 @@ module.exports = (app, plugin, model) => {
         /**
          * 发布新文章
          */
+        let result = null;
         if(articleId){
             // 自定义id
-            req.body.id = articleId.count;
-            const result = await Article.create(req.body)
-            res.send(requestResult(result))
+            req.body.data.id = articleId.count;
+            result = await Article.create(req.body.data)
         }else{
             /**
              * 第一次发表文章
@@ -51,10 +51,30 @@ module.exports = (app, plugin, model) => {
                 count: 1103
             }
             const count = await Counter.create(data)
-            
-            req.body.id = count.count;
-            const result = await Article.create(req.body)
-            res.send(requestResult(result))
+            req.body.data.id = count.count;
+            result = await Article.create(req.body.data)
+        }
+        res.send(requestResult(result))
+
+        // ...Subscribe
+        const email_data = req.body.email
+        if(email_data.subscribe && !result.hide){
+            const sub = await Subscribe.find()
+            const email_list = sub.filter(i => i.active)
+
+            // 群发邮件
+            if(email_list.length > 0){
+                const send_email = email_list.reduce((t, i) => {
+                    t.push(i.email)
+                    return t
+                }, [])
+                const data = {
+                    title: result.title,
+                    url: req.headers.origin + '/' + result.id,
+                    email: send_email
+                }
+                email(2, data, email_data)
+            }
         }
     })
 

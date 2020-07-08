@@ -2,7 +2,7 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
 
-    let {Info, Comment, Counter, Article, Envelope, Myself} = model
+    let {Info, Comment, Counter, Article, Envelope, Myself, Subscribe} = model
     let {time, email, dateFormat, requestResult} = plugin
 
     router.get('/info', async (req, res) => {
@@ -18,9 +18,13 @@ module.exports = (app, plugin, model) => {
                 web_name: info.web_name,
                 web_describe: info.web_describe,
                 bg: info.bg,
-                email: info.email,
-                email_name: info.email_name,
-                admin_mark: info.comment_mark,
+                
+                email: info.email.address,
+                email_name: info.email.name,
+                email_comment: info.email.comment,
+                admin_mark: info.email.mark,
+                
+                email_subscribe: info.email.subscribe,
             }
         }
 
@@ -133,8 +137,18 @@ module.exports = (app, plugin, model) => {
             const count = await Counter.create(data)
             req.body.data.id = count.count;
         }
+
+        /**
+         * 返回评论数据，页面展示
+         */
         const result = await Comment.create(req.body.data)
-        
+        if(result.type === 1){
+            result._doc['child'] = [];
+        }
+        result._doc['time'] = dateFormat(result.time)
+
+        res.send(requestResult(result))
+
         /**
          * 未读+1
          */
@@ -143,35 +157,25 @@ module.exports = (app, plugin, model) => {
         }, {
             $inc: { 'count' : 1 }
         })
-        if(!total) await Counter.create({name: 'comment_read', count: 1})
+        if(!total){
+            Counter.create({name: 'comment_read', count: 1})
+        }
 
         /**
-         * 返回评论数据，页面展示
+         * 发送邮件通知
          */
-        if(result.type === 1){
-            result._doc['child'] = [];
-        }
-        result._doc['time'] = dateFormat(result.time)
-
-        res.send(requestResult(result))
-
-        const info = await Info.findOne()
-
-        if(info.email_message){
+        if(req.body.is_email){
+            const info = await Info.findOne()
             const data = {
                 title: req.body.title,
                 url: req.body.url,
-                name: req.body.data.reply_name || info.email_name,
-                email: req.body.data.reply_email || info.email
+                name: req.body.data.reply_name || info.email.name,
+                email: req.body.data.reply_email || info.email.address
             }
-            const emailData = {
-                email: info.email,
-                email_name: info.email_name,
-                email_pass: info.email_pass,
-                web_name: info.web_name,
-            }
+
             // 发送邮件
-            email(data, emailData)
+            const email_info = Object.assign({}, info['email'], {web_name: info['web_name']})
+            email(3, data, email_info)            
         }
     })
 
@@ -181,16 +185,6 @@ module.exports = (app, plugin, model) => {
                 '_id': req.params.id
             }, {
                 $inc: { 'like': 1 }
-            })
-        res.send(data)
-    })
-
-    // read +1
-    router.put('/article_read/:id', async (req, res) => {
-        const data = await Article.updateOne({
-                '_id': req.params.id
-            }, {
-                $inc: { 'read': 1}
             })
         res.send(data)
     })
@@ -224,6 +218,86 @@ module.exports = (app, plugin, model) => {
     router.get('/myself', async (req, res) => {
         const result = await Myself.findOne()
         res.send(requestResult(result))
+    })
+
+    // subscribe
+    router.post('/subscribe', async (req, res) => {
+        const result = await Subscribe.findOne({email: req.body.email})
+
+        const send = {
+            email: req.body.email,
+            url: `${req.headers.origin}/subscribe?code=${req.body.code}&email=${req.body.email}`
+        }
+
+        // 添加验证 or 重新验证
+        if(!result || !result.active){
+            get_data(Object.prototype.toString.call(result) === "[object Null]")
+        } else {
+            // 已验证
+            res.send(requestResult())
+        }
+
+        async function get_data(type){
+            let data = '';
+            if(type){
+                data = await Promise.all([
+                    Subscribe.create(req.body),
+                    Info.findOne()
+                ])
+            } else {
+                data = await Promise.all([
+                    Subscribe.findOneAndUpdate({
+                        email: req.body.email
+                    }, req.body, {
+                        new: true
+                    }),
+                    Info.findOne()
+                ])
+            }
+            res.send(requestResult(data[0]))
+
+            const email_info = Object.assign({}, data[1]['email'], {web_name: data[1]['web_name']})
+            email(1, send, email_info) // 发送邮件验证
+        }
+    })
+
+    // subscribe result
+    router.post('/subscribe_result', async (req, res) => {
+        const result = await Subscribe.findOne({email: req.body.email})
+        const time = new Date().setDate(new Date().getDate())
+
+        // 邮箱错误
+        if(!result){
+            res.send({
+                status: 3,
+                message: '邮箱错误',
+            })
+            return;
+        }
+
+        // 开始验证
+        let data = {message:'success'}
+        if(!result.active){
+            if(req.body.code == result.code && time < result.time){
+                data = await Subscribe.findOneAndUpdate({
+                    email: req.body.email
+                }, {
+                    $set: { active: true }
+                }, {
+                    multi: true
+                }, (err, doc) => {
+                    return doc;
+                } )
+                // 验证成功
+                res.send(requestResult(data))
+            } else {
+                // 验证失败
+                res.send(requestResult())
+            }
+        } else {
+            // 已验证
+            res.send(requestResult(data))
+        }
     })
 
     app.use('/web/api', router)

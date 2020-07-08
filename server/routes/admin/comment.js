@@ -18,14 +18,28 @@ module.exports = (app, plugin, model) => {
     // Delete
     router.delete('/comment', async (req, res) => {
         const id = req.body.id;
-        const data = await Comment.deleteOne({id})
-        /**
-         * 删除所有子评论
-         */
+
+        // 删除评论 未读-1
+        const result = await Promise.all([
+            Comment.deleteOne({id}),
+            Counter.findOneAndUpdate({
+                name: 'comment_read'
+            }, {
+                $inc: { 'count' : -1 }
+            })
+        ])
+
+        // 删除所有子评论 & 未读数量
         if(!req.body.parent_id){
-            await Comment.deleteMany({parent_id:id})
+            const a = await Comment.deleteMany({parent_id:id})
+            await Counter.findOneAndUpdate({
+                name: 'comment_read'
+            }, {
+                $inc: { 'count' : -(a.n) }
+            })
         }
-        res.send(requestResult(data))
+
+        res.send(requestResult(result[0]))
     })
 
     // Reply
@@ -37,7 +51,7 @@ module.exports = (app, plugin, model) => {
         }, {
             new: true
         })
-
+        
         // 添加评论id
         req.body.data.id = commentCount.count;
         const result = await Comment.create(req.body.data)
@@ -45,17 +59,16 @@ module.exports = (app, plugin, model) => {
         res.send(requestResult(result))
         
         // 邮件信息
-        const articleData = await Article.findOne({id: req.body.data.topic_id})
-        
-        if(req.body.email.email_message){
-            const obj = {
+        if(req.body.email.comment){
+            const articleData = await Article.findOne({id: req.body.data.topic_id})
+            const data = {
                 title: articleData.title,
-                url: req.body.email.address + '/' + req.body.data.topic_id,
+                url: req.body.email.web_address + '/' + req.body.data.topic_id,
                 name: req.body.data.reply_name,
                 email: req.body.data.reply_email
             }
             // 发送邮件
-            email(obj, req.body.email)
+            email(3, data, req.body.email)
         }
     })
 

@@ -41,8 +41,8 @@
 
         <el-pagination
             background
-            :page-size="count"
-            :pager-count="11"
+            :page-size="10"
+            :pager-count="5"
             :total="total"
             :current-page="page"
             @current-change="load"

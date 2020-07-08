@@ -238,7 +238,12 @@ export default {
             const type = this.id ? `article/${this.data._id}` : 'article';
             const mesg = this.id ? '更新' : '发表';
 
-            this.$http.post(type, this.data).then(res => {
+            // 网站和管理员的信息
+            const email = this.$data.info['email']
+            email.web_name = this.$data.info['web_name']
+            email.web_address = this.$data.info['address']
+
+            this.$http.post(type, {data: this.data, email}).then(res => {
                 setTimeout(() => {
                     if(res.data.status === 1){
                         this.$message({

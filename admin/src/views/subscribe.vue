@@ -1,27 +1,29 @@
 <template>
-    <div class="article">
-        <h2 class="tit">文章列表 ({{total}})</h2>
-        
-        <el-table :data="data">
+    <div class="phrase">
+        <h2 class="tit">订阅通知 ({{data.length}})</h2>
+
+        <el-table :data="data" style="width: 100%"  height="calc(800px - 240px)">
+            
             <el-table-column label="Title">
                 <template slot-scope="scope">
-                    <p>{{scope.row.title}}</p>
+                    <p>{{scope.row.email}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="Date" width=140 class="hidden">
+
+            <el-table-column label="Date" width=140>
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.time}} {{scope.row.time.month.en}} {{scope.row.time.day.on}}</span>
+                    <span>{{scope.row.time.month.en}} {{scope.row.time.day.on}}, {{scope.row.time.year}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="Status" width=140>
+                <template slot-scope="scope">
+                    <span style="color:#ff7b7b">{{scope.row.active}}</span>
                 </template>
             </el-table-column>
 
             <el-table-column label="options" width=100>
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="View Article" placement="top">
-                        <i class="el-icon-view" @click="view(scope.row.id)"></i>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="Edit Article" placement="top">
-                        <i class="el-icon-edit" @click="edit(scope.row.id)"></i>
-                    </el-tooltip>
                     <el-tooltip effect="dark" content="Delete" placement="top">
                         <i class="el-icon-delete" @click="remove(scope.row)"></i>
                     </el-tooltip>
@@ -30,87 +32,28 @@
 
         </el-table>
 
-        <el-pagination
-            background
-            :page-size="10"
-            :pager-count="5"
-            :total="total"
-            :current-page="page"
-            @current-change="load"
-            layout="prev, pager, next"
-        >
-        </el-pagination>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
     data() {
         return {
             data: [],
-            count: 10,
-            total: 0,
-            page: 1,
             loading: ''
         }
     },
     created(){
-        this.total = this.$data.articleQty
         this.load();
     },
-    mounted(){
-        document.querySelector('.content').style.overflow = 'hidden'
-    },
-    destroyed(){
-        document.querySelector('.content').style.overflow = 'auto'
-    },
-    computed: {
-        ...mapState(['$data'])
-    },
     methods: {
-        load(page){
-            /**
-             * vuex 存在当前页数据
-             */
-            const article = this.$store.state.article;
-            if(article[page]){
-                this.data = article[page];
-                return
-            }
-
+        async load(){
             this.loading = this.$loading({target: '.container'})
-
-            this.$http.get('/article', {
-                params: {page}
-            }).then(res => {
-                setTimeout(() => {
-                    const data = res.data.body;
-                    const item = ['data', 'total', 'page']
-
-                    item.map(i => this[i] = data[i])
-                    /**
-                     * 添加数据到vuex，请求优化
-                     */
-                    this.$store.commit('setCache', {
-                        type: 'article',
-                        page: page || 1,
-                        data: this.data,
-                        total: this.total
-                    })
-                    this.loading.close()
-                }, 500)
-            })
-        },
-        edit(id){
-            this.$router.push({
-                name: 'info',
-                query: { id: id }
-            })
-        },
-        // 新窗口打开文章
-        view(id){
-            window.open(`${window.location.origin}/${id}`)
+            const res = await this.$http.get('/subscribe');
+            setTimeout(() => {
+                this.data = res.data;
+                this.loading.close()
+            }, 500)
         },
         remove(item){
             this.$confirm('删除该文章, 是否继续?', '提示', {
@@ -118,14 +61,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.delete(`article/${item._id}`).then(res => {
+                this.$http.delete(`subscribe/${item._id}`).then(res => {
                     setTimeout(() => {
-                        this.$store.commit('resetCache', 'article')
                         this.load()
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
-                        })
+                        });
                         this.$infoUpdate() // 刷新状态
                     }, 1000)
                 })
@@ -141,10 +83,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.article{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+.phrase{
     .header{
         h1{
             border-left: 2px solid #0084ff;
@@ -162,17 +101,6 @@ export default {
             }
         }
     }
-    .article-list{
-        width: 100%;
-        thead tr{
-            height: 40px;
-        }
-        tbody{
-            tr{
-                height: 50px;
-            }
-        }
-    }
     i[class*=el-icon-]{
         cursor: pointer;
         margin: 2px;
@@ -187,10 +115,7 @@ export default {
             color: red;
         }
     }
-    /deep/ 
-        .el-table__body-wrapper{
-            height: calc(100% - 80px);
-            overflow: auto;
+    /deep/ .el-table__body-wrapper{
         &::-webkit-scrollbar-track {
             background: #fff;
         }
@@ -202,9 +127,8 @@ export default {
         }
     }
 }
-
 @media screen and (max-width: 600px) {
-    .article{
+    .phrase{
         padding: 0;
         box-shadow: none;
         .header h1{
@@ -212,15 +136,9 @@ export default {
             margin: 10px 0 20px;
         }
     }
-    /deep/ .el-table__body-wrapper{
-        height: calc(100vh - 212px) !important;
-    }
-    .el-table__header, .el-table__body{
+     /deep/ .el-table__header{
         width: 100% !important;
         display: block;
-        tbody{
-            display: block;
-        }
         thead{
             display: block;
             tr{
@@ -228,13 +146,18 @@ export default {
                 th{
                     padding: 6px 0;
                     &:nth-of-type(2){
-                        display: none;
+                        width: 100px;
+                        text-align: center;
                     }
                     &:nth-of-type(1){
                         flex: 1;
                     }
                     &:nth-of-type(3){
                         width: 68px;
+                        text-align: center;
+                    }
+                    &:nth-of-type(4){
+                        width: 48px;
                         text-align: right;
                     }
                     .cell{
@@ -243,27 +166,50 @@ export default {
                 } 
             }
         }
+    }
+    /deep/ .el-table__body{
+        width: 100% !important;
+        display: block;
+        tbody{
+            display: block;
+        }
         .el-table__row{
             display: flex;
             width: 100%;
             justify-content: space-between;
             td{
                 &:nth-of-type(2){
-                    display: none;
+                    width: 100px;
+                    text-align: center;
                 }
                 &:nth-of-type(1){
                     flex: 1;
                 }
                 &:nth-of-type(3){
                     width: 68px;
+                    text-align: center;
+                }
+                &:nth-of-type(4){
+                    width: 48px;
                     text-align: right;
                 }
                 div{
                     padding: 0;
                 }
             }
+            .el-button{
+                display: none;
+            } 
+            .el-icon-edit, .el-icon-delete{
+                display: inline-block;
+                margin: 4px;
+                color: #0084ff;
+                font-size: 16px;
+                &.el-icon-delete{
+                    color: red;
+                }
+            }
         } 
     }
-    
 }
 </style>

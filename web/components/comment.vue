@@ -267,6 +267,7 @@ export default {
                 url: window.location.href,
                 type: this.isReply ? 1 : 2,
                 data: Object.assign({}, this.replyObj, this.form),
+                is_email: this.$store.state.data.email_comment
             }
             
             this.$axios.post('comment', formData)

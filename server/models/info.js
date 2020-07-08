@@ -3,19 +3,10 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
     name: String,           // 管理员昵称
     avatar: String,         // 管理员头像
-    comment_mark: String,   // 管理员标识
     address: String,        // 网站地址
     web_name: String,       // 网站名
     web_describe: String,   // 网站描述
     web_seo: String,        // 网站关键词
-
-    email: String,          // 邮箱
-    email_name: String,     // 邮箱名
-    email_pass: String,     // 邮箱pass
-    email_message: {        // 邮件通知
-        type: Boolean,
-        default: false
-    }, 
 
     upload_type: String,    // 文件上传方式
     upload_oss: {           // 阿里云OSS
@@ -27,10 +18,21 @@ const schema = new mongoose.Schema({
         domain: String
     },
 
+    email: {
+        mode: String,
+        name: String,
+        mark: String,
+        pass: String,
+        address: String,
+        comment: Boolean,
+        subscribe: Boolean
+    },
+
     bg: {
         bg_mood: String,
         bg_about: String,
         bg_letter: String,
+        bg_subscribe: String,
     },
     
     cover: {                // 首屏效果
