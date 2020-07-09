@@ -149,7 +149,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ header{
+.container /deep/ header{
     background: rgba(255, 255, 255, 0.13);
     border-bottom: 1px solid rgba(246, 247, 248, 0.07);
     .icon{
