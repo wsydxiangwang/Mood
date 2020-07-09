@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
  * @param {Number} type 1=>订阅验证 2=>订阅通知 3=>评论通知
  * @param {Object} data 基本信息
  * @param {Object} email 邮箱和网站信息
+ * 
+ * 扩展只需添加mode对应值,并且在setting添加对应值
  */
 function email(type, data, email){    
     const mode = {

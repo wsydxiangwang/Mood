@@ -76,6 +76,11 @@ export default {
                     path: '/myself',
                 },
                 {
+                    icon: 'el-icon-sunrise-1',
+                    title: 'Subscribe',
+                    path: '/subscribe',
+                },
+                {
                     icon: 'el-icon-sunset',
                     title: 'Setting',
                     path: '/setting',

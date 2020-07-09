@@ -76,6 +76,11 @@ export default {
 			return this.$store.state.data
 		}
     },
+    head () {
+        return {
+            title: `Subscribe | ${this.info.web_name}`
+        }
+    },
     mounted(){
         // 背景音乐
         if(this.info.bg.bg_subscribe){
@@ -153,6 +158,17 @@ export default {
             &.logo{
                 color: #fff
             }
+        }
+        .logo-img img{
+            background: url(/image/logo/logo3.png) no-repeat center;
+            filter: drop-shadow(rgb(255, 255, 255) 40px 0px);
+            position: relative;
+            left: -40px;
+            border-right: 0px solid transparent;
+            height: 30px;
+            width: 30px;
+            background-size: cover;
+            overflow: hidden;
         }
     }
 }
