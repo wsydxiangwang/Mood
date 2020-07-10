@@ -18,28 +18,22 @@ module.exports = (app, plugin, model) => {
     // Delete
     router.delete('/comment', async (req, res) => {
         const id = req.body.id;
-
-        // 删除评论 未读-1
-        const result = await Promise.all([
-            Comment.deleteOne({id}),
-            Counter.findOneAndUpdate({
-                name: 'comment_read'
-            }, {
-                $inc: { 'count' : -1 }
+        const total = [
+            new Promise((resolve, reject) => {
+                Comment.deleteOne({id}, (err, doc) => doc ? resolve(doc) : reject())
             })
-        ])
-
-        // 删除所有子评论 & 未读数量
+        ]
+        // 删除所有子评论
         if(!req.body.parent_id){
-            const a = await Comment.deleteMany({parent_id:id})
-            await Counter.findOneAndUpdate({
-                name: 'comment_read'
-            }, {
-                $inc: { 'count' : -(a.n) }
-            })
+            total.push(new Promise((resolve, reject) => {
+                Comment.deleteMany({parent_id: id}, (err, doc) => doc ? resolve(doc) : reject())
+            }))
         }
-
-        res.send(requestResult(result[0]))
+        Promise.all(total).then(resolve => {
+            res.send(requestResult(resolve[0]))
+        }).catch(err => {
+            res.send(requestResult())
+        })
     })
 
     // Reply
@@ -74,10 +68,6 @@ module.exports = (app, plugin, model) => {
 
     // 一键已读
     router.post('/comment_read', async (req, res) => {
-        await Counter.findOneAndUpdate({
-            name: 'comment_read'
-        }, { 'count' : 0 })
-
         const comment = await Comment.updateMany({
             status: 1
         }, {

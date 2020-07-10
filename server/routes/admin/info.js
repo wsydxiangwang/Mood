@@ -12,19 +12,21 @@ module.exports = (app, plugin, model) => {
             Envelope.find().sort({time: -1}).limit(8),
             Article.countDocuments(),
             Comment.countDocuments(),
-            Counter.findOne({name: 'comment_read'}),
+            Comment.find({status: 1}).countDocuments()
         ])
-        
         result[2].forEach(item => item._doc['time'] = dateFormat(item.time) )
 
+        /**
+         * 个人信息
+         * 文章列表
+         * 短语列表
+         * 文章总数
+         * 评论总数量
+         * 评论未读数量
+         */
         const key = ['info', 'article', 'envelope', 'articleQty', 'commentQty', 'unread']
-
         const data = key.reduce((total, item, index) => {
-            if(item == 'unread'){
-                total[item] = result[index] ? result[index].count : 0
-            }else{
-                total[item] = result[index]
-            }
+            total[item] = result[index]
             return total
         }, {})
         

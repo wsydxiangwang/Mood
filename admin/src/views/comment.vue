@@ -104,9 +104,10 @@ export default {
             }).then(res => {
                 setTimeout(() => {
                     const data = res.data.body;
-                    const item = ['data', 'total', 'page']
 
-                    item.map(i => this[i] = data[i])
+                    // 当前页面数据
+                    ['data', 'total', 'page'].map(i => this[i] = data[i])
+
                     /**
                      * 添加数据到vuex，请求优化
                      */
@@ -128,19 +129,14 @@ export default {
         view(id){
             window.open(`${window.location.origin}/${id}`)
         },
-        remove(item){
-           
-            const message = item.parent_id ? '删除该评论, 是否继续?' : '当前为一级评论, 会连同子评论一块删除哦~'
+        remove(data){
+            const message = data.parent_id ? '删除该评论, 是否继续?' : '当前为一级评论, 会连同子评论一块删除哦~'
 
             this.$confirm(message, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                const data = {
-                    id: item.id,
-                    parent_id: item.parent_id
-                }
                 this.$http.delete(`/comment`, { data }).then(res => {
                     if(res.data.status === 1){
                         setTimeout(() => {
