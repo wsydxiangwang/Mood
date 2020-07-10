@@ -36,7 +36,6 @@ build/Release
 
 # Dependency directories
 node_modules/
-.nuxt/
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -63,11 +62,7 @@ typings/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
-# next.js build output
-.next
 
-# nuxt.js build output
-.nuxt
 
 # Nuxt generate
 /dist
