@@ -4,7 +4,7 @@ import ClientOnly from 'vue-client-only'
 import NoSsr from 'vue-no-ssr'
 import { createRouter } from './router.js'
 import NuxtChild from './components/nuxt-child.js'
-import NuxtError from '../layouts/error.vue'
+import NuxtError from '..\\layouts\\error.vue'
 import Nuxt from './components/nuxt.js'
 import App from './App.js'
 import { setContext, getLocation, getRouteData, normalizeError } from './utils'
@@ -12,11 +12,11 @@ import { createStore } from './store.js'
 
 /* Plugins */
 
-import nuxt_plugin_axios_abb52350 from 'nuxt_plugin_axios_abb52350' // Source: ./axios.js (mode: 'all')
-import nuxt_plugin_vuemavoneditor_e5e1de58 from 'nuxt_plugin_vuemavoneditor_e5e1de58' // Source: ../plugins/vue-mavon-editor (mode: 'all')
-import nuxt_plugin_common_47fd80b8 from 'nuxt_plugin_common_47fd80b8' // Source: ../plugins/common.js (mode: 'all')
-import nuxt_plugin_component_9f70f064 from 'nuxt_plugin_component_9f70f064' // Source: ../plugins/component.js (mode: 'all')
-import nuxt_plugin_router_aacea2cc from 'nuxt_plugin_router_aacea2cc' // Source: ../plugins/router.js (mode: 'client')
+import nuxt_plugin_axios_eabc5044 from 'nuxt_plugin_axios_eabc5044' // Source: .\\axios.js (mode: 'all')
+import nuxt_plugin_vuemavoneditor_e5e1de58 from 'nuxt_plugin_vuemavoneditor_e5e1de58' // Source: ..\\plugins\\vue-mavon-editor (mode: 'all')
+import nuxt_plugin_common_47fd80b8 from 'nuxt_plugin_common_47fd80b8' // Source: ..\\plugins\\common.js (mode: 'all')
+import nuxt_plugin_component_9f70f064 from 'nuxt_plugin_component_9f70f064' // Source: ..\\plugins\\component.js (mode: 'all')
+import nuxt_plugin_router_aacea2cc from 'nuxt_plugin_router_aacea2cc' // Source: ..\\plugins\\router.js (mode: 'client')
 
 // Component: <ClientOnly>
 Vue.component(ClientOnly.name, ClientOnly)
@@ -173,8 +173,8 @@ async function createApp (ssrContext) {
 
   // Plugin execution
 
-  if (typeof nuxt_plugin_axios_abb52350 === 'function') {
-    await nuxt_plugin_axios_abb52350(app.context, inject)
+  if (typeof nuxt_plugin_axios_eabc5044 === 'function') {
+    await nuxt_plugin_axios_eabc5044(app.context, inject)
   }
 
   if (typeof nuxt_plugin_vuemavoneditor_e5e1de58 === 'function') {

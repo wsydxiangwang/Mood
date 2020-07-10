@@ -3,13 +3,13 @@ import Router from 'vue-router'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _74ef11c1 = () => interopDefault(import('../pages/about.vue' /* webpackChunkName: "pages/about" */))
-const _2643c7aa = () => interopDefault(import('../pages/article.vue' /* webpackChunkName: "pages/article" */))
-const _60330acc = () => interopDefault(import('../pages/envelope.vue' /* webpackChunkName: "pages/envelope" */))
-const _fe6ad2e0 = () => interopDefault(import('../pages/rain.vue' /* webpackChunkName: "pages/rain" */))
-const _2e1236fe = () => interopDefault(import('../pages/subscribe.vue' /* webpackChunkName: "pages/subscribe" */))
-const _d6b226f4 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
-const _0fc05c2e = () => interopDefault(import('../pages/_articleId.vue' /* webpackChunkName: "pages/_articleId" */))
+const _1fc95799 = () => interopDefault(import('..\\pages\\about.vue' /* webpackChunkName: "pages_about" */))
+const _f8b810fc = () => interopDefault(import('..\\pages\\article.vue' /* webpackChunkName: "pages_article" */))
+const _a24e5418 = () => interopDefault(import('..\\pages\\envelope.vue' /* webpackChunkName: "pages_envelope" */))
+const _3db79490 = () => interopDefault(import('..\\pages\\rain.vue' /* webpackChunkName: "pages_rain" */))
+const _97b45e54 = () => interopDefault(import('..\\pages\\subscribe.vue' /* webpackChunkName: "pages_subscribe" */))
+const _3f81325e = () => interopDefault(import('..\\pages\\index.vue' /* webpackChunkName: "pages_index" */))
+const _4c1ffd56 = () => interopDefault(import('..\\pages\\_articleId.vue' /* webpackChunkName: "pages__articleId" */))
 
 // TODO: remove in Nuxt 3
 const emptyFn = () => {}
@@ -29,31 +29,31 @@ export const routerOptions = {
 
   routes: [{
     path: "/about",
-    component: _74ef11c1,
+    component: _1fc95799,
     name: "about"
   }, {
     path: "/article",
-    component: _2643c7aa,
+    component: _f8b810fc,
     name: "article"
   }, {
     path: "/envelope",
-    component: _60330acc,
+    component: _a24e5418,
     name: "envelope"
   }, {
     path: "/rain",
-    component: _fe6ad2e0,
+    component: _3db79490,
     name: "rain"
   }, {
     path: "/subscribe",
-    component: _2e1236fe,
+    component: _97b45e54,
     name: "subscribe"
   }, {
     path: "/",
-    component: _d6b226f4,
+    component: _3f81325e,
     name: "index"
   }, {
     path: "/:articleId",
-    component: _0fc05c2e,
+    component: _4c1ffd56,
     name: "articleId"
   }],
 
