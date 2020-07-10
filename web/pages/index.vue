@@ -611,6 +611,9 @@ export default {
 		width: 100%;
 		height: 100%;
 		z-index: 9999;
+		display: flex;
+		justify-content: center;
+		align-items: center;	
 		background: rgba(255, 255, 255, 0.96);
 		transition: top 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
 		.world{
@@ -628,7 +631,7 @@ export default {
 			width: 80%;
 			display: block;
 			text-align: center;
-			margin: 260px auto 0;
+			margin-top: -120px;
 			li{
 				margin: 0 20px 20px;
 				list-style: none;
@@ -763,7 +766,6 @@ export default {
 		}
 		.nav{
 			.nav-list{
-				margin-top: 200px;
 				li{
 					// margin: 0 12px;
 					a{
