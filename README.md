@@ -28,6 +28,7 @@ npm run serve  ## admin & server
 ```
 
 (一开始服务端控制台如报错，均为`mongodb`运行没成功，不熟悉的话还是挺坑的，请大家了解一下吧！！)
+
 (Mac用户可参考一下这篇`mongodb`的运行，[具体应该是这样的，我忘了](https://wsydxiangwang.github.io/%E5%90%8E%E7%AB%AF/mongo/1.html#mac))
 
 
