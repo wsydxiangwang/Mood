@@ -241,12 +241,23 @@ apt install nginx -y
 
 #### 上传项目文件
 
+- 先在本地打包好项目
+
+```
+## 进入`web`和`admin`目录，分别运行以下两个命令
+
+npm install
+npm run build
+```
+
+- 然后上传到服务器
+
 连接服务器的上传工具有：xftp，xshell，FileZilla，为了区分环境, 我们在服务器根目录新建文件夹`data`，然后如下：
 
-- 前台项目：在`data`新建文件夹`web`，然后上传本地`web`里面的（`.nuxt`, `static`, `package.json`, `nuxt.config.js`）四个文件即可
+- 前台项目：在`data`目录新建文件夹`web`，然后上传本地`web`里面的（`.nuxt`, `static`, `package.json`, `nuxt.config.js`）四个文件即可
 - 后台及服务：直接把本地`server`上传到`data`就行了，因为`admin`后台项目是打包到`server`文件夹的, 所以在这里不用上传
 
-接着分别进入`web`和`server`目录, 各自`npm install`一下, 安装成功后, 测试一下是否正常
+接着分别进入服务器的`web`和`server`目录, 各自`npm install`一下, 安装成功后, 测试一下是否正常
 
 - 在`server`目录, 执行命令`node index.js`, 打印成功则你懂的, 按`crtl+c`退出程序
 - 在`web`目录, 执行命令`npm run start`, 打印成功，可以进入下一步
