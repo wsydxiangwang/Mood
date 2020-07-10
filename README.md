@@ -209,10 +209,11 @@ npm run serve  ## admin & server
 
 ### 项目部署
 
+（很多网友向我推荐真香系列`docker`部署，我最近开始学一下，如果ok的话，再来改成`docker`部署，或有哪位同学愿意教我的😂）
 
 你要有一个属于自己的服务器，或者免费的平台，反正能上传程序的都行。
 
-我用的是阿里云的服务器，镜像:`Ubuntu 18.04`
+我用的是阿里云的服务器，镜像:`Ubuntu 18.04`，意义不大，仅做参考
 
 #### 服务器安装程序
 
@@ -232,13 +233,18 @@ apt install pm2 -g
 apt install nginx -y
 ```
 
-你要接触过服务器的话，不用我教，你也有办法安装，否则还是挺麻烦的，可以看下面这个视频
+你要接触过服务器的话，不用我教，你也有办法安装，否则还是挺麻烦的
+
+安装的版本如果过低的话，大家看一下下面这个视频进行升级，我也是跟着入门学习来的
 
 具体安装方法，可在b站上学习一下，或则直接找我也可，如果我有时间的话 [https://www.bilibili.com/video/BV18t411L7Lg?p=4](https://www.bilibili.com/video/BV18t411L7Lg?p=4) (跳过git这一节，up主收益了记得找我😅)
 
 #### 上传项目文件
 
-白哥推荐（FileZilla）此工具，为了区分环境, 我们在根目录新建文件夹`data`, 并上传`web`和`server`两个文件夹, 因为`admin`后台项目是打包到`server`文件夹的, 所以在这里不用上传
+连接服务器的上传工具有：xftp，xshell，FileZilla，为了区分环境, 我们在服务器根目录新建文件夹`data`，然后如下：
+
+- 前台项目：在`data`新建文件夹`web`，然后上传本地`web`里面的（`.nuxt`, `static`, `package.json`, `nuxt.config.js`）四个文件即可
+- 后台及服务：直接把本地`server`上传到`data`就行了，因为`admin`后台项目是打包到`server`文件夹的, 所以在这里不用上传
 
 接着分别进入`web`和`server`目录, 各自`npm install`一下, 安装成功后, 测试一下是否正常
 
@@ -252,8 +258,13 @@ apt install nginx -y
 以上测试都ok的话，我们可以使用`pm2`来运行程序，进入指定的目录，使用指定的命令行
 
 ```
-pm2 start index.js --name="server   
-pm2 start npm --name "web" -- run start
+## 双引号为运行的名字，为了区分前台和服务
+
+## 后台及服务的命令
+pm2 start index.js --name="server"   	 
+
+## 前台web的执行命令
+pm2 start npm --name "web" -- run start  
 ```
 
 <br>
@@ -277,7 +288,7 @@ server {
     ssl on;
 
     ##
-    # 开启https证书地址
+    # 开启https证书地址（可选）
     ##
     ssl_certificate /etc/nginx/xxxx.com.pem;
     ssl_certificate_key /etc/nginx/xxxxx.com.key;
@@ -302,25 +313,40 @@ server {
     
     server_name xxx.com;  // 你的域名地址
     
-    // 通过rewrite方式把所有http请求也转成了https请求
+    // 通过rewrite方式把所有http请求也转成了https请求 （开启https，需要这一步）
     rewrite ^(.*)$ https://$server_name$1 permanent;
     
-	  # reverse proxy
-	  location / {
-		    proxy_pass http://127.0.0.1:8000;
-	  }
+    # reverse proxy
+    location / {
+	proxy_pass http://127.0.0.1:8000;
+    }
 
-	  location /admin {
-		    proxy_pass http://127.0.0.1:3000;
-	  }
+    location /admin {
+	proxy_pass http://127.0.0.1:3000;
+    }
 }
+```
+
+先开启`nginx`，然后再往下走
+
+```
+# Nginx一些操作的命令
+$ start nginx      // 开启nginx
+$ nginx -t         // 检查nginx配置文件
+$ nginx -V         // 查看版本信息
+$ nginx -s reload  // 重新加载配置
+$ nginx -s quit    // 关闭nginx
+$ nginx -s stop    // 停止nginx
+$ service nginx stop      // 停止
+$ service nginx start     // 启动
+$ service nginx restart   // 重启
 ```
 
 Nginx上传文件大小限制的问题, 所以需要加入以下字段, 方能正常上传
 
-1. 打开nginx配置文件`nginx.conf`, 路径一般是：`/etc/nginx/nginx.conf`。
-2. 在http{}段中加入`client_max_body_size 20m`; 20m为允许最大上传的大小。
-3. 保存后重启nginx，问题解决。(重启命令: `nginx -s reload`)
+1. 打开`nginx`配置文件`nginx.conf`, 路径一般是：`/etc/nginx/nginx.conf`。
+2. 在`http{}`段中加入`client_max_body_size 20m`; 20m为允许最大上传的大小。
+3. 保存后，执行`nginx -s reload`，重新加载配置，ok。
 
 以上填写的域名，需要解析到服务器，是否开启https，看个人喜好吧~~
 
@@ -356,7 +382,7 @@ Nginx上传文件大小限制的问题, 所以需要加入以下字段, 方能�
 
 ### 最后
 
-分享自己的一个全栈简单项目给大家，感兴趣的可以学习一下，有bug/优化可以提一下。
+分享自己的一个全栈简单项目给大家，感兴趣的可以学习一下，有什么**建议/bug/优化可以提一下**，感谢！！。
 
 最最最重要的一点，求个star🥺
 
