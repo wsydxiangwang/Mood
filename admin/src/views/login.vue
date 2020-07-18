@@ -47,8 +47,8 @@ export default {
         return {
             loginLoading: false,
             data: {
-                username: '李白',
-                password: 'wsydxiangwang',
+                username: '',
+                password: '',
             },
             create: {},
             isShow: false
