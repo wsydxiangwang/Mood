@@ -82,7 +82,7 @@ module.exports = (app, plugin, model) => {
     router.post('/article/:id', async (req, res) => {
         const data = await Article.findByIdAndUpdate(
             req.params.id, 
-            req.body, 
+            req.body.data, 
             (err, doc) => {
                 return doc
             })

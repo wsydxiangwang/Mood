@@ -39,8 +39,8 @@ export default {
             }
 
             const data = {
-                name: this.$data.info.email_name,
-                email: this.$data.info.email,
+                name: this.$data.info.email.name,
+                email: this.$data.info.email.address,
                 content: this.content,
                 time: this.dateFormat(),
                 image: 1,

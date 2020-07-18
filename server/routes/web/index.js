@@ -40,9 +40,7 @@ module.exports = (app, plugin, model) => {
             Article.find({hide:false}).sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
         ])
 
-        result[1].forEach(item => {
-            item._doc['time'] = dateFormat(item.time)
-        })
+        result[1].forEach(item => item._doc['time'] = dateFormat(item.time))
 
         // 列表页 分组
         if(req.query.from){ 
@@ -93,6 +91,7 @@ module.exports = (app, plugin, model) => {
         const id = Number(req.params.id)
         const result = await Comment.find({topic_id: id})
 
+        // 一级评论和子级评论格式转化
         const data = result.reduce((total, item, index, arr) => {    
             item._doc['time'] = dateFormat(item.time)
             if(item.type === 1){
@@ -127,7 +126,7 @@ module.exports = (app, plugin, model) => {
             req.body.data.id = commentCount.count;
         }else{
             /**
-             * 第一次发表文章
+             * 第一次发表评论
              * 创建自增id字段
              */
             const data = {
@@ -148,18 +147,6 @@ module.exports = (app, plugin, model) => {
         result._doc['time'] = dateFormat(result.time)
 
         res.send(requestResult(result))
-
-        /**
-         * 未读+1
-         */
-        const total = await Counter.findOneAndUpdate({
-            name: 'comment_read'
-        }, {
-            $inc: { 'count' : 1 }
-        })
-        if(!total){
-            Counter.create({name: 'comment_read', count: 1})
-        }
 
         /**
          * 发送邮件通知
