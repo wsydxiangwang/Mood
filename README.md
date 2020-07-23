@@ -11,6 +11,24 @@
 在线卑微，求个star🥺
 
 
+### 项目部署
+
+1. 在服务器目录，创建`data`文件夹作为项目目录
+
+2. 上传github拉取的`web` `server` `config` 三个文件夹和 `docker-compose.yml` 一个文件。
+
+3. 打开服务器终端，安装`docker`（安装教程参考：）
+
+4. 安装成功后，进入刚才创建的`data`目录，运行`docker-compose up -d`
+
+ok， 搞定， 就是这么简单，docker牛逼
+
+比如你的域名为：`http://aa.com`，那么后台则为：`http://aa.com/admin`
+
+到这里就没问题了，直接先进入后台，设置基本信息，ok完美，赶紧回家吃个饭庆祝庆祝~~
+
+<br>
+
 ## 本地开发
 
 1. 首先，需要在电脑安装数据库`mongodb`，并且运行`mongodb`服务。
@@ -206,23 +224,7 @@ npm run serve  ## admin & server
 
 <br>
 
-### 项目部署
 
-1. 在服务器目录，创建`data`文件夹作为项目目录
-
-2. 上传github拉取的`web` `server` `config` 三个文件夹和 `docker-compose.yml` 一个文件。
-
-3. 打开服务器终端，安装`docker`（安装教程参考：）
-
-4. 安装成功后，进入刚才创建的`data`目录，运行`docker-compose up -d`
-
-ok， 搞定， 就是这么简单，docker牛逼
-
-比如你的域名为：`http://aa.com`，那么后台则为：`http://aa.com/admin`
-
-到这里就没问题了，直接先进入后台，设置基本信息，ok完美，赶紧回家吃个饭庆祝庆祝~~
-
-<br>
 
 ### 闲言细语
 
