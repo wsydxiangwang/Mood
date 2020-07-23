@@ -21,7 +21,7 @@ module.exports = {
     port: 8000
   },
   env: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3000/web/api',
+    baseUrl: process.env.BASE_URL || 'http://server:3000/web/api',
   },
   /*
   ** Nuxt.js modules
@@ -41,14 +41,14 @@ module.exports = {
   },
   proxy: {
     '/api': {
-      target: process.env.BASE_URL || 'http://localhost:3000/web/api',
+      target: process.env.BASE_URL || 'http://server:3000/web/api',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '/'
       },
     },
     '/uploads': {
-      target: 'http://localhost:3000/',
+      target: 'http://server:3000/',
       changeOrigin: true,
     },
   }, 

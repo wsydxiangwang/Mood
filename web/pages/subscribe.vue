@@ -93,7 +93,7 @@ export default {
         // 是否开启订阅通知功能
         if(context.store.state.data.email_subscribe){
             const data = context.query
-            if(Object.keys(data).length > 0){
+            if(Object.keys(data).length > 1){
                 const result = await context.$axios.post('subscribe_result', data)
                 return {status: result.data.status}
             } else {
