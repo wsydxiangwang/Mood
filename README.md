@@ -10,30 +10,39 @@
 
 在线卑微，求个star🥺
 
+- 项目部署
+- 本地开发
+- 前台页面
+- 后台管理
+- 结语（肺腑之言，请一定要看）
 
 ### 项目部署
 
 1. 在服务器目录，创建`data`文件夹作为项目目录
 
-2. 上传github拉取的`web` `server` `config` 三个文件夹和 `docker-compose.yml` 一个文件。
+2. 上传github拉取的`web` `server` `config` 三个文件夹和 `docker-compose.yml` 一个文件，一共4个到`data`文件夹。
 
-3. 打开服务器终端，安装`docker`（安装教程参考：）
+3. 打开服务器终端，安装`docker`（安装教程参考：https://docs.docker.com/engine/install/）根据系统的类型一步一步来~~
 
 4. 安装成功后，进入刚才创建的`data`目录，运行`docker-compose up -d`
 
+5. 运行`docker-compose ps` or `docker ps -a` 看看是否正常运行，完美~~
+
 ok， 搞定， 就是这么简单，docker牛逼
 
-比如你的域名为：`http://aa.com`，那么后台则为：`http://aa.com/admin`
+前台网站：`http://aa.com`，后台则为：`http://aa.com/admin`，到这里就没问题了~~
 
-到这里就没问题了，直接先进入后台，设置基本信息，ok完美，赶紧回家吃个饭庆祝庆祝~~
+然后划重点：**先进入后台，设置基本信息**，前台才能正常访问，否则报错，ok完美，赶紧回家吃个饭庆祝庆祝~~
+
+**一句话搞定部署，docker真香（爆破音）**
 
 <br>
 
-## 本地开发
+### 本地开发
 
 1. 首先，需要在电脑安装数据库`mongodb`，并且运行`mongodb`服务。
 
-2. 项目的启动，进入不同的文件夹，执行以下命令：
+2. 项目的启动
 
 ```
 npm install    ## 每个目录必须
@@ -43,16 +52,17 @@ npm run dev    ## web
 npm run serve  ## admin & server
 ```
 
-(一开始服务端控制台如报错，均为`mongodb`运行没成功，不熟悉的话还是挺坑的，请大家了解一下吧！！)
+`localhost:27017`，可查看`mongodb`是否运行
+
+(一开始服务端控制台如报错，链接超时等等，均为`mongodb`运行没成功，不熟悉的话还是挺坑的，请大家了解一下吧！！)
 
 (Mac用户可参考一下这篇`mongodb`的运行，[具体应该是这样的，我忘了](https://wsydxiangwang.github.io/%E5%90%8E%E7%AB%AF/mongo/1.html#mac))
-
 
 3. 开启之后，需要先进入管理后台，**填写首屏的信息**，才能正常访问前台，否则前台就会报错。（额...这里偷懒了没做处理，也没必要处理🧐）
 
 4. 到这里就ok了，如果有建议/优化/bug的，可以随时`Issues` or `邮件`我，感谢支持！！
 
-（额... 代码解说就没必要了吧~都看得懂😂）
+（代码解说就没必要了吧~都看得懂😂）
 
 <br>
 
@@ -67,8 +77,9 @@ npm run serve  ## admin & server
 - 后台页面
   - vue-cli、element-ui
 - 后端
-  - Node.js、MongoDB、Nginx、PM2
+  - Node.js、MongoDB、docker
 - 前后台：已适配PC和Mobile
+  - 最近发现了有些手机浏览器不兼容的情况，我就一部小米，不好测试，所以请见谅..（pc模拟器无敌）..
 
 <br>
 
