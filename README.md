@@ -1,5 +1,3 @@
-(正在优化更简单的部署方式，docker，还没上文档，请稍等)
-
 ## Hello，大家好，我是李白～～
 
 这是一个入门全栈之路的小项目，从设计、前端、后端，一路狂飙的学习，开始担心发量了。
@@ -12,12 +10,41 @@
 
 在线卑微，求个star🥺
 
+- 项目部署
+- 本地开发
+- 前台页面
+- 后台管理
+- 结语（肺腑之言，请一定要看）
 
-## 本地开发
+### 项目部署
+
+按照这个教程，你不懂代码，也能拥有属于自己的一个网站系统，后台设置都已完善，覆盖了基本的发帖功能！！
+
+1. 在服务器目录，创建`data`文件夹作为项目目录
+
+2. 上传github拉取的`web` `server` `config` 三个文件夹和 `docker-compose.yml` 一个文件，一共4个到`data`文件夹。
+
+3. 打开服务器终端，安装`docker`（安装教程参考：https://docs.docker.com/engine/install/）根据系统的类型一步一步来~~
+
+4. 安装成功后，进入刚才创建的`data`目录，运行`docker-compose up -d`
+
+5. 运行`docker-compose ps` or `docker ps -a` 看看是否正常运行，完美~~
+
+ok， 搞定， 就是这么简单，docker牛逼
+
+前台网站：`http://aa.com`，后台则为：`http://aa.com/admin`，到这里就没问题了~~
+
+然后划重点：**先进入后台，设置基本信息**，前台才能正常访问，否则报错，ok完美，赶紧回家吃个饭庆祝庆祝~~
+
+**一句话搞定部署，docker真香（爆破音）**
+
+<br>
+
+### 本地开发
 
 1. 首先，需要在电脑安装数据库`mongodb`，并且运行`mongodb`服务。
 
-2. 项目的启动，进入不同的文件夹，执行以下命令：
+2. 项目的启动
 
 ```
 npm install    ## 每个目录必须
@@ -27,16 +54,17 @@ npm run dev    ## web
 npm run serve  ## admin & server
 ```
 
-(一开始服务端控制台如报错，均为`mongodb`运行没成功，不熟悉的话还是挺坑的，请大家了解一下吧！！)
+`localhost:27017`，可查看`mongodb`是否运行
+
+(一开始服务端控制台如报错，链接超时等等，均为`mongodb`运行没成功，不熟悉的话还是挺坑的，请大家了解一下吧！！)
 
 (Mac用户可参考一下这篇`mongodb`的运行，[具体应该是这样的，我忘了](https://wsydxiangwang.github.io/%E5%90%8E%E7%AB%AF/mongo/1.html#mac))
-
 
 3. 开启之后，需要先进入管理后台，**填写首屏的信息**，才能正常访问前台，否则前台就会报错。（额...这里偷懒了没做处理，也没必要处理🧐）
 
 4. 到这里就ok了，如果有建议/优化/bug的，可以随时`Issues` or `邮件`我，感谢支持！！
 
-（额... 代码解说就没必要了吧~都看得懂😂）
+（代码解说就没必要了吧~都看得懂😂）
 
 <br>
 
@@ -51,8 +79,9 @@ npm run serve  ## admin & server
 - 后台页面
   - vue-cli、element-ui
 - 后端
-  - Node.js、MongoDB、Nginx、PM2
+  - Node.js、MongoDB、docker
 - 前后台：已适配PC和Mobile
+  - 最近发现了有些手机浏览器不兼容的情况，我就一部小米，不好测试，所以请见谅..（pc模拟器无敌）..
 
 <br>
 
@@ -176,10 +205,11 @@ npm run serve  ## admin & server
 - 上传文件：上传图片和音乐，可指定上传位置，默认为服务器（可选阿里云OSS）
 - 邮件类型：目前仅支持QQ、163邮箱（其他需要的邮箱可自行填充）
 - 评论功能：昵称、邮箱、管理员标识（前台页面突出管理员的标识）
-- 评论通知：发布评论时，发送邮件通知
-- 订阅通知：发布文章时，自动发送邮件通知已订阅的邮箱
+- 评论通知：发布评论时，发送邮件通知被回复者
+- 订阅通知：发布文章时，群发邮件通知已订阅的邮箱
 - PASS码：开启通知功能，需要填写此码，具体在邮箱设置（开启SMTP服务器）可获得，需跟填写的邮箱一致
-- 修改密码：忘了你自己看着办吧~~
+- 修改密码：需要原密码，忘了你自己看着办吧~~ 
+（小窍门：浏览器已保存的账号密码，均可查看F12）
 
 （基础信息，务必填写完整，以免出现无知的bug，解决bug找我一个十块钱，不讲价，除非给我介绍个女朋友🥺）
 
@@ -193,7 +223,7 @@ npm run serve  ## admin & server
 
 #### 前台页面LOGO
 
-- 找到目录，替换里面的图片（需4张）（/web/static/image/logo/）
+- 找到目录，替换里面的图片（需4张，可参考原有的图片）（/web/static/image/logo/）
 - 首页logo两张：456*200（一白一黑透明）
 - 子页面的logo：200*200
 - 标签栏的ico图标：随意
@@ -208,165 +238,7 @@ npm run serve  ## admin & server
 
 <br>
 
-### 项目部署
 
-（很多网友向我推荐真香系列`docker`部署，我最近开始学一下，如果ok的话，再来改成`docker`部署，或有哪位同学愿意教我的😂）
-
-你要有一个属于自己的服务器，或者免费的平台，反正能上传程序的都行。
-
-我用的是阿里云的服务器，镜像:`Ubuntu 18.04`，意义不大，仅做参考
-
-#### 服务器安装程序
-
-首先, 需要使用命令行进入操作，安装以下程序：
-
-```
-nodejs   => 后端运行程序
-mongodb  => 数据库
-pm2      => 保持不间断运行程序
-nginx    => 域名指向代理转发
-
-## 安装命令为
-
-apt install nodejs
-apt install mongodb-server -y
-apt install pm2 -g
-apt install nginx -y
-```
-
-你要接触过服务器的话，不用我教，你也有办法安装，否则还是挺麻烦的
-
-安装的版本如果过低的话，大家看一下下面这个视频进行升级，我也是跟着入门学习来的
-
-具体安装方法，可在b站上学习一下，或则直接找我也可，如果我有时间的话 [https://www.bilibili.com/video/BV18t411L7Lg?p=4](https://www.bilibili.com/video/BV18t411L7Lg?p=4) (跳过git这一节，up主收益了记得找我😅)
-
-#### 上传项目文件
-
-- 先在本地打包好项目
-
-```
-## 进入`web`和`admin`目录，分别运行以下两个命令
-
-npm install
-npm run build
-```
-
-- 然后上传到服务器
-
-连接服务器的上传工具有：xftp，xshell，FileZilla，为了区分环境, 我们在服务器根目录新建文件夹`data`，然后如下：
-
-- 前台项目：在`data`目录新建文件夹`web`，然后上传本地`web`里面的（`.nuxt`, `static`, `package.json`, `nuxt.config.js`）四个文件即可
-- 后台及服务：直接把本地`server`上传到`data`就行了，因为`admin`后台项目是打包到`server`文件夹的, 所以在这里不用上传
-
-接着分别进入服务器的`web`和`server`目录, 各自`npm install`一下, 安装成功后, 测试一下是否正常
-
-- 在`server`目录, 执行命令`node index.js`, 打印成功则你懂的, 按`crtl+c`退出程序
-- 在`web`目录, 执行命令`npm run start`, 打印成功，可以进入下一步
-
-<br>
-
-#### 开启服务
-
-以上测试都ok的话，我们可以使用`pm2`来运行程序，进入指定的目录，使用指定的命令行
-
-```
-## 双引号为运行的名字，为了区分前台和服务
-
-## 后台及服务的命令
-pm2 start index.js --name="server"   	 
-
-## 前台web的执行命令
-pm2 start npm --name "web" -- run start  
-```
-
-<br>
-
-#### Nginx配置
-
-最后一步，想要网站域名正常访问的话，还得手动配置nginx, 具体也可以跟着视频的教学来，以下为必填的关键字段
-
-打开nginx配置文件`nginx.conf`, 路径一般是：`/etc/nginx/nginx.conf`。
-
-```
-server {
-    listen 443;
-
-    server_name xxx.com;  // 你的域名,,,,
-
-    ##
-    # SSL Settings
-    ##
-
-    ssl on;
-
-    ##
-    # 开启https证书地址（可选）
-    ##
-    ssl_certificate /etc/nginx/xxxx.com.pem;
-    ssl_certificate_key /etc/nginx/xxxxx.com.key;
-
-    ssl_session_timeout 5m;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_prefer_server_ciphers on;
-
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-    }
-
-    location /admin {
-        proxy_pass http://127.0.0.1:3000;
-    }
-}
-
-server {
-    listen 80;
-    listen [::]:80;
-    
-    server_name xxx.com;  // 你的域名地址
-    
-    // 通过rewrite方式把所有http请求也转成了https请求 （开启https，需要这一步）
-    rewrite ^(.*)$ https://$server_name$1 permanent;
-    
-    # reverse proxy
-    location / {
-	proxy_pass http://127.0.0.1:8000;
-    }
-
-    location /admin {
-	proxy_pass http://127.0.0.1:3000;
-    }
-}
-```
-
-先开启`nginx`，然后再往下走
-
-```
-# Nginx一些操作的命令
-$ start nginx      // 开启nginx
-$ nginx -t         // 检查nginx配置文件
-$ nginx -V         // 查看版本信息
-$ nginx -s reload  // 重新加载配置
-$ nginx -s quit    // 关闭nginx
-$ nginx -s stop    // 停止nginx
-$ service nginx stop      // 停止
-$ service nginx start     // 启动
-$ service nginx restart   // 重启
-```
-
-Nginx上传文件大小限制的问题, 所以需要加入以下字段, 方能正常上传
-
-1. 打开`nginx`配置文件`nginx.conf`, 路径一般是：`/etc/nginx/nginx.conf`。
-2. 在`http{}`段中加入`client_max_body_size 20m`; 20m为允许最大上传的大小。
-3. 保存后，执行`nginx -s reload`，重新加载配置，ok。
-
-以上填写的域名，需要解析到服务器，是否开启https，看个人喜好吧~~
-
-比如你的域名为：`http://aa.com`，那么后台则为：`http://aa.com/admin`
-
-到这里就没问题了，直接先进入后台，设置基本信息，ok完美，赶紧回家吃个饭庆祝庆祝~~
-
-<br>
 
 ### 闲言细语
 
