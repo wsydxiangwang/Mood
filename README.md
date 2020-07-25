@@ -204,7 +204,7 @@ npm run serve  ## admin & server
 ![](https://imgkr.cn-bj.ufileos.com/b6f8bc18-2151-4af0-ab16-9ad980b48f21.png)
 
 
-![](https://imgkr.cn-bj.ufileos.com/7ac4747b-21f8-4366-98a6-a6dc441728d8.png)
+![](https://user-gold-cdn.xitu.io/2020/7/1/1730b0cfcebf3114?imageslim)
 
 <br>
 
