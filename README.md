@@ -27,7 +27,7 @@
 > 
 > 3. 在服务器目录，创建`data`文件夹作为项目目录，并上传刚才拉取的`3个文件夹`和`1个文件`
 >
-> 4. 打开服务器终端，安装`docker`（安装教程参考：https://docs.docker.com/engine/install/ ）根据系统的类型一步一步来~~
+> 4. 打开服务器终端，安装`docker`（安装教程参考：https://docs.docker.com/engine/install/ ）
 > 
 > 5. 安装成功后，进入刚才创建的`data`目录，运行`docker-compose up -d`，进行部署
 >
