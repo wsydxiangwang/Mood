@@ -79,8 +79,6 @@ npm run serve  ## admin & server
 
 (Mac用户可参考一下这篇`mongodb`的运行，[具体应该是这样的，我忘了](https://wsydxiangwang.github.io/%E5%90%8E%E7%AB%AF/mongo/1.html#mac))
 
-（代码解说就没必要了吧~都看得懂😂）
-
 <br>
 
 ### 项目代码
@@ -98,7 +96,7 @@ npm run serve  ## admin & server
 - 前后台：已适配PC和Mobile
   - 发现了有些手机兼容异常的情况，我就一部小米，不好测试，所以请见谅（PC模拟器无敌）..
 
-（待定：介绍前后台实现的具体功能和代码逻辑）
+（待定：讲解前后台实现的具体功能和代码逻辑）
 
 <br>
 
