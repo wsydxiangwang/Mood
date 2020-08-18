@@ -4,6 +4,8 @@
 <div align="center">
     <img src="https://image.raindays.cn/image/github/nuxt.png">
     <img src="https://image.raindays.cn/image/github/vuecli.png">
+    <img src="https://image.raindays.cn/image/github/node.png">
+    <img src="https://image.raindays.cn/image/github/mongodb.png">
 </div>
 
 ## 🎃 陌生人，你好呀~~
