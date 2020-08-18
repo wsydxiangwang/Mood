@@ -8,6 +8,10 @@
     <img src="https://image.raindays.cn/image/github/mongodb.png">
 </div>
 
+<div align="center">
+    <img src="https://image.raindays.cn/image/github/mood.png" width="300px">
+</div>
+
 ## 🎃 陌生人，你好呀~~
 
 (欢迎提出建议和想法，感谢支持！！过段时间再来一点一点优化，有很多不足之处，还请见谅！！后面也会用React来重构一遍！！)s
