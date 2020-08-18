@@ -2,8 +2,8 @@
 
 
 
- <div align="center">![](https://image.raindays.cn/image/github/1.jpg)</div>
- 
+ <div align="center">![]()</div>
+ <div align=center><img style="max-width:300px" src="https://image.raindays.cn/image/github/1.jpg"/></div>
 
 # 🎃 陌生人，你好呀~~
 
