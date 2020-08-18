@@ -1,6 +1,6 @@
 # <div align="center">简洁博客系统</div>
 
- <div align=center><img style="width:300px" src="https://image.raindays.cn/image/github/1.jpg"/></div>
+ <div align=center><img width="300px" src="https://image.raindays.cn/image/github/1.jpg"/></div>
 
 # 🎃 陌生人，你好呀~~
 
