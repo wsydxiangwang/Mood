@@ -1,6 +1,10 @@
 # <div align="center">简易博客系统</div>
 
 
+<div align="center">
+    <img src="https://image.raindays.cn/image/github/nuxt.png">
+    <img src="https://image.raindays.cn/image/github/vuecli.png">
+</div>
 
 ## 🎃 陌生人，你好呀~~
 
