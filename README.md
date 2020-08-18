@@ -1,6 +1,6 @@
-# <div align="center">简洁博客系统</div>
+# <div align="center">简易博客系统</div>
 
- <div align=center><img width="300px" src="https://image.raindays.cn/image/github/1.jpg"/></div>
+
 
 ## 🎃 陌生人，你好呀~~
 
@@ -21,6 +21,8 @@
 - 前台页面
 - 后台管理
 - 闲言细语
+
+<br>
 
 ## ⚽️ 项目部署
 
