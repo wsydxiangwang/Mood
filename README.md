@@ -107,19 +107,19 @@ npm run serve  ## admin & server
 ## 🍔 项目代码
 
 - 页面设计
-  - 下三流设计师，均为绞尽脑汁的设计
+  - 三流设计师，均为绞尽脑汁的设计
   - 前台些许借鉴于**素锦**（开源项目）
 - 前台页面
-  - vue的服务端渲染框架Nuxt.js
+  - Vue 的服务端渲染框架 Nuxt.js
   - 样式均为绞尽脑汁的手写
 - 后台页面
-  - vue-cli、element-ui
+  - Vue-cli、Element-ui
 - 后端
-  - Node.js、MongoDB、docker
-- 前后台：已适配PC和Mobile
+  - Node.js、MongoDB、Docker
+- 前后台：已适配 PC 和 Mobile
   - 发现了有些手机兼容异常的情况，我就一部小米，不好测试，所以请见谅（PC模拟器无敌）..
 
-（待定：现在时间很奇妙，后面再讲解前后台实现的具体功能和代码逻辑，下面的只是个功能概述）
+- [项目代码讲解](https://github.com/wsydxiangwang/Mood/blob/master/Project%20Code.md)
 
 <br>
 
@@ -135,7 +135,7 @@ npm run serve  ## admin & server
 
 主要针对路人、游客、所有人开放的，无需注册账号、即可评论和查看。
 
-来看你的网站，是给你面子，评个论也是对你有意思。难不成还想我注册个账号，才让我评论和查看文章啊？？告辞（友好性满分🤓）
+来看你的网站是给你面子，评个论也是对你有意思。难不成还想我注册个账号，才让我评论和查看文章啊？？告辞（友好性满分🤓）
 
 ```
 # 首页
