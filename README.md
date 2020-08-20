@@ -33,8 +33,8 @@
 在线卑微，求个star🥺
 
 - 项目部署
-- 本地开发
 - 项目代码
+- 本地开发
 - 前台页面
 - 后台管理
 - 闲言细语
@@ -66,6 +66,25 @@ ok， 搞定， 就是这么简单，docker牛逼
 然后划重点：**先进入后台，设置基本信息**，前台才能正常访问，否则报错，ok完美，赶紧回家吃个饭庆祝庆祝~~
 
 **一句话搞定部署，docker真香（爆破音）**
+
+<br>
+
+## 🍔 项目代码
+
+- 页面设计
+  - 三流设计师，均为绞尽脑汁的设计
+  - 前台些许借鉴于**素锦**（开源项目）
+- 前台页面
+  - Vue 的服务端渲染框架 Nuxt.js
+  - 样式均为绞尽脑汁的手写
+- 后台页面
+  - Vue-cli、Element-ui
+- 后端
+  - Node.js、MongoDB、Docker
+- 前后台：已适配 PC 和 Mobile
+  - 发现了有些手机兼容异常的情况，我就一部小米，不好测试，所以请见谅（PC模拟器无敌）..
+
+- [项目代码讲解](https://github.com/wsydxiangwang/Mood/blob/master/Project%20Code.md)
 
 <br>
 
@@ -104,24 +123,6 @@ npm run serve  ## admin & server
 
 <br>
 
-## 🍔 项目代码
-
-- 页面设计
-  - 三流设计师，均为绞尽脑汁的设计
-  - 前台些许借鉴于**素锦**（开源项目）
-- 前台页面
-  - Vue 的服务端渲染框架 Nuxt.js
-  - 样式均为绞尽脑汁的手写
-- 后台页面
-  - Vue-cli、Element-ui
-- 后端
-  - Node.js、MongoDB、Docker
-- 前后台：已适配 PC 和 Mobile
-  - 发现了有些手机兼容异常的情况，我就一部小米，不好测试，所以请见谅（PC模拟器无敌）..
-
-- [项目代码讲解](https://github.com/wsydxiangwang/Mood/blob/master/Project%20Code.md)
-
-<br>
 
 ## 🍎 前台页面
 
