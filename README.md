@@ -84,7 +84,7 @@ ok， 搞定， 就是这么简单，docker牛逼
 - 前后台：已适配 PC 和 Mobile
   - 发现了有些手机兼容异常的情况，我就一部小米，不好测试，所以请见谅（PC模拟器无敌）..
 
-- [项目代码讲解](https://github.com/wsydxiangwang/Mood/blob/master/Project%20Code.md)
+- [项目代码讲解，点我 🤡](https://github.com/wsydxiangwang/Mood/blob/master/Project%20Code.md)
 
 <br>
 
