@@ -93,12 +93,13 @@ export default {
 			default: 160
 		},
 		// 图集
+		// 验证码图片，可自行替换
 		puzzleImgList: {
 			type: Array,
 			default: () => [
-				"https://image.yeyucm.cn/Myself-Resources/coverPictureOriginal.png",
-				"https://image.yeyucm.cn/Myself-Resources/coverPictureOriginal.png",
-				"https://image.yeyucm.cn/Myself-Resources/coverPictureOriginal.png"
+				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png",
+				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png",
+				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png"
 			]
 		},
 		// 滑块的大小
