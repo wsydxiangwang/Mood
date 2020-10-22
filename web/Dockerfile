@@ -8,6 +8,8 @@ WORKDIR /web
 
 RUN npm config set registry https://registry.npm.taobao.org
 
+RUN npm install --save nuxt@2.11.0
+
 RUN npm install
 
 RUN npm rebuild node-sass
