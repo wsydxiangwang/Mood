@@ -5,6 +5,52 @@ var common = {
     install(Vue, option){
         // 设置滚动条位置
         Vue.prototype.$setScroll = (dom, type) => {
+            const t = document.querySelector(dom).offsetTop;
+            const h = document.documentElement.clientHeight || document.body.clientHeight;
+            const target = t + (h / 2) + 300;
+
+            let beforeScroll = 0;
+
+            console.log(t, h, target)
+
+			this.timerScroll = setInterval(() => {
+                /**
+                 * 滚动条顶部距离
+                 * 浏览器视口高度
+                 * 文档的总高度
+                 */
+                let winObj = ['scrollTop', 'clientHeight', 'scrollHeight'];
+                let [scrollT, clientH, scrollH] = winObj.map(i => document.documentElement[i] || document.body[i] )
+
+				let speed = (target - scrollT) / 10;
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+				if(((scrollT + speed) >= target)){
+                    console.log(1)
+					clearInterval(this.timerScroll)
+					scrollT = document.body.scrollTop = document.documentElement.scrollTop = target;
+				}else{
+                    scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + speed;
+                    console.log(2)                    
+                    // 期间手动向上滚，则取消滚动
+                    if (scrollT <= beforeScroll) {
+                        console.log('over')
+                        clearInterval(this.timerScroll)
+                    }
+                }
+                
+                beforeScroll = scrollT
+
+				if(scrollT + clientH >= scrollH){
+                    console.log(3)
+					clearInterval(this.timerScroll)
+				}
+			}, 25)
+        }
+
+
+
+        Vue.prototype.$setScrolls = (dom, type) => {
             // 计算滚动距离
             const t = document.querySelector(dom).offsetTop;
             const h = document.documentElement.clientHeight || document.body.clientHeight;
@@ -107,7 +153,10 @@ var common = {
         })
 
         // 使用函数，切换路由，可清除监听事件
-        const watch = () => {
+        const watch = (e) => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+            // console.log(scrollTop)
             Vue.prototype.$throttle(() => listenList.map(i => lazyLoad(i)) , 50)()
         }
 
