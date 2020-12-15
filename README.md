@@ -12,7 +12,7 @@
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
-持续更新中...
+持续更新中..
 
 ## 🎃 陌生人，你好呀~~
 
