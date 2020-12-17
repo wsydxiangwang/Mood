@@ -236,7 +236,7 @@ export default {
                 }
             }
 
-            // Puzzle Verification
+            // Puzzle Verification style
             ['header', 'section', '.comment-section'].map(item => {
                 document.querySelector(item).classList.add('verify')
             })
@@ -244,11 +244,23 @@ export default {
         },
         // Submit Comment
         submit(){
+
+            // Comment default avatar
+            let commentImage = localStorage.getItem('comment-image')
+            let image = 0
+
+            if (commentImage) {
+                image = +commentImage
+            } else {
+                image = Math.floor(Math.random() * 10 + 1)
+                localStorage.setItem('comment-image', image)
+            }
+
             this.form = {
+                image,
                 name: this.form.name.trim(),
                 time: this.dateFormat(),
                 email: this.form.email.trim(),
-                image: Math.floor(Math.random() * 10 + 1),
                 content: this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, ''),
                 topic_id: this.id,
             }
@@ -257,19 +269,27 @@ export default {
              * Administrator Mark
              */
             const data = this.$store.state.data
+            const email = this.$store.state.data.email_comment
+
             if(this.form.email == data.email && this.form.name == data.email_name){
                 this.form.image = 1;
                 this.form.admin = true;
             }
 
+            // Email notification information
             const formData = {
                 title: this.title,
                 url: window.location.href,
                 type: this.isReply ? 1 : 2,
                 data: Object.assign({}, this.replyObj, this.form),
-                is_email: this.$store.state.data.email_comment
+                is_email: email
             }
             
+
+            console.log(formData)
+
+            return
+
             this.$axios.post('comment', formData)
                 .then(res => {
                     if(res.data.status === 1){

@@ -4,47 +4,43 @@ var common = {
 
     install(Vue, option){
         // 设置滚动条位置
-        Vue.prototype.$setScroll = (dom, type) => {
+        Vue.prototype.$setScroll = (dom) => {
+            const getWin = (type) => {
+                let list = type ? [type] : ['scrollTop', 'clientHeight', 'scrollHeight'];
+                let temp = list.map(i => {
+                    return document.documentElement[i] || document.body[i]
+                })
+                return type ? temp[0] : temp
+            }
+            // 根据DOM元素来计算滚动条距离
             const t = document.querySelector(dom).offsetTop;
-            const h = document.documentElement.clientHeight || document.body.clientHeight;
-            const target = t + (h / 2) + 300;
+            const h = getWin('clientHeight');
 
-            let beforeScroll = 0;
+            const target = getWin('scrollTop') + (h / 2) - 100
 
             console.log(t, h, target)
 
-			this.timerScroll = setInterval(() => {
-                /**
-                 * 滚动条顶部距离
-                 * 浏览器视口高度
-                 * 文档的总高度
-                 */
-                let winObj = ['scrollTop', 'clientHeight', 'scrollHeight'];
-                let [scrollT, clientH, scrollH] = winObj.map(i => document.documentElement[i] || document.body[i] )
+            let beforeScroll = 0;
 
-				let speed = (target - scrollT) / 10;
+			this.timerScroll = setInterval(() => {
+                let scrollT = getWin('scrollTop');
+                let speed = (target - scrollT) / 10;
+                
 				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
 
+                console.log(scrollT)
+                
 				if(((scrollT + speed) >= target)){
-                    console.log(1)
 					clearInterval(this.timerScroll)
 					scrollT = document.body.scrollTop = document.documentElement.scrollTop = target;
 				}else{
                     scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + speed;
-                    console.log(2)                    
-                    // 期间手动向上滚，则取消滚动
+                    // 手动向上滚，则取消滚动
                     if (scrollT <= beforeScroll) {
-                        console.log('over')
                         clearInterval(this.timerScroll)
                     }
                 }
-                
                 beforeScroll = scrollT
-
-				if(scrollT + clientH >= scrollH){
-                    console.log(3)
-					clearInterval(this.timerScroll)
-				}
 			}, 25)
         }
 
