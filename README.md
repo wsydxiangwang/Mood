@@ -1,18 +1,10 @@
 # <div align="center">简易博客系统</div>
 
-
-<div align="center">
-    <img src="https://image.raindays.cn/image/github/nuxt.png">
-    <img src="https://image.raindays.cn/image/github/vuecli.png">
-    <img src="https://image.raindays.cn/image/github/node.png">
-    <img src="https://image.raindays.cn/image/github/mongodb.png">
-</div>
-
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
-持续更新中...
+开始优化、持续更新中，暂不fork吧..
 
 ## 🎃 陌生人，你好呀~~
 
