@@ -1,6 +1,6 @@
 # <div align="center">简易博客系统</div>
 
-![](https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen) ![](https://img.shields.io/badge/@vue/cli-v4.3.1-brightgreen) ![](https://img.shields.io/badge/Node-v12.16.1-brightgreen) ![](https://img.shields.io/badge/MongDB-v4.2.4-brightgreen)
+![](https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen) ![](https://img.shields.io/badge/@vue/cli-v4.3.1-brightgreen) ![](https://img.shields.io/badge/vuex-v3.4.0-brightgreen) ![](https://img.shields.io/badge/ElementUI-v2.13.0-brightgreen) ![](https://img.shields.io/badge/Node-v12.16.1-brightgreen) ![](https://img.shields.io/badge/MongDB-v4.2.4-brightgreen)
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
