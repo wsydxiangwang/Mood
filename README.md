@@ -1,5 +1,7 @@
 # <div align="center">简易博客系统</div>
 
+[](https://img.shields.io/badge/node-v12.16.1-brightgreen) [](https://img.shields.io/badge/node-v12.16.1-brightgreen)
+
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
