@@ -184,7 +184,9 @@ export default {
         },
         // Reply Mode
         reply(item, type, items){
+
             this.$setScroll('.comment', 'comment');
+
             this.isReply = true;
             this.replyObj = {
                 parent_id: item.id,

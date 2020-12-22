@@ -3,22 +3,16 @@ import Vue from 'vue'
 var common = {
 
     install(Vue, option){
+
         // 设置滚动条位置
-        Vue.prototype.$setScroll = (dom) => {
+        Vue.prototype.$setScroll = (dom, type) => {
             const getWin = (type) => {
-                let list = type ? [type] : ['scrollTop', 'clientHeight', 'scrollHeight'];
-                let temp = list.map(i => {
-                    return document.documentElement[i] || document.body[i]
-                })
-                return type ? temp[0] : temp
+                return document.documentElement[type] || document.body[type]
             }
-            // 根据DOM元素来计算滚动条距离
-            const t = document.querySelector(dom).offsetTop;
-            const h = getWin('clientHeight');
-
-            const target = getWin('scrollTop') + (h / 2) - 100
-
-            console.log(t, h, target)
+            // DOM元素 计算位置
+            const domTop = document.querySelector(dom).offsetTop
+            const index = type === 'index' ? 280 : -700
+            const target = domTop + (getWin('clientHeight') / 2) + index
 
             let beforeScroll = 0;
 
@@ -27,59 +21,21 @@ var common = {
                 let speed = (target - scrollT) / 10;
                 
 				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + speed;
 
-                console.log(scrollT)
-                
-				if(((scrollT + speed) >= target)){
-					clearInterval(this.timerScroll)
-					scrollT = document.body.scrollTop = document.documentElement.scrollTop = target;
-				}else{
-                    scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + speed;
-                    // 手动向上滚，则取消滚动
-                    if (scrollT <= beforeScroll) {
-                        clearInterval(this.timerScroll)
-                    }
+                let result = null;
+                if (type === 'comment') {
+                    result = (beforeScroll && scrollT > beforeScroll )|| scrollT <= target || scrollT === 0
+                } else {
+                    result = scrollT <= beforeScroll || (scrollT + speed) >= target
+                }
+                if (result) {
+                    clearInterval(this.timerScroll)
                 }
                 beforeScroll = scrollT
 			}, 25)
         }
 
-
-
-        Vue.prototype.$setScrolls = (dom, type) => {
-            // 计算滚动距离
-            const t = document.querySelector(dom).offsetTop;
-            const h = document.documentElement.clientHeight || document.body.clientHeight;
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            
-            const index = type == 'index' ? 200 : 0
-            const target = type == 'comment' ? t - 200 : scrollTop + h / 2 - 100 + index
-
-			this.timerScroll = setInterval(() => {
-                /**
-                 * 滚动条顶部距离
-                 * 浏览器视口高度
-                 * 文档的总高度
-                 */
-                let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-                let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-
-				let speed = (target - scrollTop) / 10;
-				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
-
-				if(((scrollTop + speed) >= target && type !== 'comment') || (scrollTop + speed) <= target && type == 'comment'){
-					clearInterval(this.timerScroll)
-					scrollTop = document.body.scrollTop = document.documentElement.scrollTop = target;
-				}else{
-					scrollTop = document.body.scrollTop = document.documentElement.scrollTop = scrollTop + speed;
-                }
-                
-				if(scrollTop + windowHeight >= scrollHeight){
-					clearInterval(this.timerScroll)
-				}
-			}, 25)
-        }
 
         // 加载下一页数据
         let [page, loadingFrom, loadingType] = [1, '', 'more'];
