@@ -1,12 +1,14 @@
 # <div align="center">简易博客系统</div>
 
+### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧..(如果GitHub没提交，那就是在峡谷追人...)
+
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
 ![](https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen) ![](https://img.shields.io/badge/@vue/cli-v4.3.1-brightgreen) ![](https://img.shields.io/badge/vuex-v3.4.0-brightgreen) ![](https://img.shields.io/badge/ElementUI-v2.13.0-brightgreen) ![](https://img.shields.io/badge/Node-v12.16.1-brightgreen) ![](https://img.shields.io/badge/MongDB-v4.2.4-brightgreen)
 
-开始优化、持续更新中，暂不fork吧..
+
 
 ## 🎃 陌生人，你好呀~~
 
