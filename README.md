@@ -1,6 +1,13 @@
 # <div align="center">简易博客系统</div>
 
-![](https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen) ![](https://img.shields.io/badge/@vue/cli-v4.3.1-brightgreen) ![](https://img.shields.io/badge/vuex-v3.4.0-brightgreen) ![](https://img.shields.io/badge/ElementUI-v2.13.0-brightgreen) ![](https://img.shields.io/badge/Node-v12.16.1-brightgreen) ![](https://img.shields.io/badge/MongDB-v4.2.4-brightgreen)
+<div align="center">
+    <img src="https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen">
+    <img src="https://img.shields.io/badge/@vue/cli-v4.3.1-brightgreen">
+    <img src="https://img.shields.io/badge/vuex-v3.4.0-brightgreen">
+    <img src="https://img.shields.io/badge/ElementUI-v2.13.0-brightgreen">
+    <img src="https://img.shields.io/badge/Node-v12.16.1-brightgreen">
+    <img src="https://img.shields.io/badge/MongDB-v4.2.4-brightgreen">
+</div>
 
 ### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧..(如果GitHub没提交，那就是在峡谷追人...)
 
