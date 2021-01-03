@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/MongDB-v4.2.4-brightgreen">
 </div>
 
-### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧..(如果GitHub没提交，那就是在峡谷追人...)
+### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧，代码在修改中，可能某些功能无法正常使用..(如果GitHub没提交，那就是在峡谷追人...)
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
