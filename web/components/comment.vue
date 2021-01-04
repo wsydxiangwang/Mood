@@ -12,7 +12,7 @@
                 </div>
                 <textarea class="textarea" placeholder="What do you want to say..." v-model="form.content"></textarea>
 
-                <!-- submit loading -->
+                <!-- submit button and loading -->
                 <div class="bottom">
                     <button type="button" @click="submitVerify" :class="status == 9?'active':''">SUBMIT</button>
 
@@ -53,8 +53,12 @@
                 </div>
             </div>
 
+            <!-- comment box -->
             <template v-if="comment.total > 0">
-                <h2><span>Comment List</span><span>({{comment.total}})</span></h2>
+                <h2>
+                    <span>Comment List</span>
+                    <span>({{comment.total}})</span>
+                </h2>
                 <div class="comment-list">
                     <transition-group name="comment-item">
                         <!-- Comment List -->
@@ -70,17 +74,17 @@
                                         <img :src="'/image/comment/'+item.image+'.jpg'">
                                     </div>
                                     <div class="name">
-                                        <a>{{item.name}}<span v-if="item.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
+                                        <a>{{item.name}}<span v-if="item.admin">{{ adminMark }}</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
-                                            <span class="time">{{item.time.time}} {{item.time.month.en}} {{item.time.day.on}}, {{item.time.year}}</span>
+                                            <span class="time">{{ getCommentDate(item.time) }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="comment-content">{{item.content}}</div>
                             </div>
 
-                            <!-- Reply to list -->
+                            <!-- sub-comment to list -->
                             <div class="comments" v-if="item.child.length > 0">
                                 <transition-group name="comment-child">
                                     <div 
@@ -94,14 +98,16 @@
                                                 <img :src="'/image/comment/'+items.image+'.jpg'">
                                             </div>
                                             <div class="name">
-                                                <a>{{items.name}}<span v-if="items.admin">{{$store.state.data.admin_mark || '行人'}}</span></a>
+                                                <a>{{items.name}}<span v-if="items.admin">{{ adminMark }}</span></a>
                                                 <div class="r">
                                                     <div class="reply" @click="reply(item, 2, items)">reply</div>
-                                                    <span class="time">{{items.time.time}} {{items.time.month.en}} {{items.time.day.on}}, {{items.time.year}}</span>
+                                                    <span class="time">{{ getCommentDate(items.time) }}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="comments-content"><span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}</div>
+                                        <div class="comments-content">
+                                            <span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}
+                                        </div>
                                     </div>
                                 </transition-group>
                             </div>
@@ -137,9 +143,9 @@ export default {
             status: 10,
             hint: [
                 '您的名字是第一印象哦～',
-                '胆敢冒充站长，来人，拉出去砍了！！',
                 '请输入正确的邮箱～',
                 '偷偷告诉我，你作文是不是0分～',
+                '胆敢冒充站长，来人，拉出去砍了！！',
                 '哇哦！遇到错误，要不再试试',
                 '完成验证才可以提交哦～',
                 'Submitting...',
@@ -154,19 +160,34 @@ export default {
         }
     },
     mounted(){
+        // get localStorage comment info
+        // localStorage.getItem('Libai');
+
         this.$axios.get(`comment/${this.id}`).then(res => {
-            if(res.data.status === 1){
+            if (res.data.status === 1) {
                 this.comment = res.data.body
                 this.$emit('total', this.comment.total)
             }
         })
     },
+    computed: {
+        adminMark() {
+            return this.$store.state.data.admin_mark || '行人'
+        }
+    },
     methods: {
+        getCommentDate(time) {
+            return `${time.time} ${time.month.en} ${time.day.on}, ${time.year}`
+        },
+        // toggle view
+        toggleClass(type) {
+            ['header', 'section', '.comment-section'].forEach(item => {
+                document.querySelector(item).classList[type]('verify')
+            })
+        },
         // Validation results
         verifyResult(type){
-            ['header', 'section', '.comment-section'].map(item => {
-                document.querySelector(item).classList.remove('verify')
-            })
+            this.toggleClass('remove')
             this.isVerification = false;
             setTimeout(() => {
                 if(type){
@@ -201,47 +222,22 @@ export default {
             if(this.status == 6) return;
             
             const data = this.$store.state.data
-            const map = {
-                name: () => {
-                    return {
-                        code: 0,
-                        type: !this.form.name
-                    }
-                },
-                // Administrator
-                admin: () => {
-                    return {
-                        code: 1,
-                        type: (this.form.name == data.email_name && this.form.email != data.email) || (this.form.name != data.email_name && this.form.email == data.email)
-                    }
-                },
-                email: ()=>{
-                    return {
-                        code: 2,
-                        type: !/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.form.email)
-                    }
-                },
-                content: () => {
-                    return {
-                        code: 3,
-                        type: !this.form.content
-                    }
+            const list = [
+                this.form.name,
+                /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.form.email),
+                this.form.content,
+                !(this.form.name == data.email_name || this.form.email == data.email),
+            ]
+            for (let i in list) {
+                if (!list[i]) {
+                    console.log(i)
+                    this.status = i
+                    return
                 }
             }
-
-            // Content Verification
-            for(let i in map){
-                const result = map[i]();
-                if(result.type){
-                    this.status = result.code
-                    return;
-                }
-            }
-
-            // Puzzle Verification style
-            ['header', 'section', '.comment-section'].map(item => {
-                document.querySelector(item).classList.add('verify')
-            })
+        
+            // Verify slider
+            this.toggleClass('add')
             this.isVerification = true;
         },
         // Submit Comment
