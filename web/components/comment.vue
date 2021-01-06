@@ -157,12 +157,19 @@ export default {
 
             isReply: false,
             replyObj: {},
+
+            adminPopup: false
         }
     },
     mounted(){
         // get localStorage comment info
-        // localStorage.getItem('Libai');
-
+        const info = JSON.parse(localStorage.getItem('comment'));
+        if (info) {
+            for (let i of ['name', 'email', 'image']) {
+                this.form[i] = info[i]
+            }
+        }
+        // get comment data
         this.$axios.get(`comment/${this.id}`).then(res => {
             if (res.data.status === 1) {
                 this.comment = res.data.body
@@ -179,20 +186,21 @@ export default {
         getCommentDate(time) {
             return `${time.time} ${time.month.en} ${time.day.on}, ${time.year}`
         },
-        // toggle view
-        toggleClass(type) {
+        // toggle view        
+        verifyPopup(is) {
+            const type = is ? 'add' : 'remove';
             ['header', 'section', '.comment-section'].forEach(item => {
                 document.querySelector(item).classList[type]('verify')
             })
+            this.isVerification = is;
         },
         // Validation results
         verifyResult(type){
-            this.toggleClass('remove')
-            this.isVerification = false;
+            this.verifyPopup(false)
             setTimeout(() => {
-                if(type){
+                if (type) {
                     this.status = 5;
-                }else{
+                } else {
                     this.status = 6;
                     setTimeout(this.submit, 500) // start submit
                 }
@@ -217,7 +225,7 @@ export default {
             }
         },
         // Verification
-        submitVerify(){
+        submitVerify() {
             // loading
             if(this.status == 6) return;
             
@@ -230,15 +238,18 @@ export default {
             ]
             for (let i in list) {
                 if (!list[i]) {
-                    console.log(i)
+                    if (i == 3) {
+                        // Administrator Verify
+                        this.administrator()
+                    }
                     this.status = i
                     return
                 }
             }
-        
-            // Verify slider
-            this.toggleClass('add')
-            this.isVerification = true;
+            this.verifyPopup(true)
+        },
+        administrator() {
+            this.adminPopup = true
         },
         // Submit Comment
         submit(){
