@@ -125,6 +125,16 @@
                 @clone="verifyResult"
             ></PuzzleVerification>
         </div>
+
+        <div class="admin-popup" :class="adminPopup ? 'show' : 'exit'">
+            <span class="iconfont icon-close2" @click="closeAdminPopup"></span>
+            <img :src="$store.state.data.avatar">
+            <div>
+                哇哦～恭喜你，发现了一个小彩蛋～～
+            </div>
+            <input type="text" placeholder="请输入管理员身份标识码">
+            <button>确定</button>
+        </div>
     </div>
 </template>
 
@@ -189,10 +199,13 @@ export default {
         // toggle view        
         verifyPopup(is) {
             const type = is ? 'add' : 'remove';
+            this.toggleClass(type)
+            this.isVerification = is;
+        },
+        toggleClass(type) {
             ['header', 'section', '.comment-section'].forEach(item => {
                 document.querySelector(item).classList[type]('verify')
             })
-            this.isVerification = is;
         },
         // Validation results
         verifyResult(type){
@@ -249,7 +262,12 @@ export default {
             this.verifyPopup(true)
         },
         administrator() {
+            this.toggleClass('add')
             this.adminPopup = true
+        },
+        closeAdminPopup() {
+            this.toggleClass('remove')
+            this.adminPopup = false
         },
         // Submit Comment
         submit(){
@@ -371,9 +389,121 @@ export default {
 .verify{
     filter: blur(5px);
 }
+@keyframes fadeInTop
+{
+	from {
+		opacity: 0;
+		visibility: hidden;
+        margin-top: 80px;
+	}
+	to {
+		opacity:1;
+		visibility: visible;
+        margin-top: 0;
+	}
+}
+@keyframes fadeInDown
+{
+	from {
+		opacity:1;
+		visibility: visible;
+        margin-top: 0;
+	}
+	to {
+		opacity: 0;
+		visibility: hidden;
+        margin-top: -80px;
+	}
+}
 .comment{
     width: 800px;
     margin: auto;
+    .admin-popup{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px #dbdbdb;
+        padding: 40px 25px 30px;
+        border-radius: 6px;
+        background: rgb(255, 255, 255);
+        z-index: 999999;
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        &.show{
+            animation: fadeInTop 0.6s both;
+        }
+        &.exit{
+            animation: fadeInDown 0.6s both;
+        }
+        span{
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            color: #999;
+            cursor: pointer;
+            &:hover{
+                color: var(--colorComment)
+            }
+        }
+        input{
+            height: 34px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 2px 10px 0;
+            text-align: left;
+            outline: none;
+            font-size: 12px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: all .3s;
+            &::-webkit-input-placeholder{
+                color:#999;
+            }
+            &::-moz-placeholder{   /* Mozilla Firefox 19+ */
+                color:#999;
+            }　　
+            &:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+                color:#999;
+            }
+            &:-ms-input-placeholder{  /* Internet Explorer 10-1*/
+                color:#999;
+            }
+            &:hover{
+                border-color: rgb(210, 210, 210);
+            }
+        }
+        button{
+            height: 34px;
+            line-height: 36px;
+            width: 100px;
+            font-size: 14px;
+            color: #fff;
+            border-radius: 6px;
+            background: var(--colorActive);
+            cursor: pointer;
+            outline: none;
+            border: none;
+            margin: 12px 0 0;
+            transition: all .3s;
+            border: none;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: auto;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        div{
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 14px;
+        }
+    }
     h2{
         color:#333;
         font-weight:400;

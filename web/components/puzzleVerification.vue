@@ -482,12 +482,12 @@ export default {
 	from {
 		opacity: 0;
 		visibility: hidden;
-		transform: translate(0,0);
+		transform: translate(0, 80px);
 	}
 	to {
-		opacity:1;
+		opacity: 1;
 		visibility: visible;
-		transform: translate(0,-80px);
+		transform: translate(0, 0);
 	}
 }
 @keyframes fadeInDown
@@ -495,12 +495,12 @@ export default {
 	from {
 		opacity:1;
 		visibility: visible;
-		transform: translate(0,-80px);
+		transform: translate(0, 0);
 	}
 	to {
 		opacity: 0;
 		visibility: hidden;
-		transform: translate(0,0);
+		transform: translate(0,-80px);
 	}
 }
 .slider-container {
