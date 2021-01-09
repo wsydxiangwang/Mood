@@ -1,5 +1,5 @@
 <template>
-	<div class="container index" :class="{navActive: isNav}">
+	<div class="container index" :class="{navActive: isNav}" v-if="info">
 		<div class="cover">
 			<div id="scene" :style="{height:boxH}">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
@@ -70,6 +70,9 @@
 		<!-- loading -->
 		<Loading v-if="loading"></Loading>
 	</div>
+	<div v-else class="empty-data">
+		请到管理员后台填写完整信息！
+	</div>
 </template>
 
 <script>
@@ -117,19 +120,22 @@ export default {
 	},
     head () {
         return {
-			title: this.info.web_name,
+			title: this.info?.web_name,
 			meta: [
-                { hid: 'keywords', name: 'keywords', content: this.info.web_seo },
-                { hid: 'description', name: 'description', content: this.info.web_describe },
+                { hid: 'keywords', name: 'keywords', content: this.info?.web_seo },
+                { hid: 'description', name: 'description', content: this.info?.web_describe },
             ]
 		}
 	},
 	computed: {
-		info(){
+		info() {
 			return this.$store.state.data
 		}
 	},
 	mounted(){
+		if (!this.info) {
+			return
+		}
 		document.body.style.overflowY = 'hidden';
 
 		// Cover image loading is complete
@@ -162,6 +168,9 @@ export default {
 			return;
 		}
 		const {data} = await context.$axios.get('article')
+
+		console.log(data)
+
 		return { articleList: data.status == 1 ? data.body : {}}
 	},
 	beforeRouteEnter(to,from,next){
@@ -281,6 +290,16 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.empty-data{
+	position: absolute;
+    top: 40%;
+    left: 50%;
+    font-size: 20px;
+    letter-spacing: 4px;
+	transform: translate(-50%);
+	font-weight: 600;
+    color: red;
+}
 .index{
 	position: absolute;
 	width: 100%;

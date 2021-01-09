@@ -12,8 +12,6 @@ RUN npm install --save nuxt@2.11.0
 
 RUN npm install
 
-RUN npm rebuild node-sass
-
 RUN npm run build
 
 ENV HOST 0.0.0.0
