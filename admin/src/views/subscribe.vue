@@ -115,7 +115,7 @@ export default {
             color: red;
         }
     }
-    /deep/ .el-table__body-wrapper{
+    ::v-deep .el-table__body-wrapper{
         &::-webkit-scrollbar-track {
             background: #fff;
         }
@@ -136,7 +136,7 @@ export default {
             margin: 10px 0 20px;
         }
     }
-     /deep/ .el-table__header{
+     ::v-deep .el-table__header{
         width: 100% !important;
         display: block;
         thead{
@@ -167,7 +167,7 @@ export default {
             }
         }
     }
-    /deep/ .el-table__body{
+    ::v-deep .el-table__body{
         width: 100% !important;
         display: block;
         tbody{

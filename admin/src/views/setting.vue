@@ -401,7 +401,7 @@ export default {
 <style lang="scss" scoped>
 .avatar-uploader{
     height: 100px;
-    /deep/ .el-upload{
+    ::v-deep .el-upload{
         height: 100px;
         width: 100px;
         overflow: hidden;
@@ -421,7 +421,7 @@ export default {
 }
 .cover{
     overflow: hidden;
-    /deep/ .el-upload{
+    ::v-deep .el-upload{
         width: 300px;
         height: 170px;
         border-radius: 4px;
@@ -479,7 +479,7 @@ h2.tit{
 }
 @media screen and (max-width: 600px) {
     .cover{
-        /deep/ .el-upload{
+        ::v-deep .el-upload{
             width: 100%;
         }
     }
@@ -487,7 +487,7 @@ h2.tit{
         opacity: 1;
         display: block;
     }
-    /deep/ .el-form-item{
+    ::v-deep .el-form-item{
         label{
             width: 90px !important;
         }

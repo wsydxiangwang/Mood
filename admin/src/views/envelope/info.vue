@@ -137,7 +137,7 @@ section{
         width: 100%;
         height: 38px;
         margin: 5px 0;
-        /deep/ input{
+        ::v-deep input{
             border-color: #eee !important;
         }
     }

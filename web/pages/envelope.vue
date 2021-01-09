@@ -120,7 +120,7 @@ header{
         }
         .text{
             color: #333;
-            /deep/ .hljs-right{
+            ::v-deep .hljs-right{
                 text-align: right;
             }
         }

@@ -168,7 +168,7 @@ export default {
     .content{
         padding: 100px 0;
         font-size: 14px;
-        /deep/ 
+        ::v-deep 
         .markdown-body{
             box-shadow: none !important;
             min-height: auto;
@@ -284,7 +284,7 @@ export default {
         }
         .content{
             padding: 60px 0;
-            /deep/ 
+            ::v-deep 
             .markdown-body{
                 p{
                     line-height: 28px;
@@ -299,7 +299,7 @@ export default {
 
 @media screen and (max-width: 600px) {
     .articleld{
-        /deep/ header{
+        ::v-deep header{
             &.isUp{
                 position: fixed;
                 box-shadow: 0 1px 8px #f0f9ff;
@@ -311,7 +311,7 @@ export default {
             }
         }
         .content{
-            /deep/ 
+            ::v-deep 
             .markdown-body{
                 iframe{
                     height: 310px;
@@ -332,7 +332,7 @@ export default {
 @media screen and (max-width: 500px) {
     .articleld{
         .content{
-            /deep/ 
+            ::v-deep 
             .markdown-body{
                 iframe{
                     height: 260px;
@@ -343,7 +343,7 @@ export default {
 }
 @media screen and (max-width: 414px) {
     .content{
-        /deep/ 
+        ::v-deep 
         .markdown-body{
             iframe{
                 height: 220px;

@@ -55,7 +55,7 @@ export default {
     font-size: initial;
 }
 .container{
-    /deep/ 
+    ::v-deep 
     .markdown-body{
     width: 100%;
     max-width: 800px;
@@ -162,7 +162,7 @@ export default {
         }
     }
     @media screen and (max-width: 600px) {
-    /deep/ 
+    ::v-deep 
         .markdown-body{
             iframe{
                 height: 310px;

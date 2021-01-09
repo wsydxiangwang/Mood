@@ -187,7 +187,7 @@ export default {
             color: red;
         }
     }
-    /deep/ 
+    ::v-deep 
         .el-table__body-wrapper{
             height: calc(100% - 80px);
             overflow: auto;
@@ -212,7 +212,7 @@ export default {
             margin: 10px 0 20px;
         }
     }
-    /deep/ .el-table__body-wrapper{
+    ::v-deep .el-table__body-wrapper{
         height: calc(100vh - 212px) !important;
     }
     .el-table__header, .el-table__body{

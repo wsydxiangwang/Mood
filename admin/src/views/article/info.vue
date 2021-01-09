@@ -308,7 +308,7 @@ section{
         width: 50%;
         max-width: 360px;
         margin: 0 7px;
-        /deep/ .el-upload{
+        ::v-deep .el-upload{
             width: 100%;
             .el-upload-dragger{
                 width: 100%;
@@ -338,7 +338,7 @@ section{
         width: 100%;
     }
 }
-/deep/ .el-switch__label{
+::v-deep .el-switch__label{
     color: #98999c;
     font-weight: 400;
     &.is-active{
@@ -361,7 +361,7 @@ section{
         line-height: 36px;
         padding: 0;
     }
-    .upload-box .upload-demo /deep/ .el-upload .el-upload-dragger{
+    .upload-box .upload-demo ::v-deep .el-upload .el-upload-dragger{
         height: 130px;
         .el-icon-picture-outline-round, .el-icon-headset{
             font-size: 36px;

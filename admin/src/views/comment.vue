@@ -229,7 +229,7 @@ export default {
         text-align: center;
         line-height: 15px;
     }
-    /deep/ .el-table{
+    ::v-deep .el-table{
         .el-table__body-wrapper{
             height: calc(100% - 80px);
             overflow: auto;
@@ -258,7 +258,7 @@ export default {
         .el-pagination{
             bottom: 5px !important;
         }
-        /deep/ .el-table__header{
+        ::v-deep .el-table__header{
             width: 100% !important;
             display: block;
             thead{
@@ -285,7 +285,7 @@ export default {
                 }
             }
         }
-        /deep/ .el-table__body{
+        ::v-deep .el-table__body{
             width: 100% !important;
             display: block;
             tbody{

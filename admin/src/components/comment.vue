@@ -154,7 +154,7 @@ export default {
         margin-bottom: 14px;
         padding-left: 64px;
     }
-    /deep/ textarea{
+    ::v-deep textarea{
         height: 150px !important;
         padding: 12px !important;
         background: #f1f1f1;

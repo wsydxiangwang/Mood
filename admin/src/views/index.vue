@@ -60,7 +60,7 @@ export default {
                 width: 6px;
                 height: 6px;
             }
-            /deep/ .el-pagination{
+            ::v-deep .el-pagination{
                 position: absolute;
                 bottom: 20px;
                 left: 0;

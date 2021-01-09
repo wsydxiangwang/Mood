@@ -129,7 +129,7 @@ export default {
             color: red;
         }
     }
-    /deep/ .el-table__body-wrapper{
+    ::v-deep .el-table__body-wrapper{
         &::-webkit-scrollbar-track {
             background: #fff;
         }

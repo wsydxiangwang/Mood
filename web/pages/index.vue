@@ -411,7 +411,7 @@ export default {
 			margin-top: 90px;
 			display: inline-block;
 		}
-		/deep/ .bottom-loading{
+		::v-deep .bottom-loading{
 			position: relative;
 			z-index: 999;
 			.btn{
