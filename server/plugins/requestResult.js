@@ -1,16 +1,18 @@
 /**
- * 请求结果 统一处理返回值
+ * 请求结果
+ * @param {Number} status 状态码
+ * @param {All} data 数据/信息
  */
-function requestResult(data){
-    if(data){
+function requestResult(status, data){
+    if(status == 1){
         return {
-            status: 1,
+            status,
             message: 'success',
             body: data
         }
     }else{
         return {
-            status: 2,
+            status,
             message: 'error',
             body: data
         }

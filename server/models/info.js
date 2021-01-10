@@ -1,49 +1,50 @@
+// 信息
 const mongoose = require('mongoose');
-
 const schema = new mongoose.Schema({
-    name: String,           // 管理员昵称
-    avatar: String,         // 管理员头像
-    address: String,        // 网站地址
-    web_name: String,       // 网站名
-    web_describe: String,   // 网站描述
-    web_seo: String,        // 网站关键词
-
-    upload_type: String,    // 文件上传方式
-    upload_oss: {           // 阿里云OSS
-        bucket: String,
-        region: String,
-        endPoint: String,
-        accessKeyId: String,
-        accessKeySecret: String,
-        domain: String
+    base: {
+        admin_avatar: String,   // 管理员头像
+        admin_name: String,     // 管理员昵称
+        name: String,           // 网站名字
+        address: String,        // 网站域名
+        describe: String,       // 网站描述
+        seo: String,            // SEO关键词
+        upload_type: String,    // 文件上传方式
+        email_type: String,     // 邮箱类型
+        pass: String            // 邮箱PASS码
     },
 
-    email: {
-        mode: String,
-        name: String,
-        mark: String,
-        pass: String,
-        address: String,
-        comment: Boolean,
-        subscribe: Boolean
+    administrator: {
+        email: String,          // 邮箱
+        name: String,           // 名字
+        mark: String,           // 标识
+        code: String,           // 验证码
+        comment: Boolean,       // 评论通知
+        message: Boolean,       // 订阅通知
+        subscribe: Boolean      // 留言页面
     },
 
-    bg: {
-        bg_mood: String,
-        bg_about: String,
-        bg_letter: String,
-        bg_subscribe: String,
+    page_music: {                   // 背景音乐
+        mood: String,
+        letter: String,
+        subscribe: String,
+        message: String,
+        about: String
+    },
+
+    other: {
+        icp_txt: String,            // 备案号
+        icp_link: String,           // 备案链接
+        password: String,           // 原密码
+        password_new: String        // 新密码
     },
     
-    cover: {                // 首屏效果
+    cover: {                        // 首屏效果
         date: String,
         title: String,
         link: String,
         color: String,
         image: String,
-        describe: String,
-        icp_txt: String,
-        icp_link: String
+        describe: String
     },
 })
 

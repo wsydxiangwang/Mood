@@ -2,7 +2,8 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
     
-    let {Info} = model
+    let { Info } = model
+    let {requestResult} = plugin
     
     const fs = require('fs');
     const co = require('co');
@@ -95,11 +96,11 @@ module.exports = (app, plugin, model) => {
             });
         }else{
             const filePath = (req.file.path).replace(/\\/g,"\/");
-            res.json({
-                status: 100, 
-                msg:'上传成功', 
-                url: `/${filePath}` 
-            });
+            const data = {
+                url: `/${filePath}` ,
+                message: '上传成功'
+            }
+            res.send(requestResult(1, data))
         }
     })
 

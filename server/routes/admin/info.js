@@ -34,6 +34,7 @@ module.exports = (app, plugin, model) => {
     })
 
     router.post('/info', async (req, res) => {
+        console.log(req.body)
         if(req.body._id){
             const result = await Info.findByIdAndUpdate(
                 req.body._id, 
@@ -44,9 +45,9 @@ module.exports = (app, plugin, model) => {
             res.send(requestResult(result))
         }else{
             const result = await Info.create(req.body)
-            res.send(requestResult(result))
+            res.send(requestResult(1, result))
         }
     })
-
+    
     app.use('/admin/api', router)
 }

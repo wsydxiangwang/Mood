@@ -3,9 +3,9 @@
         <div class="sidebar" :class="{hide:scale, show:show}">
             <div class="info">
                 <div class="photo">
-                    <img :src="$info.avatar || ''">
+                    <img v-if="$info" :src="$info.avatar || ''">
                 </div>
-                <p class="name">{{$info.name}}</p>
+                <p class="name" v-if="$info">{{ $info.name }}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 
@@ -19,7 +19,7 @@
                     @click="toPage(item.title)"
                 >
                     <i :class="item.icon"></i>
-                    <span>{{item.title}}</span>
+                    <span>{{ item.title }}</span>
                     <span v-if="item.title=='Comment' && $data.unread" class="unread">{{$data.unread}}</span>
                 </el-menu-item>
             </el-menu> 
@@ -47,7 +47,7 @@ export default {
                 },
                 {
                     icon: 'el-icon-heavy-rain',
-                    title: 'Small mood',
+                    title: 'Little mood',
                     path: '/article',
                 },
                 {

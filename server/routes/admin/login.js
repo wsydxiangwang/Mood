@@ -9,26 +9,26 @@ module.exports = (app, plugin, model) => {
     const jwt = require('jsonwebtoken');
 
     // 修改密码
-    router.post('/password', async (req, res) => {
-        const password = crypto.createHash('sha256').update(req.body.password.one).digest('hex');
-        const passwords = crypto.createHash('sha256').update(req.body.password.two).digest('hex');
-
+    router.post('/password', (req, res) => {
+        const [password, passwords] = ['p1', 'p2'].map(i => {
+            return crypto.createHash('sha256').update(req.body[i]).digest('hex')
+        })
         /**
-         * 原密码正确 再更换新密码
+         * 验证原密码 更新密码
          */
         User.findOne({password}, (err, docs) => {
-            if(docs){
+            if (docs) {
                 User.findOneAndUpdate({
                     password
                 }, {
                     $set: { 
-                        password : passwords 
+                        password: passwords
                     }
                 }, (err, doc) => {
-                    res.send(requestResult(doc))
+                    res.send(requestResult(1, '密码修改成功！'))
                 })
-            }else{
-                res.send(requestResult(docs))
+            } else {
+                res.send(requestResult(2, '原密码输入错误！'))
             }
         })
     })
