@@ -10,7 +10,6 @@
 </div>
 
 ### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧，可先关注一波，代码在修改中，某些功能无法正常使用..(如果GitHub没提交，那就是在峡谷砍人...)
-### 部署的时候，有一个node-sass报错的问题，可找个好网络再试试，这是npm的问题，后续我再解决！
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
