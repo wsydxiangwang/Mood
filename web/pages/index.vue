@@ -27,7 +27,7 @@
 				<ul class="nav-list">
 					<template v-for="(item, index) in navList">
 						<template v-if="item.url == 'subscribe'">
-							<li v-if="$store.state.data.email_subscribe" :key="index">
+							<li v-if="info.administrator.subscribe" :key="index">
 								<a @click="toPage(item.url)">{{item.title}}</a>
 							</li>
 						</template>
@@ -61,8 +61,8 @@
 			<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
 		</div>
 
-		<div class="foot" v-if="info.cover.icp_txt">
-			<a :href="info.cover.icp_link" target="_blank">{{info.cover.icp_txt}}</a>
+		<div class="foot" v-if="info.other.icp_txt">
+			<a :href="info.other.icp_link" target="_blank">{{info.other.icp_txt}}</a>
 		</div>
 
 		<BackTop v-if="isBack"></BackTop>
@@ -120,10 +120,10 @@ export default {
 	},
     head () {
         return {
-			title: this.info?.web_name,
+			title: this.info?.base.name,
 			meta: [
-                { hid: 'keywords', name: 'keywords', content: this.info?.web_seo },
-                { hid: 'description', name: 'description', content: this.info?.web_describe },
+                { hid: 'keywords', name: 'keywords', content: this.info?.base.seo },
+                { hid: 'description', name: 'description', content: this.info?.base.describe },
             ]
 		}
 	},

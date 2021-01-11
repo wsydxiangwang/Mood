@@ -72,7 +72,7 @@
                                 width="300"
                                 trigger="hover"
                             >
-                                <p></p>
+                                <p>与邮箱一致的通行码, 在邮箱设置开启SMTP服务器可获取（邮件通知必填）</p>
                                 <span v-if="k == 'email_pass'" slot="reference">(view)</span>
                             </el-popover>
                             <el-input v-model="form[key][k]"></el-input>

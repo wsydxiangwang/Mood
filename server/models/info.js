@@ -19,8 +19,8 @@ const schema = new mongoose.Schema({
         mark: String,           // 标识
         code: String,           // 验证码
         comment: Boolean,       // 评论通知
-        message: Boolean,       // 订阅通知
-        subscribe: Boolean      // 留言页面
+        message: Boolean,       // 留言页面
+        subscribe: Boolean      // 订阅通知
     },
 
     page_music: {                   // 背景音乐

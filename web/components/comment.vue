@@ -128,12 +128,12 @@
 
         <div class="admin-popup" :class="adminPopup ? 'show' : 'exit'">
             <span class="iconfont icon-close2" @click="closeAdminPopup"></span>
-            <img :src="$store.state.data.avatar">
+            <img :src="data.base.admin_avatar">
             <div>
                 哇哦～恭喜你，发现了一个小彩蛋～～
             </div>
-            <input type="text" placeholder="请输入管理员身份标识码">
-            <button>确定</button>
+            <input type="text" placeholder="请输入管理员身份标识码" v-model="adminCode">
+            <button @click="adminSubmit">确定</button>
         </div>
     </div>
 </template>
@@ -168,7 +168,8 @@ export default {
             isReply: false,
             replyObj: {},
 
-            adminPopup: false
+            adminPopup: false,
+            adminCode: '',
         }
     },
     mounted(){
@@ -176,7 +177,7 @@ export default {
         const info = JSON.parse(localStorage.getItem('comment'));
         if (info) {
             for (let i of ['name', 'email', 'image']) {
-                this.form[i] = info[i]
+                this.$set(this.form, i, info[i])
             }
         }
         // get comment data
@@ -189,7 +190,10 @@ export default {
     },
     computed: {
         adminMark() {
-            return this.$store.state.data.admin_mark || '行人'
+            return this.data.administrator.mark || '行人'
+        },
+        data() {
+            return this.$store.state.data
         }
     },
     methods: {
@@ -241,19 +245,17 @@ export default {
         submitVerify() {
             // loading
             if(this.status == 6) return;
-            
-            const data = this.$store.state.data
             const list = [
                 this.form.name,
                 /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.form.email),
                 this.form.content,
-                !(this.form.name == data.email_name || this.form.email == data.email),
+                !(this.form.name == this.data.administrator.name || this.form.email == this.data.administrator.email),
             ]
             for (let i in list) {
                 if (!list[i]) {
                     if (i == 3) {
                         // Administrator Verify
-                        this.administrator()
+                        this.administrator(true)
                     }
                     this.status = i
                     return
@@ -261,9 +263,19 @@ export default {
             }
             this.verifyPopup(true)
         },
-        administrator() {
-            this.toggleClass('add')
-            this.adminPopup = true
+        adminSubmit() {
+            if (this.adminCode == this.data.administrator.code) {
+                this.administrator(false)
+                this.submit()
+            } else {
+
+            }
+        },
+        administrator(type) {
+            console.log(2)
+            const css = type ? 'add' : 'remove'
+            this.toggleClass(css)
+            this.adminPopup = type
         },
         closeAdminPopup() {
             this.toggleClass('remove')
@@ -280,8 +292,9 @@ export default {
                 image = +commentImage
             } else {
                 image = Math.floor(Math.random() * 10 + 1)
-                localStorage.setItem('comment-image', image)
             }
+
+            console.log(this.form)
 
             this.form = {
                 image,

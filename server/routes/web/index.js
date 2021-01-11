@@ -7,28 +7,7 @@ module.exports = (app, plugin, model) => {
 
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
-
-        let data = null;
-
-        if(info){
-            data = {
-                cover: info.cover,
-                avatar: info.avatar,
-                web_seo: info.web_seo,
-                web_name: info.web_name,
-                web_describe: info.web_describe,
-                bg: info.bg,
-                
-                email: info.email.address,
-                email_name: info.email.name,
-                email_comment: info.email.comment,
-                admin_mark: info.email.mark,
-                
-                email_subscribe: info.email.subscribe,
-            }
-        }
-
-        res.send(requestResult(data))
+        res.send(requestResult(1, info))
     })
 
     // All articles
@@ -77,11 +56,10 @@ module.exports = (app, plugin, model) => {
         }, {
             new: true
         })
-
-        if(data){
+        if (data) {
             data._doc['time'] = dateFormat(data.time)
-            res.send(requestResult(data))
-        }else{
+            res.send(requestResult(1, data))
+        } else {
             res.send(requestResult())
         }
     })

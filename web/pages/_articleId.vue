@@ -57,9 +57,9 @@ export default {
     },
     head () {
         return {
-            title: `${this.data.title} | ${this.info.web_name}`,
+            title: `${this.data.title} | ${this.info.base.name}`,
             meta: [
-                { hid: 'keywords', name: 'keywords', content: this.info.web_seo },
+                { hid: 'keywords', name: 'keywords', content: this.info.base.seo },
                 { hid: 'description', name: 'description', content: this.data.describe }
             ]
         }
@@ -107,12 +107,11 @@ export default {
     },
     async asyncData(context){
         const id = context.params.articleId;
-        const {data} = await context.$axios.get(`article/${id}`)
-        
-        if(data.status == 1){
+        const {data} = await context.$axios.get(`article/${id}`)        
+        if (data.status == 1) {
             return { data: data.body }
-        }else{
-            context.error({ statusCode: 404, message: '页面未找到或无数据' })
+        } else {
+            context.error({ statusCode: 404, message: '页面未找到～' })
         }
     },
     // error page
