@@ -3,9 +3,9 @@
         <div class="sidebar" :class="{hide:scale, show:show}">
             <div class="info">
                 <div class="photo">
-                    <img v-if="$info" :src="$info.avatar || ''">
+                    <img v-if="$info" :src="$info.base.admin_avatar || ''">
                 </div>
-                <p class="name" v-if="$info">{{ $info.name }}</p>
+                <p class="name" v-if="$info">{{ $info.base.admin_name }}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 
@@ -109,7 +109,7 @@ export default {
     computed: {
         ...mapState(['$data']),
         $info(){
-            return Object.keys(this.$data).length > 0 ? this.$data.info : {}
+            return this.$data ? this.$data.info : {}
         }
     },
     methods: {

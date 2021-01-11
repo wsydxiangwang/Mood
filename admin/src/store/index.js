@@ -20,8 +20,8 @@ const store = new Vuex.Store({
 		resetCache(state, type){
 			state[type] = {};
         },
-        // 保存数据
-        allData(state, data){
+        // 信息
+        info(state, data){
             state.$data = data
         },
         // 已读

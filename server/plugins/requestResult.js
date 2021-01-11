@@ -4,13 +4,13 @@
  * @param {All} data 数据/信息
  */
 function requestResult(status, data){
-    if(status == 1){
+    if (status == 1) {
         return {
             status,
             message: 'success',
             body: data
         }
-    }else{
+    } else {
         return {
             status,
             message: 'error',

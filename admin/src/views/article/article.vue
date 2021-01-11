@@ -56,8 +56,8 @@ export default {
         }
     },
     created(){
-        this.total = this.$data.articleQty
-        this.load();
+        // this.total = this.$data.articleQty
+        // this.load();
     },
     mounted(){
         document.querySelector('.content').style.overflow = 'hidden'

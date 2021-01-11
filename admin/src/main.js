@@ -11,18 +11,18 @@ Vue.use(ElementUI);
 Vue.prototype.$http = http
 Vue.config.productionTip = false
 
-// 保存更新状态数据
+// 获取个人信息
 Vue.prototype.$infoUpdate = () => {
-  http.get('/info').then(res => {
-    if(res && res.data.status == 1){
-      const data = res.data.body;
-      store.commit('allData', data)
-    }
-  })
+    http.get('/info').then(res => {
+		if(res && res.data.status == 1){
+			const data = res.data.body;
+			store.commit('info', data)
+		}
+    })
 }
 
 new Vue({
-  store,
-  router,
-  render: function (h) { return h(App) }
+	store,
+	router,
+	render: function (h) { return h(App) }
 }).$mount('#app')

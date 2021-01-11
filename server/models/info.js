@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
         seo: String,            // SEO关键词
         upload_type: String,    // 文件上传方式
         email_type: String,     // 邮箱类型
-        pass: String            // 邮箱PASS码
+        email_pass: String      // 邮箱PASS码
     },
 
     administrator: {

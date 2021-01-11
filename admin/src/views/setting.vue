@@ -67,6 +67,14 @@
                         </template>
 
                         <template v-else>
+                            <el-popover
+                                placement="top"
+                                width="300"
+                                trigger="hover"
+                            >
+                                <p></p>
+                                <span v-if="k == 'email_pass'" slot="reference">(view)</span>
+                            </el-popover>
                             <el-input v-model="form[key][k]"></el-input>
                         </template>
                     </el-form-item>
@@ -99,7 +107,8 @@ export default {
                     describe: '网站描述',
                     seo: 'SEO关键词',
                     upload_type: '文件上传',
-                    email_type: '邮箱类型'
+                    email_type: '邮箱类型',
+                    email_pass: '邮箱PASS'
                 },
                 'administrator': {
                     value: '前台管理',
@@ -153,13 +162,6 @@ export default {
                     pass: ''
                 }
             },
-                // ['bucket', 'region', 'endPoint', 'accessKeySecret', 'accessKeyId', 'domain'],
-                    //     {
-                    //     key: 'pass',
-                    //     value: '邮箱PASS',
-                    //     placeholder: '与邮箱一致的码, 在邮箱设置开启SMTP服务器可获取 (必填)',
-                    //     show: true
-                    // },
             form: {
                 base: {},
                 administrator: {},
@@ -169,14 +171,13 @@ export default {
             },
             uploadFile: {},
             fullscreenLoading: false,
-
         }
     },
     watch: {
         $info: {
             handler(val) {
-                if(Object.keys(this.$info).length > 0){
-                    this.update()
+                if(this.$info){
+                    this.init()
                 }
             },
             immediate: true
@@ -185,12 +186,16 @@ export default {
     computed: {
         ...mapState(['$data']),
         $info(){
-            return Object.keys(this.$data).length > 0 ? this.$data.info : {}
+            return this.$data ? this.$data.info : {}
         }
     },
     methods: {
-        async onSubmit(){
-            
+        init() {
+            for (let key in this.$info) {
+                this.$set(this.form, key, this.$info[key])
+            }
+        },
+        async onSubmit() {
             /**
              * Password
              */ 
