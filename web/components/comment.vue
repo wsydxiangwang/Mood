@@ -16,7 +16,7 @@
                 <div class="bottom">
                     <button type="button" @click="submitVerify" :class="status == 9?'active':''">SUBMIT</button>
 
-                    <template v-if="status == 6">
+                    <template v-if="status == 7">
                         <div class="hint loading">
                             <div class="sk-circle selected">
                                 <div class="sk-circle1 sk-child"></div>
@@ -127,12 +127,16 @@
         </div>
 
         <div class="admin-popup" :class="adminPopup ? 'show' : 'exit'">
-            <span class="iconfont icon-close2" @click="closeAdminPopup"></span>
+            <span class="iconfont icon-close2" @click="administrator(false)"></span>
             <img :src="data.base.admin_avatar">
             <div>
                 哇哦～恭喜你，发现了一个小彩蛋～～
             </div>
             <input type="text" placeholder="请输入管理员身份标识码" v-model="adminCode">
+            <p class="hint" v-if="status == 3">
+                <span class="iconfont icon-error"></span>
+                <span>{{hint[status]}}</span>
+            </p>
             <button @click="adminSubmit">确定</button>
         </div>
     </div>
@@ -153,9 +157,10 @@ export default {
             status: 10,
             hint: [
                 '您的名字是第一印象哦～',
-                '请输入正确的邮箱～',
+                '请输入正确的邮箱，期待回信～',
                 '偷偷告诉我，你作文是不是0分～',
                 '胆敢冒充站长，来人，拉出去砍了！！',
+                '多说一点儿吧，最少10个字～',
                 '哇哦！遇到错误，要不再试试',
                 '完成验证才可以提交哦～',
                 'Submitting...',
@@ -200,6 +205,9 @@ export default {
         getCommentDate(time) {
             return `${time.time} ${time.month.en} ${time.day.on}, ${time.year}`
         },
+        getInfo(type) {
+            return this.data.administrator[type]
+        },
         // toggle view        
         verifyPopup(is) {
             const type = is ? 'add' : 'remove';
@@ -218,7 +226,6 @@ export default {
                 if (type) {
                     this.status = 5;
                 } else {
-                    this.status = 6;
                     setTimeout(this.submit, 500) // start submit
                 }
             }, 600)
@@ -244,93 +251,96 @@ export default {
         // Verification
         submitVerify() {
             // loading
-            if(this.status == 6) return;
+            if(this.status == 7) {
+                return;
+            }
             const list = [
                 this.form.name,
                 /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.form.email),
                 this.form.content,
-                !(this.form.name == this.data.administrator.name || this.form.email == this.data.administrator.email),
+                !(this.form.name == this.getInfo('name') || this.form.email == this.getInfo('email')),
             ]
             for (let i in list) {
+                if (i == 2 && list[i].length < 10) {
+                    this.status = 4
+                    return
+                }
                 if (!list[i]) {
                     if (i == 3) {
-                        // Administrator Verify
                         this.administrator(true)
+                    } else {
+                        this.status = i
                     }
-                    this.status = i
                     return
                 }
             }
             this.verifyPopup(true)
         },
         adminSubmit() {
-            if (this.adminCode == this.data.administrator.code) {
+            if (this.adminCode == this.getInfo('code')) {
                 this.administrator(false)
                 this.submit()
             } else {
-
+                this.status = 3
             }
         },
         administrator(type) {
-            console.log(2)
             const css = type ? 'add' : 'remove'
             this.toggleClass(css)
             this.adminPopup = type
         },
-        closeAdminPopup() {
-            this.toggleClass('remove')
-            this.adminPopup = false
-        },
         // Submit Comment
         submit(){
+            this.status = 7;
 
-            // Comment default avatar
-            let commentImage = localStorage.getItem('comment-image')
-            let image = 0
-
-            if (commentImage) {
-                image = +commentImage
-            } else {
-                image = Math.floor(Math.random() * 10 + 1)
+            if (!this.form['image']) {
+                this.form.image = Math.floor(Math.random() * 10 + 1)
             }
-
-            console.log(this.form)
-
-            this.form = {
-                image,
-                name: this.form.name.trim(),
-                time: this.dateFormat(),
-                email: this.form.email.trim(),
-                content: this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, ''),
-                topic_id: this.id,
-            }
+            const temp = ['email', 'name', 'image'].reduce((t, i) => {
+                t[i] = this.form[i]
+                return t
+            }, {})
+            localStorage.setItem('comment', JSON.stringify(temp))
 
             /**
              * Administrator Mark
              */
-            const data = this.$store.state.data
-            const email = this.$store.state.data.email_comment
-
-            if(this.form.email == data.email && this.form.name == data.email_name){
+            if (
+                this.form.name == this.getInfo('name') && 
+                this.form.email === this.getInfo('email')
+            ){
                 this.form.image = 1;
                 this.form.admin = true;
             }
 
-            // Email notification information
-            const formData = {
+            const content = this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, '')
+            const other = {
+                time: this.dateFormat(),
+                topic_id: this.id,
+                content
+            }
+            
+            const data = {
+                ...this.replyObj,   // reply info
+                ...this.form,       // form info
+                ...other
+            }
+
+            // and Email notification information
+            const params = {
+                data,
                 title: this.title,
                 url: window.location.href,
-                type: this.isReply ? 1 : 2,
-                data: Object.assign({}, this.replyObj, this.form),
-                is_email: email
+                type: this.isReply ? 2 : 1,
+                email: this.data.administrator.email
             }
             
 
-            console.log(formData)
+            console.log(params)
 
             return
 
-            this.$axios.post('comment', formData)
+            this.$axios.post('comment', params)
                 .then(res => {
                     if(res.data.status === 1){
                         /**
@@ -450,7 +460,7 @@ export default {
         &.exit{
             animation: fadeInDown 0.6s both;
         }
-        span{
+        .icon-close2{
             position: absolute;
             right: 15px;
             top: 15px;
@@ -515,6 +525,14 @@ export default {
             font-size: 14px;
             color: #333;
             margin-bottom: 14px;
+        }
+        p{
+            color: red;
+            font-size: 12px;
+            margin: 10px 0 0;
+            span{
+                font-size: 12px;
+            }
         }
     }
     h2{
