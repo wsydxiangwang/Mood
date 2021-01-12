@@ -9,7 +9,9 @@
     <img src="https://img.shields.io/badge/MongDB-v4.2.4-brightgreen">
 </div>
 
-### 开始优化代码和功能、持续更新中，感谢点赞，暂不fork吧，可先关注一波，代码在修改中，某些功能无法正常使用..(如果GitHub没提交，那就是在峡谷砍人...)
+### 定一个目标，春节前完结这个项目，优化一些操作体验，新增一些美的发现，优化重构所有代码！
+
+### 期间项目某些功能无法正常使用，暂不clone，可关注fork一波，待我完成，望知晓..
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
