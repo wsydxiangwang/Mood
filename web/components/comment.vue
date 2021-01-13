@@ -272,7 +272,7 @@ export default {
             })
         },
         // Reply Mode
-        reply(item, type, items){
+        reply(item, type, items) {
 
             this.$setScroll('.comment', 'comment');
 
@@ -332,13 +332,13 @@ export default {
                 title: this.title,
                 url: window.location.href,
                 type: this.isReply ? 2 : 1,
-                email: this.data.administrator.email
+                email: this.getInfo('email')
             }
             
 
-            console.log(params)
+            // console.log(params)
 
-            return
+            // return
 
             this.$axios.post('comment', params)
                 .then(res => {

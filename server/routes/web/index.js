@@ -87,7 +87,7 @@ module.exports = (app, plugin, model) => {
         
         const total = result.length;
         
-        res.send(requestResult({data,total}))
+        res.send(requestResult(1, { data, total }))
     })
     
     // Post a comment
@@ -124,7 +124,7 @@ module.exports = (app, plugin, model) => {
         }
         result._doc['time'] = dateFormat(result.time)
 
-        res.send(requestResult(result))
+        res.send(requestResult(1, result))
 
         /**
          * 发送邮件通知
