@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
     describe: String,                   // 描述
     contentHtml: String,                // 内容源码
     time: String,
-    like: {                             // 喜欢
+    like: {                             // 点赞
         type: Number,
         default: 0
     },                       
@@ -23,7 +23,7 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    music: {
+    music: {                            // 音乐
         url: {
             type: String,
             default: ''
@@ -32,8 +32,8 @@ const schema = new mongoose.Schema({
             type: String,
             default: ''
         }
-    },                      // 音乐
-    image: {
+    },                      
+    image: {                             // 封面
         url: {
             type: String,
             default: ''
@@ -42,7 +42,7 @@ const schema = new mongoose.Schema({
             type: String,
             default: ''
         }
-    },                      // 封面
+    },                      
 })
 
 module.exports = mongoose.model('Article', schema)

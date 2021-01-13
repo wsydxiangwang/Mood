@@ -54,7 +54,7 @@ module.exports = (app, plugin, model) => {
             req.body.data.id = count.count;
             result = await Article.create(req.body.data)
         }
-        res.send(requestResult(result))
+        res.send(requestResult(1, result))
 
         // ...Subscribe
         const email_data = req.body.email
@@ -86,13 +86,13 @@ module.exports = (app, plugin, model) => {
             (err, doc) => {
                 return doc
             })
-        res.send(requestResult(data))
+        res.send(requestResult(1, data))
     })
 
     // 删除文章
     router.delete('/article/:id', async (req, res) => {
         const data = await Article.findByIdAndDelete(req.params.id, req.body)
-        res.send(requestResult(data))
+        res.send(requestResult(1, data))
     })
 
     app.use('/admin/api', router)

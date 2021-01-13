@@ -109,6 +109,7 @@ export default {
     },
     data() {
         return {
+            id: '',                     // 当前文章id（编辑）
             data: {
                 title: '',              // 标题
                 content: '',            // 内容
@@ -120,7 +121,6 @@ export default {
                 hide: false,            // 隐藏
             },
             isReset: true,
-            id: '',                     // 当前文章id（编辑）
 
             upload: {},
             uploadToggle: false,
@@ -131,7 +131,9 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
-        if(this.id) this.loadData(this.id);
+        if (this.id) {
+            this.loadData(this.id)
+        }
     },
     watch: {
         'data.image.url': {
@@ -239,11 +241,11 @@ export default {
             const mesg = this.id ? '更新' : '发表';
 
             // 网站和管理员的信息
-            const email = this.$data.info['email']
-            email.web_name = this.$data.info['web_name']
-            email.web_address = this.$data.info['address']
+            // const email = this.$data.info.administrator['email']
+            // email.web_name = this.$data.info.base['name']
+            // email.web_address = this.$data.info.base['address']
 
-            this.$http.post(type, {data: this.data, email}).then(res => {
+            this.$http.post(type, {data: this.data}).then(res => {
                 setTimeout(() => {
                     if(res.data.status === 1){
                         this.$message({

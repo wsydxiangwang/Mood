@@ -36,14 +36,14 @@
                         </div>
                     </template>
 
-                    <template v-if="status == 7">
+                    <template v-if="status == 8">
                         <div class="hint success">
                             <span class="iconfont icon-success"></span>
                             <span>{{hint[status]}}</span>
                         </div>
                     </template>
 
-                    <template v-if="status!=7 && status!=6 && status!=10">
+                    <template v-if="status!=7 && status!=8 && status!=10">
                         <div class="hint red">
                             <span class="iconfont icon-error"></span>
                             <span>{{hint[status]}}</span>
@@ -208,46 +208,6 @@ export default {
         getInfo(type) {
             return this.data.administrator[type]
         },
-        // toggle view        
-        verifyPopup(is) {
-            const type = is ? 'add' : 'remove';
-            this.toggleClass(type)
-            this.isVerification = is;
-        },
-        toggleClass(type) {
-            ['header', 'section', '.comment-section'].forEach(item => {
-                document.querySelector(item).classList[type]('verify')
-            })
-        },
-        // Validation results
-        verifyResult(type){
-            this.verifyPopup(false)
-            setTimeout(() => {
-                if (type) {
-                    this.status = 5;
-                } else {
-                    setTimeout(this.submit, 500) // start submit
-                }
-            }, 600)
-        },
-        // Cancel reply
-        cancel(){
-            this.replyObj = {};
-            this.isReply = false;
-        },
-        // Reply Mode
-        reply(item, type, items){
-
-            this.$setScroll('.comment', 'comment');
-
-            this.isReply = true;
-            this.replyObj = {
-                parent_id: item.id,
-                type: type == 1 ? 2 : 3,
-                reply_name: type == 1 ? item.name : items.name,
-                reply_email: type == 1 ? item.email : items.email,
-            }
-        },
         // Verification
         submitVerify() {
             // loading
@@ -276,22 +236,62 @@ export default {
             }
             this.verifyPopup(true)
         },
-        adminSubmit() {
-            if (this.adminCode == this.getInfo('code')) {
-                this.administrator(false)
-                this.submit()
-            } else {
-                this.status = 3
-            }
+        // toggle view        
+        verifyPopup(is) {
+            const type = is ? 'add' : 'remove';
+            this.toggleClass(type)
+            this.isVerification = is;
+        },
+        // Validation results
+        verifyResult(type) {
+            this.verifyPopup(false)
+            setTimeout(() => {
+                if (type) {
+                    this.status = 6
+                } else {
+                    setTimeout(this.submit, 500) // start submit
+                }
+            }, 600)
         },
         administrator(type) {
             const css = type ? 'add' : 'remove'
             this.toggleClass(css)
             this.adminPopup = type
         },
+        adminSubmit() {
+            if (this.adminCode == this.getInfo('code')) {
+                this.administrator(false)
+                setTimeout(this.submit, 500) // start submit
+            } else {
+                this.status = 3
+            }
+        },
+        toggleClass(type) {
+            ['header', 'section', '.comment-section'].forEach(item => {
+                document.querySelector(item).classList[type]('verify')
+            })
+        },
+        // Reply Mode
+        reply(item, type, items){
+
+            this.$setScroll('.comment', 'comment');
+
+            this.isReply = true;
+            this.replyObj = {
+                parent_id: item.id,
+                type: type == 1 ? 2 : 3,
+                reply_name: type == 1 ? item.name : items.name,
+                reply_email: type == 1 ? item.email : items.email,
+            }
+        },
+        // Cancel reply
+        cancel(){
+            this.replyObj = {};
+            this.isReply = false;
+        },
         // Submit Comment
         submit(){
-            this.status = 7;
+            this.status = 7;    // loading
 
             if (!this.form['image']) {
                 this.form.image = Math.floor(Math.random() * 10 + 1)
@@ -505,7 +505,7 @@ export default {
             font-size: 14px;
             color: #fff;
             border-radius: 6px;
-            background: var(--colorActive);
+            background: var(--color-active);
             cursor: pointer;
             outline: none;
             border: none;
@@ -579,7 +579,7 @@ export default {
         .reply-name{
             color: #fff;
             display: inline-block;
-            background: var(--colorActive);
+            background: var(--color-active);
             border-radius: 21px;
             padding: 0 10px;
             height: 24px;
@@ -779,7 +779,7 @@ export default {
         transition:all .3s;
         &:hover, &.active{
             color: #fff;
-            background: var(--colorActive);
+            background: var(--color-active);
         }
     }
     .hint{
@@ -789,7 +789,7 @@ export default {
             display: flex;
             align-items: center;
             .loading-text{
-                color: var(--colorActive);
+                color: var(--color-active);
                 padding-top: 3px;
             }
         }
@@ -833,7 +833,7 @@ export default {
     margin:0 auto;
     width:15%;
     height:15%;
-    background-color:var(--colorActive);
+    background-color:var(--color-active);
     border-radius:100%;
     -webkit-animation:sk-circleBounceDelay 1.2s infinite ease-in-out both;
     animation:sk-circleBounceDelay 1.2s infinite ease-in-out both

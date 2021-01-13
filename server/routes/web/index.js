@@ -43,7 +43,7 @@ module.exports = (app, plugin, model) => {
             totalPage: Math.ceil(result[0] / 10),
         }
 
-        res.send(requestResult(data))
+        res.send(requestResult(1, data))
     })
 
     // Get article

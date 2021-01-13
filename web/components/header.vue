@@ -254,7 +254,7 @@ header{
             color: #0cd438;
         }
         &:hover{
-            color: var(--colorDefault)
+            color: var(--color-dark)
         }
     }
     .myself{

@@ -22,52 +22,43 @@
 				<div class="title"><nuxt-link :to="info.cover.link">{{info.cover.title}}</nuxt-link></div>
 				<div class="describe">{{info.cover.describe}}</div>
 			</div>
+
 			<!-- menu -->
-			<div class="nav">
-				<ul class="nav-list">
-					<template v-for="(item, index) in navList">
-						<template v-if="item.url == 'subscribe'">
-							<li v-if="info.administrator.subscribe" :key="index">
-								<a @click="toPage(item.url)">{{item.title}}</a>
-							</li>
-						</template>
-						<li v-else :key="index">
-							<a @click="toPage(item.url)">{{item.title}}</a>
-						</li>
-					</template>
-				</ul>
-				<div class="world">
-					<span>Everywhere in the world has a similar life.</span>
-				</div>
-			</div>
+			<Menu></Menu>
 		</div>
 
-		<div class="content" v-if="Object.keys(articleList.data).length > 0">
-			<div class="post" v-for="(item, index) in articleList.data" :key="index">
-				<div class="img-box" @click="article(item.id)">
-					<img v-lazy="item.image.url" src="/image/other/default.jpg" :alt="item.image.name">
-				</div>
-				<div class="info">
-					<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
-					<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
-					<div class="describe">{{item.describe}}</div>
-					<div class="stuff">
-						<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
-						<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
-						<div><i class="iconfont icon-like"></i><span>{{item.like}}</span></div>
+		<template v-if="Object.keys(articleList.data).length > 0">
+			<div class="content">
+				<div class="post" v-for="(item, index) in articleList.data" :key="index">
+					<div class="img-box" @click="article(item.id)">
+						<img v-lazy="item.image.url" src="/image/other/default.jpg" :alt="item.image.name">
+					</div>
+					<div class="info">
+						<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
+						<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
+						<div class="describe">{{item.describe}}</div>
+						<div class="stuff">
+							<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
+							<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
+							<div><i class="iconfont icon-like"></i><span>{{item.like}}</span></div>
+						</div>
 					</div>
 				</div>
+				<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
 			</div>
-			<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
-		</div>
+		</template>
+		<template v-else>
+			<div  class="content-null">
+				主人太懒了，还没发表任何文章！！
+			</div>
+		</template>
 
-		<div class="foot" v-if="info.other.icp_txt">
+		<div class="foot" v-if="info.other && info.other.icp_txt">
 			<a :href="info.other.icp_link" target="_blank">{{info.other.icp_txt}}</a>
 		</div>
 
 		<BackTop v-if="isBack"></BackTop>
 
-		<!-- loading -->
 		<Loading v-if="loading"></Loading>
 	</div>
 	<div v-else class="empty-data">
@@ -77,36 +68,18 @@
 
 <script>
 import Parallax from 'parallax-js'
+import Menu from '@/components/Menu'
 export default {
 	name: 'index',
-	data(){
-		return{
+	components: {
+		Menu
+	},
+	data() {
+		return {
 			layerStyle: {},
 			imgStyle: {},
 			boxH: '100%',
 			boxW: '100%',
-			navList: [
-				{
-					title: 'Article',
-					url: 'article'
-				},
-				{
-					title: 'Rainy',
-					url: 'rain'
-				},
-				{
-					title: 'Envelope',
-					url: 'envelope'
-				},
-				{
-					title: 'Subscribe',
-					url: 'subscribe'
-				},
-				{
-					title: "About",
-					url: 'about'
-				}
-			],
 			isNav: false,
 			loading: true,
 			loadingType: 'more',
@@ -266,10 +239,6 @@ export default {
 				this.loadingType = 'more';
 			})
 		},
-		// Other pages
-		toPage(url){
-			this.$router.push(`/${url}`)
-		},
 		// Nav
 		menu(){
 			this.isNav = !this.isNav;
@@ -358,7 +327,7 @@ export default {
 				line-height: 32px;
 				border-radius: 2px;
 				cursor: pointer;
-				color: #ff3600;
+				color: var(--color-red);
 				text-align: center;
 				background: rgba(255, 255, 255, 0.9);
 				span{
@@ -612,6 +581,14 @@ export default {
 			}
 		}
 	}
+	.content-null {
+		text-align: center;
+		padding: 40px;
+		font-size: 16px;
+		color: #464646;
+		font-weight: 600;
+		letter-spacing: 4px;
+	}
 	.foot{
 		text-align: center;
 		a{
@@ -623,50 +600,7 @@ export default {
 			padding: 1px 0 2px;
 		}
 	}
-	.nav{
-		position: fixed;
-		left: 0;
-		top: -100%;
-		width: 100%;
-		height: 100%;
-		z-index: 9999;
-		display: flex;
-		justify-content: center;
-		align-items: center;	
-		background: rgba(255, 255, 255, 0.96);
-		transition: top 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
-		.world{
-			width: 100%;
-			position: absolute;
-			bottom: 30px;
-			display: block;
-			text-align: center;
-			color: #999;
-			span{
-				font-size: 16px;	
-			}
-		}
-		.nav-list{
-			width: 80%;
-			display: block;
-			text-align: center;
-			margin-top: -120px;
-			li{
-				margin: 0 20px 20px;
-				list-style: none;
-				display: inline-block;
-				a{
-					font-size: 24px;
-					cursor: pointer;
-					color: #666;
-					letter-spacing: 1px;
-					&:hover{
-						color: #222;
-					}
-				}
-			}
-		}
-	}
+	
 	@media screen and (max-width: 1200px){
 		.content{
 			width: 900px;
@@ -783,16 +717,6 @@ export default {
 				}
 			}
 		}
-		.nav{
-			.nav-list{
-				li{
-					// margin: 0 12px;
-					a{
-						font-size: 18px;
-					}
-				}
-			}
-		}
 	}
 	@media screen and (max-width: 480px){
 		.cover{
@@ -817,9 +741,6 @@ export default {
 					line-height: 20px;
 				}
 			}
-		}
-		.nav .world span{
-			font-size: 14px;	
 		}
 	}
 }

@@ -48,8 +48,9 @@ body::-webkit-scrollbar-track{
 }
 
 :root{
-	--colorBar: #50bcb6;
-	--colorActive: #0084ff;
-	--colorComment: #EF6D57;
-	--colorDefault: #24292e;
+	--color-red: #ff3600;
+	--color-bar: #50bcb6;
+	--color-pink: #EF6D57;
+	--color-dark: #080808;
+	--color-active: #0084ff;
 }
