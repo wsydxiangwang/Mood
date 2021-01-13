@@ -210,8 +210,7 @@ export default {
         },
         // Verification
         submitVerify() {
-            // loading
-            if(this.status == 7) {
+            if(this.status == 7) {  // loading
                 return;
             }
             const list = [
@@ -273,9 +272,7 @@ export default {
         },
         // Reply Mode
         reply(item, type, items) {
-
-            this.$setScroll('.comment', 'comment');
-
+            this.$setScroll('.comment', 'comment')
             this.isReply = true;
             this.replyObj = {
                 parent_id: item.id,
@@ -334,48 +331,46 @@ export default {
                 type: this.isReply ? 2 : 1,
                 email: this.getInfo('email')
             }
-            
 
-            // console.log(params)
+            this.$axios.post('comment', params).then(res => {
+                if (res.data.status === 1) {
+                    /**
+                     * To Append Data
+                     */
+                    const data = res.data.body;
 
-            // return
-
-            this.$axios.post('comment', params)
-                .then(res => {
-                    if(res.data.status === 1){
-                        /**
-                         * To Append Data
-                         */
-                        const data = res.data.body;
-
-                        if(data.type === 1){
-                            this.comment.data.unshift(data)
-                        }else{
-                            const id = data.parent_id;
-                            this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
-                        }
-
-                        // Comment total +1 
-                        this.$set(this.comment, 'total', this.comment.total + 1)
-                        this.$emit('total', this.comment.total)
-
-                        /**
-                         * Reset State
-                         */
-                        this.form = {};
-                        this.replyObj = {};
-                        this.isReply = false;
-                        this.status = 7;
-                        setTimeout(() => {
-                            this.status = 10;
-                        }, 3000)
+                    if (data.type === 1) {
+                        this.comment.data.unshift(data)
                     }else{
-                        this.status = 4;
+                        const id = data.parent_id;
+                        this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
                     }
-                })
-                .catch(err => {
+
+                    // Comment total +1 
+                    this.$set(this.comment, 'total', this.comment.total + 1)
+                    this.$emit('total', this.comment.total)
+
+                    /**
+                     * Reset State
+                     */
+                    this.form = {
+                        name: this.form.name,
+                        email: this.form.email,
+                        image: this.form.image
+                    }
+                    this.replyObj = {};
+                    this.isReply = false;
+                    this.status = 8;
+                    setTimeout(() => {
+                        this.status = 10;
+                    }, 3000)
+                } else {
                     this.status = 4;
-                })
+                }
+            })
+            .catch(err => {
+                this.status = 4;
+            })
         },
         // FormatTime
         dateFormat(){

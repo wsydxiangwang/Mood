@@ -100,9 +100,9 @@ module.exports = (app, plugin, model) => {
             new: true
         })
 
-        if(commentCount){
+        if (commentCount) {
             req.body.data.id = commentCount.count;
-        }else{
+        } else {
             /**
              * 第一次发表评论
              * 创建自增id字段
@@ -114,12 +114,12 @@ module.exports = (app, plugin, model) => {
             const count = await Counter.create(data)
             req.body.data.id = count.count;
         }
-
+        
         /**
          * 返回评论数据，页面展示
          */
         const result = await Comment.create(req.body.data)
-        if(result.type === 1){
+        if (result.type === 1) {
             result._doc['child'] = [];
         }
         result._doc['time'] = dateFormat(result.time)
@@ -129,19 +129,19 @@ module.exports = (app, plugin, model) => {
         /**
          * 发送邮件通知
          */
-        if(req.body.is_email){
-            const info = await Info.findOne()
-            const data = {
-                title: req.body.title,
-                url: req.body.url,
-                name: req.body.data.reply_name || info.email.name,
-                email: req.body.data.reply_email || info.email.address
-            }
+        // if(req.body.is_email){
+        //     const info = await Info.findOne()
+        //     const data = {
+        //         title: req.body.title,
+        //         url: req.body.url,
+        //         name: req.body.data.reply_name || info.email.name,
+        //         email: req.body.data.reply_email || info.email.address
+        //     }
 
-            // 发送邮件
-            const email_info = Object.assign({}, info['email'], {web_name: info['web_name']})
-            email(3, data, email_info)            
-        }
+        //     // 发送邮件
+        //     const email_info = Object.assign({}, info['email'], {web_name: info['web_name']})
+        //     email(3, data, email_info)            
+        // }
     })
 
     // like +1
