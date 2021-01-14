@@ -11,13 +11,13 @@ module.exports = (app, plugin, model) => {
         const s = req.query.count || 10;
 
         const data = await getPage(Article, p, s)
-        res.send(requestResult(data))
+        res.send(requestResult(1, data))
     })
 
     // 获取指定id文章
     router.get('/article/:id', async (req, res) => {
         const data = await Article.findOne({id: req.params.id})
-        res.send(requestResult(data))
+        res.send(requestResult(1, data))
     })
 
     // 发布文章

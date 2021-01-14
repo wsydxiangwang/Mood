@@ -56,8 +56,8 @@ export default {
         }
     },
     created(){
-        // this.total = this.$data.articleQty
-        // this.load();
+        this.total = this.$data.articleQty
+        this.load();
     },
     mounted(){
         document.querySelector('.content').style.overflow = 'hidden'
@@ -74,7 +74,7 @@ export default {
              * vuex 存在当前页数据
              */
             const article = this.$store.state.article;
-            if(article[page]){
+            if (article[page]) {
                 this.data = article[page];
                 return
             }

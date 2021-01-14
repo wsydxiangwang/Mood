@@ -12,7 +12,17 @@ var common = {
             // DOM元素 计算位置
             const domTop = document.querySelector(dom).offsetTop
             const index = type === 'index' ? 280 : -700
-            const target = domTop + (getWin('clientHeight') / 2) + index
+
+            if (type == 'comment') {
+                const h = document.querySelector('.comment-form').offsetHeight
+
+                var target = domTop + (getWin('clientHeight') / 2)
+            } else {
+                var target = domTop + (getWin('clientHeight') / 2) + index
+            }
+
+
+            console.log(target)
 
             let beforeScroll = 0;
 
