@@ -1,4 +1,4 @@
-# <div align="center">简易博客系统</div>
+# <div align="center">一个完美的博客系统</div>
 
 <div align="center">
     <img src="https://img.shields.io/badge/Nuxt-v2.0.0-brightgreen">
