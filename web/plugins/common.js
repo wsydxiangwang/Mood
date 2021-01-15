@@ -3,7 +3,6 @@ import Vue from 'vue'
 var common = {
 
     install(Vue, option){
-
         // 设置滚动条位置
         Vue.prototype.$setScroll = (dom, type) => {
             const getWin = (type) => {
@@ -15,14 +14,10 @@ var common = {
 
             if (type == 'comment') {
                 const h = document.querySelector('.comment-form').offsetHeight
-
-                var target = domTop + (getWin('clientHeight') / 2)
+                var target = domTop - getWin('clientHeight') + h
             } else {
                 var target = domTop + (getWin('clientHeight') / 2) + index
             }
-
-
-            console.log(target)
 
             let beforeScroll = 0;
 

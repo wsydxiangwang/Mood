@@ -160,7 +160,7 @@ export default {
                 '请输入正确的邮箱，期待回信～',
                 '偷偷告诉我，你作文是不是0分～',
                 '胆敢冒充站长，来人，拉出去砍了！！',
-                '多说一点儿吧，最少10个字～',
+                '多说一点儿吧，至少能成一句诗～',
                 '哇哦！遇到错误，要不再试试',
                 '完成验证才可以提交哦～',
                 'Submitting...',
@@ -220,7 +220,8 @@ export default {
                 !(this.form.name == this.getInfo('name') || this.form.email == this.getInfo('email')),
             ]
             for (let i in list) {
-                if (i == 2 && list[i].length < 10) {
+                console.log(list[i])
+                if (i == 2 && (!list[i] || list[i].length < 5)) {
                     this.status = 4
                     return
                 }
@@ -256,6 +257,7 @@ export default {
             const css = type ? 'add' : 'remove'
             this.toggleClass(css)
             this.adminPopup = type
+            this.adminCode = ''
         },
         adminSubmit() {
             if (this.adminCode == this.getInfo('code')) {
@@ -293,11 +295,6 @@ export default {
             if (!this.form['image']) {
                 this.form.image = Math.floor(Math.random() * 10 + 1)
             }
-            const temp = ['email', 'name', 'image'].reduce((t, i) => {
-                t[i] = this.form[i]
-                return t
-            }, {})
-            localStorage.setItem('comment', JSON.stringify(temp))
 
             /**
              * Administrator Mark
@@ -329,7 +326,7 @@ export default {
                 title: this.title,
                 url: window.location.href,
                 type: this.isReply ? 2 : 1,
-                email: this.getInfo('email')
+                isEmail: this.getInfo('comment')
             }
 
             this.$axios.post('comment', params).then(res => {
@@ -350,14 +347,17 @@ export default {
                     this.$set(this.comment, 'total', this.comment.total + 1)
                     this.$emit('total', this.comment.total)
 
-                    /**
-                     * Reset State
-                     */
+                    // form & local
                     this.form = {
                         name: this.form.name,
                         email: this.form.email,
                         image: this.form.image
                     }
+                    localStorage.setItem('comment', JSON.stringify(this.form))
+
+                    /**
+                     * Reset State
+                     */
                     this.replyObj = {};
                     this.isReply = false;
                     this.status = 8;

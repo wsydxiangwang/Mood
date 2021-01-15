@@ -125,23 +125,20 @@ module.exports = (app, plugin, model) => {
         result._doc['time'] = dateFormat(result.time)
 
         res.send(requestResult(1, result))
-
+        
         /**
          * 发送邮件通知
          */
-        // if(req.body.is_email){
-        //     const info = await Info.findOne()
-        //     const data = {
-        //         title: req.body.title,
-        //         url: req.body.url,
-        //         name: req.body.data.reply_name || info.email.name,
-        //         email: req.body.data.reply_email || info.email.address
-        //     }
-
-        //     // 发送邮件
-        //     const email_info = Object.assign({}, info['email'], {web_name: info['web_name']})
-        //     email(3, data, email_info)            
-        // }
+        if (req.body.isEmail) {
+            const info = await Info.findOne()
+            const data = {
+                title: req.body.title,
+                url: req.body.url,
+                name: req.body.data.reply_name || info.administrator.name,
+                email: req.body.data.reply_email || info.administrator.email
+            }
+            email(3, data, info)            
+        }
     })
 
     // like +1
