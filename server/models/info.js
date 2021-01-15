@@ -46,6 +46,15 @@ const schema = new mongoose.Schema({
         image: String,
         describe: String
     },
+
+    aliyun_oss: {                   // 阿里云oss
+        bucket: String,
+        region: String,
+        endPoint: String,
+        accessKeySecret: String,
+        accessKeyId: String,
+        domain: String
+    }
 })
 
 module.exports = mongoose.model('Info', schema)

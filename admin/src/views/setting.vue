@@ -3,7 +3,7 @@
         <div class="header">
             <h2 class="tit">网站信息</h2>
         </div>
-        <el-form ref="form" :model="form" label-width="100px">
+        <el-form label-width="100px">
             <section
                 v-for="(val, key, index) in formList"
                 :key="index"
@@ -27,7 +27,7 @@
                         v-if="k != 'value'"
                         :label="v"
                         :key="i" 
-                    >   
+                    >
                         <template v-if="k == 'admin_avatar'">
                             <upload 
                                 class="avatar-uploader" 
@@ -56,6 +56,15 @@
                                     :key="index"
                                 ></el-radio>
                             </el-radio-group>
+                            <!-- 阿里云 -->
+                            <div v-if="form[key][k] == '阿里云'" class="oss-list">
+                                <el-input 
+                                    v-for="(val, key, idx) in type[k]['阿里云']"
+                                    :key="idx"
+                                    :placeholder="key"
+                                    v-model="form['aliyun_oss'][key]"
+                                ></el-input>
+                            </div>
                         </template>
 
                         <template v-else-if="k == 'color'">
@@ -73,7 +82,7 @@
                                 trigger="hover"
                             >
                                 <p>与邮箱一致的通行码, 在邮箱设置开启SMTP服务器可获取（邮件通知必填）</p>
-                                <span v-if="k == 'email_pass'" slot="reference">(view)</span>
+                                <span class="email-pass" v-if="k == 'email_pass'" slot="reference">(view)</span>
                             </el-popover>
                             <el-input v-model="form[key][k]"></el-input>
                         </template>
@@ -167,7 +176,8 @@ export default {
                 administrator: {},
                 cover: {},
                 page_music: {},
-                other: {}
+                other: {},
+                aliyun_oss: {}
             },
             uploadFile: {},
             fullscreenLoading: false,
@@ -231,10 +241,14 @@ export default {
             for (let key in this.uploadFile) {
                 uploadList.push(new Promise((resolve, reject) => {
                     const form = this.uploadFile[key]
-                    // 默认添加页面填写的信息
                     const type = this.form['base']['upload_type']
+
                     form.append('type', type)
-                    form.append('oss', this.type['upload_type'][type])
+
+                    if (type == '阿里云') {
+                        const oss = JSON.stringify(this.form['aliyun_oss'])
+                        form.append('oss', oss)
+                    }
 
                     this.$http.post('/upload', form).then(res => {
                         if (res.data.status === 1) {
@@ -252,11 +266,11 @@ export default {
             }
 
             Promise.all(uploadList).then(res => {
-                if(res.length > 0){
+                if (res.length > 0) {
                     res.map(item => {
-                        if(item.type === 'avatar'){
+                        if (item.type === 'avatar') {
                             this.form['base']['admin_avatar'] = item.url
-                        }else{
+                        } else {
                             this.form['cover']['image'] = item.url
                         }
                     })
@@ -280,7 +294,7 @@ export default {
                 })
             }).catch(err => {
                 this.fullscreenLoading = false
-                this.$message.error('图片上传失败，请检查网络是否正常 or OSS信息是否填写正确!')
+                this.$message.error('图片上传失败，请检查OSS信息是否填写正确!')
             })
         },
         uploadChange(type, file){
@@ -291,6 +305,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-form{
+    max-width: 600px;
+}
 .avatar-uploader{
     height: 100px;
     ::v-deep .el-upload{
@@ -334,6 +351,9 @@ export default {
         }
     }
 }
+.oss-list .el-input{
+    margin-top: 10px;
+}
 .upload-image-size{
     position: absolute;
     top: 20px;
@@ -357,6 +377,13 @@ h2.tit{
         width: 100%;
         border-radius: 4px;
     }
+}
+.email-pass{
+    position: absolute;
+    left: -58px;
+    top: 16px;
+    font-size: 12px;
+    color: #b3b3b3;
 }
 .submit:hover + .hint{
     opacity: 1;

@@ -5,7 +5,7 @@
         :show-file-list="false"
         :on-change="upload"
     >
-        <img v-if="url || newURL" :src="url || newURL">
+        <img v-if="url || newURL" :src="newURL || url">
         <i v-else :class="icon"></i>
     </el-upload>
 </template>
