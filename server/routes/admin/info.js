@@ -33,18 +33,13 @@ module.exports = (app, plugin, model) => {
     })
 
     router.post('/info', async (req, res) => {
-        if (req.body._id) {
-            const result = await Info.findByIdAndUpdate(
-                req.body._id, 
-                req.body, 
-                (err, doc) => {
-                    return doc
-                })
-            res.send(requestResult(1, result))
-        } else {
-            const result = await Info.create(req.body)
-            res.send(requestResult(1, result))
-        }
+        const result = await Info.findByIdAndUpdate(
+            req.body._id, 
+            req.body, 
+            (err, doc) => {
+                return doc
+            })
+        res.send(requestResult(1, result))
     })
 
     app.use('/admin/api', router)

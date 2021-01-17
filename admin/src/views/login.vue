@@ -6,14 +6,20 @@
             <div class="form-item">
                 <div class="ipt user">
                     <input type="text" placeholder="Name" v-model="data.username">
-                    <img src="../assets/login-1.png" alt="">
+                    <img src="../assets/login-1.png">
                 </div>
                 <div class="ipt pass">
                     <input type="password" placeholder="Password" v-model="data.password">
-                    <img src="../assets/login-2.png" alt="">
+                    <img src="../assets/login-2.png">
                 </div>
                 <img src="../assets/login-0.png" alt="">
-                <button @click="login" @keyup.enter="login">sign in</button>
+                <el-button 
+                    @keyup.enter.native="login" 
+                    @click="login" 
+                    type="primary"
+                >
+                    sign in
+                </el-button>
                 <span @click="isCreate" class="add">(sign up)</span>
             </div>
         </div>
@@ -25,15 +31,22 @@
         <transition name="fade">
             <section class="create" v-if="isShow">
                 <div class="create-form">
-                    <h3>创建账号</h3>
-
-                    <input type="text" placeholder="用户名" v-model="create.username">
-                    <input type="password" placeholder="密码" v-model="create.password">
-                    <input type="password" placeholder="重复密码" v-model="create.passwords">
-                    <button @click="createSubmit">sign in</button>
-
-                    <p><span class="el-icon-warning"></span> 管理员账号只能创建一次, 请牢记账号和密码！ </p>
-
+                    <h3>Create Account</h3>
+                    <el-form>
+                        <el-input placeholder="Name" v-model="form.name"></el-input>
+                        <el-input type="password" placeholder="Password" v-model="form.password"></el-input>
+                        <el-input type="password" placeholder="Confirm Password" v-model="form.passwords"></el-input>
+                        <el-input placeholder="Email" v-model="form.email"></el-input>
+                        <el-input placeholder="Email PASS" v-model="form.pass"></el-input>
+                        <el-form-item label="邮箱类型">
+                            <el-radio-group v-model="form.email_type">     
+                                <el-radio label="QQ"></el-radio>
+                                <el-radio label="163"></el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-button @click="signIn">sign in</el-button>
+                    </el-form>
+                    <p><span class="el-icon-warning"></span> 在邮箱设置开启SMTP服务器可获取（忘记密码、邮件通知必填，Emali PASS），账号只可注册一次！</p>
                     <span @click="isCreate" class="el-icon-circle-close"></span>
                 </div>
             </section>
@@ -46,11 +59,8 @@ export default {
     data(){
         return {
             loginLoading: false,
-            data: {
-                username: '',
-                password: '',
-            },
-            create: {},
+            data: {},
+            form: {},
             isShow: false
         }
     },
@@ -58,52 +68,48 @@ export default {
         isCreate(){
             this.isShow = !this.isShow
         },
-        createSubmit(){
-            if(Object.keys(this.create).length != 3){
+        signIn() {
+            if (Object.keys(this.form).length != 6) {
                 this.$message.error('请填写完整信息');
                 return;
             }
-            if(this.create.password !== this.create.passwords){
+            if (this.form.password !== this.form.passwords) {
                 this.$message.error('密码不一致');
                 return;
             }
             
             this.loginLoading = true;
 
-            this.$http.post('/user', this.create).then(res => {
-                setTimeout(() => {
-                    if(res.data.status == 1){
-                        this.$message({
-                            message: '账号创建成功, 请登录！',
-                            type: 'success'
-                        });
-                        this.create = {};
-                        this.isCreate();
-                    }else{
-                        this.$alert(res.data.message, '注册失败', {confirmButtonText: '确定'});
-                    }
-                    this.loginLoading = false
-                }, 1000)
+            this.$http.post('/user', this.form).then(res => {
+                if (res.data.status == 1) {
+                    this.$message({
+                        message: res.data.message,
+                        type: 'success'
+                    });
+                    this.form = {};
+                    this.isCreate();
+                } else {
+                    this.$alert(res.data.message, '注册失败', {confirmButtonText: '确定'});
+                }
+                this.loginLoading = false
             })
             
         },
-        async login(){
+        login(){
             this.loginLoading = true;
-            const res = await this.$http.post('/login', this.data);
-            /**
-             * 登录成功 设置token 回到首页
-             */
-            if(res.data.status === 1){
-                localStorage.setItem("Authorization", res.data.body.token)
-                this.$router.push('/')
-                this.$message({
-                    message: '登录成功',
-                    type: 'success'
-                });
-            }else{
-                this.$message.error(res.data.body.message);
-            }
-            this.loginLoading = false;
+            this.$http.post('/login', this.data).then(res => {
+                if (res.data.status === 1) {
+                    localStorage.setItem("Authorization", res.data.body.token)
+                    this.$router.push('/')
+                    this.$message({
+                        message: '登录成功',
+                        type: 'success'
+                    })
+                } else {
+                    this.$message.error(res.data.body.message)
+                }
+                this.loginLoading = false;
+            })
         }
     }
 }
@@ -183,6 +189,14 @@ export default {
                 background: #0486e2;
             }
         }
+        .el-input{
+            margin-bottom: 12px;
+            input{
+                height: 44px;
+                line-height: 44px;
+                border-color: #eee;
+            }
+        }
         .el-icon-circle-close{
             position: absolute;
             right: 15px;
@@ -248,7 +262,7 @@ export default {
         .add{
             font-size: 12px;
             color: #dad4d4;
-            display: block;
+            display: inline-block;
             margin-top: 6px;
             cursor: pointer;
             transition: all .3s;
@@ -278,18 +292,11 @@ export default {
     }
     button{
         border: none;
-        color: #fff;
         background: #0b9aff;
-        height: 40px;
-        font-size: 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: block;
         width: 100%;
         text-transform: uppercase;
         letter-spacing: 1px;
         transition: all .3s;
-        outline: none;
         margin-top: 10px;
         &:hover{
             background: #0486e2;

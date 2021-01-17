@@ -9,7 +9,6 @@ const http = axios.create({
 // request 拦截器
 http.interceptors.request.use(
     config => {
-
         // 设置token
         const token = localStorage.getItem("Authorization");
         config.headers.Authorization = `Bearer ${token}`;

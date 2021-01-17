@@ -2,8 +2,8 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
     
-    let {User} = model
-    let {requestResult} = plugin
+    let { User, Info } = model
+    let { requestResult } = plugin
 
     const crypto = require('crypto');
     const jwt = require('jsonwebtoken');
@@ -44,7 +44,7 @@ module.exports = (app, plugin, model) => {
          * 查找数据库是否有此用户
          */
         User.find(info, (err, docs) => {
-            if(docs.length != 0){
+            if (docs.length != 0) {
                 // 生成token
                 const token = jwt.sign(info, 'Libai', {
                     expiresIn: 60 * 60 * 24  // 24小时过期
@@ -53,7 +53,7 @@ module.exports = (app, plugin, model) => {
                     message: '登录成功',
                     token: token
                 }))
-            }else{
+            } else {
                 res.send(requestResult(2, {
                     message: '用户名或密码错误！',
                 }))
@@ -65,30 +65,38 @@ module.exports = (app, plugin, model) => {
     router.post('/user', async (req, res) => {
         const len = await User.find().countDocuments()
         const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
-        const info = {
-            username: req.body.username,
+        const user = {
+            username: req.body.name,
             password: pwd
         }
-        if(len){
+        const info = {
+            base: { 
+                email_pass: req.body.pass,
+                email_type: req.body.email_type
+            },
+            administrator: { email: req.body.email }
+        }
+        if (len) {
             res.json({
                 status: 2,
-                message: '请勿重复注册, 如遗忘密码, 自行操作数据库处理!',
+                message: '请勿重复注册！',
             })
-        }else{
+        } else {
             // 创建账号
-            await User.create(info, (err, docs) => {
-                if(docs.length != 0){
+            User.create(user, (err, docs) => {
+                if (docs.length != 0) {
                     res.json({
                         status: 1,
-                        message: '账号创建成功'
+                        message: '注册成功！'
                     })
-                }else{
+                } else {
                     res.json({
                         status: 2,
-                        message: '创建失败,请检查数据库or服务器是否正常'
+                        message: '注册失败，服务器或数据库出错！'
                     })
                 }
             })
+            Info.create(info)
         }
     })
     app.use('/admin/api', router)

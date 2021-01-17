@@ -61,8 +61,9 @@
                                 <el-input 
                                     v-for="(val, key, idx) in type[k]['阿里云']"
                                     :key="idx"
-                                    :placeholder="key"
+                                    :placeholder="val"
                                     v-model="form['aliyun_oss'][key]"
+                                    :class="{ red: key != 'domain' }"
                                 ></el-input>
                             </div>
                         </template>
@@ -158,12 +159,11 @@ export default {
                 upload_type: {
                     list: ['服务器', '阿里云'],
                     阿里云: {
-                        bucket: '',
-                        region: '',
-                        endPoint: '',
-                        accessKeySecret: '',
-                        accessKeyId: '',
-                        domain: ''
+                        bucket: 'bucket',
+                        region: 'region',
+                        accessKeySecret: 'accessKeySecret',
+                        accessKeyId: 'accessKeyId',
+                        domain: '自定义文件域名，非必填'
                     }
                 },
                 email_type: {
@@ -206,6 +206,18 @@ export default {
             }
         },
         async onSubmit() {
+            const upload_type = this.form['base']['upload_type']
+            const aliyun_oss = this.form['aliyun_oss']
+            
+            if (upload_type == '阿里云') {
+                for (let i in aliyun_oss) {
+                    if (i != 'domain' && !aliyun_oss[i]) {
+                        this.$message.error('请填写阿里云上传模式的必填信息！')
+                        return
+                    }
+                }
+            }
+
             /**
              * Password
              */ 
@@ -240,13 +252,12 @@ export default {
             const uploadList = []
             for (let key in this.uploadFile) {
                 uploadList.push(new Promise((resolve, reject) => {
+
                     const form = this.uploadFile[key]
-                    const type = this.form['base']['upload_type']
+                    form.append('type', upload_type)
 
-                    form.append('type', type)
-
-                    if (type == '阿里云') {
-                        const oss = JSON.stringify(this.form['aliyun_oss'])
+                    if (upload_type == '阿里云') {
+                        const oss = JSON.stringify(aliyun_oss)
                         form.append('oss', oss)
                     }
 
@@ -257,7 +268,7 @@ export default {
                                 url: res.data.body.url
                             })
                         } else {
-                            reject(res.data.message)
+                            reject(res.data.body)
                         }
                     }).catch(err => {
                         reject(err)
@@ -279,22 +290,21 @@ export default {
                 // 提交信息
                 this.$http.post('/info', this.form).then(res => {
                     if (res.data.status === 1) {
-                        setTimeout(() => {
-                            this.$message({
-                                type: 'success',
-                                message: res.data.message
-                            })
-                            this.$store.commit('updataInfo', res.data.body)
-                            this.fullscreenLoading = false
-                            // this.$router.push('/')
-                        }, 500)
+                        this.$message({
+                            type: 'success',
+                            message: 'success'
+                        })
+                        this.$store.commit('updataInfo', res.data.body)
+                        this.fullscreenLoading = false
+                        this.uploadFile = {}
                     } else {
-                        this.$message.error(res.data.message)
+                        this.$message.error(res.data.body.message)
                     }
+                    document.querySelector('.content').scrollTop = 0
                 })
             }).catch(err => {
                 this.fullscreenLoading = false
-                this.$message.error('图片上传失败，请检查OSS信息是否填写正确!')
+                this.$message.error(err.message)
             })
         },
         uploadChange(type, file){
@@ -353,6 +363,15 @@ export default {
 }
 .oss-list .el-input{
     margin-top: 10px;
+    position: relative;
+    &.red::before{
+        content: '*';
+        color: red;
+        position: absolute;
+        top: 2px;
+        left: -12px;
+        font-size: 16px;
+    }
 }
 .upload-image-size{
     position: absolute;

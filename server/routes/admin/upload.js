@@ -6,12 +6,10 @@ module.exports = (app, plugin, model) => {
     let { requestResult } = plugin
     
     const fs = require('fs');
-    const co = require('co');
-
     const multer = require('multer')
 
     /**
-     * 指定文件名和路径
+     * 指定文件类型、名字、路径
      */
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -20,9 +18,8 @@ module.exports = (app, plugin, model) => {
         },
         filename: (req, file, cb) => {
             const temp = file.originalname.split('.');
-            const lastName = '.' + temp.pop();
-            const fileName = Date.now() + lastName;
-            cb(null, fileName)
+            const name = Date.now() + '.' + temp.pop();
+            cb(null, name)
         }
     })
       
@@ -30,61 +27,41 @@ module.exports = (app, plugin, model) => {
 
     // 上传文件
     router.post('/upload', upload.single('file'), async (req, res, next) => {
-
-        console.log('type', req.body.type)
-        console.log(req.body.oss)
-
         if (req.body.type == '阿里云') {
             // 获取oss
             if (req.body.oss) {
-                console.log(1)
                 var oss = JSON.parse(req.body.oss)
             } else {
-                console.log(2)
                 const result = await Info.find()
                 var oss = result['aliyun_oss']
             }
-            
-            console.log(oss)
 
             //  文件信息
             const localFile = `./${req.file.path}`;
             const filename = req.file.mimetype.includes('image') ? 'image' : 'music';
-            const key = `Mood/${filename}/${req.file.filename}`;
+            const path = `Mood/${filename}/${req.file.filename}`;
 
-            console.log(localFile, filename, key)
-
-            const OSS = require('ali-oss');
-            const client = new OSS({
-                region: oss.region,//填写你开通的oss
-                accessKeyId: oss.accessKeyId,
-                accessKeySecret: oss.accessKeySecret
-            });
-            const ali_oss = {
-                bucket: oss.bucket,  // bucket name
-                endPoint: oss.endPoint, // oss地址
-            }
-
-            // 阿里云 上传文件 
-            co(function* () {
-                client.useBucket(ali_oss.bucket);
-                const result = yield client.put(key, localFile);
-
-                // 自定义使用域名访问图片，（别忘记把域名解析至oss）
-                const url = oss.domain ? `${oss.domain}/${result.name}` : result.url ;
-
-                fs.unlinkSync(localFile);   // 上传之后删除本地文件
-                
-                res.send(requestResult(1, {
-                    url
-                }))
-            }).catch(function (err) {
+            try {
+                const OSS = require('ali-oss')
+                const client = new OSS({
+                    bucket: oss.bucket,
+                    region: oss.region,
+                    accessKeyId: oss.accessKeyId,
+                    accessKeySecret: oss.accessKeySecret
+                })
+                const result = await client.put(path, localFile)
+                /**
+                 * 移除本地文件
+                 * 自定义域名
+                 */
                 fs.unlinkSync(localFile)
-                res.send(requestResult(2, err))
-                // code: "RequestError"
-                // name: "RequestError"
-                // status: -1
-            });
+                const data = { 
+                    url: oss.domain ? `${oss.domain}/${result.name}` : result.url 
+                }
+                res.send(requestResult(1, data))
+            } catch (e) {
+                res.send(requestResult(2, { message: '图片上传失败，请填写正确的OSS信息！'}))
+            }
         }else{
             const filePath = (req.file.path).replace(/\\/g,"\/");
             const data = {
