@@ -91,19 +91,17 @@ export default {
             this.loginLoading = true;
             const res = await this.$http.post('/login', this.data);
             /**
-             * 登录成功
-             * 设置token
-             * 去到首页
+             * 登录成功 设置token 回到首页
              */
             if(res.data.status === 1){
-                localStorage.setItem("Authorization", res.data.token)
+                localStorage.setItem("Authorization", res.data.body.token)
                 this.$router.push('/')
                 this.$message({
                     message: '登录成功',
                     type: 'success'
                 });
             }else{
-                this.$message.error(res.data.message);
+                this.$message.error(res.data.body.message);
             }
             this.loginLoading = false;
         }

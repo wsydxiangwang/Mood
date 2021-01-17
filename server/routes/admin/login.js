@@ -48,17 +48,15 @@ module.exports = (app, plugin, model) => {
                 // 生成token
                 const token = jwt.sign(info, 'Libai', {
                     expiresIn: 60 * 60 * 24  // 24小时过期
-                }); 
-                res.json({
-                    status: 1,
+                })
+                res.send(requestResult(1, {
                     message: '登录成功',
                     token: token
-                })
+                }))
             }else{
-                res.json({
-                    status: 2,
-                    message: '用户名或密码错误！'
-                })
+                res.send(requestResult(2, {
+                    message: '用户名或密码错误！',
+                }))
             }
         })
     })
