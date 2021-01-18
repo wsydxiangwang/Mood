@@ -171,6 +171,7 @@ export default {
         .markdown-body{
             box-shadow: none !important;
             min-height: auto;
+            background: var(--bg-color);
             p{
                 line-height: 36px;
                 margin: 0 0 22px;

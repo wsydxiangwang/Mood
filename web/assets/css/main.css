@@ -35,7 +35,7 @@ html, body, p, input, textarea, button, div, span {
 
 body{
 	overflow-x: hidden;
-	background: #fff;
+	background: var(--bg-color);
 }
 body::-webkit-scrollbar{
 	width: 6px;
@@ -48,6 +48,7 @@ body::-webkit-scrollbar-track{
 }
 
 :root{
+	--bg-color: #fff;
 	--color-red: #ff3600;
 	--color-bar: #50bcb6;
 	--color-pink: #EF6D57;
