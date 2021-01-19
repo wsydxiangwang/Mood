@@ -16,7 +16,7 @@ const store = new Vuex.Store({
             state.$data[`${payload.type}Qty`] = payload.total;
 			state[payload.type][payload.page] = payload.data;
         },
-        // 清楚评论或文章
+        // 重置评论或文章
 		resetCache(state, type){
 			state[type] = {};
         },
