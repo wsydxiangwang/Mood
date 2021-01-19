@@ -1,11 +1,11 @@
 <template>
-    <div class="comment-form" :class="isShow?'active':''">
+    <div class="comment-form" :class=" isShow ? 'active' : '' ">
         <div class="content">
-            <div class="img"><img :src="$data.info ? $data.info.avatar : ''"></div>
-            <p class="name">回复：{{message.name}}</p>
+            <div class="img"><img :src="$data.info ? $data.info.base.admin_avatar : ''"></div>
+            <p class="name">回复：{{ message.name }}</p>
             <el-input
                 type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
+                :autosize="{ minRows: 2, maxRows: 4 }"
                 placeholder="请输入内容"
                 v-model="content">
             </el-input>
@@ -33,7 +33,7 @@ export default {
     },
     methods: {
         submit(){
-            if(!this.content){
+            if (!this.content) {
                 this.$message.error('请填写回复的内容');
                 return;
             }
@@ -73,10 +73,10 @@ export default {
             })
         },
         close(){
+            console.log(this.message)
             this.content = ''
             this.isShow = !this.isShow
         },
-        // 时间
         dateFormat(){
             const date = new Date();
             const opt = {
