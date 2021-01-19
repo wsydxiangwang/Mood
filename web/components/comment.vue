@@ -300,7 +300,7 @@ export default {
              * Administrator Mark
              */
             if (
-                this.form.name == this.getInfo('name') && 
+                this.form.name == this.getInfo('name') ||
                 this.form.email === this.getInfo('email')
             ){
                 this.form.image = 1;

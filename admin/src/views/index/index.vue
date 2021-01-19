@@ -6,7 +6,6 @@
             <span>{{time.year || '请珍惜时间'}}</span>
             <span>{{time.date || '一寸光阴一寸金'}}</span>
         </p>
-        <!-- <p class="time">{{time}}</p> -->
 
         <section class="info">
             <h4>Hello，你好，我是谁！</h4>
@@ -22,7 +21,7 @@
                 </ul>
             </div>
         </section>
-
+        
         <section>
             <h3>article</h3>
             <div class="box" v-if="$data.article">
@@ -41,7 +40,25 @@
             </div>
         </section>
 
-        <section>
+        <!-- <section>
+            <h3>article</h3>
+            <div class="box" v-if="$data.article">
+                <p>
+                    <span class="total">{{$data.articleQty}}</span>
+                    <span>篇</span>
+                </p>
+                <p>{{dateDiff($data.article.time)}} 发布了新的心情，继续加油哦！</p>
+            </div>
+            <div class="box" v-else>
+                <p>
+                    <span class="total">0</span>
+                    <span>篇</span>
+                </p>
+                <p>快来发布新文章啦!</p>
+            </div>
+        </section> -->
+
+        <!-- <section>
             <h3>comment</h3>
             <div class="box" v-if="$data.commentQty">
                 <p>
@@ -57,7 +74,7 @@
                 </p>
                 <p>过去的时间里，收获了些许陌生的美好。</p>
             </div>
-        </section>
+        </section> -->
 
         <section>
             <h3>envelope</h3>
@@ -78,7 +95,19 @@ export default {
     data(){
         return {
             time: {},
-            timer: null
+            timer: null,
+            list: {
+                'article': {
+                    count: 'articleQty',
+                    text: `${this.dateDiff(this.$data.article.time)} 发布了新的心情，继续加油哦！`,
+                    textNull: '快来发布新文章啦'
+                },
+                'comment': {
+                    count: 'commentQty',
+                    text: '',
+                    textNull: '过去的时间里，收获了些许陌生的美好。'
+                }
+            }
         }
     },
     computed: {

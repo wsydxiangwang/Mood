@@ -7,10 +7,7 @@ module.exports = (app, plugin, model) => {
 
     // 获取文章
     router.get('/article', async (req, res) => {
-        const p = req.query.page || 1;
-        const s = req.query.count || 10;
-
-        const data = await getPage(Article, p, s)
+        const data = await getPage(Article, req.query.page, req.query.count)
         res.send(requestResult(1, data))
     })
 
