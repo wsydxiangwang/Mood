@@ -2,7 +2,7 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
     
-    let { Comment, Counter, Article } = model
+    let { Comment, Counter, Article, Info } = model
     let { email, getPage, requestResult } = plugin
 
 
@@ -44,19 +44,20 @@ module.exports = (app, plugin, model) => {
         req.body.data.id = commentCount.count;
         const result = await Comment.create(req.body.data)
 
-        res.send(requestResult(result))
+        res.send(requestResult(1, result))
         
-        // 邮件信息
-        if(req.body.email.comment){
-            const articleData = await Article.findOne({id: req.body.data.topic_id})
+        // 默默地发送邮件通知
+        const info = req.body.email
+        if (info.isEmail) {
+            const articleData = await Article.findOne({ id: req.body.data.topic_id })
+            const infos = await Info.findOne()
             const data = {
                 title: articleData.title,
-                url: req.body.email.web_address + '/' + req.body.data.topic_id,
-                name: req.body.data.reply_name,
-                email: req.body.data.reply_email
+                url: info.url,
+                name: info.name,
+                email: info.email
             }
-            // 发送邮件
-            email(3, data, req.body.email)
+            email(3, data, infos)
         }
     })
 

@@ -127,7 +127,7 @@ module.exports = (app, plugin, model) => {
         res.send(requestResult(1, result))
         
         /**
-         * 发送邮件通知
+         * 默默de发送邮件通知
          */
         if (req.body.isEmail) {
             const info = await Info.findOne()

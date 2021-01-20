@@ -13,7 +13,7 @@ function email(type, data, info){
         'QQ': 'smtp.qq.com',
         '163': 'smtp.163.com',
     }
-
+    
     const transporter = nodemailer.createTransport({
             host: mode[info.base.email_type],
             port: 465,

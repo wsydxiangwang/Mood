@@ -38,9 +38,10 @@ export default {
                 return;
             }
 
+            const info = this.$data.info;
             const data = {
-                name: this.$data.info.email.name,
-                email: this.$data.info.email.address,
+                name: info.administrator.name,
+                email: info.administrator.email,
                 content: this.content,
                 time: this.dateFormat(),
                 image: 1,
@@ -49,16 +50,19 @@ export default {
                 reply_name: this.message.name,
                 reply_email: this.message.email,
                 parent_id: this.message.parent_id || this.message.id,
+                type: this.message.type == 1 ? 2 : 3,
                 admin: true
             }
-            data.type = this.message.type == 1 ? 2 : 3;
 
             // 网站和管理员的信息
-            const email = this.$data.info['email']
-            email.web_name = this.$data.info['web_name']
-            email.web_address = this.$data.info['address']
+            const email = {
+                name: data.reply_name,
+                email: data.reply_email,
+                isEmail: info.administrator.comment,
+                url: `${info.base['address']}/${data.topic_id}`,
+            }
 
-            this.$http.post('comment', {data, email}).then(res => {
+            this.$http.post('comment', { data, email }).then(res => {
                 if(res.data.status === 1){
                     this.$message({
                         message: '评论发表成功',
