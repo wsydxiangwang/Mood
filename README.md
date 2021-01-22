@@ -11,7 +11,7 @@
 
 ### 定一个目标，春节前完结这个项目，优化一些操作体验，新增一些美的发现，优化重构所有代码！
 
-### 期间项目某些功能无法正常使用，暂不clone，可关注fork一波，待我完成，望知晓..
+### 期间项目某些功能无法正常使用，暂不clone，可关注fork一波，待我完成，望知晓...
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
