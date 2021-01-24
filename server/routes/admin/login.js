@@ -35,11 +35,18 @@ module.exports = (app, plugin, model) => {
 
     // 登录
     router.post('/login', async (req, res) => {
+        if (Object.keys(req.body).length != 2) {
+            res.send(requestResult(2, {
+                message: '请填写完整的信息！',
+            }))
+            return
+        }
         const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
         const info = {
             username: req.body.username,
             password: pwd
         }
+
         /**
          * 查找数据库是否有此用户
          */

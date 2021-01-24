@@ -5,22 +5,20 @@
             <h2>Welcome Home!</h2>
             <div class="form-item">
                 <div class="ipt user">
-                    <input type="text" placeholder="Name" v-model="data.username">
+                    <input type="text" placeholder="Name" v-model="data.username" @keyup.enter="login">
                     <img src="../assets/login-1.png">
                 </div>
                 <div class="ipt pass">
-                    <input type="password" placeholder="Password" v-model="data.password">
+                    <input type="password" placeholder="Password" v-model="data.password" @keyup.enter="login">
                     <img src="../assets/login-2.png">
                 </div>
                 <img src="../assets/login-0.png" alt="">
-                <el-button 
-                    @keyup.enter.native="login" 
-                    @click="login" 
-                    type="primary"
-                >
-                    sign in
-                </el-button>
-                <span @click="isCreate" class="add">(sign up)</span>
+                <el-button @click="login" type="primary">sign in</el-button>
+                <p class="options">
+                    <span @click="isCreate">- SignUp</span>
+                    or
+                    <span>Password -</span>
+                </p>
             </div>
         </div>
         <ul class="bg-bubbles">
@@ -33,17 +31,31 @@
                 <div class="create-form">
                     <h3>Create Account</h3>
                     <el-form>
-                        <el-input placeholder="Name" v-model="form.name"></el-input>
-                        <el-input type="password" placeholder="Password" v-model="form.password"></el-input>
-                        <el-input type="password" placeholder="Confirm Password" v-model="form.passwords"></el-input>
-                        <el-input placeholder="Email" v-model="form.email"></el-input>
-                        <el-input placeholder="Email PASS" v-model="form.pass"></el-input>
-                        <el-form-item label="邮箱类型">
-                            <el-radio-group v-model="form.email_type">     
-                                <el-radio label="QQ"></el-radio>
-                                <el-radio label="163"></el-radio>
-                            </el-radio-group>
-                        </el-form-item>
+                        <template v-for="(val, key, idx) in formList">
+                            <template v-if="val == '邮箱类型'">
+                                <el-form-item :label="val" :key="idx">
+                                    <el-radio-group v-model="form[key]">     
+                                        <el-radio label="QQ"></el-radio>
+                                        <el-radio label="163"></el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </template>
+                            <template v-else>
+                                <el-input 
+                                    :placeholder="val" 
+                                    v-model="form[key]" 
+                                    :key="idx" 
+                                    type="password"
+                                    v-if="key == 'password' || key == 'passwords'"
+                                ></el-input>
+                                <el-input 
+                                    :placeholder="val" 
+                                    v-model="form[key]" 
+                                    :key="idx"
+                                    v-else
+                                ></el-input>
+                            </template>
+                        </template>
                         <el-button @click="signIn">sign in</el-button>
                     </el-form>
                     <p><span class="el-icon-warning"></span> 在邮箱设置开启SMTP服务器可获取（忘记密码、邮件通知必填，Emali PASS），账号只可注册一次！</p>
@@ -61,6 +73,14 @@ export default {
             loginLoading: false,
             data: {},
             form: {},
+            formList: {
+                name: 'Name',
+                password: 'Password',
+                passwords: 'Confirm Password',
+                email: 'Email',
+                pass: 'Email PASS',
+                email_type: '邮箱类型'
+            },
             isShow: false
         }
     },
@@ -214,7 +234,7 @@ export default {
 .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter, .fade-leave-to {
     opacity: 0;
 }
 .form{
@@ -259,16 +279,21 @@ export default {
             height: 95px;
             transform: translate(-50%, 0);
         }
-        .add{
-            font-size: 12px;
-            color: #dad4d4;
-            display: inline-block;
-            margin-top: 6px;
-            cursor: pointer;
-            transition: all .3s;
-            text-transform: uppercase;
-            &:hover{
-                color: #0b9aff;
+        .options{
+            color: #ccc;
+            span{
+                font-size: 12px;
+                display: inline-block;
+                margin-top: 6px;
+                cursor: pointer;
+                transition: all .3s;
+                text-transform: uppercase;
+                &:hover{
+                    color: #0b9aff;
+                }
+                &:last-child:hover{
+                    color: red;
+                }
             }
         }
     }
