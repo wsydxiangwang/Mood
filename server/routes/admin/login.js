@@ -13,10 +13,7 @@ module.exports = (app, plugin, model) => {
         const [password, passwords] = ['p1', 'p2'].map(i => {
             return crypto.createHash('sha256').update(req.body[i]).digest('hex')
         })
-        /**
-         * 验证原密码 更新密码
-         */
-        User.findOne({password}, (err, docs) => {
+        User.findOne({ password }, (err, docs) => {
             if (docs) {
                 User.findOneAndUpdate({
                     password
@@ -25,10 +22,10 @@ module.exports = (app, plugin, model) => {
                         password: passwords
                     }
                 }, (err, doc) => {
-                    res.send(requestResult(1, '密码修改成功！'))
+                    res.send(requestResult(1, '密码修改成功'))
                 })
             } else {
-                res.send(requestResult(2, '原密码输入错误！'))
+                res.send(requestResult(2, '原密码输入错误'))
             }
         })
     })
@@ -41,24 +38,19 @@ module.exports = (app, plugin, model) => {
             }))
             return
         }
-        const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex');
+        const password = crypto.createHash('sha256').update(req.body.password).digest('hex');
         const info = {
             username: req.body.username,
-            password: pwd
+            password
         }
-
-        /**
-         * 查找数据库是否有此用户
-         */
         User.find(info, (err, docs) => {
             if (docs.length != 0) {
-                // 生成token
                 const token = jwt.sign(info, 'Libai', {
-                    expiresIn: 60 * 60 * 24  // 24小时过期
+                    expiresIn: 60 * 60 * 24
                 })
                 res.send(requestResult(1, {
                     message: '登录成功',
-                    token: token
+                    token
                 }))
             } else {
                 res.send(requestResult(2, {
