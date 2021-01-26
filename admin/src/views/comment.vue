@@ -25,13 +25,16 @@
             </el-table-column>
             <el-table-column label="options" width=100>
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="View Article" placement="top">
-                        <i class="el-icon-view" @click="view(scope.row.topic_id)"></i>
+                    <el-tooltip 
+                        class="item" 
+                        effect="dark" 
+                        :content="item.text" 
+                        placement="top"
+                        v-for="(item, index) in options"
+                        :key="index"
+                    >
+                        <i :class="item.icon" @click="option(scope.row, index)"></i>
                     </el-tooltip>
-                    <el-tooltip class="item" effect="dark" content="Reply" placement="top">
-                        <i class="el-icon-chat-line-round" @click="reply(scope.row)"></i>
-                    </el-tooltip>
-                    <i class="el-icon-delete" @click="remove(scope.row)"></i>
                 </template>
             </el-table-column>
         </el-table>
@@ -64,7 +67,20 @@ export default {
             total: 0,
             page: 1,
             replyData: '',
-            loading: ''
+            options: [
+                {
+                    icon: 'el-icon-view',
+                    text: 'View Article'
+                },
+                {
+                    icon: 'el-icon-chat-line-round',
+                    text: 'Reply'
+                },
+                {
+                    icon: 'el-icon-delete',
+                    text: 'Delete'
+                }
+            ]
         }
     },
     computed: {
@@ -82,11 +98,6 @@ export default {
         document.querySelector('.content').style.overflow = 'auto'
     },
     methods: {
-        // 回复
-        reply(data){
-            this.replyData = data;
-            this.$refs.comment.close();
-        },
         load(page) {
             /**
              * vuex 获取当前页数据
@@ -117,37 +128,43 @@ export default {
             this.$store.commit('resetCache', 'comment')
             this.load()
         },
-        view(id) {
-            window.open(`${window.location.origin}/${id}`)
-        },
-        remove(data) {
-            const message = data.parent_id ? '删除该评论, 是否继续?' : '当前为一级评论, 会连同子评论一块删除哦~'
-
-            this.$confirm(message, '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$request(() => this.$http.delete(`/comment`, { 
-                        params: {
-                            id: data.id,
-                            parent_id: data.parent_id
-                        }
-                    }).then(res => {
-                        if (res.data.status === 1) {
-                            this.resetLoad()
-                            this.$message({
-                                type: 'success',
-                                message: '删除成功!'
-                            })
-                        }
-                    }))
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });
-            });
+        option(data, index) {
+            const o = {
+                0: () => window.open(`${window.location.origin}/${data.topic_id}`),
+                1: () => {
+                    this.replyData = data
+                    this.$refs.comment.close()
+                },
+                2: () => {
+                    const message = data.parent_id ? '删除该评论, 是否继续?' : '当前为一级评论, 会连同子评论一块删除哦~'
+                    this.$confirm(message, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.$request(() => this.$http.delete(`/comment`, { 
+                                params: {
+                                    id: data.id,
+                                    parent_id: data.parent_id
+                                }
+                            }).then(res => {
+                                if (res.data.status === 1) {
+                                    this.resetLoad()
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    })
+                                }
+                            }))
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
+            }
+            o[index]()
         },
         // 一键已读
         onRead() {

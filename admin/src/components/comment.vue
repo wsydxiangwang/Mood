@@ -62,22 +62,24 @@ export default {
                 url: `${info.base['address']}/${data.topic_id}`,
             }
 
-            this.$http.post('comment', { data, email }).then(res => {
-                if(res.data.status === 1){
-                    this.$message({
-                        message: '评论发表成功',
-                        type: 'success'
-                    });
-                    this.$emit('Load')
-                }
-                this.close()
-            }).catch(err => {
-                this.$message.error('出错了，刷新重试一下');
-                this.close()
-            })
+            this.$request(() => this.$http.post('comment', { 
+                    data, 
+                    email 
+                }).then(res => {
+                    if(res.data.status === 1){
+                        this.$message({
+                            message: '评论发表成功',
+                            type: 'success'
+                        });
+                        this.$emit('Load')
+                    }
+                    this.close()
+                }).catch(err => {
+                    this.$message.error('出错了，刷新重试一下');
+                    this.close()
+                }))
         },
         close(){
-            console.log(this.message)
             this.content = ''
             this.isShow = !this.isShow
         },
@@ -90,7 +92,7 @@ export default {
                 "H": date.getHours().toString(),           // 时
                 "m": date.getMinutes().toString(),         // 分
             }
-            for(let i in opt){
+            for (let i in opt) {
                 opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]
             }
             const time = `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
