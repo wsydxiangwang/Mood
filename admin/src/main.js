@@ -21,6 +21,21 @@ Vue.prototype.$infoUpdate = () => {
     })
 }
 
+Vue.prototype.$getDate = (data) => {
+	return `${data.time} ${data.month.en} ${data.day.on}`
+}
+
+let loading = null
+Vue.prototype.$request = async (fn, dom = '.container') => {
+	loading && loading.close()
+	loading = ElementUI.Loading.service({ target: dom })
+	new Promise((resolve) => {
+		resolve(fn())
+	}).then(res => {
+		loading.close()
+	})
+}
+
 new Vue({
 	store,
 	router,

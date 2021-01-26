@@ -3,9 +3,9 @@
         <div class="header">
             <h1>
                 评论列表 ({{ total }}) 
-                <span @click="onRead" class="read-btn" v-if="$data.unread">
+                <span @click="onRead" class="read-btn" v-if="unread">
                     <i class="el-icon-refresh"></i>
-                    一键已读
+                    一键已读 ({{ unread }})
                 </span>
             </h1>
         </div>
@@ -16,13 +16,11 @@
                 </p>
             </el-table-column>
             <el-table-column label="Content">
-                <p slot-scope="scope">{{scope.row.content}}</p>
+                <p slot-scope="scope">{{ scope.row.content }}</p>
             </el-table-column>
             <el-table-column label="Date" width=130>
                 <span slot-scope="scope">
-                    {{scope.row.time.time}} 
-                    {{scope.row.time.month.en}} 
-                    {{scope.row.time.day.on}}
+                    {{ $getDate(scope.row.time) }}
                 </span>
             </el-table-column>
             <el-table-column label="options" width=100>
@@ -38,48 +36,50 @@
             </el-table-column>
         </el-table>
 
-        <el-pagination
-            background
-            :page-size="10"
-            :pager-count="5"
-            :total="total"
-            :current-page="page"
-            @current-change="load"
-            layout="prev, pager, next"
-            v-if="total > 0"
-        >
-        </el-pagination>
-
-        <Comment :message="replyData" @Load="resetLoad" ref="comment"></Comment>
+        <Pagination 
+            :data="total"
+            :page="page"
+            @update="load" 
+        />
+        <Comment 
+            :message="replyData" 
+            @Load="resetLoad" 
+            ref="comment"
+        ></Comment>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import Comment from '@/components/comment'
+import Comment from '@/components/Comment'
+import Pagination from '@/components/Pagination'
 export default {
-    components: { Comment },
+    components: { 
+        Comment,
+        Pagination
+    },
     data() {
         return {
             data: [],
             total: 0,
-            count: 10,
             page: 1,
             replyData: '',
             loading: ''
         }
     },
+    computed: {
+        unread() {
+            return this.$store.state.$data.unread
+        }
+    },
     created(){
-        this.load();
+        this.load()
     },
     mounted(){
         document.querySelector('.content').style.overflow = 'hidden'
     },
     destroyed(){
         document.querySelector('.content').style.overflow = 'auto'
-    },
-    computed: {
-        ...mapState(['$data']),
     },
     methods: {
         // 回复
@@ -96,26 +96,22 @@ export default {
                 this.data = comment[page];
                 return
             }
-
-            this.loading = this.$loading({target: '.container'})
-            
-            this.$http.get('/comment', {
-                params: { page }
-            }).then(res => {
-                const data = res.data.body;
-
-                // 当前页面数据
-                ['data', 'total', 'page'].map(i => this[i] = data[i])
-
-                // 添加数据到vuex，优化请求
-                this.$store.commit('setCache', {
-                    type: 'comment',
-                    page: page || 1,
-                    data: this.data,
-                    total: this.total
-                })
-                this.loading.close()
-            })
+            this.$request(() => this.$http.get('/comment', {
+                    params: { page }
+                }).then(res => {
+                    const data = res.data.body;
+                    /**
+                     * 当前页面数据
+                     * 添加数据到vuex，优化请求
+                     */
+                    ['data', 'total', 'page'].map(i => this[i] = data[i])
+                    this.$store.commit('setCache', {
+                        type: 'comment',
+                        page: page || 1,
+                        data: this.data,
+                        total: this.total
+                    })
+                }))  
         },
         resetLoad() {
             this.$store.commit('resetCache', 'comment')
@@ -132,22 +128,20 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.loading = this.$loading({target: '.container'})
-                this.$http.delete(`/comment`, { 
-                    params: {
-                        id: data.id,
-                        parent_id: data.parent_id
-                    }
-                }).then(res => {
-                    if (res.data.status === 1) {
-                        this.resetLoad()
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        })
-                        this.loading.close()
-                    }
-                })
+                this.$request(() => this.$http.delete(`/comment`, { 
+                        params: {
+                            id: data.id,
+                            parent_id: data.parent_id
+                        }
+                    }).then(res => {
+                        if (res.data.status === 1) {
+                            this.resetLoad()
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            })
+                        }
+                    }))
             }).catch(() => {
                 this.$message({
                     type: 'info',

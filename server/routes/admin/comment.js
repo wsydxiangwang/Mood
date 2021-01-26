@@ -9,24 +9,19 @@ module.exports = (app, plugin, model) => {
     // Get comment
     router.get('/comment', async (req, res) => {
         const p = req.query.page;
-        const s = req.query.count;
-        
+        const s = req.query.count || 10;
         const data = await getPage(Comment, p, s)
-
         res.send(requestResult(1, data))
     })
 
     // Delete
     router.delete('/comment', async (req, res) => {
         const id = req.query.id;
-        
         await Comment.deleteOne({ id })
-
         // 一级评论，则删除所有子评论
         if (!req.body.parent_id) {
             await Comment.deleteMany({ parent_id: id })
-        }        
-
+        }
         res.send(requestResult(1))
     })
 
