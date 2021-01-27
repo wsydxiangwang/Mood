@@ -1,11 +1,11 @@
 <template>
     <div class="article">
-        <h2 class="tit">文章列表 ({{total}})</h2>
+        <h2 class="tit">文章列表 ({{ total }})</h2>
         
         <el-table :data="data">
             <el-table-column label="Title">
                 <template slot-scope="scope">
-                    <p>{{scope.row.title}}</p>
+                    <p>{{ scope.row.title }}</p>
                 </template>
             </el-table-column>
             <el-table-column label="Date" width=140 class="hidden">
@@ -13,7 +13,6 @@
                     <span>{{ $getDate(scope.row.time) }}</span>
                 </template>
             </el-table-column>
-
             <el-table-column label="options" width=100>
                 <template slot-scope="scope">
                     <el-tooltip 
@@ -28,7 +27,6 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-
         </el-table>
 
         <Pagination 
@@ -49,7 +47,6 @@ export default {
     data() {
         return {
             data: [],
-            count: 10,
             total: 0,
             page: 1,
             options: [
@@ -69,17 +66,7 @@ export default {
         }
     },
     created(){
-        this.total = this.$data.articleQty
-        this.load();
-    },
-    mounted(){
-        document.querySelector('.content').style.overflow = 'hidden'
-    },
-    destroyed(){
-        document.querySelector('.content').style.overflow = 'auto'
-    },
-    computed: {
-        ...mapState(['$data'])
+        this.load()
     },
     methods: {
         load(page){
@@ -111,8 +98,17 @@ export default {
         },
         option(data, index) {
             const o = {
-                0: () => window.open(`${window.location.origin}/${data.id}`),
-                1: () => this.$router.push({ name: 'info', query: { id: data.id }}),
+                0: () => {
+                    window.open(`${window.location.origin}/${data.id}`)
+                },
+                1: () => {
+                    this.$router.push({ 
+                        name: 'info', 
+                        query: { 
+                            id: data.id 
+                        }
+                    })
+                },
                 2: () => {
                     this.$confirm('删除该文章, 是否继续?', '提示', {
                         confirmButtonText: '确定',
@@ -127,7 +123,6 @@ export default {
                                     type: 'success',
                                     message: '删除成功!'
                                 })
-                                this.$infoUpdate() // 刷新状态
                             }))
                     }).catch(() => {
                         this.$message({

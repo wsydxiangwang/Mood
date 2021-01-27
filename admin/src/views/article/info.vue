@@ -3,15 +3,10 @@
 
         <section>
             <h2 class="tit">无人问津的心情，在黑纸白字间游荡！</h2>
-            <el-input
-                placeholder="标题"
-                v-model="data.title"
-                clearable>
-            </el-input>
+            <el-input placeholder="标题" v-model="data.title" clearable></el-input>
         </section>
 
         <mavon-editor 
-            :ishljs="true" 
             @change="change" 
             v-model="data.content" 
             :subfield="false"
@@ -21,76 +16,43 @@
         />
 
         <section>
-            <date 
-                @getDate="getDate" 
-                :originalDate="data.time" 
-                v-if="isReset"
-            ></date>
-            <el-input
-                placeholder="文章摘要"
-                v-model="data.describe"
-                prefix-icon="el-icon-document"
-                clearable>
-            </el-input>
-
+            <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
+            <el-input placeholder="文章摘要" v-model="data.describe" prefix-icon="el-icon-document" clearable></el-input>
             <div class="upload-box" v-if="!uploadToggle">
                 <el-upload
-                    class="upload-demo"
+                    class="upload-item"
                     :auto-upload="false"
                     :show-file-list="false"
-                    :on-change="musicUpload"
-                    action=""
+                    :on-change="uploadMusic"
+                    action
                     drag
                 >
-                    <template v-if="data.music && data.music.url">
-                        <i class="el-icon-headset"></i>
-                        <div class="el-upload__text">{{data['music'].name}}</div>
-                    </template>
-                    <template v-else>
-                        <i class="el-icon-headset"></i>
-                        <div class="el-upload__text">背景音乐</div>
-                    </template>
+                    <i class="el-icon-headset"></i>
+                    <div class="el-upload__text">{{ data.music.url ? data['music'].name : '背景音乐' }}</div>
                 </el-upload>
                 <el-upload
-                    class="upload-demo"
+                    class="upload-item"
                     :auto-upload="false"
                     :show-file-list="false"
-                    :on-change="imgUpload"
-                    action=""
+                    :on-change="uploadImage"
+                    action
                     drag
                 >
-                    <img v-if="data.image && data.image.url" :src="data.image.url">
-                    <i class="el-icon-picture-outline-round"></i>
-                    <div class="el-upload__text">封面图片 (680*440)</div>
+                    <template v-if="data.image.url">
+                        <img v-if="data.image.url" :src="data.image.url">
+                    </template>
+                    <template v-else>
+                        <i class="el-icon-picture-outline-round"></i>
+                        <div class="el-upload__text">封面图片 (680*440)</div>
+                    </template>
                 </el-upload>
             </div>
             <template v-else>
-                <el-input
-                    placeholder="音乐地址"
-                    v-model="data.music.url"
-                    prefix-icon="el-icon-headset"
-                    clearable>
-                </el-input>
-                <el-input
-                    placeholder="封面图片"
-                    prefix-icon="el-icon-picture-outline-round"
-                    v-model="data.image.url"
-                    clearable>
-                </el-input>
+                <el-input placeholder="音乐地址" v-model="data.music.url" prefix-icon="el-icon-headset" clearable></el-input>
+                <el-input placeholder="封面图片" v-model="data.image.url" prefix-icon="el-icon-picture-outline-round" clearable></el-input>
             </template>
-
-            <el-switch
-                v-model="uploadToggle"
-                active-text="输入链接"
-                inactive-text="文件上传"
-            >
-            </el-switch>
-
-            <el-switch
-                v-model="data.hide"
-                inactive-text="发布文章"
-                active-text="隐藏文章">
-            </el-switch>
+            <el-switch v-model="uploadToggle" active-text="输入链接" inactive-text="文件上传"></el-switch>
+            <el-switch v-model="data.hide" inactive-text="发布文章" active-text="隐藏文章"></el-switch>
         </section>
 
         <el-button type="primary" class="submit" @click="submit">SUBMIT</el-button>
@@ -122,7 +84,9 @@ export default {
             },
             isReset: true,
 
-            upload: {},
+            markdownImage: [],          // 编辑器的图片集合
+
+            // upload: {},
             uploadToggle: false,
 
             fullscreenLoading: false,
@@ -155,10 +119,10 @@ export default {
         ...mapState(['$data'])
     },
     methods: {
-        musicUpload(file){
+        uploadMusic(file) {
             this.uploads('music', file)
         },
-        imgUpload(file){
+        uploadImage(file) {
             this.uploads('image', file)
         },
         // 保存临时文件
@@ -168,36 +132,35 @@ export default {
                 this.$message.error(`请选择${name}格式的文件!`)
                 return
             }
-            const formData = new FormData();
-            formData.append('file', file.raw);        
-            formData.append('type', this.$data.info.upload_type);    
+            const form = new FormData()
+            form.append('file', file.raw)
+            form.append('type', this.$data.info.base.upload_type)
 
             this.$set(this.data, type, {
                 url: URL.createObjectURL(file.raw),
-                name: file.name
-            })
-
-            this.$set(this.upload, type, {
-                url: URL.createObjectURL(file.raw),
                 name: file.name,
-                formData
+                form
             })
         },
-        $imgAdd(pos, $file){
-           var formdata = new FormData();
-           formdata.append('file', $file);
-           formdata.append('type', this.$data.info.upload_type);
+        $imgAdd(index, $file){
+            var form = new FormData();
+            form.append('file', $file);
+            form.append('type', this.$data.info.base.upload_type);
 
-           this.$http.post('/upload', formdata).then(res => {           
-               this.$refs.md.$img2Url(pos, res.data.url);
+            this.markdownImage.push({
+                index,
+                form
             })
+        //    this.$http.post('/upload', form).then(res => {           
+        //        this.$refs.md.$img2Url(pos, res.data.url);
+        //     })
         },
         $imgDel(pos){
-            const data = {
-                url: pos[0],
-                type: this.$data.info.upload_type
-            }
-            this.$http.post('/delete_file', data)
+            // const data = {
+            //     url: pos[0],
+            //     type: this.$data.info.upload_type
+            // }
+            // this.$http.post('/delete_file', data)
         },
         change(value, render){
             this.data.contentHtml = render;     // 解析的html
@@ -205,6 +168,35 @@ export default {
             this.data.words = value.length;     // 字数
         },
         async submit(){
+            
+            if (this.markdownImage.length > 0) {
+                var uploadImages = this.markdownImage.reduce((total, item) => {
+                    total.push(new Promise((resolve, reject) => {
+                        this.$http.post('/upload', item.form).then(res => {
+                            if (res.data.status == 1) {
+                                resolve([res.data.body, item.index])
+                            } else {
+                                reject(res.data.body)
+                            }
+                        })
+                    }))
+                    return total
+                }, [])
+            }
+
+            Promise.all(uploadImages).then(res => {
+                // 替换内容框的图片地址为线上地址
+                for (let i of res) {
+                    this.$refs.md.$img2Url(i[1], i[0].url);
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+
+            console.log(this.data)
+
+            return
+
             const map = {
                 'title': '请输入标题',
                 'content': '请输入内容',
@@ -306,7 +298,7 @@ section{
 .upload-box{
     display: flex;
     margin: 10px -7px 6px;
-    .upload-demo{
+    .upload-item{
         width: 50%;
         max-width: 360px;
         margin: 0 7px;
@@ -363,7 +355,7 @@ section{
         line-height: 36px;
         padding: 0;
     }
-    .upload-box .upload-demo ::v-deep .el-upload .el-upload-dragger{
+    .upload-box .upload-item ::v-deep .el-upload .el-upload-dragger{
         height: 130px;
         .el-icon-picture-outline-round, .el-icon-headset{
             font-size: 36px;

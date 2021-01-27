@@ -12,7 +12,7 @@
         <el-table :data="data">
             <el-table-column label="Name" width=140>
                 <p slot-scope="scope">
-                    <span v-if="scope.row.status == 1" class="read">1</span> {{scope.row.name}}
+                    <span v-if="scope.row.status == 1" class="read">1</span> {{ scope.row.name }}
                 </p>
             </el-table-column>
             <el-table-column label="Content">
@@ -91,12 +91,6 @@ export default {
     created(){
         this.load()
     },
-    mounted(){
-        document.querySelector('.content').style.overflow = 'hidden'
-    },
-    destroyed(){
-        document.querySelector('.content').style.overflow = 'auto'
-    },
     methods: {
         load(page) {
             /**
@@ -130,7 +124,9 @@ export default {
         },
         option(data, index) {
             const o = {
-                0: () => window.open(`${window.location.origin}/${data.topic_id}`),
+                0: () => {
+                    window.open(`${window.location.origin}/${data.topic_id}`)
+                },
                 1: () => {
                     this.replyData = data
                     this.$refs.comment.close()
