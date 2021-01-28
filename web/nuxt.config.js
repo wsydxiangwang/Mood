@@ -23,17 +23,9 @@ module.exports = {
   env: {
     baseUrl: process.env.BASE_URL || 'http://server:3000/web/api',
   },
-  /*
-  ** Nuxt.js modules
-  */
   modules: [
-    // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
   ],
-  /*
-  ** Axios module configuration
-  ** See https://axios.nuxtjs.org/options
-  */
   axios: {
     proxy: true,
     prefix: '/api', // baseURL
@@ -52,18 +44,8 @@ module.exports = {
       changeOrigin: true,
     },
   }, 
-  /*
-  ** Customize the progress-bar color
-  */
   loading: '~/components/loadingTab.vue',
-  // loading: false,
-  /*
-  ** Global CSS
-  */
   css: ["~assets/css/main.css", "~assets/css/iconfont.css"],
-  /*
-  ** Plugins to load before mounting the App
-  */
   plugins: [
     { src: '@/plugins/vue-mavon-editor', ssr: true },
     { src: '@/plugins/common.js', ssr: true },
@@ -84,7 +66,8 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-const ThemeColorReplacer = require('webpack-theme-color-replacer')
+      const ThemeColorReplacer = require('webpack-theme-color-replacer')
+      console.log(ThemeColorReplacer)
       new ThemeColorReplacer({
         matchColors: ['#ed4040', '#4b0', '255,80,80', '27, 92.531%, 52.745%'], // colors array for extracting css file, support rgb and hsl.
         fileName: 'css/theme-colors-[contenthash:8].css', //optional. output css file name, suport [contenthash] and [hash].
