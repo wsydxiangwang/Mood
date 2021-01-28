@@ -1,72 +1,72 @@
 <template>
     <div class="article">
-        <h2 class="tit">文章列表 ({{total}})</h2>
+        <h2 class="tit">文章列表 ({{ total }})</h2>
         
         <el-table :data="data">
             <el-table-column label="Title">
                 <template slot-scope="scope">
-                    <p>{{scope.row.title}}</p>
+                    <p>{{ scope.row.title }}</p>
                 </template>
             </el-table-column>
             <el-table-column label="Date" width=140 class="hidden">
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.time}} {{scope.row.time.month.en}} {{scope.row.time.day.on}}</span>
+                    <span>{{ $getDate(scope.row.time) }}</span>
                 </template>
             </el-table-column>
-
             <el-table-column label="options" width=100>
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="View Article" placement="top">
-                        <i class="el-icon-view" @click="view(scope.row.id)"></i>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="Edit Article" placement="top">
-                        <i class="el-icon-edit" @click="edit(scope.row.id)"></i>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="Delete" placement="top">
-                        <i class="el-icon-delete" @click="remove(scope.row)"></i>
+                    <el-tooltip 
+                        class="item" 
+                        effect="dark" 
+                        :content="item.text" 
+                        placement="top"
+                        v-for="(item, index) in options"
+                        :key="index"
+                    >
+                        <i :class="item.icon" @click="option(scope.row, index)"></i>
                     </el-tooltip>
                 </template>
             </el-table-column>
-
         </el-table>
 
-        <el-pagination
-            background
-            :page-size="10"
-            :pager-count="5"
-            :total="total"
-            :current-page="page"
-            @current-change="load"
-            layout="prev, pager, next"
-        >
-        </el-pagination>
+        <Pagination 
+            :data="total"
+            :page="page"
+            @update="load" 
+        />
     </div>
 </template>
 
 <script>
+import Pagination from '@/components/Pagination'
 import { mapState } from 'vuex'
 export default {
+    components: { 
+        Pagination
+    },
     data() {
         return {
             data: [],
-            count: 10,
             total: 0,
             page: 1,
-            loading: ''
+            options: [
+                {
+                    icon: 'el-icon-view',
+                    text: 'View Article'
+                },
+                {
+                    icon: 'el-icon-edit',
+                    text: 'Edit Article'
+                },
+                {
+                    icon: 'el-icon-delete',
+                    text: 'Delete'
+                }
+            ]
         }
     },
     created(){
-        this.total = this.$data.articleQty
-        this.load();
-    },
-    mounted(){
-        document.querySelector('.content').style.overflow = 'hidden'
-    },
-    destroyed(){
-        document.querySelector('.content').style.overflow = 'auto'
-    },
-    computed: {
-        ...mapState(['$data'])
+        this.load()
     },
     methods: {
         load(page){
@@ -79,62 +79,60 @@ export default {
                 return
             }
 
-            this.loading = this.$loading({target: '.container'})
-
-            this.$http.get('/article', {
-                params: {page}
-            }).then(res => {
-                setTimeout(() => {
+            this.$request(() => this.$http.get('/article', {
+                    params: { page }
+                }).then(res => {
                     const data = res.data.body;
-                    const item = ['data', 'total', 'page']
-
-                    item.map(i => this[i] = data[i])
                     /**
-                     * 添加数据到vuex，请求优化
+                     * 当前页面数据
+                     * 添加数据到vuex，优化请求
                      */
+                    ['data', 'total', 'page'].map(i => this[i] = data[i])
                     this.$store.commit('setCache', {
                         type: 'article',
                         page: page || 1,
                         data: this.data,
                         total: this.total
                     })
-                    this.loading.close()
-                }, 500)
-            })
+                }))
         },
-        edit(id){
-            this.$router.push({
-                name: 'info',
-                query: { id: id }
-            })
-        },
-        // 新窗口打开文章
-        view(id){
-            window.open(`${window.location.origin}/${id}`)
-        },
-        remove(item){
-            this.$confirm('删除该文章, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$http.delete(`article/${item._id}`).then(res => {
-                    setTimeout(() => {
-                        this.$store.commit('resetCache', 'article')
-                        this.load()
+        option(data, index) {
+            const o = {
+                0: () => {
+                    window.open(`${window.location.origin}/${data.id}`)
+                },
+                1: () => {
+                    this.$router.push({ 
+                        name: 'info', 
+                        query: { 
+                            id: data.id 
+                        }
+                    })
+                },
+                2: () => {
+                    this.$confirm('删除该文章, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.$request(() => this.$http.delete(`article/${data._id}`)
+                            .then(res => {
+                                this.$store.commit('resetCache', 'article')
+                                this.load()
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                })
+                            }))
+                    }).catch(() => {
                         this.$message({
-                            type: 'success',
-                            message: '删除成功!'
+                            type: 'info',
+                            message: '已取消删除'
                         })
-                        this.$infoUpdate() // 刷新状态
-                    }, 1000)
-                })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });
-            });
+                    })
+                }
+            }
+            o[index]()
         }
     }
 }

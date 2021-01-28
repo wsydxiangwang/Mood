@@ -67,17 +67,14 @@ export default {
             this.$http.post('/delete_file', data)
         },
         submit(){
-            this.loading = true;
-            this.$http.post('myself', this.data).then(res => {
-                setTimeout(() => {
+            this.$request(() => this.$http.post('myself', this.data)
+                .then(res => {
                     this.$message({
                         message: 'success',
                         type: 'success'
-                    });
-                    this.$router.push('/')
-                    this.loading = false;
-                }, 500)
-            })
+                    })
+                    document.querySelector('.content').scrollTop = 0
+                }))
         }
     }
 }
