@@ -140,9 +140,7 @@ export default {
 		if(context.store.state.index){ // 防止重复加载 
 			return;
 		}
-		const {data} = await context.$axios.get('article')
-
-		console.log(data)
+		const { data } = await context.$axios.get('article')
 
 		return { articleList: data.status == 1 ? data.body : {}}
 	},

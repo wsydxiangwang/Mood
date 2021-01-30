@@ -3,6 +3,9 @@ import Vue from 'vue'
 var common = {
 
     install(Vue, option){
+
+
+
         // 设置滚动条位置
         Vue.prototype.$setScroll = (dom, type) => {
             const getWin = (type) => {
