@@ -7,17 +7,18 @@
         </section>
 
         <mavon-editor 
-            @change="change" 
             v-model="data.content" 
             :subfield="false"
             @imgAdd="$imgAdd"
             @imgDel="$imgDel"
-            ref="md" 
+            ref="markdown" 
         />
 
         <section>
-            <date @getDate="getDate" :originalDate="data.time" v-if="isReset"></date>
+            <Date @getDate="getDate" :originalDate="data.time" v-if="isReset" />
+
             <el-input placeholder="文章摘要" v-model="data.describe" prefix-icon="el-icon-document" clearable></el-input>
+
             <div class="upload-box" v-if="!uploadToggle">
                 <el-upload
                     class="upload-item"
@@ -38,19 +39,19 @@
                     action
                     drag
                 >
-                    <template v-if="data.image.url">
-                        <img v-if="data.image.url" :src="data.image.url">
-                    </template>
+                    <img v-if="data.image.url" :src="data.image.url">
                     <template v-else>
                         <i class="el-icon-picture-outline-round"></i>
                         <div class="el-upload__text">封面图片 (680*440)</div>
                     </template>
                 </el-upload>
             </div>
+
             <template v-else>
                 <el-input placeholder="音乐地址" v-model="data.music.url" prefix-icon="el-icon-headset" clearable></el-input>
                 <el-input placeholder="封面图片" v-model="data.image.url" prefix-icon="el-icon-picture-outline-round" clearable></el-input>
             </template>
+
             <el-switch v-model="uploadToggle" active-text="输入链接" inactive-text="文件上传"></el-switch>
             <el-switch v-model="data.hide" inactive-text="发布文章" active-text="隐藏文章"></el-switch>
         </section>
@@ -60,13 +61,13 @@
 </template>
 
 <script>
-import date from '@/components/date'
+import Date from '@/components/Date'
 import { mapState } from 'vuex'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
-        date,
+        Date,
         mavonEditor
     },
     data() {
@@ -86,7 +87,7 @@ export default {
 
             markdownImage: [],          // 编辑器的图片集合
 
-            // upload: {},
+            upload: {},
             uploadToggle: false,
 
             fullscreenLoading: false,
@@ -99,22 +100,22 @@ export default {
             this.loadData(this.id)
         }
     },
-    watch: {
-        'data.image.url': {
-            handler(val) {
-                if(!val){
-                    delete this.upload['image']
-                }
-            }
-        },
-        'data.music.url': {
-            handler(val) {
-                if(!val){
-                    delete this.upload['music']
-                }
-            }
-        }
-    },
+    // watch: {
+    //     'data.image.url': {
+    //         handler(val) {
+    //             if(!val){
+    //                 delete this.upload['image']
+    //             }
+    //         }
+    //     },
+    //     'data.music.url': {
+    //         handler(val) {
+    //             if(!val){
+    //                 delete this.upload['music']
+    //             }
+    //         }
+    //     }
+    // },
     computed: {
         ...mapState(['$data'])
     },
@@ -151,80 +152,63 @@ export default {
                 index,
                 form
             })
-        //    this.$http.post('/upload', form).then(res => {           
-        //        this.$refs.md.$img2Url(pos, res.data.url);
-        //     })
         },
-        $imgDel(pos){
-            // const data = {
-            //     url: pos[0],
-            //     type: this.$data.info.upload_type
-            // }
-            // this.$http.post('/delete_file', data)
-        },
-        change(value, render){
-            this.data.contentHtml = render;     // 解析的html
-            this.data.content = value;          // 输入的内容
-            this.data.words = value.length;     // 字数
+        $imgDel(index){
+            this.markdownImage.splice(index, 1)
         },
         async submit(){
-            
-            if (this.markdownImage.length > 0) {
-                var uploadImages = this.markdownImage.reduce((total, item) => {
-                    total.push(new Promise((resolve, reject) => {
-                        this.$http.post('/upload', item.form).then(res => {
-                            if (res.data.status == 1) {
-                                resolve([res.data.body, item.index])
-                            } else {
-                                reject(res.data.body)
-                            }
-                        })
-                    }))
-                    return total
-                }, [])
-            }
-
-            Promise.all(uploadImages).then(res => {
-                // 替换内容框的图片地址为线上地址
-                for (let i of res) {
-                    this.$refs.md.$img2Url(i[1], i[0].url);
-                }
-            }).catch(err => {
-                console.log(err)
-            })
-
-            console.log(this.data)
-
-            return
+            const markdown = this.$refs.markdown
+            this.data.content = markdown.d_value    // 内容
 
             const map = {
                 'title': '请输入标题',
                 'content': '请输入内容',
-                'time': '请选择时间',
+                'time': '请选择时间'
             }
-            for(let i in map){
-                if(!this.data[i]){
-                    this.$message.error(`${map[i]}`);
-                    return;
+            for (let i in map) {
+                if (!this.data[i]) {
+                    this.$message.error(`${map[i]}`)
+                    return
                 }
             }
 
-            this.fullscreenLoading = true;
+            this.fullscreenLoading = true
+
+            // 上传内容区图片
+            const conImgList = this.markdownImage
+            for (let i = 0; i< conImgList.length; i++) {
+                const result = await this.$http.post('/upload', conImgList[i]['form'])
+                if (result.data.status == 1) {
+                    markdown.$img2Url(i, result.data.body.url)
+                    console.log(3)
+                } else {
+                    this.$message.error(result.data.body.message)
+                    break
+                }
+            }
+            
+            console.log(2)
+
+            this.data.contentHtml = markdown.d_render;     // 解析的html
+            this.data.content = markdown.d_value;          // 输入的内容
+            this.data.words = markdown.d_value.length;     // 字数
             
             // 上传文件
-            if(!this.uploadToggle){
-                for(let i in this.upload){
-                    const result = await this.$http.post('/upload', this.upload[i].formData);
-                    if(result.data.status == 100){
-                        this.data[i].url = result.data.url;
-                    }else{
-                        // 错误
-                        this.$message.error('图片上传失败, 请检查网络!');
-                        this.fullscreenLoading = false;
+            if (!this.uploadToggle) {
+                for (let i in this.upload) {
+                    const { status, body } = await this.$http.post('/upload', this.upload[i].formData)
+
+                    console.log(status, body)
+
+                    if (status == 1) {
+                        this.data[i].url = body.url
+                    } else {
+                        this.$message.error(body.message)
+                        this.fullscreenLoading = false
                     }
                 }
             }
-
+            
             // 摘要默认内容
             const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;
@@ -232,44 +216,31 @@ export default {
             const type = this.id ? `article/${this.data._id}` : 'article';
             const mesg = this.id ? '更新' : '发表';
 
-            // 网站和管理员的信息
-            // const email = this.$data.info.administrator['email']
-            // email.web_name = this.$data.info.base['name']
-            // email.web_address = this.$data.info.base['address']
-
-            this.$http.post(type, {data: this.data}).then(res => {
-                setTimeout(() => {
-                    if(res.data.status === 1){
-                        this.$message({
-                            message: `${mesg}成功`,
-                            type: 'success'
-                        });
+            this.$http.post(type, { data: this.data })
+                .then(res => {
+                    if (res.data.status === 1) {
+                        this.$message.success(`${mesg}成功`)
                         this.$router.push('/article')
-                        this.$infoUpdate() // 刷新状态
-                    }else{
+                        this.$infoUpdate()
+                    } else {
                         this.$message.error(`${mesg}失败，请检查网络问题!`);
                     }
-                    this.fullscreenLoading = false;
-                }, 500)
-            })
+                    this.fullscreenLoading = false
+                })
         },
         // 获取时间
         getDate(val){
             this.data.time = val;
         },
         // 获取当前文章的数据
-        async loadData(id){
-
+        loadData(id){
             this.loading = this.$loading({target: '.container'})
-
-            const res = await this.$http.get(`article/${id}`)
-
-            setTimeout(() => {
-                this.data = res.data.body;
-                this.isReset = false;
-                this.$nextTick(() => { this.isReset = true; })
+            this.$http.get(`article/${id}`).then(res => {
+                this.data = res.data.body
+                this.isReset = false
+                this.$nextTick(() => { this.isReset = true })
                 this.loading.close()
-            }, 500)
+            })
         },
     }
 }

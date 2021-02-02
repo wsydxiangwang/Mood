@@ -19,7 +19,7 @@ const routes = [
 			{
 				path: '/article',
 				name: "article",
-				component: resolve => require(['@/views/article/article'], resolve)
+				component: resolve => require(['@/views/article/list'], resolve)
 			},
 			{
 				path: '/article/info',

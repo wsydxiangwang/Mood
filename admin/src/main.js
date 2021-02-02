@@ -36,6 +36,22 @@ Vue.prototype.$request = async (fn, dom = '.container') => {
 	})
 }
 
+Vue.prototype.$dateFormat = () => {
+	const date = new Date();
+	const opt = {
+		"Y": date.getFullYear().toString(),        // 年
+		"M": (date.getMonth() + 1).toString(),     // 月
+		"D": date.getDate().toString(),            // 日
+		"H": date.getHours().toString(),           // 时
+		"m": date.getMinutes().toString(),         // 分
+	}
+	for (let i in opt) {
+		opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]
+	}
+	const time = `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
+	return time
+}
+
 new Vue({
 	store,
 	router,

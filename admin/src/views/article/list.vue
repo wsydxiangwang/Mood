@@ -39,7 +39,6 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { mapState } from 'vuex'
 export default {
     components: { 
         Pagination
@@ -83,17 +82,9 @@ export default {
                     params: { page }
                 }).then(res => {
                     const data = res.data.body;
-                    /**
-                     * 当前页面数据
-                     * 添加数据到vuex，优化请求
-                     */
+                    // 当前页面数据, 缓存到vuex
                     ['data', 'total', 'page'].map(i => this[i] = data[i])
-                    this.$store.commit('setCache', {
-                        type: 'article',
-                        page: page || 1,
-                        data: this.data,
-                        total: this.total
-                    })
+                    this.$store.commit('setCache', { type: 'article', data })
                 }))
         },
         option(data, index) {

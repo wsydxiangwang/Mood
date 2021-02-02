@@ -13,7 +13,7 @@
         />
 
         <section>
-            <date @getDate="getDate" :originalDate="data.time" v-if="hackReset"></date>
+            <Date @getDate="getDate" :originalDate="data.time" v-if="hackReset" />
         </section>
 
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
@@ -21,12 +21,12 @@
 </template>
 
 <script>
-import date from '@/components/date'
+import Date from '@/components/Date'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
-        date,
+        Date,
         mavonEditor
     },
     data() {

@@ -12,9 +12,9 @@ const store = new Vuex.Store({
 	},
 	mutations: {
         // 缓存评论/文章
-		setCache(state, data){
-            state.$data[`${data.type}Qty`] = data.total;
-			state[data.type][data.page] = data.data;
+		setCache(state, { type, data }){
+            state.$data[`${type}Qty`] = data.total;
+			state[type][data.page] = data.data;
         },
         // 重置评论或文章
 		resetCache(state, type){

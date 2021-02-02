@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Comment from '@/components/Comment'
 import Pagination from '@/components/Pagination'
 export default {
@@ -96,26 +95,18 @@ export default {
             /**
              * vuex 获取当前页数据
              */
-            const comment = this.$store.state.comment;
+            const comment = this.$store.state.comment
             if (comment[page]) {
-                this.data = comment[page];
+                this.data = comment[page]
                 return
             }
             this.$request(() => this.$http.get('/comment', {
                     params: { page }
                 }).then(res => {
                     const data = res.data.body;
-                    /**
-                     * 当前页面数据
-                     * 添加数据到vuex，优化请求
-                     */
+                    // 当前页面数据, 缓存到vuex
                     ['data', 'total', 'page'].map(i => this[i] = data[i])
-                    this.$store.commit('setCache', {
-                        type: 'comment',
-                        page: page || 1,
-                        data: this.data,
-                        total: this.total
-                    })
+                    this.$store.commit('setCache', { type: 'comment', data })
                 }))  
         },
         resetLoad() {
@@ -162,7 +153,6 @@ export default {
             }
             o[index]()
         },
-        // 一键已读
         onRead() {
             this.$http.post(`comment_read`).then(res => {
                 this.load()

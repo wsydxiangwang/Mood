@@ -1,7 +1,7 @@
 <template>
-    <div class="comment-form" :class=" isShow ? 'active' : '' ">
+    <div class="comment-form" :class="showClass">
         <div class="content">
-            <div class="img"><img :src="$data.info ? $data.info.base.admin_avatar : ''"></div>
+            <div class="img"><img :src="avatarURL"></div>
             <p class="name">回复：{{ message.name }}</p>
             <el-input
                 type="textarea"
@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
+    name: 'Comment',
     props: ['message'],
     data(){
         return{
@@ -29,7 +29,15 @@ export default {
         }
     },
     computed: {
-        ...mapState(['$data'])
+        info() {
+            return this.$store.state.$data.info
+        },
+        showClass() {
+            return this.isShow ? 'active' : ''
+        },
+        avatarURL() {
+            return this.info ? this.info.base.admin_avatar : ''
+        }
     },
     methods: {
         submit(){
@@ -38,12 +46,13 @@ export default {
                 return;
             }
 
-            const info = this.$data.info;
+            const getAdminInfo = (name) => this.info.administrator[name]
+
             const data = {
-                name: info.administrator.name,
-                email: info.administrator.email,
+                name: getAdminInfo('name'),
+                email: getAdminInfo('email'),
                 content: this.content,
-                time: this.dateFormat(),
+                time: this.$dateFormat(),
                 image: 1,
                 status: 2,
                 topic_id: this.message.topic_id,
@@ -58,8 +67,8 @@ export default {
             const email = {
                 name: data.reply_name,
                 email: data.reply_email,
-                isEmail: info.administrator.comment,
-                url: `${info.base['address']}/${data.topic_id}`,
+                isEmail: getAdminInfo('comment'),
+                url: `${this.info.base['address']}/${data.topic_id}`,
             }
 
             this.$request(() => this.$http.post('comment', { 
@@ -82,22 +91,7 @@ export default {
         close(){
             this.content = ''
             this.isShow = !this.isShow
-        },
-        dateFormat(){
-            const date = new Date();
-            const opt = {
-                "Y": date.getFullYear().toString(),        // 年
-                "M": (date.getMonth() + 1).toString(),     // 月
-                "D": date.getDate().toString(),            // 日
-                "H": date.getHours().toString(),           // 时
-                "m": date.getMinutes().toString(),         // 分
-            }
-            for (let i in opt) {
-                opt[i] = opt[i].length == 1 ? opt[i].padStart(2, "0") : opt[i]
-            }
-            const time = `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`
-            return time
-        }
+        }   
     }
 }
 </script>>
