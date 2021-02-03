@@ -19,7 +19,7 @@
 
             <el-input placeholder="文章摘要" v-model="data.describe" prefix-icon="el-icon-document" clearable></el-input>
 
-            <div class="upload-box" v-if="!uploadToggle">
+            <div class="upload-box" v-if="!isUpload">
                 <el-upload
                     class="upload-item"
                     :auto-upload="false"
@@ -29,7 +29,7 @@
                     drag
                 >
                     <i class="el-icon-headset"></i>
-                    <div class="el-upload__text">{{ data.music.url ? data['music'].name : '背景音乐' }}</div>
+                    <div class="el-upload__text">{{ data.music.url ? data['music'].name || data['music'].url : '背景音乐' }}</div>
                 </el-upload>
                 <el-upload
                     class="upload-item"
@@ -52,7 +52,7 @@
                 <el-input placeholder="封面图片" v-model="data.image.url" prefix-icon="el-icon-picture-outline-round" clearable></el-input>
             </template>
 
-            <el-switch v-model="uploadToggle" active-text="输入链接" inactive-text="文件上传"></el-switch>
+            <el-switch v-model="isUpload" active-text="文件上传" inactive-text="输入链接"></el-switch>
             <el-switch v-model="data.hide" inactive-text="发布文章" active-text="隐藏文章"></el-switch>
         </section>
 
@@ -84,11 +84,8 @@ export default {
                 hide: false,            // 隐藏
             },
             isReset: true,
-
             markdownImage: [],          // 编辑器的图片集合
-
-            upload: {},
-            uploadToggle: false,
+            isUpload: false,            // 是否上传 取反
 
             fullscreenLoading: false,
             loading: ''
@@ -100,22 +97,6 @@ export default {
             this.loadData(this.id)
         }
     },
-    // watch: {
-    //     'data.image.url': {
-    //         handler(val) {
-    //             if(!val){
-    //                 delete this.upload['image']
-    //             }
-    //         }
-    //     },
-    //     'data.music.url': {
-    //         handler(val) {
-    //             if(!val){
-    //                 delete this.upload['music']
-    //             }
-    //         }
-    //     }
-    // },
     computed: {
         ...mapState(['$data'])
     },
@@ -178,37 +159,37 @@ export default {
             const conImgList = this.markdownImage
             for (let i = 0; i< conImgList.length; i++) {
                 const result = await this.$http.post('/upload', conImgList[i]['form'])
+                const body = result.data.body
                 if (result.data.status == 1) {
-                    markdown.$img2Url(i, result.data.body.url)
-                    console.log(3)
+                    markdown.$img2Url(i, body.url)
                 } else {
-                    this.$message.error(result.data.body.message)
+                    this.fullscreenLoading = false
+                    this.$message.error(body.message)
                     break
                 }
             }
             
-            console.log(2)
-
             this.data.contentHtml = markdown.d_render;     // 解析的html
             this.data.content = markdown.d_value;          // 输入的内容
             this.data.words = markdown.d_value.length;     // 字数
-            
-            // 上传文件
-            if (!this.uploadToggle) {
-                for (let i in this.upload) {
-                    const { status, body } = await this.$http.post('/upload', this.upload[i].formData)
 
-                    console.log(status, body)
-
-                    if (status == 1) {
-                        this.data[i].url = body.url
-                    } else {
-                        this.$message.error(body.message)
-                        this.fullscreenLoading = false
+            // 上传背景音乐 & 封面图
+            if (!this.isUpload) {
+                for (let i of ['image', 'music']) {
+                    const data = this.data[i]
+                    if (data.form) {
+                        const res = await this.$http.post('/upload', data.form)
+                        if (res.data.status == 1) {
+                            data.url = res.data.body.url
+                            delete data.form
+                        } else {
+                            this.$message.error(res.data.body.message)
+                            this.fullscreenLoading = false
+                        }
                     }
                 }
             }
-            
+
             // 摘要默认内容
             const describe = this.data.describe;
             this.data.describe = !describe ? this.data.content.slice(0, 60) + '...' : describe;

@@ -63,7 +63,7 @@ module.exports = (app, plugin, model) => {
                 res.send(requestResult(2, { message: '图片上传失败，请填写正确的OSS信息！'}))
             }
         } else {
-            const filePath = (req.file.path).replace(/\\/g,"\/");
+            const filePath = (req.file.path).replace(/\\/g,"\/")
             const data = {
                 url: `/${filePath}` ,
                 message: '上传成功'
