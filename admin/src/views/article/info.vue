@@ -62,7 +62,6 @@
 
 <script>
 import Date from '@/components/Date'
-import { mapState } from 'vuex'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
@@ -98,7 +97,9 @@ export default {
         }
     },
     computed: {
-        ...mapState(['$data'])
+        uploadType() {
+            return this.$store.state.$data.info.base.upload_type
+        }
     },
     methods: {
         uploadMusic(file) {
@@ -116,7 +117,7 @@ export default {
             }
             const form = new FormData()
             form.append('file', file.raw)
-            form.append('type', this.$data.info.base.upload_type)
+            form.append('type', this.uploadType)
 
             this.$set(this.data, type, {
                 url: URL.createObjectURL(file.raw),
@@ -127,8 +128,7 @@ export default {
         $imgAdd(index, $file){
             var form = new FormData();
             form.append('file', $file);
-            form.append('type', this.$data.info.base.upload_type);
-
+            form.append('type', this.uploadType);
             this.markdownImage.push({
                 index,
                 form
@@ -161,17 +161,22 @@ export default {
                 const result = await this.$http.post('/upload', conImgList[i]['form'])
                 const body = result.data.body
                 if (result.data.status == 1) {
-                    markdown.$img2Url(i, body.url)
+                    markdown.$img2Url(i + 1, body.url)
                 } else {
                     this.fullscreenLoading = false
                     this.$message.error(body.message)
                     break
                 }
             }
-            
-            this.data.contentHtml = markdown.d_render;     // 解析的html
-            this.data.content = markdown.d_value;          // 输入的内容
-            this.data.words = markdown.d_value.length;     // 字数
+
+            const textarea = {
+                'contentHtml': markdown.d_render,
+                'content': markdown.d_value,
+                'words': markdown.d_value.length
+            }
+            for (let i in textarea) {
+                this.data[i] = textarea[i]
+            }
 
             // 上传背景音乐 & 封面图
             if (!this.isUpload) {
@@ -185,6 +190,7 @@ export default {
                         } else {
                             this.$message.error(res.data.body.message)
                             this.fullscreenLoading = false
+                            return
                         }
                     }
                 }
@@ -215,13 +221,13 @@ export default {
         },
         // 获取当前文章的数据
         loadData(id){
-            this.loading = this.$loading({target: '.container'})
-            this.$http.get(`article/${id}`).then(res => {
-                this.data = res.data.body
-                this.isReset = false
-                this.$nextTick(() => { this.isReset = true })
-                this.loading.close()
-            })
+            this.$request(() => this.$http.get(`article/${id}`)
+                .then(res => {
+                    this.data = res.data.body
+                    this.isReset = false
+                    this.$nextTick(() => { this.isReset = true })
+                })
+            )
         },
     }
 }

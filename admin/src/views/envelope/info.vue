@@ -4,16 +4,16 @@
         <h2 class="tit">无人问津的心情，在黑纸白字间游荡！</h2>
 
         <mavon-editor 
-            @change="change" 
             v-model="data.content" 
-            ref="md" 
+            ref="markdown" 
             style="height: 60vh" 
-            :toolbars="markdownOption" 
             :subfield="false"
+            @imgAdd="$imgAdd"
+            @imgDel="$imgDel"
         />
 
         <section>
-            <Date @getDate="getDate" :originalDate="data.time" v-if="hackReset" />
+            <Date @getDate="getDate" :originalDate="data.time" v-if="isReset" />
         </section>
 
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
@@ -37,39 +37,9 @@ export default {
                 time: '',               // 时间
             },
             id: null,
-            hackReset: true,
-
-            markdownOption: {
-                bold: true, // 粗体
-                italic: true, // 斜体
-                header: true, // 标题
-                underline: true, // 下划线
-                strikethrough: true, // 中划线
-                mark: true, // 标记
-                superscript: true, // 上角标
-                subscript: true, // 下角标
-                quote: true, // 引用
-                ol: true, // 有序列表
-                ul: true, // 无序列表
-                link: true, // 链接
-                code: true, // code
-                table: true, // 表格
-                fullscreen: true, // 全屏编辑
-                readmodel: true, // 沉浸式阅读
-                htmlcode: true, // 展示html源码
-                /* 1.3.5 */
-                undo: true, // 上一步
-                redo: true, // 下一步
-                trash: true, // 清空
-                alignleft: true, // 左对齐
-                aligncenter: true, // 居中
-                alignright: true, // 右对齐
-                /* 2.2.1 */
-                subfield: true, // 单双栏模式
-                preview: true, // 预览
-            },
-
+            isReset: true,
             fullscreenLoading: false,
+            markdownImage: [],
             loading: ''
         }
     },
@@ -86,12 +56,10 @@ export default {
             
             let res = await this.$http.get(`envelope/${id}`)
 
-            setTimeout(() => {
-                this.data = res.data;
-                this.hackReset = false;
-                this.$nextTick(() => { this.hackReset = true; })
-                this.loading.close()
-            }, 500)
+            this.data = res.data
+            this.isReset = false
+            this.$nextTick(() => { this.isReset = true })
+            this.loading.close()
         },
         getDate(time){
             this.data.time = time;

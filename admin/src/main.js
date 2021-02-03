@@ -33,6 +33,7 @@ Vue.prototype.$request = async (fn, dom = '.container') => {
 		resolve(fn())
 	}).then(res => {
 		loading.close()
+		document.querySelector('.content').scrollTop = 0
 	})
 }
 

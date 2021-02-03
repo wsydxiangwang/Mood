@@ -29,21 +29,25 @@ export default {
     },
     data() {
         return {
-            newURL: ''
+            newURL: '',
+            form: null
         }
     },
     methods: {
+        getFile() {
+            return this.form.get('file')
+        },
         upload(file) {
             if (!file.raw.type.includes('image')) {
                 this.$message.error('请选择图片格式的文件！')
                 return
             }
 
-            const form = new FormData()
-            form.append('file', file.raw)
+            this.form = new FormData()
+            this.form.append('file', file.raw)
 
             this.newURL = URL.createObjectURL(file.raw)
-            this.$emit('change', this.name, form)
+            this.$emit('change', this.name, this.form)
         }
     }
 }

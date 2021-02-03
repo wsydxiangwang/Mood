@@ -29,22 +29,24 @@
                         :key="i" 
                     >
                         <template v-if="k == 'admin_avatar'">
-                            <upload 
+                            <Upload 
                                 class="avatar-uploader" 
                                 :url="form[key][k]" 
                                 name="avatar"
+                                ref="upload"
                                 @change="uploadChange"
                                 icon="el-icon-user"
-                            ></upload>
+                            />
                         </template>
 
                         <template v-else-if="k == 'image'">
-                            <upload 
+                            <Upload 
                                 class="cover" 
                                 name="cover"
+                                ref="upload"
                                 @change="uploadChange"
                                 :url="form[key][k]" 
-                            ></upload>
+                            />
                             <span class="upload-image-size">(1920*1080)</span>
                         </template>
 
@@ -100,8 +102,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Upload from '../components/upload.vue'
+import Upload from '@/components/Upload'
 export default {
     components: {
         Upload
@@ -186,17 +187,14 @@ export default {
     watch: {
         $info: {
             handler(val) {
-                if(this.$info){
-                    this.init()
-                }
+                this.init()
             },
             immediate: true
         }
     },
     computed: {
-        ...mapState(['$data']),
         $info(){
-            return this.$data ? this.$data.info : {}
+            return this.$store.state.$data ? this.$store.state.$data.info : {}
         }
     },
     methods: {
@@ -235,12 +233,12 @@ export default {
                 return
             }
 
-            this.fullscreenLoading = true;
+            this.fullscreenLoading = true
 
             if (p1 && p2) {
-                const result = await this.$http.post('/password', {p1, p2})
+                const result = await this.$http.post('/password', { p1, p2 })
                 if(result.data.status === 2){
-                    this.fullscreenLoading = false;
+                    this.fullscreenLoading = false
                     this.$message.error('原密码输入有误!')
                     return;
                 }
@@ -252,9 +250,11 @@ export default {
             const uploadList = []
             for (let key in this.uploadFile) {
                 uploadList.push(new Promise((resolve, reject) => {
-
-                    const form = this.uploadFile[key]
+                    
+                    const uploadRef = this.$refs.upload.filter(item => item.name === key)
+                    const form = new FormData()
                     form.append('type', upload_type)
+                    form.append('file', uploadRef[0].getFile())
 
                     if (upload_type == '阿里云') {
                         const oss = JSON.stringify(aliyun_oss)
@@ -277,6 +277,8 @@ export default {
             }
 
             Promise.all(uploadList).then(res => {
+                console.log(this.uploadFile)
+                console.log(1)
                 if (res.length > 0) {
                     res.map(item => {
                         if (item.type === 'avatar') {
@@ -303,11 +305,14 @@ export default {
                     document.querySelector('.content').scrollTop = 0
                 })
             }).catch(err => {
+                console.log(this.uploadFile)
+                console.log(2)
                 this.fullscreenLoading = false
                 this.$message.error(err.message)
             })
         },
         uploadChange(type, file){
+            console.log(file)
             this.uploadFile[type] = file
         }
     }

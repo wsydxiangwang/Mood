@@ -107,7 +107,8 @@ export default {
                     // 当前页面数据, 缓存到vuex
                     ['data', 'total', 'page'].map(i => this[i] = data[i])
                     this.$store.commit('setCache', { type: 'comment', data })
-                }))  
+                })
+            )  
         },
         resetLoad() {
             this.$store.commit('resetCache', 'comment')

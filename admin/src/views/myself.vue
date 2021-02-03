@@ -1,18 +1,14 @@
 <template>
-    <div v-loading.fullscreen.lock="loading">
-        
+    <div>
         <h2 class="tit">个人信息页，来让陌生人认识一下自己吧！！</h2>
-
         <mavon-editor 
-            @change="change" 
             v-model="data.content" 
             style="height: 69vh" 
             :subfield="false"
             @imgAdd="$imgAdd"
             @imgDel="$imgDel"
-            ref="md" 
+            ref="markdown" 
         />
-
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
     </div>
 </template>
@@ -31,49 +27,66 @@ export default {
                 content: '',            // 内容
                 contentHtml: '',        // 内容解析html
             },
-            loading: false
+            markdownImage: []
         }
     },
     computed: {
-        ...mapState(['$data'])
+        uploadType() {
+            return this.$store.state.$data.info.base.upload_type
+        }
     },
     mounted(){
         this.$http.get('myself').then(res => {
-            if(res.data.status == 1){
-                this.data = res.data.body
+            if (res.data.status == 1) {
+                if (res.data.body) {
+                    this.data = res.data.body
+                }
+            } else {
+                this.$message.error('出错了，请刷新页面！')
             }
         })
-
     },
     methods: {
-        change(value, render){
-            this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
-            this.data.content = value;          // 输入的内容
-        },
-        $imgAdd(pos, $file){
-           var formdata = new FormData();
-           formdata.append('file', $file);
-           formdata.append('type', this.$data.info.upload_type);
+        $imgAdd(index, $file){
+            var form = new FormData();
+            form.append('file', $file);
+            form.append('type', this.uploadType);
 
-           this.$http.post('/upload', formdata).then(res => {           
-               this.$refs.md.$img2Url(pos, res.data.url);
+            this.markdownImage.push({
+                index,
+                form
             })
         },
-        $imgDel(pos){
-            const data = {
-                url: pos[0],
-                type: this.$data.info.upload_type
-            }
-            this.$http.post('/delete_file', data)
+        $imgDel(index){
+            this.markdownImage.splice(index, 1)
         },
-        submit(){
+        async submit(){
+            const markdown = this.$refs.markdown
+            const textarea = {
+                'contentHtml': markdown.d_render,
+                'content': markdown.d_value,
+            }
+            for (let i in textarea) {
+                this.data[i] = textarea[i]
+            }
+
+            // 上传内容区图片
+            const conImgList = this.markdownImage
+            for (let i = 0; i< conImgList.length; i++) {
+                const result = await this.$http.post('/upload', conImgList[i]['form'])
+                const body = result.data.body
+                if (result.data.status == 1) {
+                    markdown.$img2Url(i + 1, body.url)
+                } else {
+                    this.fullscreenLoading = false
+                    this.$message.error(body.message)
+                    break
+                }
+            }
+
             this.$request(() => this.$http.post('myself', this.data)
                 .then(res => {
-                    this.$message({
-                        message: 'success',
-                        type: 'success'
-                    })
-                    document.querySelector('.content').scrollTop = 0
+                    this.$message.success('success')
                 }))
         }
     }
