@@ -33,15 +33,11 @@ export default {
         }
     },
     methods: {
-        getFile() {
-            return this.form.get('file')
-        },
         upload(file) {
             if (!file.raw.type.includes('image')) {
                 this.$message.error('请选择图片格式的文件！')
                 return
             }
-
             this.newURL = URL.createObjectURL(file.raw)
             this.$emit('change', this.name, file.raw)
         }

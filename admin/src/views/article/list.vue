@@ -1,6 +1,9 @@
 <template>
     <div class="article">
-        <h2 class="tit">文章列表 ({{ total }})</h2>
+        <h2 class="tit">
+            文章列表 ({{ total }})
+            <span @click="newArticle" class="add"><span class="el-icon-plus"></span> 新文章</span>    
+        </h2>
         
         <el-table :data="data">
             <el-table-column label="Title">
@@ -32,7 +35,7 @@
         <Pagination 
             :data="total"
             :page="page"
-            @update="load" 
+            @update="load"
         />
     </div>
 </template>
@@ -68,6 +71,9 @@ export default {
         this.load()
     },
     methods: {
+        newArticle() {
+            this.$router.push('/article/info')
+        },
         load(page){
             /**
              * vuex 存在当前页数据

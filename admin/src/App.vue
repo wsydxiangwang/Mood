@@ -34,15 +34,40 @@ body{
 	display: flex;	
 }
 h2.tit{
-    border-left: 2px solid #0084ff;
+    border-left: 2px solid var(--color-main);
     padding-left: 16px;
     font-size: 18px;
     font-weight: 400;
     margin: 20px 0 30px;
-    color: #0084ff;
+	color: var(--color-main);
+	position: relative;
+	.add{
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 26px;
+		line-height: 28px;
+		font-size: 13px;
+		border-radius: 4px;
+		padding: 0 12px;
+		color: #fff;
+		background: var(--color-main);
+		cursor: pointer;
+		&:hover{
+			background: var(--color-main-hover);
+		}
+		.el-icon-plus{
+			font-size: 12px;
+			font-weight: 800;
+		}
+	}
 }
 .markdown-body *{
 	list-style: initial;
+}
+:root{
+	--color-main: #0084ff;
+	--color-main-hover: #0279e9;
 }
 @media screen and (max-width: 600px) {
 	#app{

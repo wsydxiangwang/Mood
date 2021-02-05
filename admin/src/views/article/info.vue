@@ -21,28 +21,27 @@
 
             <div class="upload-box" v-if="!isUpload">
                 <el-upload
+                    v-for="(item, index) in ['music', 'image']"
+                    :key="index"
                     class="upload-item"
                     :auto-upload="false"
                     :show-file-list="false"
-                    :on-change="uploadMusic"
+                    :on-change="uploadChange"
+                    :name="item"
+                    ref="upload"
                     action
                     drag
                 >
-                    <i class="el-icon-headset"></i>
-                    <div class="el-upload__text">{{ data.music.url ? data['music'].name || data['music'].url : '背景音乐' }}</div>
-                </el-upload>
-                <el-upload
-                    class="upload-item"
-                    :auto-upload="false"
-                    :show-file-list="false"
-                    :on-change="uploadImage"
-                    action
-                    drag
-                >
-                    <img v-if="data.image.url" :src="data.image.url">
+                    <template v-if="item == 'music'">
+                        <i class="el-icon-headset"></i>
+                        <div class="el-upload__text">{{ data[item].url ? data[item].name || data[item].url : '背景音乐' }}</div>
+                    </template>
                     <template v-else>
-                        <i class="el-icon-picture-outline-round"></i>
-                        <div class="el-upload__text">封面图片 (680*440)</div>
+                        <img v-if="data.image.url" :src="data.image.url">
+                        <template v-else>
+                            <i class="el-icon-picture-outline-round"></i>
+                            <div class="el-upload__text">封面图片 (680*440)</div>
+                        </template>
                     </template>
                 </el-upload>
             </div>
@@ -102,10 +101,15 @@ export default {
         }
     },
     methods: {
-        uploadMusic(file) {
+        uploadChange(file) {
+            const type = ['image', 'audio']
+            console.log(type.indexOf(file.raw.type))
+            console.log(file)
+            console.log(this.$refs.upload)
             this.uploads('music', file)
         },
         uploadImage(file) {
+            console.log(this.$refs.ss.uploadFiles)
             this.uploads('image', file)
         },
         // 保存临时文件

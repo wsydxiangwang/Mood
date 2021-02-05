@@ -51,19 +51,9 @@ export default {
                     path: '/article',
                 },
                 {
-                    icon: 'el-icon-light-rain',
-                    title: 'New mood',
-                    path: '/article/info',
-                },
-                {
                     icon: 'el-icon-lightning',
                     title: 'A letter',
                     path: '/envelope',
-                },
-                {
-                    icon: 'el-icon-cloudy-and-sunny',
-                    title: 'New letter',
-                    path: '/envelope/info',
                 },
                 {
                     icon: 'el-icon-sunrise-1',
