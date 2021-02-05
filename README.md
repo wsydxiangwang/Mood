@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/MongDB-v4.2.4-brightgreen">
 </div>
 
-### 定一个目标，春节前完结这个项目，优化一些操作体验，新增一些美的发现，优化重构所有代码！（coding...
+### 定一个目标，春节前完结这个项目，优化一些操作体验，新增一些美的发现，优化重构所有代码！（coding...期间项目不可使用，勿clone！！！
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
