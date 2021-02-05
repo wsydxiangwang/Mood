@@ -11,8 +11,8 @@ app.use(history({
 
 app.use(require('cors')())                              // 跨域
 app.use(express.json())                                 // JSON转换
-app.use(bodyParser.json());                             // 数据JSON类型
-app.use(bodyParser.urlencoded({ extended: false }));    // 解析post请求数据
+app.use(bodyParser.json())                              // 数据JSON类型
+app.use(bodyParser.urlencoded({ extended: false }))     // 解析post请求数据
 
 /**
  * 静态文件
@@ -32,13 +32,11 @@ app.use(expressJwt({
 
 // 中间件
 app.use((err, req, res, next) => {
-    // 跳过前台接口验证
-    if(req.originalUrl.slice(1, 4) == 'web'){
-        return next();
+    if (req.originalUrl.slice(1, 4) == 'web') { // 跳过前台接口验证
+        return next()
     }
-    // Token过期
-    if (err.name === "UnauthorizedError") {
-        res.status(err.status || 401);
+    if (err.name === "UnauthorizedError") {     // Token过期
+        res.status(err.status || 401)
         res.send({
             message: 'token过期，请重新登录',
             code: 401,
