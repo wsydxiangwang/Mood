@@ -29,7 +29,7 @@ const routes = [
 			{
 				path: '/envelope',
 				name: "envelope",
-				component: resolve => require(['@/views/envelope/envelope'], resolve)
+				component: resolve => require(['@/views/envelope/list'], resolve)
 			},
 			{
 				path: '/envelope/info',
