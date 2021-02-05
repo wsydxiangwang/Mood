@@ -83,18 +83,16 @@ const router = new VueRouter({
 	routes
 })
 
-// 路由拦截
 router.beforeEach((to, from, next) => {
-	const list = ['/article/info', '/envelope/info']
-	if (!list.includes(to.path)) {	// 激活导航
-		store.commit('setMenu', to.path)	
-	}
-	if (!to.meta.requireAuth) {  
-		// 获取当前的token, 不存在则进入登录页面
-		if (localStorage.getItem("Authorization")) {
+	let list = ['/article/info', '/envelope/info']
+	let name = list.indexOf(to.path) > -1 ? '/' + to.path.split('/')[1] : to.path
+
+	store.commit('setMenu', name)
+	
+	if (!to.meta.requireAuth) {
+		if (localStorage.getItem("Authorization")) {  // 是否已登录
 			next()
         } else {
-			console.log('未登录 请先登录')
             next({ path: '/login' })
         }
     } else {

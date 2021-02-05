@@ -40,21 +40,22 @@ h2.tit{
     font-weight: 400;
     margin: 20px 0 30px;
 	color: var(--color-main);
-	position: relative;
+	display: flex;
+    align-items: center;
+    justify-content: space-between;
 	.add{
-		position: absolute;
-		top: 0;
-		right: 0;
-		height: 26px;
-		line-height: 28px;
+		height: 30px;
+		line-height: 32px;
 		font-size: 13px;
 		border-radius: 4px;
 		padding: 0 12px;
-		color: #fff;
-		background: var(--color-main);
+		color: var(--color-main);
+		cursor: pointer;
+		background: #e8f4ff;
 		cursor: pointer;
 		&:hover{
-			background: var(--color-main-hover);
+			color: #fff;
+			background: var(--color-main);
 		}
 		.el-icon-plus{
 			font-size: 12px;

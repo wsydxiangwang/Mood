@@ -23,18 +23,17 @@
                 <el-upload
                     v-for="(item, index) in ['music', 'image']"
                     :key="index"
-                    class="upload-item"
-                    :auto-upload="false"
                     :show-file-list="false"
-                    :on-change="uploadChange"
+                    :http-request="uploadChange"
                     :name="item"
+                    class="upload-item"
                     ref="upload"
                     action
                     drag
                 >
                     <template v-if="item == 'music'">
                         <i class="el-icon-headset"></i>
-                        <div class="el-upload__text">{{ data[item].url ? data[item].name || data[item].url : '背景音乐' }}</div>
+                        <div class="el-upload__text">{{ musicName }}</div>
                     </template>
                     <template v-else>
                         <img v-if="data.image.url" :src="data.image.url">
@@ -98,33 +97,31 @@ export default {
     computed: {
         uploadType() {
             return this.$store.state.$data.info.base.upload_type
+        },
+        musicName() {
+            return this.data['music'].url ? this.data['music'].name || this.data['music'].url : '背景音乐'
         }
     },
     methods: {
-        uploadChange(file) {
-            const type = ['image', 'audio']
-            console.log(type.indexOf(file.raw.type))
-            console.log(file)
-            console.log(this.$refs.upload)
-            this.uploads('music', file)
-        },
-        uploadImage(file) {
-            console.log(this.$refs.ss.uploadFiles)
-            this.uploads('image', file)
-        },
-        // 保存临时文件
-        uploads(type, file){
-            const name = type == 'music' ? 'audio' : 'image';
-            if (!file.raw.type.includes(name)) {
+        uploadChange(data) {
+            const list = ['audio', 'image']
+            const name = data.filename == 'music' ? 'audio' : data.filename
+            const index = list.indexOf(data.file.type.split('/')[0])
+
+            if (name != list[index]) {
                 this.$message.error(`请选择${name}格式的文件!`)
                 return
             }
+            this.uploads(data.filename, data.file)
+        },
+        // 保存临时文件
+        uploads(type, file) {
             const form = new FormData()
-            form.append('file', file.raw)
+            form.append('file', file)
             form.append('type', this.uploadType)
 
             this.$set(this.data, type, {
-                url: URL.createObjectURL(file.raw),
+                url: URL.createObjectURL(file),
                 name: file.name,
                 form
             })
