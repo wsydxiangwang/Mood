@@ -28,25 +28,15 @@
                         :label="v"
                         :key="i" 
                     >
-                        <template v-if="k == 'admin_avatar'">
+                        <template v-if="k == 'admin_avatar' || k == 'image'">
                             <Upload 
-                                class="avatar-uploader" 
-                                :url="form[key][k]" 
-                                name="avatar"
-                                ref="upload"
-                                @change="uploadChange"
-                                icon="el-icon-user"
-                            />
-                        </template>
-                        <template v-else-if="k == 'image'">
-                            <Upload 
-                                class="cover" 
-                                name="cover"
-                                ref="upload"
+                                :icon="k == 'image' ? 'el-icon-picture' : 'el-icon-user'"
+                                :class="uploadType(k)" 
+                                :name="uploadType(k)"
                                 @change="uploadChange"
                                 :url="form[key][k]" 
                             />
-                            <span class="upload-image-size">(1920*1080)</span>
+                            <span class="upload-image-size" v-if="k == 'image'">(1920*1080)</span>
                         </template>
 
                         <template v-else-if="k == 'upload_type' || k == 'email_type'">
@@ -197,6 +187,12 @@ export default {
         }
     },
     methods: {
+        uploadType(name) {
+            return name == 'admin_avatar' ? 'avatar' : 'cover'
+        },
+        uploadChange(type, file) {
+            this.uploadFile[type] = file
+        },
         init() {
             for (let key in this.$info) {
                 this.$set(this.form, key, this.$info[key])
@@ -292,9 +288,6 @@ export default {
                 this.$message.error(msg)
             }
             this.fullscreenLoading = false
-        },
-        uploadChange(type, file){
-            this.uploadFile[type] = file
         }
     }
 }
@@ -304,7 +297,7 @@ export default {
 .el-form{
     max-width: 600px;
 }
-.avatar-uploader{
+.avatar{
     height: 100px;
     ::v-deep .el-upload{
         height: 100px;
