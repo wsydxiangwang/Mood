@@ -38,7 +38,6 @@
                                 icon="el-icon-user"
                             />
                         </template>
-
                         <template v-else-if="k == 'image'">
                             <Upload 
                                 class="cover" 
@@ -187,7 +186,7 @@ export default {
     watch: {
         $info: {
             handler(val) {
-                this.init()
+                if (val) this.init()
             },
             immediate: true
         }
@@ -235,11 +234,13 @@ export default {
 
             this.fullscreenLoading = true
 
+            /**
+             * Password Submit
+             */ 
             if (p1 && p2) {
                 const result = await this.$http.post('/password', { p1, p2 })
                 if(result.data.status === 2){
-                    this.fullscreenLoading = false
-                    this.$message.error('原密码输入有误!')
+                    this.popupHint(result.data.message)
                     return;
                 }
             }
@@ -247,72 +248,52 @@ export default {
             /**
              * Upload Image
              */
-            const uploadList = []
             for (let key in this.uploadFile) {
-                uploadList.push(new Promise((resolve, reject) => {
-                    
-                    const uploadRef = this.$refs.upload.filter(item => item.name === key)
-                    const form = new FormData()
-                    form.append('type', upload_type)
-                    form.append('file', uploadRef[0].getFile())
+                const form = new FormData()
+                form.append('type', upload_type)
+                form.append('file', this.uploadFile[key])
 
-                    if (upload_type == '阿里云') {
-                        const oss = JSON.stringify(aliyun_oss)
-                        form.append('oss', oss)
-                    }
-
-                    this.$http.post('/upload', form).then(res => {
-                        if (res.data.status === 1) {
-                            resolve({
-                                type: key, 
-                                url: res.data.body.url
-                            })
-                        } else {
-                            reject(res.data.body)
-                        }
-                    }).catch(err => {
-                        reject(err)
-                    })
-                }))
-            }
-
-            Promise.all(uploadList).then(res => {
-                console.log(this.uploadFile)
-                console.log(1)
-                if (res.length > 0) {
-                    res.map(item => {
-                        if (item.type === 'avatar') {
-                            this.form['base']['admin_avatar'] = item.url
-                        } else {
-                            this.form['cover']['image'] = item.url
-                        }
-                    })
+                if (upload_type == '阿里云') {
+                    const oss = JSON.stringify(aliyun_oss)
+                    form.append('oss', oss)
                 }
 
-                // 提交信息
-                this.$http.post('/info', this.form).then(res => {
-                    if (res.data.status === 1) {
-                        this.$message({
-                            type: 'success',
-                            message: 'success'
-                        })
-                        this.$store.commit('updataInfo', res.data.body)
-                        this.fullscreenLoading = false
-                        this.uploadFile = {}
+                const res = await this.$http.post('/upload', form)
+                const msg = res.data.body
+                
+                if (res.data.status === 1) {
+                    if (key === 'avatar') {
+                        this.form['base']['admin_avatar'] = msg.url
                     } else {
-                        this.$message.error(res.data.body.message)
+                        this.form['cover']['image'] = msg.url
                     }
-                    document.querySelector('.content').scrollTop = 0
-                })
+                } else {
+                    this.popupHint(msg.message)
+                    return
+                }
+            }
+
+            /**
+             * SUBMIT
+             */
+            this.$http.post('/info', this.form).then(res => {
+                this.uploadFile = {}
+                this.popupHint('success', true)
+                this.$store.commit('updataInfo', res.data.body)
+                document.querySelector('.content').scrollTop = 0
             }).catch(err => {
-                console.log(this.uploadFile)
-                console.log(2)
-                this.fullscreenLoading = false
-                this.$message.error(err.message)
+                this.popupHint(err.message)
             })
         },
+        popupHint(msg, type){
+            if (type) {
+                this.$message.success(msg)
+            } else {
+                this.$message.error(msg)
+            }
+            this.fullscreenLoading = false
+        },
         uploadChange(type, file){
-            console.log(file)
             this.uploadFile[type] = file
         }
     }

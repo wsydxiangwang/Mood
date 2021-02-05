@@ -29,8 +29,7 @@ export default {
     },
     data() {
         return {
-            newURL: '',
-            form: null
+            newURL: ''
         }
     },
     methods: {
@@ -43,11 +42,8 @@ export default {
                 return
             }
 
-            this.form = new FormData()
-            this.form.append('file', file.raw)
-
             this.newURL = URL.createObjectURL(file.raw)
-            this.$emit('change', this.name, this.form)
+            this.$emit('change', this.name, file.raw)
         }
     }
 }
