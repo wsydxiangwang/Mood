@@ -1,7 +1,7 @@
 <template>
     <div class="phrase">
         <h2 class="tit">
-            短语列表 ({{ data.length }})
+            短语列表 ({{ total }})
             <span @click="newEnvelope" class="add"><span class="el-icon-plus"></span> 新短语</span>    
         </h2>
 
@@ -23,81 +23,91 @@
                 <template slot-scope="scope">
                     <el-tooltip 
                         effect="dark" 
-                        content="Edit"
                         placement="top"
                         v-for="(item, index) in list"
+                        :content="item.text"
                         :key="index"
                     >
-                        <i :class="index.icon" @click="option(scope.row, index)"></i>
+                        <i :class="item.icon" @click="option(scope.row, index)"></i>
                     </el-tooltip>
                 </template>
             </el-table-column>
 
         </el-table>
 
+        <Pagination :data="total" :page="page" @update="load" />
+
     </div>
 </template>
 
 <script>
+import Pagination from '@/components/Pagination'
 export default {
+    components: { 
+        Pagination
+    },
     data() {
         return {
             data: [],
+            total: 0,
+            page: 1,
             list: [
                 {
-                    type: '',
-                    icon: ''
+                    text: 'Edit',
+                    icon: 'el-icon-edit'
                 },
                 {
-                    type: '',
-                    icon: ''
+                    text: 'Delete',
+                    icon: 'el-icon-delete'
                 }
             ]
         }
     },
-    created(){
-        this.load();
+    created() {
+        this.load()
     },
     methods: {
-        option(data, index) {
-            const o = {
-                0: () => {
-
-                }
-            }            
-        },
         newEnvelope() {
             this.$router.push('/envelope/info')
         },
-        load(){
-            this.$request(() => this.$http.get('/envelope').then(res => {
-                this.data = res.data.body
+        load(page){
+            this.$request(() => this.$http.get('/envelope', {
+                params: { page }
+            }).then(res => {
+                ['data', 'total', 'page'].map(i => this[i] = res.data.body[i])
             }))
         },
-        remove(item){
-            this.$confirm('删除该文章, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$http.delete(`envelope/${item._id}`).then(res => {
-                    this.load()
-                    this.$message.success('删除成功!')
-                    this.$infoUpdate() // 刷新状态
-                })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });
-            });
-        },
-        edit(id){
-            this.$router.push({
-                name: 'envelopeInfo',
-                query: { id }
-            })
-        },
+        option(data, index) {
+            const o = {
+                0: () => {
+                    this.$router.push({
+                        name: 'envelopeInfo',
+                        query: { 
+                            id: data._id 
+                        }
+                    })
+                },
+                1: () => {
+                    this.$confirm('删除该信息, 是否继续?', '', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.$http.delete(`envelope/${data._id}`).then(res => {
+                            this.load()
+                            this.$message.success('删除成功!')
+                            this.$infoUpdate()
+                        })
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        })
+                    })
+                }
+            }
+            o[index]()    
+        }
     }
 }
 </script>

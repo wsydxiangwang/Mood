@@ -75,23 +75,11 @@ export default {
             this.$router.push('/article/info')
         },
         load(page){
-            /**
-             * vuex 存在当前页数据
-             */
-            const article = this.$store.state.article;
-            if (article[page]) {
-                this.data = article[page];
-                return
-            }
-
             this.$request(() => this.$http.get('/article', {
-                    params: { page }
-                }).then(res => {
-                    const data = res.data.body;
-                    // 当前页面数据, 缓存到vuex
-                    ['data', 'total', 'page'].map(i => this[i] = data[i])
-                    this.$store.commit('setCache', { type: 'article', data })
-                }))
+                params: { page }
+            }).then(res => {
+                ['data', 'total', 'page'].map(i => this[i] = res.data.body[i])
+            }))
         },
         option(data, index) {
             const o = {
@@ -114,12 +102,12 @@ export default {
                     }).then(() => {
                         this.$request(() => this.$http.delete(`article/${data._id}`)
                             .then(res => {
-                                this.$store.commit('resetCache', 'article')
-                                this.load()
-                                this.$message({
-                                    type: 'success',
-                                    message: '删除成功!'
-                                })
+                                if (res.data.status === 1) {
+                                    this.load()
+                                    this.$message.success('删除成功！')
+                                } else {
+                                    this.$message.error(res.data.body.message)
+                                }
                             }))
                     }).catch(() => {
                         this.$message({

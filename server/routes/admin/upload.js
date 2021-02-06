@@ -3,7 +3,7 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { Info } = model
-    let { requestResult } = plugin
+    let { RequestResult } = plugin
     
     const fs = require('fs');
     const multer = require('multer')
@@ -58,9 +58,9 @@ module.exports = (app, plugin, model) => {
                 const data = { 
                     url: oss.domain ? `${oss.domain}/${result.name}` : result.url 
                 }
-                res.send(requestResult(1, data))
+                res.send(RequestResult(1, data))
             } catch (e) {
-                res.send(requestResult(2, { message: '图片上传失败，请填写正确的OSS信息！'}))
+                res.send(RequestResult(2, { message: '图片上传失败，请填写正确的OSS信息！'}))
             }
         } else {
             const filePath = (req.file.path).replace(/\\/g,"\/")
@@ -68,7 +68,7 @@ module.exports = (app, plugin, model) => {
                 url: `/${filePath}` ,
                 message: '上传成功'
             }
-            res.send(requestResult(1, data))
+            res.send(RequestResult(1, data))
         }
     })
 

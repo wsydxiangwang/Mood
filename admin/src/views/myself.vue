@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
@@ -38,20 +37,18 @@ export default {
     mounted(){
         this.$http.get('myself').then(res => {
             if (res.data.status == 1) {
-                if (res.data.body) {
-                    this.data = res.data.body
-                }
+                this.data = res.data.body || {}
             } else {
-                this.$message.error('出错了，请刷新页面！')
+                this.$message.error(res.data.body.message)
             }
         })
     },
     methods: {
         $imgAdd(index, $file){
-            var form = new FormData();
-            form.append('file', $file);
-            form.append('type', this.uploadType);
-
+            const form = this.$formData({
+                'file': $file,
+                'type': this.uploadType
+            })
             this.markdownImage.push({
                 index,
                 form

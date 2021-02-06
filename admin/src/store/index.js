@@ -5,29 +5,17 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-        comment: {},
-        article: {},
         $data: {},
         menu: ''
 	},
 	mutations: {
-        // 缓存评论/文章
-		setCache(state, { type, data }){
-            state.$data[`${type}Qty`] = data.total;
-			state[type][data.page] = data.data;
-        },
-        // 重置评论或文章
-		resetCache(state, type){
-			state[type] = {};
-        },
         // 信息
-        info(state, data){
+        data(state, data){
             state.$data = data
         },
         // 已读
         updateUnread(state){
-            state.$data.unread = 0;
-            state.comment = {}
+            state.$data.unread = 0
         },
         // 更新信息
         updataInfo(state, data){

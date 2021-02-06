@@ -1,20 +1,20 @@
 /**
  * 请求结果
- * @param {Number} status 状态码
- * @param {All} data 数据/信息
+ * @param {Data} err 错误结果
+ * @param {Data} doc 成功数据/信息
  */
-function requestResult(status, data){
-    if (status == 1) {
+function requestResult(err, doc){
+    if (doc) {
         return {
-            status,
+            status: 1,
             message: 'success',
-            body: data
+            body: doc
         }
     } else {
         return {
-            status,
+            status: 2,
             message: 'error',
-            body: data
+            body: err
         }
     }
 }

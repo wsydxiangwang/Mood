@@ -3,11 +3,11 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let {Subscribe} = model
-    let {dateFormat} = plugin        
+    let {DateFormat} = plugin        
 
     router.get('/subscribe', async (req, res) => {
         const data = await Subscribe.find()        
-        data.forEach(item => item._doc['time'] = dateFormat(time(item.time)) )
+        data.forEach(item => item._doc['time'] = DateFormat(time(item.time)) )
         res.send(data)
     })
 

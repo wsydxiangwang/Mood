@@ -1,28 +1,29 @@
 module.exports = (app, plugin, model) => {
-    const express = require('express');
-    const router = express.Router();
+    const express = require('express')
+    const router = express.Router()
     
     let { Myself } = model
-    let { requestResult } = plugin
+    let { RequestResult } = plugin
 
-    router.post('/myself', async (req, res) => {
+    router.post('/myself', (req, res) => {
         if (req.body._id) {
-            const result = await Myself.findByIdAndUpdate(
+            Myself.findByIdAndUpdate(
                 req.body._id, 
                 req.body, 
                 (err, doc) => {
-                    return doc
+                    res.send(RequestResult(err, doc))
                 })
-            res.send(requestResult(1, result))
         } else {
-            const result = await Myself.create(req.body)
-            res.send(requestResult(1, result))
+            Myself.create(req.body, (err, doc) => {
+                res.send(RequestResult(err, doc))
+            })
         }
     })
 
-    router.get('/myself', async (req, res) => {
-        const result = await Myself.findOne()
-        res.send(requestResult(1, result))
+    router.get('/myself', (req, res) => {
+        Myself.findOne((err, doc) => {
+            res.send(RequestResult(err, doc))
+        })
     })
 
     app.use('/admin/api', router)

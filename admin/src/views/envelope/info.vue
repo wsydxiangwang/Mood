@@ -1,19 +1,19 @@
 <template>
-    <div v-loading.fullscreen.lock="fullscreenLoading">
+    <div>
         
-        <h2 class="tit">无人问津的心情，在黑纸白字间游荡！</h2>
+        <h2 class="tit">一字一句，无人知晓！</h2>
 
         <mavon-editor 
             v-model="data.content" 
             ref="markdown" 
             style="height: 60vh" 
             :subfield="false"
-            @imgAdd="$imgAdd"
-            @imgDel="$imgDel"
+            @change="change"
+            :toolbars="toolbars"
         />
 
         <section>
-            <Date @getDate="getDate" :originalDate="data.time" v-if="isReset" />
+            <Date @getDate="getDate" :originalDate="data.time" />
         </section>
 
         <el-button class="submit" type="primary" @click="submit">SUBMIT</el-button>
@@ -37,62 +37,62 @@ export default {
                 time: '',               // 时间
             },
             id: null,
-            isReset: true,
-            fullscreenLoading: false,
-            markdownImage: [],
-            loading: ''
+            toolbars: {
+                bold: true,         // 粗体
+                italic: true,       // 斜体
+                header: true,       // 标题
+                underline: true,    // 下划线
+                strikethrough: true,// 中划线
+                mark: true,         // 标记
+                superscript: true,  // 上角标
+                subscript: true,    // 下角标
+                quote: true,        // 引用
+                ol: true,           // 有序列表
+                ul: true,           // 无序列表
+                link: true,         // 链接
+                alignleft: true,    // 左对齐
+                aligncenter: true,  // 居中
+                alignright: true,   // 右对齐
+                subfield: true,     // 单双栏模式
+            }
         }
     },
-    created(){
-        this.id = this.$route.query.id;
-        if(this.id) this.loadData(this.id);
-    },
-    mounted(){
-        this.$store.commit('setMenu', this.$route.path)
+    created() {
+        this.id = this.$route.query.id
+        this.id && this.load(this.id)
     },
     methods: {
-        async loadData(id){
-            this.loading = this.$loading({target: '.container'})
-            
-            let res = await this.$http.get(`envelope/${id}`)
-
-            this.data = res.data
-            this.isReset = false
-            this.$nextTick(() => { this.isReset = true })
-            this.loading.close()
+        load(id) {
+            this.$request(() => this.$http.get(`envelope/${id}`)
+                .then(res => {
+                    if (res.data.status === 1) {
+                        this.data = res.data.body
+                    } else {
+                        this.$message.error(res.data.body.message)
+                    }
+                })
+            )
         },
-        getDate(time){
-            this.data.time = time;
+        getDate(time) {
+            this.data.time = time
         },
-        change(value, render){
+        change(value, render) {
             this.data.contentHtml = render;     // render 为 markdown 解析后的结果[html]
             this.data.content = value;          // 输入的内容
         },
-        submit(){
-            if(!this.data.content || !this.data.time){
-                this.$message.error('请填写完整的信息');
-                return;
+        submit() {
+            if (!this.data.content || !this.data.time) {
+                this.$message.error('请填写完整的信息')
+                return
             }
+            const type = this.id ? `/envelope/${this.data._id}` : '/envelope'
+            const message = this.id ? '修改成功' : '发布成功'
 
-            this.fullscreenLoading = true;
-
-            /**
-             * 编辑或发布
-             */
-            const type = this.id ? `/envelope/${this.data._id}` : '/envelope';
-            const mesg = this.id ? '修改成功' : '发布成功';
-
-            this.$http.post(type, this.data).then(res => {
-                setTimeout(() => {
-                    this.$message({
-                        message: mesg,
-                        type: 'success'
-                    });
-                    this.$router.push('/envelope')
-                    this.fullscreenLoading = false;
-                    this.$infoUpdate() // 刷新状态
-                }, 500)
-            })
+            this.$request(() => this.$http.post(type, this.data).then(res => {
+                this.$message.success(message)
+                this.$router.push('/envelope')
+                this.$infoUpdate()
+            }))
         }
     }
 }

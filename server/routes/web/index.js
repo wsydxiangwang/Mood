@@ -3,11 +3,11 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
 
     let {Info, Comment, Counter, Article, Envelope, Myself, Subscribe} = model
-    let {time, email, dateFormat, requestResult} = plugin
+    let {time, email, DateFormat, RequestResult} = plugin
 
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
-        res.send(requestResult(1, info))
+        res.send(RequestResult(1, info))
     })
 
     // All articles
@@ -19,7 +19,7 @@ module.exports = (app, plugin, model) => {
             Article.find({hide:false}).sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
         ])
 
-        result[1].forEach(item => item._doc['time'] = dateFormat(item.time))
+        result[1].forEach(item => item._doc['time'] = DateFormat(item.time))
 
         // 列表页 分组
         if(req.query.from){ 
@@ -43,7 +43,7 @@ module.exports = (app, plugin, model) => {
             totalPage: Math.ceil(result[0] / 10),
         }
 
-        res.send(requestResult(1, data))
+        res.send(RequestResult(1, data))
     })
 
     // Get article
@@ -57,10 +57,10 @@ module.exports = (app, plugin, model) => {
             new: true
         })
         if (data) {
-            data._doc['time'] = dateFormat(data.time)
-            res.send(requestResult(1, data))
+            data._doc['time'] = DateFormat(data.time)
+            res.send(RequestResult(1, data))
         } else {
-            res.send(requestResult())
+            res.send(RequestResult())
         }
     })
 
@@ -71,7 +71,7 @@ module.exports = (app, plugin, model) => {
 
         // 一级评论和子级评论格式转化
         const data = result.reduce((total, item, index, arr) => {    
-            item._doc['time'] = dateFormat(item.time)
+            item._doc['time'] = DateFormat(item.time)
             if(item.type === 1){
                 item._doc['child'] = []
                 total.push(item)
@@ -87,7 +87,7 @@ module.exports = (app, plugin, model) => {
         
         const total = result.length;
         
-        res.send(requestResult(1, { data, total }))
+        res.send(RequestResult(1, { data, total }))
     })
     
     // Post a comment
@@ -122,9 +122,9 @@ module.exports = (app, plugin, model) => {
         if (result.type === 1) {
             result._doc['child'] = [];
         }
-        result._doc['time'] = dateFormat(result.time)
+        result._doc['time'] = DateFormat(result.time)
 
-        res.send(requestResult(1, result))
+        res.send(RequestResult(1, result))
         
         /**
          * 默默de发送邮件通知
@@ -174,12 +174,12 @@ module.exports = (app, plugin, model) => {
             page: Number(page),
             totalPage: Math.ceil(result[0] / 10),
         }
-        res.send(requestResult(data))
+        res.send(RequestResult(data))
     })
 
     router.get('/myself', async (req, res) => {
         const result = await Myself.findOne()
-        res.send(requestResult(result))
+        res.send(RequestResult(result))
     })
 
     // subscribe
@@ -196,7 +196,7 @@ module.exports = (app, plugin, model) => {
             get_data(Object.prototype.toString.call(result) === "[object Null]")
         } else {
             // 已验证
-            res.send(requestResult())
+            res.send(RequestResult())
         }
 
         async function get_data(type){
@@ -216,7 +216,7 @@ module.exports = (app, plugin, model) => {
                     Info.findOne()
                 ])
             }
-            res.send(requestResult(data[0]))
+            res.send(RequestResult(data[0]))
 
             const email_info = Object.assign({}, data[1]['email'], {web_name: data[1]['web_name']})
             email(1, send, email_info) // 发送邮件验证
@@ -251,14 +251,14 @@ module.exports = (app, plugin, model) => {
                     return doc;
                 } )
                 // 验证成功
-                res.send(requestResult(data))
+                res.send(RequestResult(data))
             } else {
                 // 验证失败
-                res.send(requestResult())
+                res.send(RequestResult())
             }
         } else {
             // 已验证
-            res.send(requestResult(data))
+            res.send(RequestResult(data))
         }
     })
 

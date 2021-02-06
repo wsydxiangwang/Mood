@@ -9,13 +9,13 @@
         <mavon-editor 
             v-model="data.content" 
             :subfield="false"
-            @imgAdd="$imgAdd"
+            @imgAdd="uploads"
             @imgDel="$imgDel"
             ref="markdown" 
         />
 
         <section>
-            <Date @getDate="getDate" :originalDate="data.time" v-if="isReset" />
+            <Date @getDate="getDate" :originalDate="data.time" />
 
             <el-input placeholder="文章摘要" v-model="data.describe" prefix-icon="el-icon-document" clearable></el-input>
 
@@ -80,19 +80,15 @@ export default {
                 music: {},              // 音乐
                 hide: false,            // 隐藏
             },
-            isReset: true,
             markdownImage: [],          // 编辑器的图片集合
             isUpload: false,            // 是否上传 取反
 
-            fullscreenLoading: false,
-            loading: ''
+            fullscreenLoading: false
         }
     },
     created(){
-        this.id = this.$route.query.id;
-        if (this.id) {
-            this.loadData(this.id)
-        }
+        this.id = this.$route.query.id
+        this.id && this.loadData(this.id)
     },
     computed: {
         uploadType() {
@@ -103,6 +99,18 @@ export default {
         }
     },
     methods: {
+        // 获取当前文章的数据
+        loadData(id){
+            this.$request(() => this.$http.get(`article/${id}`)
+                .then(res => {
+                    if (res.data.status === 1) {
+                        this.data = res.data.body
+                    } else {
+                        this.$message.error(res.data.body.message)
+                    }
+                })
+            )
+        },
         uploadChange(data) {
             const list = ['audio', 'image']
             const name = data.filename == 'music' ? 'audio' : data.filename
@@ -112,28 +120,26 @@ export default {
                 this.$message.error(`请选择${name}格式的文件!`)
                 return
             }
-            this.uploads(data.filename, data.file)
+            this.uploads(data.filename, data.file, true)
         },
         // 保存临时文件
-        uploads(type, file) {
-            const form = new FormData()
-            form.append('file', file)
-            form.append('type', this.uploadType)
-
-            this.$set(this.data, type, {
-                url: URL.createObjectURL(file),
-                name: file.name,
-                form
+        uploads(type, file, is) {
+            const form = this.$formData({
+                'file': file,
+                'type': this.uploadType
             })
-        },
-        $imgAdd(index, $file){
-            var form = new FormData();
-            form.append('file', $file);
-            form.append('type', this.uploadType);
-            this.markdownImage.push({
-                index,
-                form
-            })
+            if (is) {
+                this.$set(this.data, type, {
+                    url: URL.createObjectURL(file),
+                    name: file.name,
+                    form
+                })
+            } else {
+                this.markdownImage.push({   // 内容区图片
+                    index: type,
+                    form
+                })
+            }
         },
         $imgDel(index){
             this.markdownImage.splice(index, 1)
@@ -218,17 +224,7 @@ export default {
         },
         // 获取时间
         getDate(val){
-            this.data.time = val;
-        },
-        // 获取当前文章的数据
-        loadData(id){
-            this.$request(() => this.$http.get(`article/${id}`)
-                .then(res => {
-                    this.data = res.data.body
-                    this.isReset = false
-                    this.$nextTick(() => { this.isReset = true })
-                })
-            )
+            this.data.time = val
         },
     }
 }

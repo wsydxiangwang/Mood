@@ -2,7 +2,9 @@ const express = require('express');
 const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
 const bodyParser = require('body-parser')
-const fs = require('fs');
+const fs = require('fs')
+const path = require('path')
+
 const app = express();
 
 app.use(history({
@@ -20,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }))     // 解析post请求数�
 app.use('/admin', express.static(__dirname + '/admin'))
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
+
 /**
  * 验证token
  * 跳过用户接口
@@ -30,9 +33,9 @@ app.use(expressJwt({
     path: ["/admin/api/login", "/admin/api/user"]
 }));
 
-// 中间件
+// 接口验证
 app.use((err, req, res, next) => {
-    if (req.originalUrl.slice(1, 4) == 'web') { // 跳过前台接口验证
+    if (req.originalUrl.slice(1, 4) == 'web') { // 跳过前台
         return next()
     }
     if (err.name === "UnauthorizedError") {     // Token过期
@@ -44,8 +47,7 @@ app.use((err, req, res, next) => {
         })
         return
     }
-});
-
+})
 
 /**
  * 全局方法

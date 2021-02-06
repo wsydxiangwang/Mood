@@ -12,13 +12,7 @@
 <script>
 import Sidebar from "@/components/Sidebar";
 export default {
-    components: { Sidebar },
-    created() {
-        /**
-         * 加载所需数据
-         */
-        this.$infoUpdate()
-    }
+    components: { Sidebar }
 }
 </script>
 

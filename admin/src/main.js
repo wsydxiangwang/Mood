@@ -11,21 +11,38 @@ Vue.use(ElementUI);
 Vue.prototype.$http = http
 Vue.config.productionTip = false
 
-// 获取个人信息
+let loading = null
+
+// 设置个人信息 vuex
 Vue.prototype.$infoUpdate = () => {
     http.get('/info').then(res => {
 		if(res && res.data.status == 1){
 			const data = res.data.body;
-			store.commit('info', data)
+			store.commit('data', data)
 		}
     })
 }
 
+/**
+ * @param {Object} data form对象集合
+ */
+Vue.prototype.$formData = (data) => {
+	const form = new FormData()
+	for (let key in data) {
+		form.append(key, data[key])
+	}
+	return form
+}
+
+// 时间格式获取
 Vue.prototype.$getDate = (data) => {
 	return `${data.time} ${data.month.en} ${data.day.on}`
 }
 
-let loading = null
+/**
+ * @param {Function} fn 异步方法
+ * @param {String} dom 添加loading的元素
+ */
 Vue.prototype.$request = async (fn, dom = '.container') => {
 	loading && loading.close()
 	loading = ElementUI.Loading.service({ target: dom })
@@ -37,6 +54,7 @@ Vue.prototype.$request = async (fn, dom = '.container') => {
 	})
 }
 
+// 日期转化
 Vue.prototype.$dateFormat = () => {
 	const date = new Date();
 	const opt = {

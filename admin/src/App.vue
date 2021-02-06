@@ -4,6 +4,14 @@
 	</div>
 </template>
 
+<script>
+export default {
+    created() {
+        this.$infoUpdate()
+    }	
+}
+</script>
+
 <style lang="scss">
 * {
 	margin: 0;

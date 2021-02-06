@@ -46,7 +46,7 @@
         />
         <Comment 
             :message="replyData" 
-            @Load="resetLoad" 
+            @Load="load" 
             ref="comment"
         ></Comment>
     </div>
@@ -92,27 +92,12 @@ export default {
     },
     methods: {
         load(page) {
-            /**
-             * vuex 获取当前页数据
-             */
-            const comment = this.$store.state.comment
-            if (comment[page]) {
-                this.data = comment[page]
-                return
-            }
             this.$request(() => this.$http.get('/comment', {
                     params: { page }
                 }).then(res => {
-                    const data = res.data.body;
-                    // 当前页面数据, 缓存到vuex
-                    ['data', 'total', 'page'].map(i => this[i] = data[i])
-                    this.$store.commit('setCache', { type: 'comment', data })
+                    ['data', 'total', 'page'].map(i => this[i] = res.data.body[i])
                 })
             )  
-        },
-        resetLoad() {
-            this.$store.commit('resetCache', 'comment')
-            this.load()
         },
         option(data, index) {
             const o = {
@@ -131,19 +116,18 @@ export default {
                         type: 'warning'
                     }).then(() => {
                         this.$request(() => this.$http.delete(`/comment`, { 
-                                params: {
-                                    id: data.id,
-                                    parent_id: data.parent_id
-                                }
-                            }).then(res => {
-                                if (res.data.status === 1) {
-                                    this.resetLoad()
-                                    this.$message({
-                                        type: 'success',
-                                        message: '删除成功!'
-                                    })
-                                }
-                            }))
+                            params: {
+                                id: data.id,
+                                parent_id: data.parent_id
+                            }
+                        }).then(res => {
+                            if (res.data.status === 1) {
+                                this.load()
+                                this.$message.success('删除成功!')
+                            } else {
+                                this.$message.error(res.data.body.message)
+                            }
+                        }))
                     }).catch(() => {
                         this.$message({
                             type: 'info',
@@ -156,8 +140,12 @@ export default {
         },
         onRead() {
             this.$http.post(`comment_read`).then(res => {
-                this.load()
-                this.$store.commit('updateUnread')
+                if (res.data.status === 1) {
+                    this.load()
+                    this.$store.commit('updateUnread')
+                } else {
+                    this.$message.error(res.data.body.message)
+                }
             })
         }
     }

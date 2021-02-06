@@ -3,8 +3,8 @@
         <h2><span class="el-icon-magic-stick"></span> 愿所有的美好如约而至，愿所有的黑暗都能看到希望。</h2>
 
         <p class="time">
-            <span>{{time.year || '请珍惜时间'}}</span>
-            <span>{{time.date || '一寸光阴一寸金'}}</span>
+            <span>{{ time.year || '请珍惜时间' }}</span>
+            <span>{{ time.date || '一寸光阴一寸金' }}</span>
         </p>
 
         <section class="info">
@@ -12,76 +12,41 @@
             <div>
                 <p>重新认识、审视、定义一下自己吧。</p>
                 <ul>
-                    <li><span class="el-icon-ice-drink"></span>现在的你，是个怎样的人？</li>
-                    <li><span class="el-icon-lollipop"></span>你希望以后成为怎样的人？</li>
-                    <li><span class="el-icon-lollipop"></span>你心中的未来是怎样的？</li>
-                    <li><span class="el-icon-lollipop"></span>最想做的一件事是什么？</li>
-                    <li><span class="el-icon-lollipop"></span>你现在的生活，开心吗？</li>
-                    <li><span class="el-icon-hot-water"></span>心如止水，淡中得味，加油。</li>
+                    <li
+                        v-for="(item, index) in textList"
+                        :key="index"
+                    >
+                        <span :class="item.icon"></span>
+                        {{ item.text }}
+                    </li>
                 </ul>
             </div>
         </section>
         
-        <section>
-            <h3>article</h3>
-            <div class="box" v-if="$data.article">
+        <section v-for="(val, key, index) in list" :key="index">
+            <h3>{{ key }}</h3>
+            <div class="box" v-if="$data[val.count]">
                 <p>
-                    <span class="total">{{$data.articleQty}}</span>
-                    <span>篇</span>
+                    <span class="total">{{ $data[val.count] }}</span>
+                    <span>{{ val.unit }}</span>
                 </p>
-                <p>{{dateDiff($data.article.time)}} 发布了新的心情，继续加油哦！</p>
+                <p>{{ key == 'article' ? $time : null }}{{ val.text }}</p>
             </div>
             <div class="box" v-else>
                 <p>
                     <span class="total">0</span>
-                    <span>篇</span>
+                    <span>{{ val.unit }}</span>
                 </p>
-                <p>快来发布新文章啦!</p>
+                <p>{{ val.textNull }}</p>
             </div>
         </section>
 
-        <!-- <section>
-            <h3>article</h3>
-            <div class="box" v-if="$data.article">
-                <p>
-                    <span class="total">{{$data.articleQty}}</span>
-                    <span>篇</span>
-                </p>
-                <p>{{dateDiff($data.article.time)}} 发布了新的心情，继续加油哦！</p>
-            </div>
-            <div class="box" v-else>
-                <p>
-                    <span class="total">0</span>
-                    <span>篇</span>
-                </p>
-                <p>快来发布新文章啦!</p>
-            </div>
-        </section> -->
-
-        <!-- <section>
-            <h3>comment</h3>
-            <div class="box" v-if="$data.commentQty">
-                <p>
-                    <span class="total">{{$data.commentQty}}</span>
-                    <span>条</span>
-                </p>
-                <p>过去的时间里，收获了些许陌生的美好。</p>
-            </div>
-            <div class="box" v-else>
-                <p>
-                    <span class="total">0</span>
-                    <span>条</span>
-                </p>
-                <p>过去的时间里，收获了些许陌生的美好。</p>
-            </div>
-        </section> -->
-
         <section>
             <h3>envelope</h3>
-            <div class="envelope" v-if="$envelope && $envelope.length > 0">
-                <p v-for="(item, index) in $envelope" :key="index"><span>{{index + 1}}</span>{{item.content}}</p>
+            <div class="envelope" v-if="$envelope.length > 0">
+                <p v-for="(item, index) in $envelope" :key="index"><span>{{ index + 1 }}</span>{{ item.content }}</p>
             </div>
-            <div class="envelope" v-else style="display: flex;text-align: center;align-items: center;height: 80%;">
+            <div class="envelope envelope-null" v-else>
                 <p>空空如也</p>
             </div>
         </section>
@@ -90,7 +55,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
     data(){
         return {
@@ -99,33 +63,66 @@ export default {
             list: {
                 'article': {
                     count: 'articleQty',
-                    text: `${this.dateDiff(this.$data.article.time)} 发布了新的心情，继续加油哦！`,
+                    unit: '篇',
+                    text: `发布了新的心情，继续加油哦！`,
                     textNull: '快来发布新文章啦'
                 },
                 'comment': {
                     count: 'commentQty',
-                    text: '',
-                    textNull: '过去的时间里，收获了些许陌生的美好。'
+                    unit: '条',
+                    text: '过去的时间里，收获了些许陌生的美好。',
+                    textNull: '第一条评论会是谁呢~~~'
                 }
-            }
+            },
+            textList: [
+                {
+                    icon: 'el-icon-ice-drink',
+                    text: '现在的你，是个怎样的人？'
+                },
+                {
+                    icon: 'el-icon-lollipop',
+                    text: '你希望以后成为怎样的人？'
+                },
+                {
+                    icon: 'el-icon-lollipop',
+                    text: '你心中的未来是怎样的？'
+                },
+                {
+                    icon: 'el-icon-lollipop',
+                    text: '最想做的一件事是什么？'
+                },
+                {
+                    icon: 'el-icon-lollipop',
+                    text: '你现在的生活，开心吗？'
+                },
+                {
+                    icon: 'el-icon-hot-water',
+                    text: '心如止水，淡中得味！'
+                }
+            ],
+            bgDOM: null
         }
     },
     computed: {
-        ...mapState(['$data']),
-        $envelope(){
-            return this.$data ? this.$data.envelope : ''
+        $data() {
+            return this.$store.state.$data ? this.$store.state.$data : {}
+        },
+        $envelope() {
+            return this.$data ? this.$data.envelope : []
+        },
+        $time() {
+            return this.$data.article ? this.dateDiff(this.$data.article.time) : ''
         }
     },
-    mounted(){
+    mounted() {
         this.timer = setInterval(this.date, 1000)
-        document.querySelector('.container').style.background = '#f9fcff'
+        this.bgDOM = document.querySelector('.container')
+        this.bgDOM.style.background = '#f9fcff'
     },
-    destroyed(){
-        // 清除倒计时
+    destroyed() {
         clearInterval(this.timer)
-        if(document.querySelector('.container')){
-            document.querySelector('.container').style.background = '#fff'
-        }
+        this.bgDOM.style.background = '#fff'
+        this.bgDOM = null
     },
     methods: {
         date(){
@@ -144,7 +141,6 @@ export default {
                 date: `${day}天${hour}时${minute}分${second}秒`
             }
         },
-
         dateDiff(time) {
             const timestemp = new Date(time).getTime();
             const minute = 1000 * 60;
@@ -174,12 +170,12 @@ export default {
                 [hourC]: "小时",
                 [minC]: "分钟",
             }
-            for(let i in map){
-                if(i >= 1){
+            for (let i in map) {
+                if (i >= 1) {
                     return `${parseInt(i)}${map[i]}前`
                 }
             }
-            return '片刻之前';        
+            return '片刻之前'     
         }
     }
 }
@@ -273,6 +269,12 @@ export default {
                 margin-top: 30px;
                 color: #c4ccd4;
             }
+        }
+        .envelope-null{
+            height: 80%;
+            display: flex;
+            text-align: center;
+            align-items: center;
         }
         .envelope{
             p{

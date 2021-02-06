@@ -3,7 +3,7 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { User, Info } = model
-    let { requestResult } = plugin
+    let { RequestResult } = plugin
 
     const crypto = require('crypto');
     const jwt = require('jsonwebtoken');
@@ -22,10 +22,10 @@ module.exports = (app, plugin, model) => {
                         password: passwords
                     }
                 }, (err, doc) => {
-                    res.send(requestResult(1, '密码修改成功'))
+                    res.send(RequestResult(1, '密码修改成功'))
                 })
             } else {
-                res.send(requestResult(2, '原密码输入错误'))
+                res.send(RequestResult(2, '原密码输入错误'))
             }
         })
     })
@@ -33,7 +33,7 @@ module.exports = (app, plugin, model) => {
     // 登录
     router.post('/login', async (req, res) => {
         if (Object.keys(req.body).length != 2) {
-            res.send(requestResult(2, {
+            res.send(RequestResult(2, {
                 message: '请填写完整的信息！',
             }))
             return
@@ -48,12 +48,12 @@ module.exports = (app, plugin, model) => {
                 const token = jwt.sign(info, 'Libai', {
                     expiresIn: 60 * 60 * 24
                 })
-                res.send(requestResult(1, {
+                res.send(RequestResult(1, {
                     message: '登录成功',
                     token
                 }))
             } else {
-                res.send(requestResult(2, {
+                res.send(RequestResult(2, {
                     message: '用户名或密码错误！',
                 }))
             }

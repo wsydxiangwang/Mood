@@ -20,10 +20,8 @@ export default {
     watch: {
         value(val){
             this.$emit('getDate', val)
-        }
-    },
-    mounted(){
-        if (this.originalDate && JSON.stringify(this.originalDate) != '{}') {
+        },
+        originalDate(val) {
             this.value = this.originalDate
         }
     }

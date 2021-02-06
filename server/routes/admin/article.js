@@ -2,19 +2,20 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
     
-    let {Counter, Article, Subscribe} = model
-    let {getPage, requestResult, email} = plugin
+    let { Counter, Article, Subscribe } = model
+    let { getPage, RequestResult, email } = plugin
 
     // 获取文章
     router.get('/article', async (req, res) => {
         const data = await getPage(Article, req.query.page, req.query.count)
-        res.send(requestResult(1, data))
+        res.send(RequestResult(1, data))
     })
 
     // 获取指定id文章
-    router.get('/article/:id', async (req, res) => {
-        const data = await Article.findOne({id: req.params.id})
-        res.send(requestResult(1, data))
+    router.get('/article/:id', (req, res) => {
+        Article.findOne({id: req.params.id}, (err, doc) => {
+            res.send(RequestResult(err, doc))
+        })
     })
 
     // 发布文章
@@ -34,11 +35,11 @@ module.exports = (app, plugin, model) => {
          * 发布新文章
          */
         let result = null;
-        if(articleId){
+        if (articleId) {
             // 自定义id
             req.body.data.id = articleId.count;
             result = await Article.create(req.body.data)
-        }else{
+        } else {
             /**
              * 第一次发表文章
              * 创建自增id字段
@@ -51,45 +52,45 @@ module.exports = (app, plugin, model) => {
             req.body.data.id = count.count;
             result = await Article.create(req.body.data)
         }
-        res.send(requestResult(1, result))
+        res.send(RequestResult(1, result))
 
         // ...Subscribe
-        const email_data = req.body.email
-        if(email_data.subscribe && !result.hide){
-            const sub = await Subscribe.find()
-            const email_list = sub.filter(i => i.active)
+        // const email_data = req.body.email
+        // if (email_data.subscribe && !result.hide) {
+        //     const sub = await Subscribe.find()
+        //     const email_list = sub.filter(i => i.active)
 
-            // 群发邮件
-            if(email_list.length > 0){
-                const send_email = email_list.reduce((t, i) => {
-                    t.push(i.email)
-                    return t
-                }, [])
-                const data = {
-                    title: result.title,
-                    url: req.headers.origin + '/' + result.id,
-                    email: send_email
-                }
-                email(2, data, email_data)
-            }
-        }
+        //     // 群发邮件
+        //     if (email_list.length > 0) {
+        //         const send_email = email_list.reduce((t, i) => {
+        //             t.push(i.email)
+        //             return t
+        //         }, [])
+        //         const data = {
+        //             title: result.title,
+        //             url: req.headers.origin + '/' + result.id,
+        //             email: send_email
+        //         }
+        //         email(2, data, email_data)
+        //     }
+        // }
     })
 
     // 更新文章
-    router.post('/article/:id', async (req, res) => {
-        const data = await Article.findByIdAndUpdate(
+    router.post('/article/:id', (req, res) => {
+        Article.findByIdAndUpdate(
             req.params.id, 
             req.body.data, 
             (err, doc) => {
-                return doc
+                res.send(RequestResult(err, doc))
             })
-        res.send(requestResult(1, data))
     })
 
     // 删除文章
-    router.delete('/article/:id', async (req, res) => {
-        const data = await Article.findByIdAndDelete(req.params.id, req.body)
-        res.send(requestResult(1, data))
+    router.delete('/article/:id', (req, res) => {
+        Article.findByIdAndDelete(req.params.id, (err, doc) => {
+            res.send(RequestResult(err, doc))
+        })
     })
 
     app.use('/admin/api', router)
