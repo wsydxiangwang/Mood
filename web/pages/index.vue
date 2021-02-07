@@ -290,7 +290,7 @@ export default {
 			position: absolute;
 			top: 70px;
 			width: 100%;
-			color: #fff;
+			color: var(--color-bg-primary);
 			z-index: 99999;
 			padding: 0 40px 0 40px;
 			display: flex;
@@ -353,7 +353,7 @@ export default {
 			position: absolute;
 			top: 54%;
 			left: 10%;
-			color: #fff;
+			color: var(--color-bg-primary);
 			width: 30%;
 			transform: translateY(-50%);
 			.time{
@@ -363,7 +363,7 @@ export default {
 				margin: 15px 0 30px;
 				a{
 					font-size: 28px;
-					color: #fff;
+					color: var(--color-bg-primary);
 					text-decoration: none;
 					cursor: pointer;
 					transition: all .3s;
@@ -390,7 +390,7 @@ export default {
 			position: absolute;
 			top: -100px;
 			left: 50%;
-			background: #eaeaea;
+			background: var(--color-border-1);
 			z-index: 0;
 		}
 		.more{
@@ -403,7 +403,7 @@ export default {
 			.btn{
 				border-radius: 0;
 				display: inline-block;
-				border: 1px solid #eaeaea;
+				border: 1px solid var(--color-border-1);
 				border-radius: 4px;
 			}
 		}
@@ -438,10 +438,10 @@ export default {
 				position: absolute;
 				top: 20px;
 				padding: 80px 100px 0 80px;
-				border: 1px solid #eaeaea;
+				border: 1px solid var(--color-border-1);
 				border-radius: 6px;
 				.time{
-					color: #999;
+					color: var(--color-text-4);
 					font-size: 12px;
 				}
 				.title{
@@ -470,7 +470,7 @@ export default {
 					}
 				}
 				.describe{
-					color: #666;
+					color: var(--color-text-2);
 					font-size: 14px;
 					line-height: 22px;
 					margin-top: 10px;
@@ -482,7 +482,7 @@ export default {
 				}
 				.stuff{
 					font-size: 12px;
-					color: #999;
+					color: var(--color-text-4);
 					position: absolute;
 					bottom: 80px;
 					left: 80px;
@@ -532,7 +532,7 @@ export default {
 							transform: translate(-50%, -5px);
 							background: #EF6D57;
 							white-space: nowrap;
-							color: #fff;
+							color: var(--color-bg-primary);
 							font-size: 12px;
 							border-radius: 10px;
 							padding: 5px 14px;
@@ -592,7 +592,7 @@ export default {
 		a{
 			margin: 0 auto;
 			font-size: 13px;
-			color: #666;
+			color: var(--color-text-2);
 			text-decoration: none;
 			display: inline-block;
 			padding: 1px 0 2px;
@@ -649,8 +649,8 @@ export default {
 			width: 100%;
 			.post{
 				margin-top: 60px;
-				background: #fff;
-				border-bottom: 1px solid #eaeaea;
+				background: var(--color-bg-primary);
+				border-bottom: 1px solid var(--color-border-1);
 				.img-box{
 					width: 100%;
 					height: auto;
@@ -668,7 +668,7 @@ export default {
 					padding: 40px 20px 40px;
 					margin: auto;
 					border: none;
-					background: #fff;
+					background: var(--color-bg-primary);
 					height: auto;
 					.stuff{
 						position: static;

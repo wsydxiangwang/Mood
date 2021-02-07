@@ -186,14 +186,14 @@ header{
     top: 0;
     left: 0;
     width: 100%;
-    border-bottom: 1px solid #f6f7f8;
+    border-bottom: 1px solid var(--color-border-2);
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #666;
+    color: var(--color-text-2);
     padding: 0 15px;
-    background: #fff;
+    background: var(--color-bg-primary);
     z-index: 99999;
     transition: all .3s;
     .musicBar{
@@ -227,7 +227,7 @@ header{
         }
     }
     .icon .iconfont{
-        color: #888;
+        color: var(--color-text-3);
         font-size: 20px;
         cursor: pointer;
         margin: 4px 5px 0;
@@ -278,7 +278,7 @@ header{
         position: absolute;
         top: 60px;
         right: 10px;
-        background: #fff;
+        background: var(--color-bg-primary);
         border-radius: 10px;
         border: 1px solid #eee;
         box-shadow: 0 4px 10px #eee;
@@ -309,7 +309,7 @@ header{
             top: 30px;
             right: 40px;
             background: #ef6c57;
-            color: #fff;
+            color: var(--color-bg-primary);
             font-size: 13px;
             width: 210px;
             height: 110px;
@@ -346,7 +346,7 @@ header{
     width: 36px;
     padding: 3px;
     height: 36px;
-    color: #fff;
+    color: var(--color-bg-primary);
     opacity: 0.8;
     cursor: pointer;
     z-index: 9999999;
@@ -361,7 +361,7 @@ header{
             transform-origin: center;
             &.progress-background{
                 transform: scale(0.9);
-                stroke: #fff;
+                stroke: var(--color-bg-primary);
             }
             &.progress-bar{
                 transform: scale(0.9) rotate(-90deg);

@@ -7,7 +7,7 @@
                     <input type="text" placeholder="Email" v-model="form.email">
                 </div>
                 <div class="reply-name" v-if="isReply">
-                    <span class="">@{{replyObj.reply_name}}</span>
+                    <span class="">@{{ replyObj.reply_name }}</span>
                     <span class="iconfont icon-close" @click="cancel"></span>
                 </div>
                 <textarea class="textarea" placeholder="What do you want to say..." v-model="form.content"></textarea>
@@ -32,21 +32,21 @@
                                 <div class="sk-circle11 sk-child"></div>
                                 <div class="sk-circle12 sk-child"></div>
                             </div>
-                            <span class="loading-text">{{hint[status]}}</span>
+                            <span class="loading-text">{{ hint[status] }}</span>
                         </div>
                     </template>
 
                     <template v-if="status == 8">
                         <div class="hint success">
                             <span class="iconfont icon-success"></span>
-                            <span>{{hint[status]}}</span>
+                            <span>{{ hint[status] }}</span>
                         </div>
                     </template>
 
                     <template v-if="status!=7 && status!=8 && status!=10">
                         <div class="hint red">
                             <span class="iconfont icon-error"></span>
-                            <span>{{hint[status]}}</span>
+                            <span>{{ hint[status] }}</span>
                         </div>
                     </template>
 
@@ -57,7 +57,7 @@
             <template v-if="comment.total > 0">
                 <h2>
                     <span>Comment List</span>
-                    <span>({{comment.total}})</span>
+                    <span>({{ comment.total }})</span>
                 </h2>
                 <div class="comment-list">
                     <transition-group name="comment-item">
@@ -81,7 +81,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="comment-content">{{item.content}}</div>
+                                <div class="comment-content">{{ item.content }}</div>
                             </div>
 
                             <!-- sub-comment to list -->
@@ -98,7 +98,7 @@
                                                 <img :src="'/image/comment/'+items.image+'.jpg'">
                                             </div>
                                             <div class="name">
-                                                <a>{{items.name}}<span v-if="items.admin">{{ adminMark }}</span></a>
+                                                <a>{{ items.name }}<span v-if="items.admin">{{ adminMark }}</span></a>
                                                 <div class="r">
                                                     <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                     <span class="time">{{ getCommentDate(items.time) }}</span>
@@ -106,7 +106,7 @@
                                             </div>
                                         </div>
                                         <div class="comments-content">
-                                            <span v-if="items.type===3" class="reply-name"> @{{items.reply_name}} </span>{{items.content}}
+                                            <span v-if="items.type===3" class="reply-name"> @{{ items.reply_name }} </span>{{ items.content }}
                                         </div>
                                     </div>
                                 </transition-group>
@@ -338,7 +338,7 @@ export default {
 
                     if (data.type === 1) {
                         this.comment.data.unshift(data)
-                    }else{
+                    } else {
                         const id = data.parent_id;
                         this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
                     }
@@ -459,7 +459,7 @@ export default {
             position: absolute;
             right: 15px;
             top: 15px;
-            color: #999;
+            color: var(--color-text-4);
             cursor: pointer;
             &:hover{
                 color: var(--colorComment)
@@ -467,7 +467,7 @@ export default {
         }
         input{
             height: 34px;
-            border: 1px solid var(--color-border-primary);
+            border: 1px solid var(--color-border-1);
             border-radius: 6px;
             padding: 2px 10px 0;
             text-align: left;
@@ -478,16 +478,16 @@ export default {
             text-align: center;
             transition: all .3s;
             &::-webkit-input-placeholder{
-                color:#999;
+                color:var(--color-text-4);
             }
             &::-moz-placeholder{   /* Mozilla Firefox 19+ */
-                color:#999;
+                color:var(--color-text-4);
             }　　
             &:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
-                color:#999;
+                color:var(--color-text-4);
             }
             &:-ms-input-placeholder{  /* Internet Explorer 10-1*/
-                color:#999;
+                color:var(--color-text-4);
             }
             &:hover{
                 border-color: rgb(210, 210, 210);
@@ -498,7 +498,7 @@ export default {
             line-height: 36px;
             width: 100px;
             font-size: 14px;
-            color: #fff;
+            color: var(--color-bg-primary);
             border-radius: 6px;
             background: var(--color-active);
             cursor: pointer;
@@ -518,11 +518,11 @@ export default {
         }
         div{
             font-size: 14px;
-            color: #333;
+            color: var(--color-text-primary);
             margin-bottom: 14px;
         }
         p{
-            color: red;
+            color: var(--color-red);
             font-size: 12px;
             margin: 10px 0 0;
             span{
@@ -531,7 +531,7 @@ export default {
         }
     }
     h2{
-        color: #333;
+        color: var(--color-text-primary);
         font-weight: 400;
         margin-bottom: 20px;
         font-style:  oblique;
@@ -540,12 +540,12 @@ export default {
             &:first-child{
                 font-size: 18px;
                 margin-right: 8px;
-                border-bottom: 1px solid #666;
+                border-bottom: 1px solid var(--color-text-2);
             }
         }
     }
     .comment-form{
-        border: 1px solid var(--color-border-primary);
+        border: 1px solid var(--color-border-1);
         margin-bottom: 60px;
         border-radius: 6px;
         padding: 15px 12px;
@@ -564,9 +564,9 @@ export default {
                 outline: none;
                 color: var(--color-text-primary);
                 background: var(--color-bg-primary);
-                border-bottom: 1px dashed var(--color-border-primary);
+                border-bottom: 1px dashed var(--color-border-1);
                 &:focus{
-                    border-color: var(--color-border-light);
+                    border-color: var(--color-border-3);
                 }
                 &:last-child{
                     margin: 0;
@@ -574,7 +574,7 @@ export default {
             }
         }
         .reply-name{
-            color: #fff;
+            color: var(--color-bg-primary);
             display: inline-block;
             background: var(--color-active);
             border-radius: 21px;
@@ -595,7 +595,7 @@ export default {
             height: 200px;
             margin: 10px 0;
             color: var(--color-text-primary);
-            border: 1px dashed var(--color-border-primary);
+            border: 1px dashed var(--color-border-1);
             -webkit-transition: all .3s;
             transition: all .3s;
             border-radius: 4px;
@@ -605,7 +605,7 @@ export default {
             resize: none;
             background: url('~static/image/comment/plbj.png') no-repeat bottom right;
             &:focus{
-                border-color: var(--color-border-light);
+                border-color: var(--color-border-3);
             }
         }
     }
@@ -614,7 +614,7 @@ export default {
         overflow: hidden;
         .comment-item{
             padding: 25px 0;
-            border-bottom: 1px solid #f6f7f8;
+            border-bottom: 1px solid var(--color-border-2);
             transition : margin 1s, opacity 2s;
             .comment-item-box:hover{
                 .head .name .r .reply{
@@ -622,15 +622,15 @@ export default {
                 }
             }
             .head{
-                display:-webkit-box;
-                display:flex;
-                position:relative;
+                display: -webkit-box;
+                display: flex;
+                position: relative;
                 .img{
-                    width:45px;
-                    height:45px;
-                    border-radius:50%;
-                    margin-right:12px;
-                    overflow:hidden;
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
+                    margin-right: 12px;
+                    overflow: hidden;
                     border: 1px solid #f1f1f1;
                     img{
                         width: 100%;
@@ -638,32 +638,32 @@ export default {
                     }
                 }
                 .name{
-                    flex:1;
-                    display:-webkit-box;
-                    display:flex;
-                    -webkit-box-align:center;
-                    align-items:center;
-                    -webkit-box-pack:justify;
-                    justify-content:space-between;
+                    flex: 1;
+                    display: -webkit-box;
+                    display: flex;
+                    -webkit-box-align: center;
+                    align-items: center;
+                    -webkit-box-pack: justify;
+                    justify-content: space-between;
                     a{
-                        font-weight:400;
-                        color:#ef6d57;
-                        font-size:16px;
-                        height:20px;
-                        -webkit-transition:all .3s;
-                        transition:all .3s;
-                        text-decoration:none;
+                        font-weight: 400;
+                        color: #ef6d57;
+                        font-size: 16px;
+                        height: 20px;
+                        -webkit-transition: all .3s;
+                        transition: all .3s;
+                        text-decoration: none;
                         position: relative;
                         &:hover{
-                            color:#ef2f11;
-                            text-decoration:underline;
+                            color: #ef2f11;
+                            text-decoration: underline;
                         }
                         span{
-                            color: #fff;
+                            color: var(--color-bg-primary);
                             position: absolute;
                             top: 50%;
                             font-size: 10px;
-                            padding: 1px 6px 1px 8px;
+                            padding: 1px 10px 1px 10px;
                             margin-top: 2px;
                             white-space: nowrap;
                             background: #a9cff3;
@@ -674,7 +674,7 @@ export default {
                     .r{
                         display: flex;
                         .time{
-                            color:#999;
+                            color:var(--color-text-4);
                             font-size:13px;
                             letter-spacing:0;
                         }
@@ -696,9 +696,9 @@ export default {
             }
             
             .comment-content{
-                color:#303030;
-                line-height:22px;
-                padding:0 0 0 58px;
+                color: var(--color-text-primary);
+                line-height: 22px;
+                padding: 0 0 0 58px;
                 white-space: pre-wrap;
             }
         }
@@ -728,7 +728,7 @@ export default {
                         &:after{
                             content:"";
                             width:100%;
-                            border-top:1px solid #f6f7f8;
+                            border-top:1px solid var(--color-border-2);
                             position:absolute;
                             top:-22px;
                             left:0
@@ -736,13 +736,13 @@ export default {
                     }
                 }
                 .comments-content{
-                    color: #666;
+                    color: var(--color-text-primary);
                     padding: 0;
                     line-height: 22px;
                     margin: 0 0 0 50px;
                     white-space: pre-wrap;
                     span{
-                        color: #fff;
+                        color: var(--color-bg-primary);
                         background: #a9cff3;
                         display: inline-block;
                         height: 18px;
@@ -766,9 +766,9 @@ export default {
         line-height:36px;
         width:100px;
         font-size:14px;
-        color:#5f5f5f;
+        color:var(--color-text-5);
         border-radius:6px;
-        background:#eaeaea;
+        background:var(--color-border-1);
         cursor:pointer;
         outline:none;
         border:none;
@@ -791,7 +791,7 @@ export default {
             }
         }
         &.red span{
-            color: red;
+            color: var(--color-red);
             font-size: 13px;
             margin-right: -2px;
             display: inline-block;

@@ -26,7 +26,7 @@ export default {
         line-height: 36px;
         padding: 0 36px;
         color: #909090;
-        background: #fff;
+        background: var(--color-bg-primary);
         z-index: 9;
         letter-spacing: 2px;
         transition: all .3s;
@@ -34,7 +34,7 @@ export default {
         &.more{
             cursor: pointer;
             &:hover{
-                color: #fff;
+                color: var(--color-bg-primary);
                 background: var(--colorActive);
                 border-color: var(--colorActive);
             }

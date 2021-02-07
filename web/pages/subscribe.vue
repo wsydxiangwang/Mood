@@ -154,9 +154,9 @@ export default {
     border-bottom: 1px solid rgba(246, 247, 248, 0.07);
     .icon{
         .iconfont{
-            color: #fff;
+            color: var(--color-bg-primary);
             &.logo{
-                color: #fff
+                color: var(--color-bg-primary)
             }
         }
         .logo-img img{
@@ -193,7 +193,7 @@ export default {
     h1{
         position: absolute;
         top: 120px;
-        color: #fff;
+        color: var(--color-bg-primary);
         font-size: 24px;
         letter-spacing: 10px;
     }
@@ -249,7 +249,7 @@ export default {
         }
         button{
             background: var(--colorActive);
-            color: #fff;
+            color: var(--color-bg-primary);
             border: none;
             height: 34px;
             line-height: 36px;
@@ -266,7 +266,7 @@ export default {
         }
         input{
             border-radius: 50px;
-            background: #fff;
+            background: var(--color-bg-primary);
             padding: 0 18px;
             width: 260px;
             height: 36px;
@@ -307,7 +307,7 @@ export default {
         &:nth-child(4){
             animation-delay: -5s;
             animation-duration: 20s;
-            fill: #fff;
+            fill: var(--color-bg-primary);
         }
     }
 }

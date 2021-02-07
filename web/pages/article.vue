@@ -56,8 +56,8 @@ export default {
     },
     mounted(){
         // 背景音乐
-        if(this.info.bg.bg_mood){
-            this.music = this.info.bg.bg_mood
+        if (this.info.page_music.mood) {
+            this.music = this.info.page_music.mood
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }
@@ -160,7 +160,7 @@ header{
                 box-sizing: border-box;
             }
             span{
-                color: #999;
+                color: var(--color-text-4);
                 font-size: 13px;
                 font-style: oblique;
             }

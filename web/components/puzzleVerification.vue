@@ -204,7 +204,7 @@ export default {
 			let ctx_s = c_s.getContext("2d");
 			ctx.globalCompositeOperation = "xor";
 			// ctx.shadowBlur = 10;
-			// ctx.shadowColor = "#fff";
+			// ctx.shadowColor = "var(--color-bg-primary)";
 			// ctx.shadowOffsetX = 3;
 			// ctx.shadowOffsetY = 3;
 			ctx.fillStyle = "rgba(255,255,255)";
@@ -455,7 +455,7 @@ export default {
 .puzzle-container {
     display: inline-block;
     padding: 15px 15px 28px;
-    background: #ffffff;
+    background: var(--color-bg-primary)fff;
     border-radius: 12px;
     position: fixed;
     top: calc(50% - 105px);
@@ -531,7 +531,7 @@ export default {
 		span{
 			width: 2px;
 			height: 12px;
-			background: #fff;
+			background: var(--color-bg-primary);
 			display: inline-block;
 			margin: 2.5px;
 		}
@@ -558,7 +558,7 @@ export default {
 	.close-btn {
 		font-size: 16px;
 		cursor: pointer;
-		color: #999;
+		color: var(--color-text-4);
 	}
 
 	.re-btn:hover {

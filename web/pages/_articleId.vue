@@ -143,10 +143,10 @@ export default {
     h1.title{
         font-size: 30px;
         padding: 130px 0 22px;
-        color: var(--color-text-primary);
+        color: var(--color-text-1);
     }
     .stuff{
-        color: #6a737d;
+        color: var(--color-text-2);
         position: relative;
         line-height: 22px;
         span{
@@ -161,7 +161,7 @@ export default {
             bottom: -30px;
             left: 50%;
             transform: translateX(-50%);
-            border-bottom: 1px solid #eaeaea;
+            border-bottom: 1px solid var(--color-border-1);
         }
     }
     .content{

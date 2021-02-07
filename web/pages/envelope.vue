@@ -111,7 +111,7 @@ header{
     padding: 90px 0 50px;
     .item{
         margin-bottom: 30px;
-        background: #fff;
+        background: var(--color-bg-primary);
         padding: 30px 30px 20px;
         border-radius: 6px;
         transition: all .3s;
@@ -128,7 +128,7 @@ header{
             font-size: 13px;
             text-align: right;
             margin-top: 14px;
-            color: #888;
+            color: var(--color-text-3);
         }
     }
 }

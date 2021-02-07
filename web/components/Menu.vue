@@ -83,7 +83,7 @@ export default {
         bottom: 30px;
         display: block;
         text-align: center;
-        color: #999;
+        color: var(--color-text-4);
         span{
             font-size: 16px;	
         }
@@ -100,7 +100,7 @@ export default {
             a{
                 font-size: 24px;
                 cursor: pointer;
-                color: #666;
+                color: var(--color-text-2);
                 letter-spacing: 1px;
                 &:hover{
                     color: var(--color-dark);

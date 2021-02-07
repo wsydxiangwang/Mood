@@ -99,7 +99,7 @@ export default {
     overflow: hidden;
     position: relative;
     .logo{
-        color: #fff;
+        color: var(--color-bg-primary);
         position: fixed;
         bottom: 20px;
         left: 30px;
@@ -108,7 +108,7 @@ export default {
         cursor: pointer;
     }
     .logo-img{
-        color: #fff;
+        color: var(--color-bg-primary);
         position: fixed;
         bottom: 20px;
         left: 30px;

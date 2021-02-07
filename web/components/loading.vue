@@ -12,7 +12,7 @@
     width: 100%;
     height: 100%;
     z-index: 999999;
-    background: #fff;
+    background: var(--color-bg-primary);
     display: flex;
     align-items: center;
     justify-content: center;
