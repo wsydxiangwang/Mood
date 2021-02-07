@@ -136,14 +136,14 @@ export default {
         left: 0;
         width: 0;
         height: 2px;
-        background: #50bcb6;
+        background: var(--color-bar);
         transition: width .5s ease;
         z-index: 999999;
     }
     h1.title{
         font-size: 30px;
         padding: 130px 0 22px;
-        color: #333;
+        color: var(--color-text-primary);
     }
     .stuff{
         color: #6a737d;
@@ -171,7 +171,8 @@ export default {
         .markdown-body{
             box-shadow: none !important;
             min-height: auto;
-            background: var(--bg-color);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
             p{
                 line-height: 36px;
                 margin: 0 0 22px;
@@ -197,7 +198,7 @@ export default {
                 line-height: 28px;
             }
             blockquote{
-                background: white;
+                background: var(--color-bg-primary);
                 border-radius: 10px;
                 padding-left: 22px;
                 margin-bottom: 20px;
@@ -268,9 +269,8 @@ export default {
         font-size: 13px;
         z-index: 9999;
         padding: 0 5px;
-        color: #fff;
+        color: var(--color-bg-primary);
     }
-    
 }
 
 @media screen and (max-width: 800px) {

@@ -467,7 +467,7 @@ export default {
         }
         input{
             height: 34px;
-            border: 1px solid #eee;
+            border: 1px solid var(--color-border-primary);
             border-radius: 6px;
             padding: 2px 10px 0;
             text-align: left;
@@ -531,40 +531,42 @@ export default {
         }
     }
     h2{
-        color:#333;
-        font-weight:400;
-        margin-bottom:20px;
-        font-style: oblique;
-        display:inline-block;
+        color: #333;
+        font-weight: 400;
+        margin-bottom: 20px;
+        font-style:  oblique;
+        display: inline-block;
         span{
             &:first-child{
-                font-size:18px;
+                font-size: 18px;
                 margin-right: 8px;
-                border-bottom:1px solid #666;
+                border-bottom: 1px solid #666;
             }
         }
     }
     .comment-form{
-        border:1px solid #eee;
-        margin-bottom:60px;
-        border-radius:6px;
-        padding:15px 12px;
+        border: 1px solid var(--color-border-primary);
+        margin-bottom: 60px;
+        border-radius: 6px;
+        padding: 15px 12px;
         transition: all .3s;
         .input-box{
             display:flex;
             input{
-                width:50%;
-                height:38px;
-                font-size:14px;
-                padding-left:10px;
-                margin-right:12px;
-                -webkit-transition:all .3s;
-                transition:all .3s;
-                border:none;
-                border-bottom:1px dashed #f0f0f0;
-                outline:none;
+                width: 50%;
+                height: 38px;
+                font-size: 14px;
+                padding-left: 10px;
+                margin-right: 12px;
+                -webkit-transition: all .3s;
+                transition: all .3s;
+                border: none;
+                outline: none;
+                color: var(--color-text-primary);
+                background: var(--color-bg-primary);
+                border-bottom: 1px dashed var(--color-border-primary);
                 &:focus{
-                    border-color:#b9b9b9;
+                    border-color: var(--color-border-light);
                 }
                 &:last-child{
                     margin: 0;
@@ -589,21 +591,21 @@ export default {
             }
         }
         textarea{
-            width:100%;
-            height:200px;
-            margin:10px 0;
-            color: #333;
-            border:1px dashed #eee;
-            -webkit-transition:all .3s;
-            transition:all .3s;
-            border-radius:4px;
-            font-size:14px;
-            padding:15px;
-            outline:none;
-            resize:none;
+            width: 100%;
+            height: 200px;
+            margin: 10px 0;
+            color: var(--color-text-primary);
+            border: 1px dashed var(--color-border-primary);
+            -webkit-transition: all .3s;
+            transition: all .3s;
+            border-radius: 4px;
+            font-size: 14px;
+            padding: 15px;
+            outline: none;
+            resize: none;
             background: url('~static/image/comment/plbj.png') no-repeat bottom right;
             &:focus{
-                border-color: #b9b9b9;
+                border-color: var(--color-border-light);
             }
         }
     }

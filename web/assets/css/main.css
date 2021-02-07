@@ -35,7 +35,7 @@ html, body, p, input, textarea, button, div, span {
 
 body{
 	overflow-x: hidden;
-	background: var(--bg-color);
+	background: var(--color-bg-primary);
 }
 body::-webkit-scrollbar{
 	width: 6px;
@@ -48,10 +48,23 @@ body::-webkit-scrollbar-track{
 }
 
 :root{
-	--bg-color: #fff;
+	--color-bg-primary: #ffffff;
+	--color-bg-light: #eaeaea;
+
+	
+	--color-border-primary: #eee;
+	--color-border-light: #b9b9b9;
+	
+	--color-text-primary: #24292e;
+
 	--color-red: #ff3600;
 	--color-bar: #50bcb6;
 	--color-pink: #EF6D57;
 	--color-dark: #080808;
 	--color-active: #0084ff;
+}
+.dark-mode{
+	--color-bg-primary: #0d1117;
+	--color-text-primary: #c9d1d9;
+	--color-border-primary: #30363d;
 }
