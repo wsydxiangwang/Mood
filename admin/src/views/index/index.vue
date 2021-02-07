@@ -43,7 +43,7 @@
 
         <section>
             <h3>envelope</h3>
-            <div class="envelope" v-if="$envelope.length > 0">
+            <div class="envelope" v-if="$envelope && $envelope.length > 0">
                 <p v-for="(item, index) in $envelope" :key="index"><span>{{ index + 1 }}</span>{{ item.content }}</p>
             </div>
             <div class="envelope envelope-null" v-else>

@@ -1,24 +1,24 @@
 <template>
     <div class="phrase">
-        <h2 class="tit">订阅通知 ({{data.length}})</h2>
+        <h2 class="tit">订阅用户 ({{ total }})</h2>
 
         <el-table :data="data" style="width: 100%"  height="calc(800px - 240px)">
             
             <el-table-column label="Title">
                 <template slot-scope="scope">
-                    <p>{{scope.row.email}}</p>
+                    <p>{{ scope.row.email }}</p>
                 </template>
             </el-table-column>
 
             <el-table-column label="Date" width=140>
                 <template slot-scope="scope">
-                    <span>{{scope.row.time.month.en}} {{scope.row.time.day.on}}, {{scope.row.time.year}}</span>
+                    <span>{{ $getDate(scope.row.time) }}</span>
                 </template>
             </el-table-column>
 
             <el-table-column label="Status" width=140>
                 <template slot-scope="scope">
-                    <span style="color:#ff7b7b">{{scope.row.active}}</span>
+                    <span style="color:#ff7b7b">{{ scope.row.active }}</span>
                 </template>
             </el-table-column>
 
@@ -29,53 +29,51 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-
         </el-table>
+
+        <Pagination :data="total" :page="page" @update="load" />
 
     </div>
 </template>
 
 <script>
+import Pagination from '@/components/Pagination'
 export default {
+    components: { 
+        Pagination
+    },
     data() {
         return {
             data: [],
-            loading: ''
+            total: 0,
+            page: 1,
         }
     },
     created(){
-        this.load();
+        this.load()
     },
     methods: {
-        async load(){
-            this.loading = this.$loading({target: '.container'})
-            const res = await this.$http.get('/subscribe');
-            setTimeout(() => {
-                this.data = res.data;
-                this.loading.close()
-            }, 500)
+        load(page){
+            this.$request(() => this.$http.get('/subscribe', {
+                params: { page }
+            }).then(res => {
+                ['data', 'total', 'page'].map(i => this[i] = res.data.body[i])
+            }))
         },
         remove(item){
-            this.$confirm('删除该文章, 是否继续?', '提示', {
+            this.$confirm('删除订阅用户, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.delete(`subscribe/${item._id}`).then(res => {
-                    setTimeout(() => {
+                this.$request(() => this.$http.delete(`subscribe/${item._id}`)
+                    .then(res => {
+                        this.$message.success('删除成功!')
                         this.load()
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.$infoUpdate() // 刷新状态
-                    }, 1000)
-                })
+                    })
+                )
             }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });
+                this.$message('已取消删除')
             });
         }
     }

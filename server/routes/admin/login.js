@@ -3,7 +3,7 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { User, Info } = model
-    let { RequestResult } = plugin
+    let { RequestResult, Email } = plugin
 
     const crypto = require('crypto');
     const jwt = require('jsonwebtoken');
@@ -25,7 +25,7 @@ module.exports = (app, plugin, model) => {
                     res.send(RequestResult(1, '密码修改成功'))
                 })
             } else {
-                res.send(RequestResult(2, '原密码输入错误'))
+                res.send(RequestResult('原密码输入错误'))
             }
         })
     })
@@ -33,9 +33,7 @@ module.exports = (app, plugin, model) => {
     // 登录
     router.post('/login', async (req, res) => {
         if (Object.keys(req.body).length != 2) {
-            res.send(RequestResult(2, {
-                message: '请填写完整的信息！',
-            }))
+            res.send(RequestResult('请填写完整的信息！'))
             return
         }
         const password = crypto.createHash('sha256').update(req.body.password).digest('hex');
@@ -53,9 +51,7 @@ module.exports = (app, plugin, model) => {
                     token
                 }))
             } else {
-                res.send(RequestResult(2, {
-                    message: '用户名或密码错误！',
-                }))
+                res.send(RequestResult('用户名或密码错误！'))
             }
         })
     })
@@ -76,27 +72,39 @@ module.exports = (app, plugin, model) => {
             administrator: { email: req.body.email }
         }
         if (len) {
-            res.json({
-                status: 2,
-                message: '请勿重复注册！',
-            })
+            res.send(RequestResult('请勿重复注册账号，如忘记密码请点击找回密码！'))
         } else {
             // 创建账号
             User.create(user, (err, docs) => {
                 if (docs.length != 0) {
-                    res.json({
-                        status: 1,
-                        message: '注册成功！'
-                    })
+                    res.send(RequestResult(1, { message: '注册成功' }))
                 } else {
-                    res.json({
-                        status: 2,
-                        message: '注册失败，服务器或数据库出错！'
-                    })
+                    res.send(RequestResult('注册失败，服务器或数据库出错！'))
                 }
             })
             Info.create(info)
         }
     })
+
+    // 忘记密码
+    router.post('/forgotPassword', (req, res) => {
+        const email = req.body.email
+        Info.findOne((err, doc) => {
+            console.log(err, doc)
+            if (doc) {
+                if (email.trim() === doc.administrator.email) {
+
+                    
+                    Email(4, '', doc)
+
+                } else {
+                    res.send(RequestResult('请输入正确的邮箱！'))
+                }
+            } else {
+
+            }
+        })
+    })
+
     app.use('/admin/api', router)
 }

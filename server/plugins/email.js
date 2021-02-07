@@ -2,13 +2,13 @@
 const nodemailer = require('nodemailer');
 /**
  * 
- * @param {Number} type 1=>订阅验证 2=>订阅通知 3=>评论通知
+ * @param {Number} type 1=>订阅验证 2=>订阅通知 3=>评论通知 4=>忘记密码
  * @param {Object} data 基本信息
  * @param {Object} email 邮箱和网站信息
  * 
  * 扩展只需添加mode对应值,并且在setting添加对应值
  */
-function email(type, data, info){    
+function Email(type, data, info){    
     const mode = {
         'QQ': 'smtp.qq.com',
         '163': 'smtp.163.com',
@@ -93,10 +93,40 @@ function email(type, data, info){
                     </table>
                 </center>
             `
-        }
+        },
+        // 忘记密码
+        {
+            from: `${info.base.name} <${info.administrator.email}>`, 
+            to: info.administrator.email,
+            subject: `重新设置密码`,
+            html: `
+                <center>
+                    <table style="max-width:800px;letter-spacing: 0.2px;">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="padding: 30px;color: #303030;border-radius: 8px;box-shadow: 0 0 10px #eee;padding: 1.5rem;">
+                                        <p style="text-indent: 2em;color:#303030;font-size: 0.9rem;line-height: 24px;">
+                                            这么简单就忘记密码？<br>
+                                            <a href="${data.url}">给你一次机会，点我重新设置密码(24小时内有效)</a>
+                                        </p>
+                                        <p style="text-align: right;margin-top: 40px;font-size:0.9rem">—— ${info.base.name}</p>
+                                        <div style="background: #eff5fb;border-left: 4px solid #c2e1ff;padding: 14px;margin-top: 30px;border-radius: 9px;font-size: 0.85rem;color: #7d7f7f;line-height: 24px;">
+                                            如果我们没有机会见面，那我在这儿提前预祝你早安、午安以及晚安～～<br>
+                                            愿所有的美好如约而至，愿所有的黑暗都能看到希望，我们微笑前行～～<br>
+                                            人生没有完美，也许有些遗憾才美～～永远相信美好的事情即将发生～～
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+            `
+        },
     ]    
     
     transporter.sendMail(options[type-1], (err, res) => err ? console.log(err) : console.log('Message sent: ' + res.response))
     transporter.close(); // 关闭连接池
 }
-module.exports = email
+module.exports = Email

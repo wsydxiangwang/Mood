@@ -3,10 +3,10 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { Envelope } = model
-    let { getPage, RequestResult } = plugin
+    let { GetPage, RequestResult } = plugin
 
     router.get('/envelope', async (req, res) => {
-        const data = await getPage(Envelope, req.query.page, req.query.count)
+        const data = await GetPage(Envelope, req.query.page)
         res.send(RequestResult(null, data))
     })
 

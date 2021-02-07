@@ -3,14 +3,14 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { Comment, Counter, Article, Info } = model
-    let { email, getPage, RequestResult } = plugin
+    let { Email, GetPage, RequestResult } = plugin
 
 
     // Get comment
     router.get('/comment', async (req, res) => {
         const p = req.query.page
         const s = req.query.count || 10
-        const data = await getPage(Comment, p, s)
+        const data = await GetPage(Comment, p, s)
         res.send(RequestResult(1, data))
     })
 
@@ -52,7 +52,7 @@ module.exports = (app, plugin, model) => {
                 name: info.name,
                 email: info.email
             }
-            email(3, data, infos)
+            Email(3, data, infos)
         }
     })
 

@@ -30,7 +30,11 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(expressJwt({
     secret: "Libai"
 }).unless({
-    path: ["/admin/api/login", "/admin/api/user"]
+    path: [
+        "/admin/api/login", 
+        "/admin/api/user", 
+        "/admin/api/forgotPassword"
+    ]
 }));
 
 // 接口验证

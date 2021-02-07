@@ -40,17 +40,18 @@ Vue.prototype.$getDate = (data) => {
 }
 
 /**
- * @param {Function} fn 异步方法
- * @param {String} dom 添加loading的元素
+ * @param {Function} fn 		执行异步方法
+ * @param {String} dom 			Loading目标DOM
+ * @param {Boolean} scrollTop 	回到顶部
  */
-Vue.prototype.$request = async (fn, dom = '.container') => {
+Vue.prototype.$request = async (fn, dom = '.container', scrollTop = true) => {
 	loading && loading.close()
 	loading = ElementUI.Loading.service({ target: dom })
 	new Promise((resolve) => {
 		resolve(fn())
 	}).then(res => {
 		loading.close()
-		document.querySelector('.content').scrollTop = 0
+		scrollTop && (document.querySelector('.content').scrollTop = 0)
 	})
 }
 

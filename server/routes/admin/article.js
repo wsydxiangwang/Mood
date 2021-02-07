@@ -3,11 +3,11 @@ module.exports = (app, plugin, model) => {
     const router = express.Router();
     
     let { Counter, Article, Subscribe } = model
-    let { getPage, RequestResult, email } = plugin
+    let { GetPage, RequestResult, Email } = plugin
 
     // 获取文章
     router.get('/article', async (req, res) => {
-        const data = await getPage(Article, req.query.page, req.query.count)
+        const data = await GetPage(Article, req.query.page, req.query.count)
         res.send(RequestResult(1, data))
     })
 
@@ -71,7 +71,7 @@ module.exports = (app, plugin, model) => {
         //             url: req.headers.origin + '/' + result.id,
         //             email: send_email
         //         }
-        //         email(2, data, email_data)
+        //         Email(2, data, email_data)
         //     }
         // }
     })

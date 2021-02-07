@@ -1,5 +1,5 @@
 <template>
-    <div v-loading.fullscreen.lock="loginLoading">
+    <div>
         
         <div class="form">
             <h2>Welcome Home!</h2>
@@ -15,9 +15,9 @@
                 <img src="../assets/login-0.png" alt="">
                 <el-button @click="login" type="primary">sign in</el-button>
                 <p class="options">
-                    <span @click="isCreate">- SignUp</span>
+                    <span @click="isPopup(0)">- SignUp</span>
                     or
-                    <span>Password -</span>
+                    <span @click="isPopup(1)">Password -</span>
                 </p>
             </div>
         </div>
@@ -29,37 +29,51 @@
         <transition name="fade">
             <section class="create" v-if="isShow">
                 <div class="create-form">
-                    <h3>Create Account</h3>
-                    <el-form>
-                        <template v-for="(val, key, idx) in formList">
-                            <template v-if="val == '邮箱类型'">
-                                <el-form-item :label="val" :key="idx">
-                                    <el-radio-group v-model="form[key]">     
-                                        <el-radio label="QQ"></el-radio>
-                                        <el-radio label="163"></el-radio>
-                                    </el-radio-group>
-                                </el-form-item>
+                    <h3>{{ popupTitle }}</h3>
+
+                    <!-- 注册账号 -->
+                    <template v-if="popupTitle == 'Create Account'">
+                        <el-form>
+                            <template v-for="(val, key, idx) in formList">
+                                <template v-if="val == '邮箱类型'">
+                                    <el-form-item :label="val" :key="idx">
+                                        <el-radio-group v-model="form[key]">     
+                                            <el-radio label="QQ"></el-radio>
+                                            <el-radio label="163"></el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </template>
+                                <template v-else>
+                                    <el-input 
+                                        :placeholder="val" 
+                                        v-model="form[key]" 
+                                        :key="idx" 
+                                        type="password"
+                                        v-if="key == 'password' || key == 'passwords'"
+                                    ></el-input>
+                                    <el-input 
+                                        :placeholder="val" 
+                                        v-model="form[key]" 
+                                        :key="idx"
+                                        v-else
+                                    ></el-input>
+                                </template>
                             </template>
-                            <template v-else>
-                                <el-input 
-                                    :placeholder="val" 
-                                    v-model="form[key]" 
-                                    :key="idx" 
-                                    type="password"
-                                    v-if="key == 'password' || key == 'passwords'"
-                                ></el-input>
-                                <el-input 
-                                    :placeholder="val" 
-                                    v-model="form[key]" 
-                                    :key="idx"
-                                    v-else
-                                ></el-input>
-                            </template>
-                        </template>
-                        <el-button @click="signIn">sign in</el-button>
-                    </el-form>
-                    <p><span class="el-icon-warning"></span> 在邮箱设置开启SMTP服务器可获取（忘记密码、邮件通知必填，Emali PASS），账号只可注册一次！</p>
-                    <span @click="isCreate" class="el-icon-circle-close"></span>
+                            <el-button @click="signIn">sign in</el-button>
+                        </el-form>
+                        <p><span class="el-icon-warning"></span> 在邮箱设置开启SMTP服务器可获取（忘记密码、邮件通知必填，Emali PASS），账号只可注册一次！</p>
+                    </template>
+
+                    <!-- 忘记密码 -->
+                    <template v-else>
+                        <el-form>
+                            <el-input placeholder="请输入邮箱" v-model="form['email']" ></el-input>
+                            <el-button @click="sendEmail">sign in</el-button>
+                        </el-form>
+                        <p style="margin: 20px;"><span class="el-icon-warning"></span> 邮箱必须填写对应的 Emali PASS，才能发送邮件！</p>
+                    </template>
+                    
+                    <span @click="isPopup" class="el-icon-circle-close"></span>
                 </div>
             </section>
         </transition>
@@ -70,7 +84,6 @@
 export default {
     data(){
         return {
-            loginLoading: false,
             data: {},
             form: {},
             formList: {
@@ -81,55 +94,57 @@ export default {
                 pass: 'Email PASS',
                 email_type: '邮箱类型'
             },
-            isShow: false
+            isShow: false,
+            popupTitle: '',
         }
     },
     methods: {
-        isCreate(){
+        isPopup(name){
+            const list = ['Create Account', 'Forgot Password']
+            this.popupTitle = list[name]
             this.isShow = !this.isShow
+            this.form = {}
         },
         signIn() {
             if (Object.keys(this.form).length != 6) {
-                this.$message.error('请填写完整信息');
-                return;
+                this.$message.error('请填写完整信息')
+                return
             }
             if (this.form.password !== this.form.passwords) {
-                this.$message.error('密码不一致');
-                return;
+                this.$message.error('密码不一致')
+                return
             }
             
-            this.loginLoading = true;
-
-            this.$http.post('/user', this.form).then(res => {
-                if (res.data.status == 1) {
-                    this.$message({
-                        message: res.data.message,
-                        type: 'success'
-                    });
-                    this.form = {};
-                    this.isCreate();
-                } else {
-                    this.$alert(res.data.message, '注册失败', {confirmButtonText: '确定'});
-                }
-                this.loginLoading = false
-            })
-            
+            this.$request(() => this.$http.post('/user', this.form)
+                .then(res => {
+                    if (res.data.status == 1) {
+                        this.$message.success(res.data.body.message)
+                        this.form = {}
+                        this.isCreate()
+                    } else {
+                        this.$alert(res.data.body, '注册失败', { confirmButtonText: '确定' })
+                    }
+                }), '#app', false)
         },
         login(){
-            this.loginLoading = true;
-            this.$http.post('/login', this.data).then(res => {
-                if (res.data.status === 1) {
-                    localStorage.setItem("Authorization", res.data.body.token)
-                    this.$router.push('/')
-                    this.$message({
-                        message: '登录成功',
-                        type: 'success'
-                    })
-                } else {
-                    this.$message.error(res.data.body.message)
-                }
-                this.loginLoading = false;
-            })
+            this.$request(() => this.$http.post('/login', this.data)
+                .then(res => {
+                    if (res.data.status === 1) {
+                        localStorage.setItem("Authorization", res.data.body.token)
+                        this.$message.success('success')
+                        this.$router.push('/')
+                        this.$infoUpdate()
+                    } else {
+                        this.$message.error(res.data.body)
+                    }
+                }), '#app', false)
+        },
+        sendEmail() {
+            this.$request(() => this.$http.post('/forgotPassword', this.form)
+                .then(res => {
+                    
+                })
+            )
         }
     }
 }
