@@ -85,10 +85,10 @@
                             </div>
 
                             <!-- sub-comment to list -->
-                            <div class="comments" v-if="item.child.length > 0">
+                            <div class="comment-child-list" v-if="item.child.length > 0">
                                 <transition-group name="comment-child">
                                     <div 
-                                        class="item" 
+                                        class="comment-child-item"
                                         v-for="items in item.child" 
                                         :key="items.id"
                                         :data-id="items.id"
@@ -105,7 +105,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="comments-content">
+                                        <div class="comment-child-content">
                                             <span v-if="items.type===3" class="reply-name"> @{{ items.reply_name }} </span>{{ items.content }}
                                         </div>
                                     </div>
@@ -128,7 +128,7 @@
 
         <div class="admin-popup" :class="adminPopup ? 'show' : 'exit'">
             <span class="iconfont icon-close2" @click="administrator(false)"></span>
-            <img :src="data.base.admin_avatar">
+            <img :src="data.base.avatar">
             <div>
                 哇哦～恭喜你，发现了一个小彩蛋～～
             </div>
@@ -394,7 +394,7 @@ export default {
 
 <style lang="scss" scoped>
 /**
- * 过渡   
+ * 新增评论 过渡效果
  */
 .comment-item-enter, .comment-item-leave-to{
     opacity: 0;
@@ -613,16 +613,15 @@ export default {
         padding: 0 0 60px;
         overflow: hidden;
         .comment-item{
-            padding: 25px 0;
             border-bottom: 1px solid var(--color-border-2);
             transition : margin 1s, opacity 2s;
-            .comment-item-box:hover{
-                .head .name .r .reply{
+            .comment-item-box{
+                padding: 25px 0;
+                &:hover .head .name .r .reply{
                     opacity: 1;
                 }
             }
             .head{
-                display: -webkit-box;
                 display: flex;
                 position: relative;
                 .img{
@@ -702,11 +701,10 @@ export default {
                 white-space: pre-wrap;
             }
         }
-        .comments{
-            padding-left:45px;
-            margin-top:38px;
-            .item{
-                margin-top: 32px;
+        .comment-child-list{
+            padding-left: 45px;
+            // margin-top: 38px;
+            .comment-child-item{
                 transition: all 2s;
                 &:hover{
                     .head .name .r .reply{
@@ -735,7 +733,7 @@ export default {
                         }
                     }
                 }
-                .comments-content{
+                .comment-child-content{
                     color: var(--color-text-primary);
                     padding: 0;
                     line-height: 22px;
