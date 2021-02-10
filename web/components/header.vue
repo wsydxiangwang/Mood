@@ -19,7 +19,6 @@
         <div class="title" :class="{active: isTitle}">{{title}}</div>
 
         <div class="r icon">
-
             <!-- Article Page -->
             <template v-if="like">
                 <span class="iconfont icon-wechat" @click="wechat"></span>
@@ -29,9 +28,8 @@
                     @click="likeClick"
                 ></span>
             </template>
-
             <span class="myself" @click="myself">
-                <img :src="$store.state.data.avatar">
+                <img :src="$store.state.data.base.admin_avatar">
             </span>
         </div>
 

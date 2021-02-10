@@ -74,7 +74,7 @@
                                         <img :src="'/image/comment/'+item.image+'.jpg'">
                                     </div>
                                     <div class="name">
-                                        <a>{{item.name}}<span v-if="item.admin">{{ adminMark }}</span></a>
+                                        <a :class="{'admin-mark': item.admin}">{{ item.name }}</a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
                                             <span class="time">{{ getCommentDate(item.time) }}</span>
@@ -98,7 +98,7 @@
                                                 <img :src="'/image/comment/'+items.image+'.jpg'">
                                             </div>
                                             <div class="name">
-                                                <a>{{ items.name }}<span v-if="items.admin">{{ adminMark }}</span></a>
+                                                <a :class="{'admin-mark': items.admin}">{{ items.name }}</a>
                                                 <div class="r">
                                                     <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                     <span class="time">{{ getCommentDate(items.time) }}</span>
@@ -106,7 +106,8 @@
                                             </div>
                                         </div>
                                         <div class="comment-child-content">
-                                            <span v-if="items.type===3" class="reply-name"> @{{ items.reply_name }} </span>{{ items.content }}
+                                            <span v-if="items.type===3" class="reply-name"> @{{ items.reply_name }} </span>
+                                            <p>{{ items.content }}</p>
                                         </div>
                                     </div>
                                 </transition-group>
@@ -638,11 +639,8 @@ export default {
                 }
                 .name{
                     flex: 1;
-                    display: -webkit-box;
                     display: flex;
-                    -webkit-box-align: center;
                     align-items: center;
-                    -webkit-box-pack: justify;
                     justify-content: space-between;
                     a{
                         font-weight: 400;
@@ -657,17 +655,27 @@ export default {
                             color: #ef2f11;
                             text-decoration: underline;
                         }
-                        span{
-                            color: var(--color-bg-primary);
+                        &.admin-mark::before{
+                            content: "";
+                            height: 8px;
+                            width: 8px;
+                            background: #f16339;
+                            border-radius: 50%;
                             position: absolute;
+                            left: 100%;
                             top: 50%;
-                            font-size: 10px;
-                            padding: 1px 10px 1px 10px;
-                            margin-top: 2px;
-                            white-space: nowrap;
-                            background: #a9cff3;
-                            border-radius: 0 20px 0;
-                            transform: translateY(-50%) scale(0.9);
+                            transform: translateY(-50%);
+                            box-shadow: 0 0 0 5px rgba(241, 99, 57, 0.1);
+                            margin: 2px 8px;
+                            animation: flash 8s infinite;
+                        }
+                        @keyframes flash {
+                            0%, 50%, 100% {
+                                opacity: 1;
+                            }
+                            25%, 75% {
+                                opacity: 0;
+                            }
                         }
                     }
                     .r{
@@ -693,7 +701,6 @@ export default {
                     }
                 }
             }
-            
             .comment-content{
                 color: var(--color-text-primary);
                 line-height: 22px;
@@ -701,36 +708,31 @@ export default {
                 white-space: pre-wrap;
             }
         }
-        .comment-child-list{
+        .comment-child-list {
             padding-left: 45px;
-            // margin-top: 38px;
-            .comment-child-item{
+            .comment-child-item {
                 transition: all 2s;
+                padding: 12px 0 18px;
                 &:hover{
                     .head .name .r .reply{
                         opacity: 1;
                     }
                 }
                 .head{
-                    display:-webkit-box;
-                    display:flex;
-                    -webkit-box-align:center;
-                    align-items:center;
-                    position:relative;
+                    display: flex;
+                    align-items: center;
+                    position: relative;
                     .img{
-                        width:40px;
-                        height:40px;
+                        width: 40px;
+                        height: 40px;
                     }
-                    .name{
-                        position:relative;
-                        &:after{
-                            content:"";
-                            width:100%;
-                            border-top:1px solid var(--color-border-2);
-                            position:absolute;
-                            top:-22px;
-                            left:0
-                        }
+                    &:after{
+                        content: "";
+                        border-top: 1px solid var(--color-border-2);
+                        position: absolute;
+                        top: -12px;
+                        right: 0;
+                        left: 52px;
                     }
                 }
                 .comment-child-content{
@@ -749,6 +751,9 @@ export default {
                         border-radius: 10px;
                         margin-right: 4px;
                         font-size: 13px;
+                    }
+                    p{
+                        display: inline;
                     }
                 }
             }
