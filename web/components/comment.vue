@@ -14,36 +14,34 @@
 
                 <!-- submit button and loading -->
                 <div class="bottom">
-                    <button type="button" @click="submitVerify" :class="status == 9?'active':''">SUBMIT</button>
+                    <button 
+                        type="button" 
+                        @click="submitVerify" 
+                        :class="status == 9?'active':''"
+                    >SUBMIT</button>
 
                     <template v-if="status == 7">
                         <div class="hint loading">
                             <div class="sk-circle selected">
-                                <div class="sk-circle1 sk-child"></div>
-                                <div class="sk-circle2 sk-child"></div>
-                                <div class="sk-circle3 sk-child"></div>
-                                <div class="sk-circle4 sk-child"></div>
-                                <div class="sk-circle5 sk-child"></div>
-                                <div class="sk-circle6 sk-child"></div>
-                                <div class="sk-circle7 sk-child"></div>
-                                <div class="sk-circle8 sk-child"></div>
-                                <div class="sk-circle9 sk-child"></div>
-                                <div class="sk-circle10 sk-child"></div>
-                                <div class="sk-circle11 sk-child"></div>
-                                <div class="sk-circle12 sk-child"></div>
+                                <div 
+                                    v-for="item in 12"
+                                    class="sk-child"
+                                    :class="'sk-circle' + item"
+                                    :key="item"
+                                ></div>
                             </div>
                             <span class="loading-text">{{ hint[status] }}</span>
                         </div>
                     </template>
 
-                    <template v-if="status == 8">
+                    <template v-else-if="status == 8">
                         <div class="hint success">
                             <span class="iconfont icon-success"></span>
                             <span>{{ hint[status] }}</span>
                         </div>
                     </template>
 
-                    <template v-if="status!=7 && status!=8 && status!=10">
+                    <template v-else-if="status!=7 && status!=8 && status!=10">
                         <div class="hint red">
                             <span class="iconfont icon-error"></span>
                             <span>{{ hint[status] }}</span>
@@ -535,7 +533,6 @@ export default {
         color: var(--color-text-primary);
         font-weight: 400;
         margin-bottom: 20px;
-        font-style:  oblique;
         display: inline-block;
         span{
             &:first-child{
@@ -559,8 +556,7 @@ export default {
                 font-size: 14px;
                 padding-left: 10px;
                 margin-right: 12px;
-                -webkit-transition: all .3s;
-                transition: all .3s;
+                transition: border .3s;
                 border: none;
                 outline: none;
                 color: var(--color-text-primary);
@@ -657,15 +653,15 @@ export default {
                         }
                         &.admin-mark::before{
                             content: "";
-                            height: 8px;
-                            width: 8px;
+                            height: 6px;
+                            width: 6px;
                             background: #f16339;
                             border-radius: 50%;
                             position: absolute;
                             left: 100%;
                             top: 50%;
                             transform: translateY(-50%);
-                            box-shadow: 0 0 0 5px rgba(241, 99, 57, 0.1);
+                            box-shadow: 0 0 0 4px rgba(241, 99, 57, 0.1);
                             margin: 2px 8px;
                             animation: flash 8s infinite;
                         }
