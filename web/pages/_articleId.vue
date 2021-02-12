@@ -21,7 +21,7 @@
                 <span>喜欢 {{data.like}}</span>
             </div>
 
-            <div class="content">
+            <div class="content" @click="oImage($event)">
                 <client-only>
                     <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
                 </client-only>
@@ -76,6 +76,11 @@ export default {
         window.addEventListener('scroll', this.handleScroll, true)
     },
     methods: {
+        oImage(e) {
+            if (e.target.tagName === 'IMG') {
+                console.log(e)
+            }
+        },
         liked(){
             this.data.like++
         },
@@ -106,8 +111,8 @@ export default {
         },
     },
     async asyncData(context){
-        const id = context.params.articleId;
-        const {data} = await context.$axios.get(`article/${id}`)        
+        const id = context.params.articleId
+        const { data } = await context.$axios.get(`article/${id}`)        
         if (data.status == 1) {
             return { data: data.body }
         } else {
