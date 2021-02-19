@@ -4,142 +4,125 @@ var common = {
 
     install(Vue, option){
 
-
+        function getWin(type) {
+            return document.documentElement[type] || document.body[type]
+        }
 
         // 设置滚动条位置
-        Vue.prototype.$setScroll = (dom, type) => {
-            const getWin = (type) => {
-                return document.documentElement[type] || document.body[type]
-            }
+        Vue.prototype.$setScroll = (dom, type, speed = 10) => {
             // DOM元素 计算位置
             const domTop = document.querySelector(dom).offsetTop
-            const index = type === 'index' ? 280 : -700
+            let target
 
-            if (type == 'comment') {
+            if (type == 'top') {
+                target = 0
+            } else if (type == 'comment') {
                 const h = document.querySelector('.comment-form').offsetHeight
-                var target = domTop - getWin('clientHeight') + h
+                target = domTop - getWin('clientHeight') + h
             } else {
-                var target = domTop + (getWin('clientHeight') / 2) + index
+                const index = type === 'index' ? 280 : -700
+                target = domTop + (getWin('clientHeight') / 2) + index
             }
 
-            let beforeScroll = 0;
+            let beforeScroll = 0
 
 			this.timerScroll = setInterval(() => {
-                let scrollT = getWin('scrollTop');
-                let speed = (target - scrollT) / 10;
+                let scrollT = getWin('scrollTop')
+                let length = (target - scrollT) / speed
                 
-				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
-                scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + speed;
+				length = length > 0 ? Math.ceil(length) : Math.floor(length)
+                scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + length
 
-                let result = null;
+                let result = null
                 if (type === 'comment') {
-                    result = (beforeScroll && scrollT > beforeScroll )|| scrollT <= target || scrollT === 0
+                    result = (beforeScroll && scrollT > beforeScroll) || scrollT <= target || scrollT === 0
+                } else if (type == 'top') {
+                    result = scrollT == target || (beforeScroll && scrollT > beforeScroll)
                 } else {
-                    result = scrollT <= beforeScroll || (scrollT + speed) >= target
+                    result = scrollT <= beforeScroll || (scrollT + length) >= target
                 }
+
                 if (result) {
                     clearInterval(this.timerScroll)
                 }
+                
                 beforeScroll = scrollT
 			}, 25)
         }
 
 
         // 加载下一页数据
-        let [page, loadingFrom, loadingType] = [1, '', 'more'];
-        Vue.prototype.$load = (type, from) => {
-            // 离开路由 初始化
-            if(type == 'none'){
-                loadingFrom = '';
-                loadingType = 'more';
-                page = 1;
-                return;
+        let [page, loadType] = [1, 'more']
+        Vue.prototype.$loadMore = (type, callback) => {       
+            if (type == 'none') {
+                page = 1
+                loadType = 'more'
+                return
+            }     
+            if (loadType == 'loading' || loadType == 'nomore') {
+                return
             }
+            const axios = Vue.prototype.$nuxt.$options.$axios
 
-            // 初始化
-            if(type != loadingFrom){
-                loadingFrom = type;
-                loadingType = 'more';
-                page = 1;
-            }
-                            
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-            const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-            
-            if(scrollTop + windowHeight >= scrollHeight - 10){
+            page++
+            setLoadType('loading')
 
-                if(loadingType == 'nomore' || loadingType == 'loading') return;
-
-                page++;
-                loadingType = 'loading';
-
-                const axios = Vue.prototype.$nuxt.$options.$axios;
-                
-                const data = {
-                    page: page,
-                    from: from ? 'list' : ''
-                }
-                return new Promise((resolve, reject) => {
-                    axios.get(type, { params: data }).then(res => {
-                        setTimeout(() => {
-                            loadingType = res.data.body.page == res.data.body.totalPage ? 'nomore' : 'more'                        
-                            resolve(res.data)
-                        }, 1000)
-                    }).catch(err => {
-                        loadingType = 'more';
-                        reject()
-                    })
-                })
-            }
+            axios.get(type, { params: { page } }).then(res => {
+                const data = res.data.body
+                setTimeout(() => {
+                    callback(res.data)
+                    setLoadType(data.page == data.totalPage ? 'nomore' : 'more')
+                }, 500)
+            }).catch(err => {
+                page--
+                setLoadType('more')
+                callback(err)
+            })
+        }
+        function setLoadType(type) {
+            const store = Vue.prototype.$nuxt.$store
+            store.commit('setStatus', type)
+            loadType = type
         }
 
         /**
-         * 首页图片懒加载
+         * 首页图片懒加载 start
          */
-        let listenList = []; // 需加载图片
-
+        let listenList = []
         Vue.directive('lazy', {
-            inserted: (el, binding, vnode) => {
-                const url = binding.value
-                listenList.push({ el, src: url})
-                window.addEventListener('scroll', watch)
-                // 首屏初始化
-                lazyLoad({ el, src: url})
-            },
-            unbind: (el, binding) => {
-                window.removeEventListener('scroll', watch)
+            inserted: (el, binding) => {
+                const src = binding.value
+                if (src) {
+                    listenList.push({ el, src })
+                    window.addEventListener('scroll', watch)
+                    lazyLoad({ el, src })      // 首屏初始化
+                }
             }
         })
-
-        // 使用函数，切换路由，可清除监听事件
-        const watch = (e) => {
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-            // console.log(scrollTop)
-            Vue.prototype.$throttle(() => listenList.map(i => lazyLoad(i)) , 50)()
+        function watch(){
+            Vue.prototype.$throttle(() => listenList.map(i => lazyLoad(i)) , 100)()
         }
-
         // 加载图片
         const lazyLoad = (item) => {
-            const {el, src} = item;
-            const windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-            const position = el.getBoundingClientRect().top;
-            const show = position <= windowHeight + 500
-            
-            // 元素存在，元素可见
-            if(src && show){ 
-                let img = new Image();
-                img.src = src;
-
-                // 加载成功后, 删除对象
-                img.onload = (e) =>{
-                    el.src = src;
-                    const index = listenList.indexOf(item);
+            const { el, src } = item
+            const info = el.getBoundingClientRect()
+            const show = info.bottom + 100 > 0 && info.top - getWin('clientHeight') < 0
+            if (src && show) {
+                let img = new Image()
+                img.src = src
+                img.onload = () =>{
+                    el.src = src
+                    const index = listenList.indexOf(item)
                     index > -1 && listenList.splice(index, 1)
+                    if (listenList.length === 0) {
+                        window.removeEventListener('scroll', watch)
+                    }
                 }
             }
         }
+        /**
+         * 首页图片懒加载 end
+         */
 
         Vue.prototype.$throttle = (fn, interval) => {
             let flag = true;

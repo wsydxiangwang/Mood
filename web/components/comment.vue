@@ -209,8 +209,8 @@ export default {
         },
         // Verification
         submitVerify() {
-            if(this.status == 7) {  // loading
-                return;
+            if (this.status == 7) {  // loading
+                return
             }
             const list = [
                 this.form.name,

@@ -1,7 +1,7 @@
 <template>
-	<div class="container index" :class="{navActive: isNav}" v-if="info">
+	<div class="container index" :class="{ navActive: isNav }" v-if="info">
 		<div class="cover">
-			<div id="scene" :style="{height:boxH}">
+			<div id="scene" :style="{ height:boxH }">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
 					<img id="image" :style="imgStyle" :src="image" width="1920" height="1080">
 				</div>
@@ -16,35 +16,47 @@
 					<span class="iconfont" :class="isNav ? 'icon-close' : 'icon-menu'"></span>
 				</div>
 			</div>
-			<div class="misk" :style="{backgroundColor: info.cover.color}"></div>
+			<div class="misk" :style="{ backgroundColor: info.cover.color }"></div>
 			<div class="post">
-				<div class="time">{{info.cover.date}}</div>
-				<div class="title"><nuxt-link :to="info.cover.link">{{info.cover.title}}</nuxt-link></div>
-				<div class="describe">{{info.cover.describe}}</div>
+				<div class="time">{{ info.cover.date }}</div>
+				<div class="title">
+					<nuxt-link :to="info.cover.link">{{ info.cover.title }}</nuxt-link>
+				</div>
+				<div class="describe">{{ info.cover.describe }}</div>
 			</div>
-
-			<!-- menu -->
-			<Menu></Menu>
+			<Menu />
 		</div>
 
 		<template v-if="Object.keys(articleList.data).length > 0">
 			<div class="content">
-				<div class="post" v-for="(item, index) in articleList.data" :key="index">
-					<div class="img-box" @click="article(item.id)">
-						<img v-lazy="item.image.url" src="/image/other/default.jpg" :alt="item.image.name">
+				<div class="post" 
+					v-for="(item, index) in articleList.data" 
+					:key="index"
+				>
+					<div class="img-box" @click="toArticle(item.id)">
+						<img 
+							v-lazy="item.image.url" 
+							src="/image/other/default.jpg" 
+							:alt="item.image.name"
+						>
 					</div>
 					<div class="info">
-						<div class="time">{{item.time.month.cn}}月 {{item.time.day.on}}, {{item.time.year}}</div>
-						<div class="title"><a @click="article(item.id)">{{item.title}}</a></div>
-						<div class="describe">{{item.describe}}</div>
+						<div class="time">{{ getDate(item.time) }}</div>
+						<div class="title">
+							<a @click="toArticle(item.id)">{{ item.title }}</a>
+						</div>
+						<div class="describe">{{ item.describe }}</div>
 						<div class="stuff">
-							<div><i class="iconfont icon-text"></i><span>{{item.words}}</span></div>
-							<div><i class="iconfont icon-eye"></i><span>{{item.read}}</span></div>
-							<div><i class="iconfont icon-like"></i><span>{{item.like}}</span></div>
+							<div v-for="(v, i) in infoIcon" :key="i">
+								<i class="iconfont" :class="v.icon"></i><span>{{ item[v.name] }}</span>
+								<span class="hint" :style="{ backgroundColor: v.color }">{{ v.text }}<i :style="{ borderTopColor: v.color }"></i></span>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div @click="loadMoreData" class="more"><LoadMore :loadingType="loadingType"></LoadMore></div>
+				<div @click="loadMoreData" class="more">
+					<LoadMore />
+				</div>
 			</div>
 		</template>
 		<template v-else>
@@ -52,20 +64,17 @@
 				主人太懒了，还没发表任何文章！！
 			</div>
 		</template>
-
 		<div class="foot" v-if="info.other && info.other.icp_txt">
-			<a :href="info.other.icp_link" target="_blank">{{info.other.icp_txt}}</a>
+			<a :href="info.other.icp_link" target="_blank">{{ info.other.icp_txt }}</a>
 		</div>
-
-		<BackTop v-if="isBack"></BackTop>
-
-		<Loading v-if="loading"></Loading>
+		<BackTop v-if="isBack" />
+		<Loading v-if="loading" />
 	</div>
+
 	<div v-else class="empty-data">
 		请到管理员后台填写完整信息！
 	</div>
 </template>
-
 <script>
 import Parallax from 'parallax-js'
 import Menu from '@/components/Menu'
@@ -82,13 +91,31 @@ export default {
 			boxW: '100%',
 			isNav: false,
 			loading: true,
-			loadingType: 'more',
 			page: 1,
 			
 			isBack: true,
 
 			image: null,
-            windowChange: () => {}
+            windowChange: () => {},
+
+			status: 1,
+
+			infoIcon: [{
+				icon: 'icon-text',
+				name: 'words',
+				text: '善良',
+				color: '#EF6D57'
+			}, {
+				icon: 'icon-eye',
+				name: 'read',
+				text: '勇敢',
+				color: '#50bcb6'
+			}, {
+				icon: 'icon-like',
+				name: 'like',
+				text: '热爱',
+				color: '#ffa800'
+			}]
 		}
 	},
     head () {
@@ -109,7 +136,7 @@ export default {
 		if (!this.info) {
 			return
 		}
-		document.body.style.overflowY = 'hidden';
+		document.body.style.overflowY = 'hidden'
 
 		// Cover image loading is complete
 		let img = new Image()
@@ -119,30 +146,28 @@ export default {
 				this.image = this.info.cover.image
 				this.loading = false;
 				document.body.style.overflowY = '';
-			}, 1500)
+			}, 800)
 		}
 
 		// Homepage loaded
 		this.$store.commit('isIndex')
 
 		// Cover image init
-		const scene = document.getElementById('scene');
-		const parallaxInstance = new Parallax(scene, {
+		const scene = document.getElementById('scene')
+		new Parallax(scene, {
 			relativeInput: true,
 			clipRelativeInput: true,
 		})
-
-		if(this.articleList.page == this.articleList.totalPage){
-			this.loadingType = 'nomore'
+		if (this.articleList.page == this.articleList.totalPage) {
+			this.$store.commit('setStatus', 'nomore')
 		}
 	},
 	async asyncData(context){
-		if(context.store.state.index){ // 防止重复加载 
-			return;
+		if (context.store.state.index) { // 防止重复加载 
+			return
 		}
 		const { data } = await context.$axios.get('article')
-
-		return { articleList: data.status == 1 ? data.body : {}}
+		return { articleList: data.status == 1 ? data.body : {} }
 	},
 	beforeRouteEnter(to,from,next){
 		next(vm => {
@@ -169,8 +194,7 @@ export default {
 		},
 		// Cover image box calculation
 		coverLayer(){
-			let id = document.getElementById('scene'),
-				_w = parseInt(this.boxW), 
+			let _w = parseInt(this.boxW), 
                 _h = parseInt(this.boxH), 
 				x, y, i,
 				e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
@@ -211,30 +235,12 @@ export default {
 			this.imgStyle = Object.assign({}, this.imgStyle, style);
 		},
 		loadMoreData(){
-			if(this.loadingType == 'nomore' || this.loadingType == 'loading') return;
-
-			this.page++;
-			this.loadingType = 'loading';
-			this.$axios.get(`article`, {
-				params: {
-					page: this.page
+			this.$loadMore('article', (res) => {
+				if (res.status === 1) {
+					this.articleList.data = this.articleList.data.concat(res.body.data)
+				} else {
+					alert(res.data)
 				}
-			})
-			.then(res => {
-				const result = res.data.body;
-				if(res.data.status == 1){
-					setTimeout(() => {
-						this.articleList.data = this.articleList.data.concat(result.data)
-
-						this.$setScroll('.bottom-loading', 'index');
-
-						this.loadingType = result.page == result.totalPage ? 'nomore' : 'more';
-					}, 1000)
-				}else{
-					this.loadingType = 'more';
-				}
-			}).catch(err => {
-				this.loadingType = 'more';
 			})
 		},
 		// Nav
@@ -247,11 +253,11 @@ export default {
 			}
 			document.body.style.overflowY = this.isNav ? 'hidden' : '';
 		},
-		on(e){
-			e.preventDefault()
-		},
-		article(id){
+		toArticle(id){
 			this.$router.push(`/${id}`)
+		},
+		getDate(time) {
+			return time.month.cn + '月 ' + time.day.on + ', ' + time.year
 		}
 	}
 };
@@ -297,7 +303,6 @@ export default {
 			align-items: center;
 			justify-content: space-between;
 			.logo{
-				transition: all .3s;
 				.iconfont{
 					font-size: 36px;
 					cursor: pointer;
@@ -307,12 +312,10 @@ export default {
 				width: 100px;
 				height: 44px;
 				position: relative;
-				transition: all .3s;
 				img{
 					opacity: 1;
 					width: 100%;
 					position: absolute;
-					transition: all .3s;
 					cursor: pointer;
 					&:last-child{
 						opacity: 0;
@@ -353,7 +356,7 @@ export default {
 			position: absolute;
 			top: 54%;
 			left: 10%;
-			color: var(--color-bg-primary);
+			color: #fff;
 			width: 30%;
 			transform: translateY(-50%);
 			.time{
@@ -363,10 +366,9 @@ export default {
 				margin: 15px 0 30px;
 				a{
 					font-size: 28px;
-					color: var(--color-bg-primary);
+					color: #fff;
 					text-decoration: none;
 					cursor: pointer;
-					transition: all .3s;
 					&:hover{
 						text-decoration: underline;
 					}
@@ -383,7 +385,7 @@ export default {
 		position: relative;
 		padding-bottom: 80px;
 		text-align: center;
-		&:after{
+		&::after{
 			content: '';
 			width: 1px;
 			height: calc(100% + 100px);
@@ -422,8 +424,7 @@ export default {
 				z-index: 3;
 				overflow: hidden;
 				border-radius: 6px;
-				border: 1px solid #f3fafd;
-				transition: all .3s;
+				border: 1px solid var(--color-border-2);
 				img{
 					width: 100%;
 					height: 100%;
@@ -441,7 +442,7 @@ export default {
 				border: 1px solid var(--color-border-1);
 				border-radius: 6px;
 				.time{
-					color: var(--color-text-4);
+					color: #999;
 					font-size: 12px;
 				}
 				.title{
@@ -451,10 +452,13 @@ export default {
 					-webkit-line-clamp: 2;
 					-webkit-box-orient: vertical;
 					overflow: hidden;
+					transition: none;
 					a{
 						font-size: 24px;
 						line-height: 30px;
 						cursor: pointer;
+						color: var(--color-text-1);
+						transition: none;
 						&:hover{
 							background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
 							radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;
@@ -476,13 +480,13 @@ export default {
 					margin-top: 10px;
 					word-break: break-all;
 					display: -webkit-box;
-					-webkit-line-clamp: 3;    /* 指定行数*/
+					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
 					overflow: hidden; 
 				}
 				.stuff{
 					font-size: 12px;
-					color: var(--color-text-4);
+					color: #999;
 					position: absolute;
 					bottom: 80px;
 					left: 80px;
@@ -493,7 +497,7 @@ export default {
 						display: flex;
 						align-items: center;
 						position: relative;
-						transition: all .3s;
+						transition: none;
 						&:nth-of-type(1):hover{
 							color: #EF6D57;
 						}
@@ -507,6 +511,7 @@ export default {
 							margin-right: 4px;
 							margin-top: -4px;
 							display: inline-block;
+							transition: none;
 							&.icon-like{
 								font-size: 14px;
 								margin-top: -1px;
@@ -516,48 +521,27 @@ export default {
 								margin-top: -2px;
 							}
 						}
-						span{
-							display: inline-block;
-						}
-						&::before, &::after{
+						.hint{
 							position: absolute;
 							bottom: 100%;
 							left: 50%;
-							transition: all .3s;
-							opacity: 0;
-							visibility: hidden;
-						}
-						&::before{
-							content: '善良';
 							transform: translate(-50%, -5px);
-							background: #EF6D57;
-							white-space: nowrap;
-							color: var(--color-bg-primary);
+							color: #fff;
 							font-size: 12px;
 							border-radius: 10px;
 							padding: 5px 14px;
+							white-space: nowrap;
+							opacity: 0;
+							visibility: hidden;
+							i{
+								border: 5px solid transparent;
+								position: absolute;
+								left: 50%;
+								bottom: -10px;
+								transform: translateX(-50%);
+							}
 						}
-						&::after{
-							content: '';
-							border: 5px solid transparent;
-							border-top-color: #EF6D57;
-							transform: translate(-50%, 5px);
-						}
-						&:nth-of-type(2)::before{
-							content: '勇敢';
-							background: #50bcb6;
-						}
-						&:nth-of-type(3)::before{
-							content: '坚持';
-							background: #ffa800;
-						}
-						&:nth-of-type(2)::after{
-							border-top-color: #50bcb6;
-						}
-						&:nth-of-type(3)::after{
-							border-top-color: #ffa800;
-						}
-						&:hover::before, &:hover::after{
+						&:hover .hint{
 							opacity: 1;
 							visibility: visible;
 						}

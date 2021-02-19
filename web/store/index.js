@@ -1,6 +1,7 @@
 export const state = () => ({
     data: {},
-    index: false
+    index: false,
+    status: 'more'
 })
 
 export const mutations = {
@@ -9,6 +10,9 @@ export const mutations = {
     },
     isIndex (state) {
         state.index = true
+    },
+    setStatus (state, data) {
+        state.status = data
     }
 }
 

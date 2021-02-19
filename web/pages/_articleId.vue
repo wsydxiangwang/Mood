@@ -73,6 +73,16 @@ export default {
         }
     },
     mounted(){
+        if (window.history && window.history.pushState) {
+            window.onpopstate = function() {
+                console.log(22222)
+                var state = { 
+                    title: "title", 
+                    url: "#"
+                }; 
+                window.history.pushState(state, "title", "#"); 
+            }
+        }
         window.addEventListener('scroll', this.handleScroll, true)
     },
     methods: {

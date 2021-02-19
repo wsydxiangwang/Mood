@@ -13,16 +13,15 @@ module.exports = (app, plugin, model) => {
     // All articles
     router.get('/article', async (req, res) => {
         const page = req.query.page || 1;
-
         const result = await Promise.all([
-            Article.countDocuments(),
+            Article.find({hide:false}).countDocuments(),
             Article.find({hide:false}).sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
         ])
 
         result[1].forEach(item => item._doc['time'] = DateFormat(item.time))
 
         // 列表页 分组
-        if(req.query.from){ 
+        if (req.query.from) {
             result[1] = result[1].reduce((total, item)=>{
                 const [ , year, date] = /(\d+)\/(\d+)/.exec(item.time.date);                
                 total['_'+year] = total['_'+year] || {};

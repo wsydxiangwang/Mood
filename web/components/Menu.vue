@@ -1,11 +1,8 @@
 <template>
     <div class="nav">
         <ul class="nav-list">
-            <template v-for="(item, index) in list">
-                <li 
-                    :key="index"
-                    v-if="show(item.url)"
-                >
+            <template v-for="(item, index) in viewList">
+                <li :key="index">
                     <a @click="toPage(item.url)">{{item.title}}</a>
                 </li>
             </template>
@@ -51,13 +48,21 @@ export default {
 			],
         }
     },
+    computed: {
+        viewList() {
+            return this.list.filter(item => {
+                const type = item.url
+                if (['subscribe', 'message'].includes(type)) {
+                    if (this.$store.state.data.administrator[type]) {
+                        return item
+                    }
+                } else {
+                    return item
+                }
+            })
+        }
+    },
     methods: {
-        show(type) {
-            if (['subscribe', 'message'].includes(type)) {
-                return this.$store.state.data.administrator[type]
-            }
-            return true
-        },
 		toPage(url){
 			this.$router.push(`/${url}`)
 		},
@@ -83,7 +88,7 @@ export default {
         bottom: 30px;
         display: block;
         text-align: center;
-        color: var(--color-text-4);
+        color: #666;
         span{
             font-size: 16px;	
         }
@@ -100,10 +105,10 @@ export default {
             a{
                 font-size: 24px;
                 cursor: pointer;
-                color: var(--color-text-2);
+                color: #666;
                 letter-spacing: 1px;
                 &:hover{
-                    color: var(--color-dark);
+                    color: #080808;
                 }
             }
         }

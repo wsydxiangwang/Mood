@@ -28,20 +28,7 @@ export default {
             this.isBack = this.scrollTop >= 2000 ? 'show' : '';
 		},
         backTop(){
-            let osTopCache = 0;
-            this.timerTop = setInterval(() => {
-                const osTop = document.documentElement.scrollTop || document.body.scrollTop;
-                const ispeed = Math.floor(-osTop / 6);
-                if(osTopCache && osTopCache < osTop){
-                    clearInterval(this.timerTop)
-                    return
-                } else {
-                    osTopCache = document.documentElement.scrollTop = document.body.scrollTop = osTop + ispeed;
-                    if (osTop === 0) {
-                        clearInterval(this.timerTop)
-                    }
-                }  
-            }, 30)
+            this.$setScroll('body', 'top', 6)
         },
     }
 }
@@ -54,7 +41,6 @@ export default {
         cursor: pointer;
         opacity: 0;
         visibility: hidden;
-        transition: all .3s;
         z-index: 1;
         &.isBack{
             opacity: 1;
@@ -64,7 +50,7 @@ export default {
             font-size: 40px;
             color: #73aada;
             &:hover{
-                color: var(--colorActive)
+                color: var(--color-active)
             }
         }
     }

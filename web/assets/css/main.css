@@ -31,7 +31,9 @@ html, body, p, input, textarea, button, div, span {
 	font-size: 14px;
 	letter-spacing: 0.4px;
 	box-sizing: border-box;
-	transition: background-color .3s, color .3s;
+}
+*, *::after, *::before{
+	transition: all .3s;
 }
 
 body{
@@ -50,14 +52,12 @@ body::-webkit-scrollbar-track{
 
 :root{
 	--color-bg-primary: #ffffff;
-	--color-bg-light: #eaeaea;
 
 	
 	--color-border-1: #eeeeee;
 	--color-border-2: #f6f7f8;
 	--color-border-3: #b9b9b9;
 	
-	--color-text-primary: #24292e;
 	--color-text-1: #24292e;
 	--color-text-2: #666;
 	--color-text-3: #888;
@@ -73,7 +73,6 @@ body::-webkit-scrollbar-track{
 .dark-mode{
 	--color-bg-primary: #0d1117;
 
-	--color-text-primary: #ccc;
 	--color-text-1: #fff;
 	--color-text-2: #ccc;
 	--color-text-3: #ccc;
@@ -83,5 +82,10 @@ body::-webkit-scrollbar-track{
 	--color-border-1: #30363d;
 	--color-border-2: #1b1b1b;
 
-	--color-red: #b92800;
+	/* --color-red: #b92800; */
+	--color-red: #ff3600;
+	--color-bar: #50bcb6;
+	--color-pink: #EF6D57;
+	--color-dark: #080808;
+	--color-active: #0084ff;
 }
