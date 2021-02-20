@@ -27,10 +27,10 @@
 			<Menu />
 		</div>
 
-		<template v-if="Object.keys(articleList.data).length > 0">
+		<template v-if="Object.keys(list.data).length > 0">
 			<div class="content">
 				<div class="post" 
-					v-for="(item, index) in articleList.data" 
+					v-for="(item, index) in list.data" 
 					:key="index"
 				>
 					<div class="img-box" @click="toArticle(item.id)">
@@ -91,7 +91,6 @@ export default {
 			boxW: '100%',
 			isNav: false,
 			loading: true,
-			page: 1,
 			
 			isBack: true,
 
@@ -158,16 +157,16 @@ export default {
 			relativeInput: true,
 			clipRelativeInput: true,
 		})
-		if (this.articleList.page == this.articleList.totalPage) {
-			this.$store.commit('setStatus', 'nomore')
-		}
+		
+		this.$loadStatus(this.list)
+		
 	},
 	async asyncData(context){
 		if (context.store.state.index) { // 防止重复加载 
 			return
 		}
 		const { data } = await context.$axios.get('article')
-		return { articleList: data.status == 1 ? data.body : {} }
+		return { list: data.status == 1 ? data.body : {} }
 	},
 	beforeRouteEnter(to,from,next){
 		next(vm => {
@@ -237,7 +236,7 @@ export default {
 		loadMoreData(){
 			this.$loadMore('article', (res) => {
 				if (res.status === 1) {
-					this.articleList.data = this.articleList.data.concat(res.body.data)
+					this.list.data = this.list.data.concat(res.body.data)
 				} else {
 					alert(res.data)
 				}
@@ -458,7 +457,7 @@ export default {
 						line-height: 30px;
 						cursor: pointer;
 						color: var(--color-text-1);
-						transition: none;
+						transition: backgroundPosition 0s, color .3s;
 						&:hover{
 							background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
 							radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;

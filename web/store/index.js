@@ -17,7 +17,6 @@ export const mutations = {
 }
 
 export const actions = {
-    // 获取网站信息
     async nuxtServerInit({ commit }, { req }) {
         const res = await this.$axios.get('info')
         commit('data', res.data.body)

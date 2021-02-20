@@ -24,7 +24,6 @@ html, body, p, input, textarea, button, div, span {
   	transform: translate(-50px, 0);
 }
 
-
 *{
 	margin: 0;
 	padding: 0;
@@ -53,16 +52,17 @@ body::-webkit-scrollbar-track{
 :root{
 	--color-bg-primary: #ffffff;
 
-	
 	--color-border-1: #eeeeee;
 	--color-border-2: #f6f7f8;
 	--color-border-3: #b9b9b9;
+	--color-border-4: #F3FAFD;
 	
 	--color-text-1: #24292e;
 	--color-text-2: #666;
 	--color-text-3: #888;
 	--color-text-4: #999;
 	--color-text-5: #555;
+	--color-text-6: #5b6773;
 
 	--color-red: #ff3600;
 	--color-bar: #50bcb6;
@@ -78,9 +78,11 @@ body::-webkit-scrollbar-track{
 	--color-text-3: #ccc;
 	--color-text-4: #666;
 	--color-text-5: #888;
+	--color-text-6: #fff;
 	
 	--color-border-1: #30363d;
 	--color-border-2: #1b1b1b;
+	--color-border-4: #1b1b1b;
 
 	/* --color-red: #b92800; */
 	--color-red: #ff3600;

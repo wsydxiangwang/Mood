@@ -85,6 +85,12 @@ var common = {
             loadType = type
         }
 
+        Vue.prototype.$loadStatus = (data) => {
+            if (data.page == data.totalPage) {
+                setLoadType('nomore')
+            }
+        }
+
         /**
          * 首页图片懒加载 start
          */

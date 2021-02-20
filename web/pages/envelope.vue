@@ -4,8 +4,7 @@
             v-if="refresh" 
             :music="music" 
             title="好好学习, 天天向上!"
-        ></Header>
-
+        />
         <section class="content">
             <div v-if="!data.data || data.data.length == 0">
                 空无一物，就像你我一样。
@@ -13,9 +12,9 @@
             <template v-else>
                 <div v-for="(item, index) in data.data" :key="index" class="item">
                     <div class="text" v-html="item.contentHtml"></div>
-                    <div class="time">{{item.time}}</div>
+                    <div class="time">{{ item.time }}</div>
                 </div>
-                <LoadMore :loadingType="loadingType"></LoadMore>
+                <LoadMore />
             </template>
         </section>
     </div>
@@ -26,8 +25,7 @@ export default {
     data(){
         return{
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
-            refresh: true,
-			loadingType: 'more'
+            refresh: true
         }
     },
     head () {
@@ -37,52 +35,15 @@ export default {
     },
     mounted(){
         // 背景音乐
-        if(this.info.bg.bg_letter){
-            this.music = this.info.bg.bg_letter
+        if (this.info.page_music.letter) {
+            this.music = this.info.page_music.letter
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }
-
-        if(this.data.totalPage > 1){
-            window.addEventListener('scroll', this.load)
-        }
-
-        if(this.data.page == this.data.totalPage){
-            this.loadingType = 'nomore'
-        }
-    },
-    destroyed(){
-        this.$load('none')
-        window.removeEventListener('scroll', this.load)
     },
     methods: {
         load(){
-            const data = this.$load('envelope')
-
-            if(typeof data === 'object'){
-                this.loadingType = 'loading'
-            }
-
-            data && data.then(res => {
-                if(res.status === 1){
-                    const result = res.body;
-                    this.data.data = this.data.data.concat(result.data)
-
-                    if(result.page == result.totalPage){
-                        this.loadingType = 'nomore';
-                        window.removeEventListener('scroll', this.load)
-                    }else{
-                        this.loadingType = 'more';
-                    }
-
-                    // 设置滚动条位置
-                    this.$setScroll('.bottom-loading');
-                }else{
-                    this.loadingType = 'more';
-                }
-            }).catch(err => {
-                this.loadingType = 'nomore';
-            })
+         
         }
     },
     computed: {
@@ -91,16 +52,12 @@ export default {
 		}
     },
     async asyncData(context){
-        let {data} = await context.$axios.get('envelope')
-        return {data: data.status === 1 ? data.body : ''}
-    },
+        let { data } = await context.$axios.get('envelope')
+        return { data: data.status === 1 ? data.body : '' }
+    }
 }
 </script>
-
 <style lang="scss" scoped>
-header{
-    position: fixed;
-}
 .container{
     min-height: 100vh;
     background: #eef5ff;
