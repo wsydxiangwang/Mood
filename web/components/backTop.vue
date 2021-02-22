@@ -24,12 +24,12 @@ export default {
     },
     methods: {
 		handleScroll(){
-            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;            
-            this.isBack = this.scrollTop >= 2000 ? 'show' : '';
+            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+            this.isBack = this.scrollTop >= 2000 ? 'show' : ''
 		},
         backTop(){
-            this.$setScroll('body', 'top', 6)
-        },
+            this.$setScroll('top')
+        }
     }
 }
 </script>

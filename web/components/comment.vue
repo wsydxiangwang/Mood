@@ -273,14 +273,14 @@ export default {
         },
         // Reply Mode
         reply(item, type, items) {
-            this.$setScroll('.comment', 'comment')
-            this.isReply = true;
+            this.isReply = true
             this.replyObj = {
                 parent_id: item.id,
                 type: type == 1 ? 2 : 3,
                 reply_name: type == 1 ? item.name : items.name,
                 reply_email: type == 1 ? item.email : items.email,
             }
+            this.$nextTick(() => this.$setScroll('comment'))
         },
         // Cancel reply
         cancel(){

@@ -244,13 +244,15 @@ export default {
 		},
 		// Nav
 		menu(){
-			this.isNav = !this.isNav;
-			if(this.isNav){
-				document.addEventListener('touchmove', this.on, {passive: false})
-			}else{
-				document.removeEventListener('touchmove', this.on, {passive: false})
-			}
+			this.isNav = !this.isNav
 			document.body.style.overflowY = this.isNav ? 'hidden' : '';
+			
+			// if(this.isNav){
+			// 	document.addEventListener('touchmove', this.on, {passive: false})
+			// }else{
+			// 	document.removeEventListener('touchmove', this.on, {passive: false})
+			// }
+			// 
 		},
 		toArticle(id){
 			this.$router.push(`/${id}`)

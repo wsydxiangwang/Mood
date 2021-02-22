@@ -8,57 +8,69 @@ var common = {
             return document.documentElement[type] || document.body[type]
         }
 
-        // 设置滚动条位置
-        Vue.prototype.$setScroll = (dom, type, speed = 10) => {
-            // DOM元素 计算位置
-            const domTop = document.querySelector(dom).offsetTop
-            let target
-
-            if (type == 'top') {
-                target = 0
-            } else if (type == 'comment') {
-                const h = document.querySelector('.comment-form').offsetHeight
-                target = domTop - getWin('clientHeight') + h
-            } else {
-                const index = type === 'index' ? 280 : -700
-                target = domTop + (getWin('clientHeight') / 2) + index
+        /**
+         * 设置滚动条位置
+         * @param {String} type  => 类型
+         * @param {Number} speed => 速度
+         */
+        Vue.prototype.$setScroll = (type, speed = 6) => {
+            const typeList = {
+                index: () => {
+                    return getWin('scrollTop') + getWin('clientHeight') / 2
+                },
+                article: '',
+                envelope: '',
+                message: '',
+                comment: () => {
+                    const form = document.querySelector('.comment-form'),
+                          h = form.offsetHeight,
+                          t = form.offsetTop;
+                    return t + h + 20 - getWin('clientHeight')
+                },
+                top: () => 0
             }
 
+            let target = typeList[type]()
             let beforeScroll = 0
 
-			this.timerScroll = setInterval(() => {
-                let scrollT = getWin('scrollTop')
-                let length = (target - scrollT) / speed
-                
-				length = length > 0 ? Math.ceil(length) : Math.floor(length)
-                scrollT = document.body.scrollTop = document.documentElement.scrollTop = scrollT + length
+            console.error(target)
 
+			this.timerScroll = setInterval(() => {
+                let curScroll = getWin('scrollTop')
+                let newSpeed = (target - curScroll) / speed
+                
+				newSpeed = newSpeed > 0 ? Math.ceil(newSpeed) : Math.floor(newSpeed)
+                curScroll = document.body.scrollTop = document.documentElement.scrollTop = curScroll + newSpeed
+
+                /**
+                 * 终点 & 边界处理
+                 */
                 let result = null
                 if (type === 'comment') {
-                    result = (beforeScroll && scrollT > beforeScroll) || scrollT <= target || scrollT === 0
+                    result = (beforeScroll && curScroll > beforeScroll) || curScroll <= target || curScroll === 0
                 } else if (type == 'top') {
-                    result = scrollT == target || (beforeScroll && scrollT > beforeScroll)
+                    result = curScroll == target || (beforeScroll && curScroll > beforeScroll)
                 } else {
-                    result = scrollT <= beforeScroll || (scrollT + length) >= target
+                    result = curScroll <= beforeScroll || (curScroll + newSpeed) >= target
                 }
-
+                
                 if (result) {
                     clearInterval(this.timerScroll)
                 }
                 
-                beforeScroll = scrollT
+                beforeScroll = curScroll
 			}, 25)
         }
 
 
-        // 加载下一页数据
+        // Load More
         let [page, loadType] = [1, 'more']
-        Vue.prototype.$loadMore = (type, callback) => {       
-            if (type == 'none') {
+        Vue.prototype.$loadMore = (type, callback, from) => {       
+            if (type == 'none') {   // reset
                 page = 1
                 loadType = 'more'
                 return
-            }     
+            }
             if (loadType == 'loading' || loadType == 'nomore') {
                 return
             }
@@ -67,12 +79,16 @@ var common = {
             page++
             setLoadType('loading')
 
-            axios.get(type, { params: { page } }).then(res => {
+            const params = { page, from }            
+            axios.get(type, { params }).then(res => {
                 const data = res.data.body
-                setTimeout(() => {
-                    callback(res.data)
-                    setLoadType(data.page == data.totalPage ? 'nomore' : 'more')
-                }, 500)
+                const result = data.page == data.totalPage ? 'nomore' : 'more'
+                const speed = from ? 10 : 6
+
+                callback(res.data)
+                setLoadType(result)
+                Vue.prototype.$setScroll('index', speed)
+
             }).catch(err => {
                 page--
                 setLoadType('more')

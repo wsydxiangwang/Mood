@@ -2,8 +2,8 @@ module.exports = (app, plugin, model) => {
     const express = require('express');
     const router = express.Router();
 
-    let {Info, Comment, Counter, Article, Envelope, Myself, Subscribe} = model
-    let {time, Email, DateFormat, RequestResult} = plugin
+    let { Info, Comment, Counter, Article, Envelope, Myself, Subscribe } = model
+    let { time, Email, DateFormat, RequestResult } = plugin
 
     router.get('/info', async (req, res) => {
         const info = await Info.findOne()
@@ -12,7 +12,7 @@ module.exports = (app, plugin, model) => {
 
     // All articles
     router.get('/article', async (req, res) => {
-        const page = req.query.page || 1;
+        const page = req.query.page || 1
         const result = await Promise.all([
             Article.find({hide:false}).countDocuments(),
             Article.find({hide:false}).sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
@@ -23,12 +23,12 @@ module.exports = (app, plugin, model) => {
         // 列表页 分组
         if (req.query.from) {
             result[1] = result[1].reduce((total, item)=>{
-                const [ , year, date] = /(\d+)\/(\d+)/.exec(item.time.date);                
-                total['_'+year] = total['_'+year] || {};
-                total['_'+year][date] = total['_'+year][date] || [];
-                total['_'+year][date].push(item);
+                const [ , year, date] = /(\d+)\/(\d+)/.exec(item.time.date)
+                total['_'+year] = total['_'+year] || {}
+                total['_'+year][date] = total['_'+year][date] || []
+                total['_'+year][date].push(item)
                 return total
-            }, {})         
+            }, {})
         }
 
         /**
