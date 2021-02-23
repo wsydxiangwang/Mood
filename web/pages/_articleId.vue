@@ -64,26 +64,10 @@ export default {
             ]
         }
     },
-    destroyed(){
-        window.removeEventListener('scroll', this.handleScroll, true)
-    },
     computed: {
 		info(){
 			return this.$store.state.data
         }
-    },
-    mounted(){
-        if (window.history && window.history.pushState) {
-            window.onpopstate = function() {
-                console.log(22222)
-                var state = { 
-                    title: "title", 
-                    url: "#"
-                }; 
-                window.history.pushState(state, "title", "#"); 
-            }
-        }
-        window.addEventListener('scroll', this.handleScroll, true)
     },
     methods: {
         oImage(e) {

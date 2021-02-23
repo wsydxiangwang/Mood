@@ -48,15 +48,14 @@ export default {
     mixins: [scrollMixin],
     data(){
         return{
-            newData: '',
-            music: 'https://image.raindays.cn/music/shunjiandeyongheng.mp3',
+            music: '',
             enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-            refresh: true
+            refresh: false
         }
     },
     head () {
         return {
-            title: `Article | ${this.info.web_name}`
+            title: `Article | ${this.info.base.name}`
         }
     },
     computed: {
@@ -65,20 +64,17 @@ export default {
 		}
     },
     watch: {
-        '$store.state.scroll.isBottom': {
+        isScrollBottom: {
             handler(val) {
-                if (val) {
-                    this.load()
-                }
-            }
+                val && this.load()
+            },
+            immediate: true
         }
     },
     mounted(){
-        // 背景音乐
         if (this.info.page_music.mood) {
             this.music = this.info.page_music.mood
-            this.refresh = false
-            this.$nextTick(() => this.refresh = true )
+            this.refresh = true
         }
         this.$loadStatus(this.list)
     },
@@ -94,11 +90,11 @@ export default {
                                 if (current[k]) {
                                     this.list.data[key][k] = current[k].concat(newest[k])
                                 } else {
-                                    this.list.data[key][k] = newest[k]
+                                    this.$set(this.list.data[key], k, newest[k])
                                 }
                             }
                         } else {
-                            this.list.data[key] = newest
+                            this.$set(this.list.data, key, newest)
                         }
                     }
                 } else {
@@ -108,7 +104,7 @@ export default {
         },
         viewArticle(id){
             this.$router.push(`/${id}`)
-        },
+        }
     },
     async asyncData(context){
         const { data } = await context.$axios.get('article', { 
@@ -177,9 +173,6 @@ export default {
                             display: flex;
                             justify-content: center;
                             border: 1px solid var(--color-border-4);
-                            img{
-                                height: 100%;
-                            }
                         }
                         .tit{
                             flex: 1;
@@ -192,9 +185,9 @@ export default {
                                 cursor: pointer;
                                 font-size: 15px;
                                 padding-bottom: 5px;
-                                transition: color .3s, backgroundColor .3s, backgroundPosition 0s;
+                                transition: backgroundColor .3s, backgroundPosition 0s;
                                 &:hover, &:focus{
-                                    color: #024180;
+                                    color: var(--color-text-7);
                                     background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
                                     radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;
                                     background-size: 20px 20px;
@@ -223,13 +216,13 @@ export default {
     }
 } 
 @media screen and (max-width: 700px){
-    .list{
+    .article-list .list{
         width: 100%;
         padding: 80px 20px 20px;
     }
 }
 @media screen and (max-width: 500px){
-    .list{
+    .article-list .list{
         padding: 60px 10px 20px;
         .year-list{
             padding: 10px 10px 10px 6px;

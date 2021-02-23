@@ -1,10 +1,6 @@
 <template>
     <div class="container">
-        <Header 
-            v-if="refresh" 
-            :music="music" 
-            title="好好学习, 天天向上!"
-        />
+        <Header v-if="refresh" :music="music" />
         <section class="content">
             <div v-if="!data.data || data.data.length == 0">
                 空无一物，就像你我一样。
@@ -24,8 +20,8 @@
 export default {
     data(){
         return{
-            music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
-            refresh: true
+            music: '',
+            refresh: false
         }
     },
     head () {
@@ -37,13 +33,19 @@ export default {
         // 背景音乐
         if (this.info.page_music.letter) {
             this.music = this.info.page_music.letter
-            this.refresh = false
-            this.$nextTick(() => this.refresh = true )
+            this.refresh = true
+        }
+    },
+    watch: {
+        isScrollBottom: {
+            handler(val) {
+                val && this.load()
+            }
         }
     },
     methods: {
-        load(){
-         
+        load() {
+
         }
     },
     computed: {

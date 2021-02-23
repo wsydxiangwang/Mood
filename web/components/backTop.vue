@@ -1,32 +1,27 @@
 <template>
-    <div class="back-top" :class="{isBack}" @click="backTop">
+    <div class="back-top" :class="{ isBack }" @click="backTop">
         <span class="iconfont icon-top"></span>
     </div>
 </template>
 
 <script>
+import scrollMixin from '~/mixin/scroll.js'
 export default {
+    mixins: [scrollMixin],
     data(){
         return{
             isBack: '',
-            timerTop: null,
-            scrollTop: 0,
-            fnScroll: () => {}
         }
     },
-    mounted(){
-        this.handleScroll()
-        this.fnScroll = this.$throttle(this.handleScroll, 100)
-        window.addEventListener('scroll', this.fnScroll)
-    },
-    destroyed(){
-        window.removeEventListener('scroll', this.fnScroll)
+    watch: {
+        curScroll: {
+            handler(val) {
+                this.isBack = val >= 1000 ? 'show' : ''
+            },
+            immediate: true
+        }
     },
     methods: {
-		handleScroll(){
-            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-            this.isBack = this.scrollTop >= 2000 ? 'show' : ''
-		},
         backTop(){
             this.$setScroll('top')
         }

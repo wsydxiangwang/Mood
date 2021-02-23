@@ -1,8 +1,7 @@
 export const state = () => ({
     data: {},
     index: false,
-    status: 'more',
-    scroll: {}
+    status: 'more'
 })
 
 export const mutations = {
@@ -14,9 +13,6 @@ export const mutations = {
     },
     setStatus (state, data) {
         state.status = data
-    },
-    scrollInfo (state, data) {
-        state.scroll = data
     }
 }
 

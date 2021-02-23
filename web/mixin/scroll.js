@@ -2,6 +2,8 @@
 export default {
     data() {
         return {
+            curScroll: null,
+            isScrollBottom: false,
             scrollFn: () => {}
         }
     },
@@ -17,11 +19,8 @@ export default {
             const t = this.getWin('scrollTop'),
                   h = this.getWin('scrollHeight'),
                   windwH = this.getWin('clientHeight');
-            const data = {
-                curScroll: t,
-                isBottom: t + windwH >= h - 10
-            }   
-            this.$store.commit('scrollInfo', data)
+            this.curScroll = t
+            this.isScrollBottom = t + windwH >= h - 10
         },
         getWin(type) {
             return document.documentElement[type] || document.body[type]

@@ -7,13 +7,34 @@ var common = {
         function getWin(type) {
             return document.documentElement[type] || document.body[type]
         }
-
+        const Tween = {
+            linear : function(t, b, c, d) {   //匀速
+                return c * t / d + b;
+            },
+            easeIn : function(t, b, c, d) {   //加速
+                return c * (t /= d) * t + b;
+            },
+            easeOut : function(t, b, c, d) {  //减速
+                return -c * (t /= d) * (t - 2) + b;
+            },
+            easeBoth : function(t, b, c, d) { //加速减速
+                if((t /= d / 2) < 1) {
+                    return c / 2 * t * t + b;
+                }
+                return -c / 2 * ((--t) * (t - 2) - 1) + b;
+            },
+            easeInStrong : function(t, b, c, d) {  //加加速
+                return c * (t /= d) * t * t * t + b;
+            }
+        }
         /**
          * 设置滚动条位置
          * @param {String} type  => 类型
          * @param {Number} speed => 速度
          */
-        Vue.prototype.$setScroll = (type, speed = 6) => {
+        let timerScroll = null
+        Vue.prototype.$setScroll = (type, times = 1000) => {
+            const startTime = new Date().getTime()
             const typeList = {
                 index: () => {
                     return getWin('scrollTop') + getWin('clientHeight') / 2
@@ -33,15 +54,18 @@ var common = {
             let target = typeList[type]()
             let beforeScroll = 0
 
-            console.error(target)
+            console.warn(target)
 
-			this.timerScroll = setInterval(() => {
+			timerScroll = setInterval(() => {
                 let curScroll = getWin('scrollTop')
-                let newSpeed = (target - curScroll) / speed
-                
-				newSpeed = newSpeed > 0 ? Math.ceil(newSpeed) : Math.floor(newSpeed)
-                curScroll = document.body.scrollTop = document.documentElement.scrollTop = curScroll + newSpeed
+                let curTime = new Date().getTime()
+                const t = times - Math.max(0, startTime - curTime + times)
+                const value = Tween['linear'](t, curScroll, target - curScroll, times)
 
+                curScroll = document.body.scrollTop = document.documentElement.scrollTop = value
+                
+                console.log(value)
+                
                 /**
                  * 终点 & 边界处理
                  */
@@ -51,21 +75,20 @@ var common = {
                 } else if (type == 'top') {
                     result = curScroll == target || (beforeScroll && curScroll > beforeScroll)
                 } else {
-                    result = curScroll <= beforeScroll || (curScroll + newSpeed) >= target
+                    result = curScroll <= beforeScroll || curScroll == target
                 }
-                
-                if (result) {
-                    clearInterval(this.timerScroll)
-                }
-                
+
+                result && clearInterval(timerScroll)
+
                 beforeScroll = curScroll
 			}, 25)
         }
 
+        
 
         // Load More
-        let [page, loadType] = [1, 'more']
-        Vue.prototype.$loadMore = (type, callback, from) => {       
+        let [page, loadType, time] = [1, 'more', null]
+        Vue.prototype.$loadMore = (type, callback, from) => {
             if (type == 'none') {   // reset
                 page = 1
                 loadType = 'more'
@@ -79,15 +102,23 @@ var common = {
             page++
             setLoadType('loading')
 
+            time = new Date().getTime()
+
             const params = { page, from }            
             axios.get(type, { params }).then(res => {
                 const data = res.data.body
                 const result = data.page == data.totalPage ? 'nomore' : 'more'
                 const speed = from ? 10 : 6
 
-                callback(res.data)
-                setLoadType(result)
-                Vue.prototype.$setScroll('index', speed)
+                // loading 效果最少 500ms
+                let timer = 500 - new Date().getTime() + time
+                timer = timer < 0 ? 0 : timer
+
+                setTimeout(() => {
+                    callback(res.data)
+                    setLoadType(result)
+                    Vue.prototype.$setScroll('index')
+                }, timer)
 
             }).catch(err => {
                 page--
@@ -99,6 +130,7 @@ var common = {
             const store = Vue.prototype.$nuxt.$store
             store.commit('setStatus', type)
             loadType = type
+            time = null
         }
 
         Vue.prototype.$loadStatus = (data) => {

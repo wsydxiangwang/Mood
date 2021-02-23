@@ -25,7 +25,7 @@
                 <span 
                     class="iconfont icon-like" 
                     :class="{like: isLike}"
-                    @click="likeClick"
+                    @click="onLike"
                 ></span>
             </template>
             <span class="myself" @click="myself">
@@ -69,7 +69,9 @@
 
 <script>
 import QRCode from "qrcode"
+import scrollMixin from '~/mixin/scroll.js'
 export default {
+    mixins: [scrollMixin],
     props: ['music', 'title', 'github', 'like'],
     data(){
         return{
@@ -83,90 +85,82 @@ export default {
             dashArray: Math.PI * 100,
 
             isLike: false,
-            scrollTop: 0,
             qrccode: false,
             isUp: false,
 
             likeTime: null,
             likeHint: false,
-
-            fnScroll: () => {}
         }
     },
-    destroyed (){
-        window.removeEventListener('scroll', this.fnScroll)
-    },
     mounted(){
-        if(this.like){
+        if (this.like) {
             this.$nextTick(() => {
                 const canvas = document.getElementById('qrccode')
                 QRCode.toCanvas(canvas, window.location.href)
             })
         }        
         // isLike
-        const like = localStorage.getItem(`like-${this.like}`);
-        this.isLike = Boolean(like)
+        this.isLike = !!localStorage.getItem(`like-${this.like}`)
+    },
+    watch: {
+        curScroll: {
+            handler(val, oldVal) {
+                this.isUp = val > 100 && val - oldVal < 0 
 
-        this.fnScroll = this.$throttle(this.handleScroll, 100)
-        window.addEventListener('scroll', this.fnScroll)
+                if (val >= 100) {
+                    this.isTitle = true
+                    this.mobileMusic = 'show'
+                } else {
+                    this.isTitle = false
+                    this.mobileMusic = this.mobileMusic ? 'exit' : ''
+                }
+            },
+            immediate: true
+        }
     },
     computed: {
         // mobile music progress
         dashOffset() {
-            return (1 - this.percent) * this.dashArray;
+            return (1 - this.percent) * this.dashArray
         },
     },
     methods: {
-        // Scroll Change
-        handleScroll(){
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const relust = scrollTop - this.scrollTop
-            this.scrollTop = scrollTop
-
-            this.isUp = scrollTop > 100 && relust < 0 
-
-            if(scrollTop >= 100){
-                this.isTitle = true;
-                this.mobileMusic = 'show';
-            }else{
-                this.isTitle = false;
-                this.mobileMusic = this.mobileMusic ? 'exit' : '';
-            }
-        },
-        wechat(){
-            this.qrccode = !this.qrccode
-        },
         // like +1
-        likeClick(){
-            if(this.isLike){
+        onLike(){
+            if (this.isLike) {
                 clearTimeout(this.likeTime)
                 this.likeHint = true
                 this.likeTime = setTimeout(() => this.likeHint = false, 3000)
-            }else{
+            } else {
                 this.$axios.put(`article_like/${this.like}`).then(res => {
                     this.$emit('liked', true)
-                    this.isLike = true;
-                    localStorage.setItem(`like-${this.like}`, true);
+                    this.isLike = true
+                    localStorage.setItem(`like-${this.like}`, true)
                 })
             }
         },
         changeMusic(){
-            let music = document.getElementById("music");
-            this.isStore = !this.isStore;
-            if(this.isStore){
-                music.play();
+            let music = document.getElementById("music")
+            this.isStore = !this.isStore
+            if (this.isStore) {
+                music.play()
                 this.timer = setInterval(() => {
-                    const n = (100 * (music.currentTime / music.duration)).toFixed(2);
-                    const ns = (1 * (music.currentTime / music.duration));
+                    const result = music.currentTime / music.duration
+                    const n = (100 * result).toFixed(2)
+
                     // Loop 
-                    if(n >= 100) clearInterval(this.timer);
-                    this.changeProgress = n + '%';
-                    this.percent = ns;
+                    n >= 100 && clearInterval(this.timer)
+
+                    this.changeProgress = n + '%'
+                    this.percent = result
                 }, 50)
             } else {
-                music.pause();
-                clearInterval(this.timer);
+                music.pause()
+                clearInterval(this.timer)
             }
+        },
+        wechat(){
+            this.qrccode = !this.qrccode
         },
         toIndex(){
             this.$router.push('/')
