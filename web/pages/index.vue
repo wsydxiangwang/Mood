@@ -7,7 +7,6 @@
 				</div>
 			</div>
 			<div class="head">
-				<!-- <div class="logo"><span class="iconfont icon-logo4"></span></div> -->
 				<div class="logo-img">
 					<img src="/image/logo/logo1.png">
 					<img src="/image/logo/logo2.png">
@@ -67,7 +66,7 @@
 		<div class="foot" v-if="info.other && info.other.icp_txt">
 			<a :href="info.other.icp_link" target="_blank">{{ info.other.icp_txt }}</a>
 		</div>
-		<BackTop v-if="isBack" />
+		<BackTop />
 		<Loading v-if="loading" />
 	</div>
 
@@ -91,13 +90,9 @@ export default {
 			boxW: '100%',
 			isNav: false,
 			loading: true,
-			
-			isBack: true,
 
 			image: null,
             windowChange: () => {},
-
-			status: 1,
 
 			infoIcon: [{
 				icon: 'icon-text',
@@ -135,61 +130,54 @@ export default {
 		if (!this.info) {
 			return
 		}
-		document.body.style.overflowY = 'hidden'
-
-		// Cover image loading is complete
-		let img = new Image()
-		img.src = this.info.cover.image
-		img.onload = () => {
-			setTimeout(() => {
-				this.image = this.info.cover.image
-				this.loading = false;
-				document.body.style.overflowY = '';
-			}, 800)
-		}
-
-		// Homepage loaded
+		this.update()
+		this.loadImage()
+		
+		// Homepage info
 		this.$store.commit('isIndex')
-
-		// Cover image init
-		const scene = document.getElementById('scene')
-		new Parallax(scene, {
-			relativeInput: true,
-			clipRelativeInput: true,
-		})
-		
 		this.$loadStatus(this.list)
-		
 	},
-	async asyncData(context){
-		if (context.store.state.index) { // 防止重复加载 
-			return
-		}
-		const { data } = await context.$axios.get('article')
-		return { list: data.status == 1 ? data.body : {} }
-	},
-	beforeRouteEnter(to,from,next){
+	beforeRouteEnter(to, from, next){
 		next(vm => {
-			vm.init()
-			vm.windowChange = vm.$debounce(vm.init, 100)
+			vm.windowChange = vm.$debounce(vm.update, 100)
 			window.onresize = () => vm.windowChange()
-			vm.isBack = true
 		})
 	},
-	beforeRouteLeave(to,from,next){
-		document.body.style.overflowY = ''
+	beforeRouteLeave(to, from, next){
 		window.onresize = null
-		this.isBack = false
-		setTimeout(() => this.isNav = false, 500)
-		document.removeEventListener('touchmove', this.on, {passive: false})
+		setTimeout(this.menu, 500)
         next()
     },
 	methods: {
 		// Cover image init
-		init(){
+		update(){
 			this.boxH = document.documentElement.clientHeight + 'px';
 			this.boxW = document.documentElement.clientWidth + 'px';
 			this.coverLayer()
+		},
+		// Load Image
+		loadImage() {
+			const time = new Date().getTime()
+
+			// Cover image loading is complete
+			let img = new Image()
+			img.src = this.info.cover.image
+			img.onload = () => {
+				// loading 效果最少 500ms
+				let timer = 500 - new Date().getTime() + time
+				timer = timer < 0 ? 0 : timer
+				setTimeout(() => {
+					this.image = this.info.cover.image
+					this.loading = false
+				}, timer)
+			}
+
+			// Cover image init
+			const scene = document.getElementById('scene')
+			new Parallax(scene, {
+				relativeInput: true,
+				clipRelativeInput: true,
+			})
 		},
 		// Cover image box calculation
 		coverLayer(){
@@ -210,28 +198,31 @@ export default {
 			const style = {
                 width: _w + x + 'px',
                 height: _h + y + 'px',
-                marginLeft: - 0.5 * x + 'px',
-                marginTop: - 0.5 * y + 'px'
+                marginLeft: -0.5 * x + 'px',
+                marginTop: -0.5 * y + 'px'
 			}
 			this.layerStyle = Object.assign({}, this.layerStyle, style);
             this.coverImg()
 		},
 		// Cover image size calculation
 		coverImg(){
-			const width = parseInt(this.layerStyle.width), 
-                  height = parseInt(this.layerStyle.height), 
+			const width = parseInt(this.layerStyle.width),
+                  height = parseInt(this.layerStyle.height),
 				  ratio = 1080 / 1920,
-				  style = {};
+				  compute = height / width > ratio;
 
-			const compute = height / width > ratio;
+			const style = {
+				width: compute ? (height / ratio + 'px') : `${width}px`,
+				height: compute ? `${height}px` : (width * ratio + 'px')
+			}
+			style['left'] = (width - parseInt(style.width)) / 2 +'px'
+			style['top'] = (height - parseInt(style.height)) / 2 +'px'
 
-			style['width'] = compute ? (height / ratio + 'px') : `${width}px`;
-			style['height'] = compute ? `${height}px` : (width * ratio + 'px');
-			
-			style['left'] = (width - parseInt(style.width)) / 2 +'px';
-			style['top'] = (height - parseInt(style.height)) / 2 +'px';
-
-			this.imgStyle = Object.assign({}, this.imgStyle, style);
+			this.imgStyle = Object.assign({}, this.imgStyle, style)
+		},
+		menu(){
+			this.isNav = !this.isNav
+			document.body.style.overflowY = this.isNav ? 'hidden' : ''
 		},
 		loadMoreData(){
 			this.$loadMore('article', (res) => {
@@ -242,26 +233,21 @@ export default {
 				}
 			})
 		},
-		// Nav
-		menu(){
-			this.isNav = !this.isNav
-			document.body.style.overflowY = this.isNav ? 'hidden' : '';
-			
-			// if(this.isNav){
-			// 	document.addEventListener('touchmove', this.on, {passive: false})
-			// }else{
-			// 	document.removeEventListener('touchmove', this.on, {passive: false})
-			// }
-			// 
-		},
 		toArticle(id){
 			this.$router.push(`/${id}`)
 		},
 		getDate(time) {
 			return time.month.cn + '月 ' + time.day.on + ', ' + time.year
 		}
+	},
+	async asyncData(context){
+		if (context.store.state.index) { // 防止重复加载 
+			return
+		}
+		const { data } = await context.$axios.get('article')
+		return { list: data.status == 1 ? data.body : {} }
 	}
-};
+}
 </script>
 <style lang="scss" scoped>
 .empty-data{
@@ -670,7 +656,6 @@ export default {
 			}
 			.misk{
 				clip-path: none;
-				background: rgba(176, 14, 37, 0.35);
 			}
 			.post{
 				bottom: 8%;

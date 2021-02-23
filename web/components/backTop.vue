@@ -1,5 +1,5 @@
 <template>
-    <div class="back-top" :class="{ isBack }" @click="backTop">
+    <div class="back-top" :class="{ show }" @click="backTop">
         <span class="iconfont icon-top"></span>
     </div>
 </template>
@@ -10,16 +10,16 @@ export default {
     mixins: [scrollMixin],
     data(){
         return{
-            isBack: '',
+            show: '',
         }
     },
     watch: {
         curScroll: {
             handler(val) {
-                this.isBack = val >= 1000 ? 'show' : ''
+                this.show = val >= 1000 ? 'show' : ''
             },
             immediate: true
-        }
+        }   
     },
     methods: {
         backTop(){
@@ -37,7 +37,7 @@ export default {
         opacity: 0;
         visibility: hidden;
         z-index: 1;
-        &.isBack{
+        &.show{
             opacity: 1;
             visibility: visible;
         }

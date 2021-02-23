@@ -10,6 +10,7 @@ export default {
     beforeMount() {
         this.scrollFn = this.$throttle(this.handleScroll, 100)
         window.addEventListener('scroll', this.scrollFn)
+        this.handleScroll()
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.scrollFn)

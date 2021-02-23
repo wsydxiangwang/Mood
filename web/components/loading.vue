@@ -22,7 +22,7 @@
         display: block;
         margin-top: -20px;
         border-radius: 50%;
-        background: #808080;
+        background: var(--color-text-6);
         animation: Loading 2s both infinite;
     }
 }
