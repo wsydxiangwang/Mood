@@ -2,7 +2,7 @@
     <div class="articleld">
 
         <!-- Article Progress -->
-        <div class="scrollbar" :style="{width: postProgress}"></div>
+        <div class="scrollbar" :style="{ width: postProgress }"></div>
 
         <Header 
             :music="data.music.url" 
@@ -12,13 +12,13 @@
         ></Header>
 
         <section>
-            <h1 class="title">{{data.title}}</h1>
+            <h1 class="title">{{ data.title }}</h1>
             <div class="stuff">
-                <span>{{data.time.month.cn}}月 {{data.time.day.on}}, {{data.time.year}}</span>
-                <span>阅读 {{data.read}}</span>
-                <span>字数 {{data.words}}</span>
-                <span>评论 {{commentTotal}}</span>
-                <span>喜欢 {{data.like}}</span>
+                <span>{{ data.time.month.cn }}月 {{ data.time.day.on }}, {{ data.time.year }}</span>
+                <span>阅读 {{ data.read }}</span>
+                <span>字数 {{ data.words }}</span>
+                <span>评论 {{ commentTotal }}</span>
+                <span>喜欢 {{ data.like }}</span>
             </div>
 
             <div class="content" @click="oImage($event)">
