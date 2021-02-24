@@ -54,7 +54,7 @@ var common = {
             let target = typeList[type]()
             let beforeScroll = 0
 
-            console.warn(target)
+            // console.warn(target)
 
 			timerScroll = setInterval(() => {
                 let curScroll = getWin('scrollTop')
@@ -63,9 +63,7 @@ var common = {
                 const value = Tween['linear'](t, curScroll, target - curScroll, times)
 
                 curScroll = document.body.scrollTop = document.documentElement.scrollTop = value
-                
-                console.log(value)
-                
+                                
                 /**
                  * 终点 & 边界处理
                  */

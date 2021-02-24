@@ -67,8 +67,7 @@ export default {
         isScrollBottom: {
             handler(val) {
                 val && this.load()
-            },
-            immediate: true
+            }
         }
     },
     mounted(){

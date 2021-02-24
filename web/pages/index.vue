@@ -145,7 +145,10 @@ export default {
 	},
 	beforeRouteLeave(to, from, next){
 		window.onresize = null
-		setTimeout(this.menu, 500)
+		setTimeout(() => {
+			this.isNav = false
+			document.body.style.overflowY = ''
+		}, 800)
         next()
     },
 	methods: {

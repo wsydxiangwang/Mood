@@ -16,10 +16,13 @@ export default {
         window.removeEventListener('scroll', this.scrollFn)
     },
     methods: {
-        handleScroll () {
+        handleScroll () {            
             const t = this.getWin('scrollTop'),
                   h = this.getWin('scrollHeight'),
                   windwH = this.getWin('clientHeight');
+            if (h == windwH) {  // 路由切换 兼容模式
+                return
+            }
             this.curScroll = t
             this.isScrollBottom = t + windwH >= h - 10
         },

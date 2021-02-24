@@ -3,14 +3,24 @@
         <section class="comment-section" style="transition:all .3s">
             <div class="comment-form">
                 <div class="input-box">
-                    <input type="text" placeholder="Name" v-model="form.name">
-                    <input type="text" placeholder="Email" v-model="form.email">
+                    <input 
+                        v-for="(val, key, index) in { name: 'Name', email: 'Email'}"
+                        type="text" 
+                        :placeholder="val" 
+                        v-model="form[key]"
+                        :key="index"
+                    >
                 </div>
                 <div class="reply-name" v-if="isReply">
                     <span class="">@{{ replyObj.reply_name }}</span>
                     <span class="iconfont icon-close" @click="cancel"></span>
                 </div>
-                <textarea class="textarea" placeholder="What do you want to say..." v-model="form.content"></textarea>
+
+                <textarea 
+                    class="textarea" 
+                    placeholder="What do you want to say..." 
+                    v-model="form.content"
+                ></textarea>
 
                 <!-- submit button and loading -->
                 <div class="bottom">
@@ -118,10 +128,9 @@
         
         <div>
             <PuzzleVerification 
-                blockType="puzzle" 
+                @clone="verifyResult"
                 :onSuccess="verifyResult"
                 :verificationShow="isVerification"
-                @clone="verifyResult"
             ></PuzzleVerification>
         </div>
 
@@ -166,7 +175,7 @@ export default {
                 '提交成功, Nice.'
             ],
 
-            isVerification: false,
+            isVerification: true,
             verificationSuccess: false,
 
             isReply: false,
