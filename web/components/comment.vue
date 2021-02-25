@@ -131,21 +131,21 @@
                 @clone="verifyResult"
                 :onSuccess="verifyResult"
                 :verificationShow="isVerification"
-            ></PuzzleVerification>
+            />
         </div>
 
-        <div class="admin-popup" :class="adminPopup ? 'show' : 'exit'">
-            <span class="iconfont icon-close2" @click="administrator(false)"></span>
-            <img :src="data.base.avatar">
+        <div class="admin-popup" :class="adminPopupStatus">
+            <span class="iconfont icon-close2" @click="verifyPopup('admin', false)"></span>
+            <img :src="data.base.admin_avatar">
             <div>
                 哇哦～恭喜你，发现了一个小彩蛋～～
             </div>
             <input type="text" placeholder="请输入管理员身份标识码" v-model="adminCode">
             <p class="hint" v-if="status == 3">
                 <span class="iconfont icon-error"></span>
-                <span>{{hint[status]}}</span>
+                <span>{{ hint[status] }}</span>
             </p>
-            <button @click="adminSubmit">确定</button>
+            <button @click="verifyResult('admin')">确定</button>
         </div>
     </div>
 </template>
@@ -175,13 +175,13 @@ export default {
                 '提交成功, Nice.'
             ],
 
-            isVerification: true,
+            isVerification: 0,
             verificationSuccess: false,
 
             isReply: false,
             replyObj: {},
 
-            adminPopup: false,
+            adminPopup: 0,
             adminCode: '',
         }
     },
@@ -202,21 +202,20 @@ export default {
         })
     },
     computed: {
-        adminMark() {
-            return this.data.administrator.mark || '行人'
-        },
         data() {
             return this.$store.state.data
+        },
+        adminPopupStatus() {
+			const o = {
+				0: '',
+				1: 'show',
+				2: 'exit'
+			}
+			return o[this.adminPopup]
         }
     },
     methods: {
-        getCommentDate(time) {
-            return `${time.time} ${time.month.en} ${time.day.on}, ${time.year}`
-        },
-        getInfo(type) {
-            return this.data.administrator[type]
-        },
-        // Verification
+        // 1. Verification
         submitVerify() {
             if (this.status == 7) {  // loading
                 return
@@ -228,57 +227,54 @@ export default {
                 !(this.form.name == this.getInfo('name') || this.form.email == this.getInfo('email')),
             ]
             for (let i in list) {
-                console.log(list[i])
                 if (i == 2 && (!list[i] || list[i].length < 5)) {
                     this.status = 4
                     return
                 }
                 if (!list[i]) {
                     if (i == 3) {
-                        this.administrator(true)
+                        this.verifyPopup('admin', true)
                     } else {
                         this.status = i
                     }
                     return
                 }
             }
-            this.verifyPopup(true)
+            this.verifyPopup('slider', true)
         },
-        // toggle view        
-        verifyPopup(is) {
-            const type = is ? 'add' : 'remove';
-            this.toggleClass(type)
-            this.isVerification = is;
-        },
-        // Validation results
-        verifyResult(type) {
-            this.verifyPopup(false)
-            setTimeout(() => {
-                if (type) {
-                    this.status = 6
-                } else {
-                    setTimeout(this.submit, 500) // start submit
-                }
-            }, 600)
-        },
-        administrator(type) {
-            const css = type ? 'add' : 'remove'
+        // 2. toggle view        
+        verifyPopup(type, result) {
+            const css = result ? 'add' : 'remove'
+            const status = result ? 1 : 2
+
             this.toggleClass(css)
-            this.adminPopup = type
-            this.adminCode = ''
-        },
-        adminSubmit() {
-            if (this.adminCode == this.getInfo('code')) {
-                this.administrator(false)
-                setTimeout(this.submit, 500) // start submit
-            } else {
-                this.status = 3
+
+            if (type == 'slider') {
+                this.isVerification = status
+            } else if (type == 'admin') {
+                this.adminPopup = status
+                this.adminCode = ''
             }
         },
-        toggleClass(type) {
-            ['header', 'section', '.comment-section'].forEach(item => {
-                document.querySelector(item).classList[type]('verify')
-            })
+        // 3. Validation results
+        verifyResult(type, result) {
+            if (type == 'slider') {
+                this.verifyPopup('slider', false)
+                setTimeout(() => {
+                    if (result) {
+                        setTimeout(this.submit)     // 4. submit data
+                    } else {
+                        this.status = 6
+                    }
+                }, 600)
+            } else if (type == 'admin') {
+                if (this.adminCode == this.getInfo('code')) {
+                    this.verifyPopup('admin', false)
+                    setTimeout(this.submit, 400) // 4. submit data
+                } else {
+                    this.status = 3
+                }
+            }
         },
         // Reply Mode
         reply(item, type, items) {
@@ -293,12 +289,14 @@ export default {
         },
         // Cancel reply
         cancel(){
-            this.replyObj = {};
-            this.isReply = false;
+            this.replyObj = {}
+            this.isReply = false
         },
-        // Submit Comment
+        // 4. Submit Comment
         submit(){
             this.status = 7;    // loading
+
+            const LoadingStartTime = new Date().getTime()
 
             if (!this.form['image']) {
                 this.form.image = Math.floor(Math.random() * 10 + 1)
@@ -325,10 +323,10 @@ export default {
             const data = {
                 ...this.replyObj,   // reply info
                 ...this.form,       // form info
-                ...other
+                ...other        
             }
 
-            // and Email notification information
+            // send Email notification information
             const params = {
                 data,
                 title: this.title,
@@ -339,46 +337,59 @@ export default {
 
             this.$axios.post('comment', params).then(res => {
                 if (res.data.status === 1) {
-                    /**
-                     * To Append Data
-                     */
-                    const data = res.data.body;
+                    // loading 500ms
+                    let timer = 500 - new Date().getTime() + LoadingStartTime
+                    timer = timer < 0 ? 0 : timer
 
-                    if (data.type === 1) {
-                        this.comment.data.unshift(data)
-                    } else {
-                        const id = data.parent_id;
-                        this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
-                    }
-
-                    // Comment total +1 
-                    this.$set(this.comment, 'total', this.comment.total + 1)
-                    this.$emit('total', this.comment.total)
-
-                    // form & local
-                    this.form = {
-                        name: this.form.name,
-                        email: this.form.email,
-                        image: this.form.image
-                    }
-                    localStorage.setItem('comment', JSON.stringify(this.form))
-
-                    /**
-                     * Reset State
-                     */
-                    this.replyObj = {};
-                    this.isReply = false;
-                    this.status = 8;
                     setTimeout(() => {
-                        this.status = 10;
-                    }, 3000)
+                        // To Append Data
+                        const data = res.data.body
+                        if (data.type === 1) {
+                            this.comment.data.unshift(data)
+                        } else {
+                            const id = data.parent_id
+                            this.comment.data.filter(i => i.id == id).forEach(item => item.child.push(data))
+                        }
+                        // Comment total +1 
+                        this.$set(this.comment, 'total', this.comment.total + 1)
+                        this.$emit('total', this.comment.total)
+
+                        // form & local
+                        const formInfo = ['name', 'email', 'image']
+                        this.form = formInfo.reduce((t, i) => {
+                            t[i] = this.form[i]
+                            return t
+                        }, {})
+
+                        localStorage.setItem('comment', JSON.stringify(this.form))
+
+                        /**
+                         * Reset State
+                         */
+                        this.replyObj = {}
+                        this.isReply = false
+                        this.status = 8
+                        setTimeout(this.status = 10, 3000)
+                        
+                    }, timer)
                 } else {
-                    this.status = 4;
+                    this.status = 4
                 }
             })
             .catch(err => {
-                this.status = 4;
+                this.status = 4
             })
+        },
+        toggleClass(type) {
+            ['header', 'section', '.comment-section'].forEach(item => {
+                document.querySelector(item).classList[type]('verify')
+            })
+        },
+        getCommentDate(time) {
+            return `${time.time} ${time.month.en} ${time.day.on}, ${time.year}`
+        },
+        getInfo(type) {
+            return this.data.administrator[type]
         },
         // FormatTime
         dateFormat(){

@@ -1,8 +1,8 @@
 <template>
 	<div 
 		class="puzzle-container"
+		:class="status"
 	>
-
 		<div class="puzzle-header">
 			<span class="puzzle-header-left">拖动下方滑块完成拼图</span>
 			<div>
@@ -11,41 +11,33 @@
 			</div>
 		</div>
 
-		<div :style="'position:relative;overflow:hidden;width:'+ width +'px;'">
-			<div :style="'position:relative;width:' + width + 'px;height:' + height + 'px;'">
-				<img
-					id="scream"
-					ref="scream"
-					:src="imgRandom"
-					:style="'width:' + width + 'px;height:' + height + 'px;'"
-				/>
+		<div class="puzzle-content">
+			<div class="puzzle-image">
+				<img id="scream" ref="scream" :src="imgRandom" />
 				<canvas id="puzzle-box" ref="puzzleBox"></canvas>
 			</div>
 			<div
 				class="puzzle-lost-box"
-				:style="'left:' + left_Num + 'px;width:' + width + 'px;height:' + height + 'px;'"
+				:style="'left:' + left_Num + 'px;'"
 			>
 				<canvas id="puzzle-shadow" ref="puzzleShadow"></canvas>
 				<canvas id="puzzle-lost" ref="puzzleLost"></canvas>
 			</div>
-			<p :class="'ver-tips'+ (displayTips ? ' slider-tips' : '')" ref="verTips">
-				<template v-if="verification">
-					<span style="color:#42ca6b;" class="iconfont icon-success"></span>
-					<span style="color:#42ca6b;">验证通过</span>
-				</template>
-				<template v-if="!verification">
-					<span class="iconfont icon-close"></span>
-					<span>验证失败，请移动到正确位置！</span>
-				</template>
+			<p 
+				class="ver-tips"
+				:class="{'slider-tips': displayTips, 'success': verification}" 
+			>
+				<span class="iconfont" :class="verification ? 'icon-success' : 'icon-close'"></span>
+				<span>{{ verification ? '验证通过' : '验证失败，请移动到正确位置！'}}</span>
 			</p>
 		</div>
 
-		<div class="slider-container" :style="'width:' + width + 'px;'">
+		<div class="slider-container">
 			<div class="slider-bar"></div>
 			<div 
-				class="slider-btn" 
-				ref="sliderBtn" 
-				@mousedown="startMove" 
+				class="slider-btn"
+				ref="sliderBtn"
+				@mousedown="startMove"
 				@touchstart="startMove"
 			>
 				<span></span>
@@ -61,27 +53,31 @@ export default {
 	name: "puzzleVerification",
 	data() {
 		return {
-			isVerificationShow: '',
+			isVerificationShow: 0,
 			moveStart: "",
 			displayTips: false,
 			verification: false,
 			randomX: null,
 			randomY: null,
 			imgRandom: "",
-			left_Num: 0,	
+			left_Num: 0,
+
+			refList: ['puzzleBox', 'puzzleShadow', 'puzzleLost']
 		}
 	},
-	model: {
-		prop: 'verificationShow',
-		event: 'setVisible'
-	},
 	watch: {
-		isVerificationShow(val) {
-			this.$emit('setVisible', val);
-		},
 		verificationShow(val) {
-			// console.log(val)
-			this.isVerificationShow = val;
+			this.isVerificationShow = val
+		}
+	},
+	computed: {
+		status() {
+			const o = {
+				0: '',
+				1: 'show',
+				2: 'exit'
+			}
+			return o[this.isVerificationShow]
 		}
 	},
 	props: {
@@ -93,16 +89,6 @@ export default {
 		height: {
 			type: [String, Number],
 			default: 160
-		},
-		// 图集
-		// 验证码图片，可自行替换
-		puzzleImgList: {
-			type: Array,
-			default: () => [
-				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png",
-				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png",
-				"https://image.raindays.cn/Myself-Resources/coverPictureOriginal.png"
-			]
 		},
 		// 滑块的大小
 		blockSize: {
@@ -119,38 +105,28 @@ export default {
 			type: [String, Number],
 			default: 100
 		},
-		// 成功的回调
 		onSuccess: {
 			type: Function,
 			default: () => {}
 		},
-		//  
 		onError: {
 			type: Function,
 			default: () => {}
 		},
 		verificationShow: {
-			type: Boolean,
-			default: false
+			type: Number,
+			default: 0
 		}
 	},
 	mounted() {
-		this.$nextTick(() => {
-			this.initCanvas();
-		});
-		['puzzleBox', 'puzzleShadow', 'puzzleLost'].forEach(i => {
+		this.refList.forEach(i => {
 			this.$refs[i]['width'] = this.width
 			this.$refs[i]['height'] = this.height
 		})
+		this.$nextTick(this.initCanvas)
 	},
 	created() {
-    	// 随机显示一张图片
-		let imgRandomIndex = Math.round(
-			Math.random() * (this.puzzleImgList.length - 1)
-		);
-    	this.imgRandom = this.puzzleImgList[imgRandomIndex];
-
-		
+    	this.imgRandom = this.$store.state.data.cover.image
 	},
 	methods: {
 		initCanvas() {
@@ -173,10 +149,7 @@ export default {
 				d = PL_Size / 3;
 
 			this.left_Num = -X + 10
-
-			this.render('puzzleBox', X, Y, d)
-			this.render('puzzleLost', X, Y, d)
-			this.render('puzzleShadow', X, Y, d)
+			this.refList.forEach(i => this.render(i, X, Y, d))
 		},
 		render(type, X, Y, d) {
 			let canvas = this.$refs[type].getContext("2d")
@@ -212,18 +185,13 @@ export default {
 			}
 		},
 		closeVerificationBox() {
-			this.isVerificationShow = false;
-			this.$emit('clone', true)
+			this.isVerificationShow = 2
+			this.$emit('clone', 'slider', false)
 		},
-		/* 刷新 */
 		refreshImg() {
-			let imgRandomIndex = Math.round(
-				Math.random() * (this.puzzleImgList.length - 1)
-			);
-			this.imgRandom = this.puzzleImgList[imgRandomIndex];
-			this.initCanvas();
+			this.initCanvas()
 		},
-		/* 通过重置画布尺寸清空画布，这种方式更彻底 */
+		// 清空画布
 		clearCanvas() {
 			let c = this.$refs.puzzleBox;
 			let c_l = this.$refs.puzzleLost;
@@ -232,14 +200,14 @@ export default {
 			c_l.setAttribute("height", c.getAttribute("height"));
 			c_s.setAttribute("height", c.getAttribute("height"));
 		},
-		/* 按住滑块后初始化移动监听，记录初始位置 */
+		// 按住滑块
 		startMove(e) {
 			e = e || window.event;
 			this.$refs.sliderBtn.style.backgroundPosition = "0 -216px";
 			this.moveStart = e.pageX || e.targetTouches[0].pageX;
 			this.addMouseMoveListener();
 		},
-		/* 滑块移动 */
+		// 滑块移动中
 		moving(e) {
 			e = e || window.event;
 			let moveX = e.pageX || e.targetTouches[0].pageX;
@@ -248,18 +216,15 @@ export default {
 			let PL_Size = this.blockSize;
 			let padding = this.wraperPadding;
 
-			if (this.moveStart === "") {
-				return "";
-			}
-			if (d < 0 || d > w - padding - PL_Size + 90) {
-				return "";
+			if (this.moveStart === "" || (d < 0 || d > w - padding - PL_Size + 90)) {
+				return
 			}
 			for (let i of ['sliderBtn', 'puzzleLost', 'puzzleShadow']) {
-				this.$refs[i].style.left = d + "px";
-				this.$refs[i].style.transition = "inherit";
+				this.$refs[i].style.left = d + "px"
+				this.$refs[i].style.transition = "inherit"
 			}
 		},
-		/* 移动结束，验证并回调 */
+		// 移动结束，验证并回调
 		moveEnd(e) {
 			e = e || window.event;
 			let moveEnd_X = (e.pageX || e.changedTouches[0].pageX) - this.moveStart;
@@ -267,29 +232,26 @@ export default {
 			let deviationValue = this.deviation;
 			let Min_left = ver_Num - deviationValue;
 			let Max_left = ver_Num + deviationValue;
+
+			const verResult = Max_left > moveEnd_X && moveEnd_X > Min_left
+
 			if (this.moveStart !== "") {
-				if (Max_left > moveEnd_X && moveEnd_X > Min_left) {
-					this.displayTips = true;
-					this.verification = true;
-					setTimeout(() => {
-						this.displayTips = false;
-						this.initCanvas();
-						this.onSuccess();
-					}, 500);
-				} else {
-					this.displayTips = true;
-					this.verification = false;
-					setTimeout(() => {
-						this.displayTips = false;
-						this.initCanvas();
-						this.onError();
-					}, 800);
-				}
+				this.displayTips = true
+				this.verification = verResult									
+				setTimeout(() => {
+					this.displayTips = false
+					if (verResult) {
+						this.onSuccess('slider', true)
+					} else {
+						this.initCanvas()
+						this.onError()
+					}
+				}, 1000)
 			}
 
 			const result = ['sliderBtn', 'puzzleLost', 'puzzleShadow']
 			
-			if (result.every(i => typeof i !== 'undefined')) {
+			if (result.every(i => typeof i !== 'undefined') && !verResult) {
 				setTimeout(() => {
 					for (let i of result) {
 						this.$refs[i].style.left = 0
@@ -308,7 +270,6 @@ export default {
 		}
 	},
 	beforeRouteLeave(to,from,next){
-        // 销毁滚动条事件
         document.removeEventListener("mousemove", self.moving);
         document.removeEventListener("touchmove", self.moving);
         document.removeEventListener("mouseup", self.moveEnd);
@@ -329,22 +290,126 @@ export default {
 	box-shadow: 0 0 10px #dbdbdb;
 	margin: 0 0 0 -145px;
 	z-index: 99999;
-	// opacity: 0;
-	// visibility: hidden;
+	opacity: 0;
+	visibility: hidden;
+	transition: none;	
 	&.show{
 		animation: fadeInTop 0.6s both;
 	}
 	&.exit{
 		animation: fadeInDown 0.6s both;
 	}
-}
-@media screen and (max-width: 600px) {
-	.puzzle-container{
-		margin-top: 0;
+	.puzzle-header {
+		display: flex;
+		justify-content: space-between;
+		margin: 0 0 10px;
+		.puzzle-header-left {
+			color: #333;
+		}
+		.re-btn,
+		.close-btn {
+			font-size: 16px;
+			cursor: pointer;
+			color: var(--color-text-4);
+		}
+		.re-btn:hover {
+			color: #67c23a;
+		}
+		.close-btn:hover {
+			color: #f56c6c;
+		}
+		.close-btn {
+			margin-left: 5px;
+		}
+	}
+	.puzzle-content{
+		position: relative;
+		overflow: hidden;
+		width: 260px;
+		.puzzle-image{
+			position: relative;
+			width: 260px;
+			height: 160px;
+			img{
+				width: 260px;
+				height: 160px;
+			}
+		}
+		.puzzle-lost-box{
+			width: 260px;
+			height: 160px;
+		}
+		.ver-tips {
+			position: absolute;
+			left: 0;
+			bottom: -28px;
+			background: rgba(255, 255, 255, 0.9);
+			height: 28px;
+			line-height: 30px;
+			font-size: 12px;
+			width: 100%;
+			margin: 0;
+			text-align: left;
+			padding: 0 8px;
+			transition: all 0.4s;
+			span{
+				transition: all .4s;
+				color: red;
+				font-size: 13px;
+				transition: none;
+			}
+			&.success span{
+				color: #0081ff;
+			}
+			&.slider-tips {
+				bottom: 0;
+			}
+		}
+	}
+	.slider-container {
+		position: relative;
+		margin: 10px auto 0;
+		min-height: 15px;
+		transition: none;
+		width: 260px;
+		.slider-btn {
+			position: absolute;
+			width: 46px;
+			height: 26px;
+			left: 0;
+			top: 0;
+			z-index: 12;
+			cursor: pointer;
+			background-position: 0 -84px;
+			transition: inherit;
+			background: #0084ff;
+			border-radius: 36px;
+			box-shadow: 0 0px 2px #0081ff;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			user-select: none;
+			span{
+				width: 2px;
+				height: 12px;
+				background: var(--color-bg-primary);
+				display: inline-block;
+				margin: 2.5px;
+			}
+		}
+		.slider-bar {
+			height: 10px;
+			border: 1px solid #e9e9e9;
+			border-radius: 5px;
+			background: #efefef;
+			box-shadow: 0 1px 1px #f8fcff inset;
+			position: absolute;
+			width: 100%;
+			top: 7px;
+		}
 	}
 }
-@keyframes fadeInTop
-{
+@keyframes fadeInTop {
 	from {
 		opacity: 0;
 		visibility: hidden;
@@ -356,8 +421,7 @@ export default {
 		transform: translate(0, 0);
 	}
 }
-@keyframes fadeInDown
-{
+@keyframes fadeInDown {
 	from {
 		opacity:1;
 		visibility: visible;
@@ -368,101 +432,6 @@ export default {
 		visibility: hidden;
 		transform: translate(0,-80px);
 	}
-}
-.slider-container {
-	position: relative;
-	margin: 10px auto 0;
-	min-height: 15px;
-	transition: none;
-	.slider-btn {
-		position: absolute;
-		width: 46px;
-		height: 26px;
-		left: 0;
-		top: 0;
-		z-index: 12;
-		cursor: pointer;
-		background-position: 0 -84px;
-		transition: inherit;
-		background: #0084ff;
-		border-radius: 36px;
-		box-shadow: 0 0px 2px #0081ff;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		-moz-user-select:none; /*火狐*/
-		-webkit-user-select:none; /*webkit浏览器*/
-		-ms-user-select:none; /*IE10*/
-		-khtml-user-select:none; /*早期浏览器*/
-		user-select:none;
-		span{
-			width: 2px;
-			height: 12px;
-			background: var(--color-bg-primary);
-			display: inline-block;
-			margin: 2.5px;
-		}
-	}
-	.slider-bar {
-		height: 10px;
-		border: 1px solid #e9e9e9;
-		border-radius: 5px;
-		background: #efefef;
-		box-shadow: 0 1px 1px #f8fcff inset;
-		position: absolute;
-		width: 100%;
-		top: 7px;
-	}
-}
-.puzzle-header {
-	display: flex;
-	justify-content: space-between;
-	margin: 0 0 10px;
-	.puzzle-header-left {
-		color: #333;
-	}
-	.re-btn,
-	.close-btn {
-		font-size: 16px;
-		cursor: pointer;
-		color: var(--color-text-4);
-	}
-
-	.re-btn:hover {
-		color: #67c23a;
-	}
-
-	.close-btn:hover {
-		color: #f56c6c;
-	}
-
-	.close-btn {
-		margin-left: 5px;
-	}
-
-}
-.ver-tips {
-	position: absolute;
-	left: 0;
-	bottom: -28px;
-	background: rgba(255, 255, 255, 0.9);
-	height: 28px;
-    line-height: 30px;
-	font-size: 12px;
-	width: 100%;
-	margin: 0;
-	text-align: left;
-	padding: 0 8px;
-	transition: all 0.4s;
-	span{
-		transition: all .4s;
-		color: red;
-		font-size: 13px;
-		transition: none;
-	}
-}
-.slider-tips {
-	bottom: 0;
 }
 #puzzle-box {
 	position: absolute;
@@ -491,5 +460,9 @@ export default {
 	z-index: 111;
 	transition: none;
 }
-
+@media screen and (max-width: 600px) {
+	.puzzle-container{
+		margin-top: 0;
+	}
+}
 </style>
