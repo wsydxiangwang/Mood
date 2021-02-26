@@ -9,7 +9,7 @@
             :title="data.title"
             :like="data._id"
             @liked="liked"
-        ></Header>
+        />
 
         <section>
             <h1 class="title">{{ data.title }}</h1>
@@ -127,7 +127,7 @@ export default {
     section{
         width: 800px;
         margin: auto;
-        transition: all .3s;
+        transition: none;
     }
     .scrollbar{
         position: fixed;
@@ -351,9 +351,6 @@ export default {
     }
 }
 
-.verify{
-    filter: blur(5px);
-}
 @keyframes headShow {
     from {
         opacity: 0;

@@ -196,9 +196,9 @@ export default {
 			let c = this.$refs.puzzleBox;
 			let c_l = this.$refs.puzzleLost;
 			let c_s = this.$refs.puzzleShadow;
-			c.setAttribute("height", c.getAttribute("height"));
-			c_l.setAttribute("height", c.getAttribute("height"));
-			c_s.setAttribute("height", c.getAttribute("height"));
+			c.setAttribute("height", c.getAttribute("height"))
+			c_l.setAttribute("height", c.getAttribute("height"))
+			c_s.setAttribute("height", c.getAttribute("height"))
 		},
 		// 按住滑块
 		startMove(e) {

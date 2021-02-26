@@ -48,6 +48,10 @@ body::-webkit-scrollbar-thumb{
 body::-webkit-scrollbar-track{
 	background: #f6f6f6;
 }
+.verify{
+    filter: blur(5px);
+    transition: none;
+}
 
 :root{
 	--color-bg-primary: #ffffff;

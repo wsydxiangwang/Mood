@@ -1,6 +1,6 @@
 <template>
     <div class="comment">
-        <section class="comment-section" style="transition:all .3s">
+        <section class="comment-section">
             <div class="comment-form">
                 <div class="input-box">
                     <input 
@@ -82,7 +82,7 @@
                                         <img :src="'/image/comment/'+item.image+'.jpg'">
                                     </div>
                                     <div class="name">
-                                        <a :class="{'admin-mark': item.admin}">{{ item.name }}</a>
+                                        <a :class="{'admin-mark': item.admin}">{{ item.name }}<span class="mark-tit" v-if="item.admin">这里有我，并且不止有我</span></a>
                                         <div class="r">
                                             <div class="reply" @click="reply(item, 1)">reply</div>
                                             <span class="time">{{ getCommentDate(item.time) }}</span>
@@ -106,7 +106,7 @@
                                                 <img :src="'/image/comment/'+items.image+'.jpg'">
                                             </div>
                                             <div class="name">
-                                                <a :class="{'admin-mark': items.admin}">{{ items.name }}</a>
+                                                <a :class="{'admin-mark': items.admin}">{{ items.name }}<span class="mark-tit" v-if="items.admin">这里有我，并且不止有我</span></a>
                                                 <div class="r">
                                                     <div class="reply" @click="reply(item, 2, items)">reply</div>
                                                     <span class="time">{{ getCommentDate(items.time) }}</span>
@@ -369,7 +369,7 @@ export default {
                         this.replyObj = {}
                         this.isReply = false
                         this.status = 8
-                        setTimeout(this.status = 10, 3000)
+                        setTimeout(() => this.status = 10, 3000)
                         
                     }, timer)
                 } else {
@@ -423,9 +423,6 @@ export default {
     opacity: 0;
 }
 
-.verify{
-    filter: blur(5px);
-}
 @keyframes fadeInTop
 {
 	from {
@@ -455,13 +452,17 @@ export default {
 .comment{
     width: 800px;
     margin: auto;
+    .comment-section{
+        transition: none;
+    }
     .admin-popup{
         position: fixed;
         top: 50%;
         left: 50%;
+        width: 310px;
         transform: translate(-50%, -50%);
         box-shadow: 0 0 10px #dbdbdb;
-        padding: 40px 25px 30px;
+        padding: 40px 30px 30px;
         border-radius: 6px;
         background: rgb(255, 255, 255);
         z-index: 999999;
@@ -671,19 +672,57 @@ export default {
                             color: #ef2f11;
                             text-decoration: underline;
                         }
-                        &.admin-mark::before{
-                            content: "";
-                            height: 6px;
-                            width: 6px;
-                            background: #f16339;
-                            border-radius: 50%;
-                            position: absolute;
-                            left: 100%;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            box-shadow: 0 0 0 4px rgba(241, 99, 57, 0.1);
-                            margin: 2px 8px;
-                            animation: flash 8s infinite;
+                        &.admin-mark{
+                            &:hover .mark-tit{
+                                opacity: 1;
+                                visibility: visible;
+                                transform: scale(1);
+                            }
+                            .mark-tit{
+                                position: absolute;
+                                white-space: nowrap;
+                                font-size: 12px;
+                                background: #ef6d57;
+                                color: #fff;
+                                bottom: 100%;
+                                left: 100%;
+                                border-radius: 20px;
+                                padding: 0 10px;
+                                height: 24px;
+                                line-height: 26px;
+                                margin-bottom: 6px;
+                                transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+                                transform-origin: left bottom;
+                                transform: scale(0);
+                                opacity: 0;
+                                visibility: hidden;
+                                z-index: 999;
+                                &::before{
+                                    content: "";
+                                    border: 10px solid transparent;
+                                    border-right-width: 10px;
+                                    border-right-color: #ef6d57;
+                                    border-bottom-width: 0px;
+                                    position: absolute;
+                                    left: 10px;
+                                    top: 22px;
+                                    transform: rotate(188deg);
+                                }
+                            }
+                            &::before{
+                                content: "";
+                                height: 6px;
+                                width: 6px;
+                                background: #f16339;
+                                border-radius: 50%;
+                                position: absolute;
+                                left: 100%;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                box-shadow: 0 0 0 4px rgba(241, 99, 57, 0.1);
+                                margin: 2px 8px;
+                                animation: flash 8s infinite;
+                            }
                         }
                         @keyframes flash {
                             0%, 50%, 100% {
@@ -1023,10 +1062,9 @@ export default {
                 padding: 0;
                 margin-top: 12px;
             }
-            .comments{
-                margin-top: 32px;
+            .comment-child-list{
                 padding-left: 24px;
-                .comments-content{
+                .comment-child-content{
                     margin-top: 12px;
                     line-height: 22px;
                     margin-left: 0px;

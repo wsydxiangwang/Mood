@@ -1,5 +1,8 @@
 <template>
-    <header :class="{qrccode, isUp}">
+    <header 
+        class="head-nav"
+        :class="{ qrccode, isUp }"
+    >
 
         <!-- Article Page -->
         <canvas v-if="like" id="qrccode"></canvas>
@@ -105,6 +108,7 @@ export default {
     watch: {
         curScroll: {
             handler(val, oldVal) {
+                
                 this.isUp = val > 100 && val - oldVal < 0 
 
                 if (val >= 100) {
