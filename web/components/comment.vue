@@ -187,7 +187,7 @@ export default {
     },
     mounted(){
         // get localStorage comment info
-        const info = JSON.parse(localStorage.getItem('comment'));
+        const info = JSON.parse(localStorage.getItem('comment'))
         if (info) {
             for (let i of ['name', 'email', 'image']) {
                 this.$set(this.form, i, info[i])
@@ -298,7 +298,9 @@ export default {
 
             const LoadingStartTime = new Date().getTime()
 
-            if (!this.form['image']) {
+            // image
+            const info = JSON.parse(localStorage.getItem('comment'))
+            if (!this.form['image'] || (info && info['name'] != this.form['name'])) {
                 this.form.image = Math.floor(Math.random() * 10 + 1)
             }
 
@@ -309,8 +311,8 @@ export default {
                 this.form.name == this.getInfo('name') ||
                 this.form.email === this.getInfo('email')
             ){
-                this.form.image = 1;
-                this.form.admin = true;
+                this.form.image = 1
+                this.form.admin = true
             }
 
             const content = this.form.content.trim().replace(/<script.*?>.*?<\/script>/ig, '')

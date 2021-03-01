@@ -20,8 +20,7 @@
 				class="puzzle-lost-box"
 				:style="'left:' + left_Num + 'px;'"
 			>
-				<canvas id="puzzle-shadow" ref="puzzleShadow"></canvas>
-				<canvas id="puzzle-lost" ref="puzzleLost"></canvas>
+				<canvas id="puzzle-lost" ref="puzzleShow"></canvas>
 			</div>
 			<p 
 				class="ver-tips"
@@ -62,7 +61,7 @@ export default {
 			imgRandom: "",
 			left_Num: 0,
 
-			refList: ['puzzleBox', 'puzzleShadow', 'puzzleLost']
+			refList: ['puzzleBox', 'puzzleShow']
 		}
 	},
 	watch: {
@@ -156,7 +155,7 @@ export default {
 			if (type == 'puzzleBox') {
 				canvas.globalCompositeOperation = "xor"
 				canvas.fillStyle = "rgba(255,255,255)"
-			} else if (type == 'puzzleLost') {
+			} else if (type == 'puzzleShow') {
 				let w = this.width,
 					h = this.height;
 				let img = new Image()
@@ -176,7 +175,7 @@ export default {
 			canvas.lineTo(X, Y + 3 * d)
 			canvas.closePath()
 
-			if (type == 'puzzleLost') {
+			if (type == 'puzzleShow') {
 				canvas.clip()
 			} else {
 				canvas.strokeStyle = "rgba(0,0,0,0)"
@@ -194,11 +193,11 @@ export default {
 		// 清空画布
 		clearCanvas() {
 			let c = this.$refs.puzzleBox;
-			let c_l = this.$refs.puzzleLost;
-			let c_s = this.$refs.puzzleShadow;
+			let c_l = this.$refs.puzzleShow;
+			// let c_s = this.$refs.puzzleShadow;
 			c.setAttribute("height", c.getAttribute("height"))
 			c_l.setAttribute("height", c.getAttribute("height"))
-			c_s.setAttribute("height", c.getAttribute("height"))
+			// c_s.setAttribute("height", c.getAttribute("height"))
 		},
 		// 按住滑块
 		startMove(e) {
@@ -219,7 +218,7 @@ export default {
 			if (this.moveStart === "" || (d < 0 || d > w - padding - PL_Size + 90)) {
 				return
 			}
-			for (let i of ['sliderBtn', 'puzzleLost', 'puzzleShadow']) {
+			for (let i of ['sliderBtn', 'puzzleShow']) {
 				this.$refs[i].style.left = d + "px"
 				this.$refs[i].style.transition = "inherit"
 			}
@@ -249,7 +248,7 @@ export default {
 				}, 1000)
 			}
 
-			const result = ['sliderBtn', 'puzzleLost', 'puzzleShadow']
+			const result = ['sliderBtn', 'puzzleShow']
 			
 			if (result.every(i => typeof i !== 'undefined') && !verResult) {
 				setTimeout(() => {
