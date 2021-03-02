@@ -3,7 +3,6 @@
         class="head-nav"
         :class="{ qrccode, isUp }"
     >
-
         <!-- Article Page -->
         <canvas v-if="like" id="qrccode"></canvas>
 
@@ -38,13 +37,13 @@
 
         <!-- liked hint -->
         <div class="like-hint-box" :class="{likeHint}" v-if="like">
-            <div class="like-hint">只能点赞一次哦, 感谢支持</div>
+            <div class="like-hint">只能点赞一次哦！</div>
             <span></span>
             <span></span>
         </div>
 
         <!-- Music Progress -->
-        <div class="musicBar" :style="{width: changeProgress}"></div>
+        <div class="musicBar" :style="{ width: progressLength }"></div>
 
         <!-- mobile music icon -->
         <div 
@@ -63,7 +62,7 @@
         </div>
         
         <!-- music -->
-        <audio id="music" loop="loop" preload="auto">
+        <audio id="music" loop preload="auto">
             <source type="audio/mpeg" :src="music">
         </audio>
 
@@ -81,7 +80,7 @@ export default {
             isStore: false,
             isTitle: false,
             timer: null,
-            changeProgress: 0,
+            progressLength: 0,
 
             percent: 0,
             mobileMusic: '',
@@ -108,10 +107,8 @@ export default {
     watch: {
         curScroll: {
             handler(val, oldVal) {
-                
-                this.isUp = val > 100 && val - oldVal < 0 
-
                 if (val >= 100) {
+                    this.isUp = val - oldVal < 0 
                     this.isTitle = true
                     this.mobileMusic = 'show'
                 } else {
@@ -137,25 +134,29 @@ export default {
                 this.likeTime = setTimeout(() => this.likeHint = false, 3000)
             } else {
                 this.$axios.put(`article_like/${this.like}`).then(res => {
-                    this.$emit('liked', true)
-                    this.isLike = true
-                    localStorage.setItem(`like-${this.like}`, true)
+                    if (res.data.status === 1) {
+                        this.isLike = true
+                        this.$emit('liked', true)
+                        localStorage.setItem(`like-${this.like}`, true)
+                    } else {
+                        alert(res.data.body.message)
+                    }
                 })
             }
         },
         changeMusic(){
-            let music = document.getElementById("music")
+            let music = document.getElementById("music"),
+                duration = music.duration,
+                result, n;
+
             this.isStore = !this.isStore
+
             if (this.isStore) {
                 music.play()
                 this.timer = setInterval(() => {
-                    const result = music.currentTime / music.duration
-                    const n = (100 * result).toFixed(2)
-
-                    // Loop 
-                    n >= 100 && clearInterval(this.timer)
-
-                    this.changeProgress = n + '%'
+                    result = music.currentTime / duration
+                    n = (100 * result).toFixed(2)
+                    this.progressLength = n + '%'
                     this.percent = result
                 }, 50)
             } else {
