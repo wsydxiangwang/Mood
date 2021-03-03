@@ -1,50 +1,50 @@
 <template>
-    <header 
-        class="head-nav"
-        :class="[ qrccode, changeClass ]"
-    >
-        <!-- Article Page -->
-        <canvas v-if="like" id="qrccode"></canvas>
-
-        <div class="l icon">
-            <!-- <span class="iconfont icon-logo3 logo" @click="toIndex"></span> -->
-            <div class="logo-img" @click="toIndex">
-                <img src="/image/logo/logo3.png">
-            </div>
-            <span 
-                class="iconfont" 
-                :class="isStore ? 'icon-pause' : 'icon-play'" 
-                @click="changeMusic"
-            ></span>
-        </div>
-
-        <div class="title" :class="{active: isTitle}">{{title}}</div>
-
-        <div class="r icon">
+    <header>
+        <div class="header-content" :class="[ qrccode, changeClass ]">
             <!-- Article Page -->
-            <template v-if="like">
-                <span class="iconfont icon-wechat" @click="wechat"></span>
+            <canvas v-if="like" id="qrccode"></canvas>
+
+            <div class="l icon">
+                <!-- <span class="iconfont icon-logo3 logo" @click="toIndex"></span> -->
+                <div class="logo-img" @click="toIndex">
+                    <img src="/image/logo/logo3.png">
+                </div>
                 <span 
-                    class="iconfont icon-like" 
-                    :class="{like: isLike}"
-                    @click="onLike"
+                    class="iconfont" 
+                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    @click="changeMusic"
                 ></span>
-            </template>
-            <span class="myself" @click="myself">
-                <img :src="$store.state.data.base.admin_avatar">
-            </span>
+            </div>
+
+            <div class="title" :class="{active: isTitle}">{{title}}</div>
+
+            <div class="r icon">
+                <!-- Article Page -->
+                <template v-if="like">
+                    <span class="iconfont icon-wechat"></span>
+                    <span 
+                        class="iconfont icon-like" 
+                        :class="{like: isLike}"
+                        @click="onLike"
+                    ></span>
+                </template>
+                <span class="myself" @click="myself">
+                    <img :src="$store.state.data.base.admin_avatar">
+                </span>
+            </div>
+
+            <!-- liked hint -->
+            <div class="like-hint-box" :class="{likeHint}" v-if="like">
+                <div class="like-hint">只能点赞一次哦！</div>
+                <span></span>
+                <span></span>
+            </div>
+
+            <!-- Music Progress -->
+            <div class="musicBar" :style="{ width: progressLength }"></div>
+        
         </div>
-
-        <!-- liked hint -->
-        <div class="like-hint-box" :class="{likeHint}" v-if="like">
-            <div class="like-hint">只能点赞一次哦！</div>
-            <span></span>
-            <span></span>
-        </div>
-
-        <!-- Music Progress -->
-        <div class="musicBar" :style="{ width: progressLength }"></div>
-
+    
         <!-- mobile music icon -->
         <div 
             class="music-btn" 
@@ -60,6 +60,7 @@
                 :class="isStore ? 'icon-pause' : 'icon-play'" 
             ></span>
         </div>
+    
         
         <!-- music -->
         <audio id="music" loop preload="auto">
@@ -84,7 +85,7 @@ export default {
             default: ''
         },
         like: {
-            type: Boolean,
+            type: String,
             default: false
         },
         sticky: {
@@ -118,12 +119,19 @@ export default {
                 QRCode.toCanvas(canvas, window.location.href)
             })
         }        
+        window.addEventListener('click', this.wechat)
         // isLike
         this.isLike = !!localStorage.getItem(`like-${this.like}`)
+    },
+    beforeDestroy() {
+        window.removeEventListener('click', this.wechat)
     },
     watch: {
         curScroll: {
             handler(val, oldVal) {
+                if (!val) {
+                    return
+                }
                 if (val >= 100) {
                     if (this.sticky) {
                         if (val - oldVal < 0) {
@@ -134,10 +142,12 @@ export default {
                     }
                     this.isTitle = true
                     this.mobileMusic = 'show'
+                    console.log(2,val)
                 } else {
                     this.changeClass = ''
                     this.isTitle = false
-                    this.mobileMusic = this.mobileMusic ? 'exit' : ''
+                    this.mobileMusic = 'exit'
+                    console.log(1,val)
                 }
             },
             immediate: true
@@ -171,7 +181,7 @@ export default {
         changeMusic(){
             let music = document.getElementById("music"),
                 duration = music.duration,
-                result, n;
+                result;
 
             this.isStore = !this.isStore
 
@@ -179,8 +189,7 @@ export default {
                 music.play()
                 this.timer = setInterval(() => {
                     result = music.currentTime / duration
-                    n = (100 * result).toFixed(2)
-                    this.progressLength = n + '%'
+                    this.progressLength = (100 * result).toFixed(2) + '%'
                     this.percent = result
                 }, 50)
             } else {
@@ -188,8 +197,12 @@ export default {
                 clearInterval(this.timer)
             }
         },
-        wechat(){
-            this.qrccode = !this.qrccode
+        wechat(e){
+            if (e.target.classList.value == "iconfont icon-wechat") {
+                this.qrccode = this.qrccode ? '' : 'qrccode'
+            } else {
+                this.qrccode = ''
+            }
         },
         toIndex(){
             this.$router.push('/')
@@ -222,7 +235,7 @@ export default {
         top: -50px;
     }
 }
-header{
+.header-content{
     position: fixed;
     top: 0;
     left: 0;
@@ -237,18 +250,6 @@ header{
     background: var(--color-bg-primary);
     z-index: 99999;
     transition: all .3s;
-    &.show{
-        position: fixed;
-        animation: headShow 0.6s both;
-        box-shadow: 0 1px 8px #f0f9ff;
-        background: rgba(255, 255, 255, 0.9);
-    }
-    &.exit{
-        position: fixed;
-        animation: headExit 0.6s both;
-        box-shadow: 0 1px 8px #f0f9ff;
-        background: rgba(255, 255, 255, 0.9);
-    }
     .musicBar{
         position: absolute;
         left: 0;
@@ -436,8 +437,20 @@ header{
     }
 }
 @media screen and (max-width: 600px) {
-    header{
+    .header-content{
         position: absolute;
+        &.show{
+            position: fixed;
+            animation: headShow 0.6s both;
+            box-shadow: 0 1px 8px #f0f9ff;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        &.exit{
+            position: fixed;
+            animation: headExit 0.6s both;
+            box-shadow: 0 1px 8px #f0f9ff;
+            background: rgba(255, 255, 255, 0.9);
+        }
         .scrollbar{
             position: fixed;
             height: 1px;

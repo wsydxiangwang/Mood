@@ -16,11 +16,11 @@ export default {
         window.removeEventListener('scroll', this.scrollFn)
     },
     methods: {
-        handleScroll () {            
-            const t = this.getWin('scrollTop'),
-                  h = this.getWin('scrollHeight'),
-                  windwH = this.getWin('clientHeight');
-            if (h == windwH) {  // 路由切换 兼容模式
+        handleScroll () {
+            const type = ['scrollTop', 'scrollHeight', 'clientHeight']
+            const [t, h, windwH] = type.map(i => this.getWin(i))
+            
+            if (h == windwH) {  // 兼容模式 路由切换
                 return
             }
             this.curScroll = t

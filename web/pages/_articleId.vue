@@ -36,23 +36,17 @@
 
 <script>
 import Comment from '@/components/comment'
+import scrollMixin from '~/mixin/scroll.js'
 export default {
+    mixins: [ scrollMixin ],
 	components: { Comment },
     data(){
         return{
             title: false,
             isLike: false,
-
-            timer: null,
-            postProgress: 0,
-
-            scrollTop: 0,
-            timerTop: null,
-            scrollTopBtn: false,
-            loading: true,
-
             commentTotal: 0,
-
+            contentHeight: 0,
+            clientHeight: 0,
             header: true
         }
     },
@@ -66,37 +60,49 @@ export default {
         }
     },
     computed: {
-		info(){
+		info() {
 			return this.$store.state.data
+        },
+        /**
+         * Article Progress
+         */
+        postProgress() {
+            if (this.contentHeight < this.clientHeight) {
+                return '100%'
+            }
+            if (!this.curScroll) {
+                return
+            }
+            const h = this.contentHeight - this.clientHeight + 100
+            const n = (100 * (this.curScroll / h)).toFixed(4)
+            return n < 100 ? n + '%' : '100%'
         }
     },
+    mounted() {
+        setTimeout(() => {
+            this.clientHeight = this.getWin('clientHeight')
+            this.contentHeight = this.getHeight()
+        })
+    },
     methods: {
+        getHeight() {
+            const domList = ['.content', '.stuff', '.title']
+            const height = domList.reduce((t, i) => {
+                t += document.querySelector(i).offsetHeight
+                return t
+            }, 0)
+            return height
+        },
         oImage(e) {
             if (e.target.tagName === 'IMG') {
                 console.log(e)
             }
         },
-        liked(){
+        liked() {
             this.data.like++
         },
-        totalComment(val){
-            this.commentTotal = val;
-        },
-        handleScroll(){
-            /**
-             * Article Progress
-             */
-            this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-            const h1 = document.getElementsByClassName('content')[0];
-            const h2 = document.getElementsByClassName('stuff')[0];
-            const h3 = document.getElementsByTagName('h1')[0];
-
-            const h = h1.offsetHeight + h2.offsetHeight + h3.offsetHeight - document.documentElement.clientHeight - 100;
-            const n = (100 * (this.scrollTop / h)).toFixed(4);
-
-            if(n < 110) this.postProgress = n + '%';
-
+        totalComment(val) {
+            this.commentTotal = val
         },
         myself(){
             this.$router.push('/Libai')
