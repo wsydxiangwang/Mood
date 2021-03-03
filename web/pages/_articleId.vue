@@ -8,6 +8,7 @@
             :music="data.music.url" 
             :title="data.title"
             :like="data._id"
+            :sticky="true"
             @liked="liked"
         />
 
@@ -299,12 +300,12 @@ export default {
 @media screen and (max-width: 600px) {
     .articleld{
         ::v-deep header{
-            &.isUp{
-                position: fixed;
-                box-shadow: 0 1px 8px #f0f9ff;
-                background: rgba(255, 255, 255, 0.9);
-                animation: headShow 0.6s both;
-            }
+            // &.isUp{
+            //     position: fixed;
+            //     box-shadow: 0 1px 8px #f0f9ff;
+            //     background: rgba(255, 255, 255, 0.9);
+            //     animation: headShow 0.6s both;
+            // }
             .myself{
                 display: none;
             }
@@ -351,14 +352,5 @@ export default {
     }
 }
 
-@keyframes headShow {
-    from {
-        opacity: 0;
-        top: -50px;
-    }
-    to {
-       top: 0;
-       opacity: 1; 
-    }
-}
+
 </style>

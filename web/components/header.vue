@@ -1,7 +1,7 @@
 <template>
     <header 
         class="head-nav"
-        :class="{ qrccode, isUp }"
+        :class="[ qrccode, changeClass ]"
     >
         <!-- Article Page -->
         <canvas v-if="like" id="qrccode"></canvas>
@@ -74,7 +74,24 @@ import QRCode from "qrcode"
 import scrollMixin from '~/mixin/scroll.js'
 export default {
     mixins: [scrollMixin],
-    props: ['music', 'title', 'github', 'like'],
+    props: {
+        music: {
+            type: String,
+            default: ''
+        },
+        title: {
+            type: String,
+            default: ''
+        },
+        like: {
+            type: Boolean,
+            default: false
+        },
+        sticky: {
+            type: Boolean,
+            default: false
+        }
+    },
     data(){
         return{
             isStore: false,
@@ -88,7 +105,7 @@ export default {
 
             isLike: false,
             qrccode: false,
-            isUp: false,
+            changeClass: '',
 
             likeTime: null,
             likeHint: false,
@@ -108,10 +125,17 @@ export default {
         curScroll: {
             handler(val, oldVal) {
                 if (val >= 100) {
-                    this.isUp = val - oldVal < 0 
+                    if (this.sticky) {
+                        if (val - oldVal < 0) {
+                            this.changeClass = 'show'
+                        } else if (this.changeClass == 'show') {
+                            this.changeClass = 'exit'
+                        }
+                    }
                     this.isTitle = true
                     this.mobileMusic = 'show'
                 } else {
+                    this.changeClass = ''
                     this.isTitle = false
                     this.mobileMusic = this.mobileMusic ? 'exit' : ''
                 }
@@ -178,6 +202,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes headShow {
+    from {
+        opacity: 0;
+        top: -50px;
+    }
+    to {
+       top: 0;
+       opacity: 1; 
+    }
+}
+@keyframes headExit {
+    from {
+       top: 0;
+       opacity: 1; 
+    }
+    to {
+        opacity: 0;
+        top: -50px;
+    }
+}
 header{
     position: fixed;
     top: 0;
@@ -193,6 +237,18 @@ header{
     background: var(--color-bg-primary);
     z-index: 99999;
     transition: all .3s;
+    &.show{
+        position: fixed;
+        animation: headShow 0.6s both;
+        box-shadow: 0 1px 8px #f0f9ff;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    &.exit{
+        position: fixed;
+        animation: headExit 0.6s both;
+        box-shadow: 0 1px 8px #f0f9ff;
+        background: rgba(255, 255, 255, 0.9);
+    }
     .musicBar{
         position: absolute;
         left: 0;
