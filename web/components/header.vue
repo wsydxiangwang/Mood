@@ -11,12 +11,12 @@
                 </div>
                 <span 
                     class="iconfont" 
-                    :class="isStore ? 'icon-pause' : 'icon-play'" 
+                    :class=[palyStatus]
                     @click="changeMusic"
                 ></span>
             </div>
 
-            <div class="title" :class="{active: isTitle}">{{title}}</div>
+            <div class="title" :class="{ active: isTitle }">{{title}}</div>
 
             <div class="r icon">
                 <!-- Article Page -->
@@ -42,7 +42,6 @@
 
             <!-- Music Progress -->
             <div class="musicBar" :style="{ width: progressLength }"></div>
-        
         </div>
     
         <!-- mobile music icon -->
@@ -57,10 +56,9 @@
             </svg>
             <span 
                 class="iconfont" 
-                :class="isStore ? 'icon-pause' : 'icon-play'" 
+                :class=[palyStatus]
             ></span>
         </div>
-    
         
         <!-- music -->
         <audio id="music" loop preload="auto">
@@ -95,7 +93,7 @@ export default {
     },
     data(){
         return{
-            isStore: false,
+            palyStatus: 'icon-play',
             isTitle: false,
             timer: null,
             progressLength: 0,
@@ -110,6 +108,8 @@ export default {
 
             likeTime: null,
             likeHint: false,
+
+            played: false
         }
     },
     mounted(){
@@ -119,17 +119,18 @@ export default {
                 QRCode.toCanvas(canvas, window.location.href)
             })
         }        
-        window.addEventListener('click', this.wechat)
+        window.addEventListener('touchstart', this.touch)
+
         // isLike
         this.isLike = !!localStorage.getItem(`like-${this.like}`)
     },
     beforeDestroy() {
-        window.removeEventListener('click', this.wechat)
+        window.removeEventListener('touchstart', this.touch)
     },
     watch: {
         curScroll: {
             handler(val, oldVal) {
-                if (!val) {
+                if (val === null || val === undefined) {
                     return
                 }
                 if (val >= 100) {
@@ -140,15 +141,17 @@ export default {
                             this.changeClass = 'exit'
                         }
                     }
-                    this.isTitle = true
                     this.mobileMusic = 'show'
-                    console.log(2,val)
                 } else {
                     this.changeClass = ''
-                    this.isTitle = false
-                    this.mobileMusic = 'exit'
-                    console.log(1,val)
+                    if (this.mobileMusic == 'show') {
+                        this.mobileMusic = 'exit'
+                    }
                 }
+                if (!this.played) {     // PC
+                    this.changeMusic()
+                }
+                this.isTitle = val >= 100
             },
             immediate: true
         }
@@ -165,27 +168,29 @@ export default {
             if (this.isLike) {
                 clearTimeout(this.likeTime)
                 this.likeHint = true
-                this.likeTime = setTimeout(() => this.likeHint = false, 3000)
+                this.likeTime = setTimeout(() => this.likeHint = false, 2000)
             } else {
                 this.$axios.put(`article_like/${this.like}`).then(res => {
-                    if (res.data.status === 1) {
-                        this.isLike = true
-                        this.$emit('liked', true)
-                        localStorage.setItem(`like-${this.like}`, true)
-                    } else {
-                        alert(res.data.body.message)
-                    }
+                    this.isLike = true
+                    this.$emit('liked', true)
+                    localStorage.setItem(`like-${this.like}`, true)
                 })
             }
         },
         changeMusic(){
+            this.played = true
             let music = document.getElementById("music"),
                 duration = music.duration,
                 result;
 
-            this.isStore = !this.isStore
+            // WeChat Browser
+            music.ondurationchange = () => {
+                duration = music.duration
+            }
 
-            if (this.isStore) {
+            this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
+
+            if (this.palyStatus == 'icon-pause') {
                 music.play()
                 this.timer = setInterval(() => {
                     result = music.currentTime / duration
@@ -197,7 +202,12 @@ export default {
                 clearInterval(this.timer)
             }
         },
-        wechat(e){
+        touch(e){
+            // Played for the first time
+            if (!this.played && e.target.classList.value != 'iconfont icon-play') {
+                this.changeMusic()
+            }
+            // Wechat code
             if (e.target.classList.value == "iconfont icon-wechat") {
                 this.qrccode = this.qrccode ? '' : 'qrccode'
             } else {
@@ -458,6 +468,9 @@ export default {
         .iconfont.logo{
             font-size: 28px;
             margin: 4px 0 0;
+        }
+        .like-hint-box{
+            right: 45px;
         }
     }
     .music-btn{

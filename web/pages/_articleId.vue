@@ -1,6 +1,21 @@
 <template>
     <div class="articleld">
 
+        <div class="skeleton">
+            <h2></h2>
+            <h3></h3>
+            <div>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+            <div>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+
         <!-- Article Progress -->
         <div class="scrollbar" :style="{ width: postProgress }"></div>
 
@@ -128,6 +143,67 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes width1 {
+    0%{ width: 60%; }
+    60%{ width: 80%; }
+    100%{ width: 60%; }
+}
+@keyframes width2 {
+    0%{ width: 40%; }
+    60%{ width: 80%; }
+    100%{ width: 40%; }
+}
+@keyframes width3 {
+    0%{ width: 50%; }
+    60%{ width: 70%; }
+    100%{ width: 50%; }
+}
+.skeleton{
+    width: 800px;
+    margin: 130px auto 100px;
+    h2{
+        background: #e4e4e4;
+        height: 40px;
+        width: 40%;
+        border-radius: 0px;
+    }
+    h3{
+        background: #e4e4e4;
+        height: 15px;
+        margin-top: 14px;
+        width: 80%;
+    }
+    div{
+        margin-top: 40px;
+        p{
+            height: 20px;
+            background: #e7e7e7;
+            margin-top: 20px;
+        }
+        &:first-of-type{
+            p:nth-of-type(1){
+                animation: width1 1.8s linear infinite;
+            }
+            p:nth-of-type(2){
+                animation: width2 1.8s linear infinite;
+            }
+            p:nth-of-type(3){
+                animation: width3 1.2s linear infinite;
+            }
+        }
+        &:last-of-type{
+            p:nth-of-type(1){
+                animation: width1 1.3s linear infinite;
+            }
+            p:nth-of-type(2){
+                animation: width2 1.4s linear infinite;
+            }
+            p:nth-of-type(3){
+                animation: width3 1.2s linear infinite;
+            }
+        }
+    }
+}
 .articleld {
     position: absolute;
     width: 100%;

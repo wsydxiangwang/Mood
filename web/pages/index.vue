@@ -278,7 +278,7 @@ export default {
 	}
 	.cover{
 		width: 100%;
-		height: 100vh;
+		height: 100%;
 		position: relative;
 		z-index: 9999;
 		overflow: hidden;
