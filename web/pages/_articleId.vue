@@ -182,10 +182,10 @@ export default {
         }
         &:first-of-type{
             p:nth-of-type(1){
-                animation: width1 1.8s linear infinite;
+                animation: width1 1.3s linear infinite;
             }
             p:nth-of-type(2){
-                animation: width2 1.8s linear infinite;
+                animation: width2 1.4s linear infinite;
             }
             p:nth-of-type(3){
                 animation: width3 1.2s linear infinite;

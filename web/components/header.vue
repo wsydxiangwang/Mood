@@ -84,7 +84,7 @@ export default {
         },
         like: {
             type: String,
-            default: false
+            default: ''
         },
         sticky: {
             type: Boolean,
