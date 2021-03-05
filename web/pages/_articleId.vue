@@ -1,9 +1,16 @@
 <template>
     <div class="articleld">
 
-        <div class="skeleton">
+        <!-- ssr 待定-->
+        <!-- <div class="skeleton" v-if="Object.values(data).length < 0">
             <h2></h2>
-            <h3></h3>
+            <h3>
+                <p></p>
+                <p></p>
+                <p></p>
+                <p></p>
+                <p></p>
+            </h3>
             <div>
                 <p></p>
                 <p></p>
@@ -14,8 +21,9 @@
                 <p></p>
                 <p></p>
             </div>
-        </div>
+        </div> -->
 
+    
         <!-- Article Progress -->
         <div class="scrollbar" :style="{ width: postProgress }"></div>
 
@@ -24,10 +32,11 @@
             :title="data.title"
             :like="data._id"
             :sticky="true"
+            :articlePage="true"
             @liked="liked"
         />
 
-        <section>
+        <section v-if="data">
             <h1 class="title">{{ data.title }}</h1>
             <div class="stuff">
                 <span>{{ data.time.month.cn }}月 {{ data.time.day.on }}, {{ data.time.year }}</span>
@@ -37,7 +46,7 @@
                 <span>喜欢 {{ data.like }}</span>
             </div>
 
-            <div class="content" @click="oImage($event)">
+            <div class="content">
                 <client-only>
                     <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
                 </client-only>
@@ -164,14 +173,18 @@ export default {
     h2{
         background: #e4e4e4;
         height: 40px;
-        width: 40%;
+        width: 208px;
         border-radius: 0px;
     }
     h3{
-        background: #e4e4e4;
-        height: 15px;
         margin-top: 14px;
-        width: 80%;
+        display: flex;
+        p{
+            width: 50px;
+            height: 15px;
+            margin-right: 12px;
+            background: #e4e4e4;
+        }
     }
     div{
         margin-top: 40px;

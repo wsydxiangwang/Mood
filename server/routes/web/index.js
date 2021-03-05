@@ -178,7 +178,7 @@ module.exports = (app, plugin, model) => {
 
     router.get('/myself', async (req, res) => {
         const result = await Myself.findOne()
-        res.send(RequestResult(result))
+        res.send(RequestResult(1, result))
     })
 
     // subscribe

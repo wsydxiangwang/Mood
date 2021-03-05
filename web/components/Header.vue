@@ -3,10 +3,9 @@
         <div class="header-content" :class="[ qrccode, changeClass ]">
             <!-- Article Page -->
             <canvas v-if="like" id="qrccode"></canvas>
-
             <div class="l icon">
                 <!-- <span class="iconfont icon-logo3 logo" @click="toIndex"></span> -->
-                <div class="logo-img" @click="toIndex">
+                <div class="logo-img" @click="toPage('/')">
                     <img src="/image/logo/logo3.png">
                 </div>
                 <span 
@@ -28,7 +27,7 @@
                         @click="onLike"
                     ></span>
                 </template>
-                <span class="myself" @click="myself">
+                <span class="myself" @click="toPage('/about')">
                     <img :src="$store.state.data.base.admin_avatar">
                 </span>
             </div>
@@ -89,6 +88,10 @@ export default {
         sticky: {
             type: Boolean,
             default: false
+        },
+        articlePage: {
+            type: Boolean,
+            default: false
         }
     },
     data(){
@@ -113,69 +116,50 @@ export default {
         }
     },
     mounted(){
-        if (this.like) {
+        // Article Page
+        if (this.articlePage) {
             this.$nextTick(() => {
                 const canvas = document.getElementById('qrccode')
                 QRCode.toCanvas(canvas, window.location.href)
             })
-        }        
-        window.addEventListener('touchstart', this.touch)
-
-        // isLike
-        this.isLike = !!localStorage.getItem(`like-${this.like}`)
+            this.isLike = !!localStorage.getItem(`like-${this.like}`)
+            this.$watch('curScroll', this.scroll, { immediate: true })
+            window.addEventListener('touchstart', this.touch)
+        }
     },
     beforeDestroy() {
-        window.removeEventListener('touchstart', this.touch)
-    },
-    watch: {
-        curScroll: {
-            handler(val, oldVal) {
-                if (val === null || val === undefined) {
-                    return
-                }
-                if (val >= 100) {
-                    if (this.sticky) {
-                        if (val - oldVal < 0) {
-                            this.changeClass = 'show'
-                        } else if (this.changeClass == 'show') {
-                            this.changeClass = 'exit'
-                        }
-                    }
-                    this.mobileMusic = 'show'
-                } else {
-                    this.changeClass = ''
-                    if (this.mobileMusic == 'show') {
-                        this.mobileMusic = 'exit'
-                    }
-                }
-                if (!this.played) {     // PC
-                    this.changeMusic()
-                }
-                this.isTitle = val >= 100
-            },
-            immediate: true
-        }
+        this.articlePage && window.removeEventListener('touchstart', this.touch)
     },
     computed: {
         // mobile music progress
         dashOffset() {
             return (1 - this.percent) * this.dashArray
-        },
+        }
     },
     methods: {
-        // like +1
-        onLike(){
-            if (this.isLike) {
-                clearTimeout(this.likeTime)
-                this.likeHint = true
-                this.likeTime = setTimeout(() => this.likeHint = false, 2000)
-            } else {
-                this.$axios.put(`article_like/${this.like}`).then(res => {
-                    this.isLike = true
-                    this.$emit('liked', true)
-                    localStorage.setItem(`like-${this.like}`, true)
-                })
+        scroll(val, oldVal){
+            if (val === null || val === undefined) {
+                return
             }
+            if (val >= 100) {
+                if (this.sticky) {
+                    if (val - oldVal < 0) {
+                        this.changeClass = 'show'
+                    } else if (this.changeClass == 'show') {
+                        this.changeClass = 'exit'
+                    }
+                }
+                this.mobileMusic = 'show'
+            } else {
+                this.changeClass = ''
+                if (this.mobileMusic == 'show') {
+                    this.mobileMusic = 'exit'
+                }
+            }
+            if (!this.played) {     // PC
+                this.changeMusic()
+            }
+            this.isTitle = val >= 100
         },
         changeMusic(){
             this.played = true
@@ -203,23 +187,35 @@ export default {
             }
         },
         touch(e){
+            const className = e.target.classList.value
             // Played for the first time
-            if (!this.played && e.target.classList.value != 'iconfont icon-play') {
+            if (!this.played && className != 'iconfont icon-play') {
                 this.changeMusic()
             }
             // Wechat code
-            if (e.target.classList.value == "iconfont icon-wechat") {
+            if (className == "iconfont icon-wechat") {
                 this.qrccode = this.qrccode ? '' : 'qrccode'
             } else {
                 this.qrccode = ''
             }
         },
-        toIndex(){
-            this.$router.push('/')
-        }, 
-        myself(){
-            this.$router.push('/about')
+        // like +1
+        onLike(){
+            if (this.isLike) {
+                clearTimeout(this.likeTime)
+                this.likeHint = true
+                this.likeTime = setTimeout(() => this.likeHint = false, 2000)
+            } else {
+                this.$axios.put(`article_like/${this.like}`).then(res => {
+                    this.isLike = true
+                    this.$emit('liked', true)
+                    localStorage.setItem(`like-${this.like}`, true)
+                })
+            }
         },
+        toPage(type){
+            this.$router.push(type)
+        }
     }
 }
 </script>

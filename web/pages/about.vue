@@ -23,13 +23,12 @@ export default {
     },
     head () {
         return {
-            title: `Hello ${this.info.web_name}`
+            title: `Hello ${this.info.base.name}`
         }
     },
     mounted(){
-        // 背景音乐
-        if(this.info.bg.bg_about){
-            this.music = this.info.bg.bg_about
+        if (this.info.page_music.about) {
+            this.music = this.info.page_music.about
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }
@@ -40,33 +39,31 @@ export default {
         }
     },
     async asyncData(context){
-        const {data} = await context.$axios.get('myself')
-        if(data.status === 1){
-            return {data: data.body}
-        }else{
-            return {data: ''}
-        }
+        const { data } = await context.$axios.get('myself')
+        return { data: data.status == 1 ? data.body : ''}
     },
 }
 </script>
 
 <style lang="scss" scoped>
-.about * {
-    font-size: initial;
-}
+// .about * {
+//     font-size: initial;
+// }
 .container{
     ::v-deep 
     .markdown-body{
-    width: 100%;
-    max-width: 800px;
-    margin: auto;
-    padding: 100px 20px 50px;
+        width: 100%;
+        max-width: 800px;
+        margin: auto;
+        padding: 100px 20px 50px;
         box-shadow: none !important;
         min-height: auto;
+        transition: none;
         p{
             line-height: 30px;
             margin: 0 0 18px;
             font-size: 16px;
+            transition: none;
             *{
                 font-size: 16px;
             }
@@ -81,6 +78,7 @@ export default {
             padding: 0;
             margin: 0 0 18px;
             line-height: 28px;
+            transition: none;
         }
         blockquote{
             background: white;
@@ -162,7 +160,7 @@ export default {
         }
     }
     @media screen and (max-width: 600px) {
-    ::v-deep 
+        ::v-deep 
         .markdown-body{
             iframe{
                 height: 310px;
