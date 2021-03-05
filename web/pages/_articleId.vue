@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Comment from '@/components/comment'
+import Comment from '@/components/Comment'
 import scrollMixin from '~/mixin/scroll.js'
 export default {
     mixins: [ scrollMixin ],

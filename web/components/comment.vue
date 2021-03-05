@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import PuzzleVerification from '@/components/puzzleVerification'
+import PuzzleVerification from '@/components/PuzzleVerification'
 export default {
     props: ['id', 'title'],
     components: { 

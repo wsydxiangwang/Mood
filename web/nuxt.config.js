@@ -45,7 +45,7 @@ module.exports = {
       changeOrigin: true,
     },
   }, 
-  loading: '~/components/loadingTab.vue',
+  loading: '~/components/LoadingTab.vue',
   css: ["~assets/css/main.css", "~assets/css/iconfont.css"],
   plugins: [
     { src: '@/plugins/vue-mavon-editor', ssr: true },
