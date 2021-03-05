@@ -106,7 +106,6 @@ var common = {
             axios.get(type, { params }).then(res => {
                 const data = res.data.body
                 const result = data.page == data.totalPage ? 'nomore' : 'more'
-                const speed = from ? 10 : 6
 
                 // loading 效果最少 500ms
                 let timer = 500 - new Date().getTime() + time

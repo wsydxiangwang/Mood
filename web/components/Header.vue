@@ -85,11 +85,15 @@ export default {
             type: String,
             default: ''
         },
-        sticky: {
+        sticky: {               // 吸顶动画
             type: Boolean,
             default: false
         },
-        articlePage: {
+        articlePage: {          // 文章页
+            type: Boolean,
+            default: false
+        },
+        playMusic: {            // 自动播放音乐
             type: Boolean,
             default: false
         }
@@ -123,12 +127,14 @@ export default {
                 QRCode.toCanvas(canvas, window.location.href)
             })
             this.isLike = !!localStorage.getItem(`like-${this.like}`)
-            this.$watch('curScroll', this.scroll, { immediate: true })
-            window.addEventListener('touchstart', this.touch)
         }
+        if (this.sticky) {
+            this.$watch('curScroll', this.scroll, { immediate: true })
+        }
+        this.playMusic && window.addEventListener('touchstart', this.touch)
     },
     beforeDestroy() {
-        this.articlePage && window.removeEventListener('touchstart', this.touch)
+        this.playMusic && window.removeEventListener('touchstart', this.touch)
     },
     computed: {
         // mobile music progress
@@ -142,12 +148,10 @@ export default {
                 return
             }
             if (val >= 100) {
-                if (this.sticky) {
-                    if (val - oldVal < 0) {
-                        this.changeClass = 'show'
-                    } else if (this.changeClass == 'show') {
-                        this.changeClass = 'exit'
-                    }
+                if (val - oldVal < 0) {
+                    this.changeClass = 'show'
+                } else if (this.changeClass == 'show') {
+                    this.changeClass = 'exit'
                 }
                 this.mobileMusic = 'show'
             } else {
@@ -156,7 +160,7 @@ export default {
                     this.mobileMusic = 'exit'
                 }
             }
-            if (!this.played) {     // PC
+            if (this.playMusic && !this.played) {     // PC
                 this.changeMusic()
             }
             this.isTitle = val >= 100

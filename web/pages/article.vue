@@ -1,6 +1,11 @@
 <template>
     <div class="container article-list">
-        <Header :music="music" title="加油啦" v-if="refresh" />
+        <Header 
+            :music="music" 
+            title="Article List" 
+            v-if="refresh" 
+            :sticky="true"
+        />
         <section class="list">
             <div class="year-list" v-if="Object.keys(list.data).length == 0">
                 空无一物，就像你我一样。
@@ -50,7 +55,7 @@ export default {
         return{
             music: '',
             enMon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-            refresh: false
+            refresh: true
         }
     },
     head () {
@@ -63,19 +68,16 @@ export default {
 			return this.$store.state.data
 		}
     },
-    watch: {
-        isScrollBottom: {
-            handler(val) {
-                val && this.load()
-            }
-        }
-    },
     mounted(){
         if (this.info.page_music.mood) {
             this.music = this.info.page_music.mood
-            this.refresh = true
+            this.refresh = false
+            this.$nextTick(() => this.refresh = true)
         }
         this.$loadStatus(this.list)
+        this.$watch('isScrollBottom', (val) => {
+            val && this.load()
+        }, { immediate: true })
     },
     methods: {
         load(){
@@ -97,7 +99,7 @@ export default {
                         }
                     }
                 } else {
-                    alert(res.data)
+                    alert(JSON.stringify(res))
                 }
             }, 'article')
         },

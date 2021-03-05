@@ -32,6 +32,7 @@
             :title="data.title"
             :like="data._id"
             :sticky="true"
+            :playMusic="true"
             :articlePage="true"
             @liked="liked"
         />

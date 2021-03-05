@@ -1,12 +1,17 @@
 <template>
     <div class="container">
-        <Header v-if="refresh" :music="music" />
+        <Header 
+            v-if="refresh" 
+            :music="music" 
+            :sticky="true" 
+            title="予给你一封信"
+        />
         <section class="content">
-            <div v-if="!data.data || data.data.length == 0">
+            <div v-if="!list.data || list.data.length == 0" class="data-null">
                 空无一物，就像你我一样。
             </div>
             <template v-else>
-                <div v-for="(item, index) in data.data" :key="index" class="item">
+                <div v-for="(item, index) in list.data" :key="index" class="item">
                     <div class="text" v-html="item.contentHtml"></div>
                     <div class="time">{{ item.time }}</div>
                 </div>
@@ -17,35 +22,40 @@
 </template>
 
 <script>
+import scrollMixin from '~/mixin/scroll.js'
 export default {
+    mixins: [scrollMixin],
     data(){
         return{
             music: '',
-            refresh: false
+            refresh: true
         }
     },
     head () {
         return {
-            title: `一封信 | ${this.info.web_name}`
+            title: `Hello ${this.info.base.name}`
         }
     },
     mounted(){
-        // 背景音乐
         if (this.info.page_music.letter) {
             this.music = this.info.page_music.letter
-            this.refresh = true
+            this.refresh = false
+            this.$nextTick(() => this.refresh = true)
         }
-    },
-    watch: {
-        isScrollBottom: {
-            handler(val) {
-                val && this.load()
-            }
-        }
+        this.$loadStatus(this.list)
+        this.$watch('isScrollBottom', (val) => {
+            val && this.load()
+        }, { immediate: true })
     },
     methods: {
         load() {
-
+            this.$loadMore('envelope', (res) => {
+                if (res.status === 1) {
+                    this.list.data = this.list.data.concat(res.body.data)
+                } else {
+                    alert(JSON.stringify(res))
+                }
+            })
         }
     },
     computed: {
@@ -55,11 +65,17 @@ export default {
     },
     async asyncData(context){
         let { data } = await context.$axios.get('envelope')
-        return { data: data.status === 1 ? data.body : '' }
+        return { list: data.status === 1 ? data.body : {} }
     }
 }
 </script>
 <style lang="scss" scoped>
+.data-null{
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: #313131;
+}
 .container{
     min-height: 100vh;
     background: #eef5ff;

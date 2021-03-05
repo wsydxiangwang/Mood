@@ -2,7 +2,9 @@
     <div class="container">
         <Header 
             v-if="refresh" 
-            :music="music" 
+            :music="music"
+            :sticky="true"
+            :playMusic="true"
             title="嘿，你今天笑了么(≖ᴗ≖)✧"
         ></Header>
         <client-only>
@@ -41,7 +43,7 @@ export default {
     async asyncData(context){
         const { data } = await context.$axios.get('myself')
         return { data: data.status == 1 ? data.body : ''}
-    },
+    }
 }
 </script>
 

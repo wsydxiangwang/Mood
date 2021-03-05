@@ -173,7 +173,7 @@ module.exports = (app, plugin, model) => {
             page: Number(page),
             totalPage: Math.ceil(result[0] / 10),
         }
-        res.send(RequestResult(data))
+        res.send(RequestResult(1, data))
     })
 
     router.get('/myself', async (req, res) => {
@@ -215,7 +215,7 @@ module.exports = (app, plugin, model) => {
                     Info.findOne()
                 ])
             }
-            res.send(RequestResult(data[0]))
+            res.send(RequestResult(1, data[0]))
 
             const email_info = Object.assign({}, data[1]['email'], {web_name: data[1]['web_name']})
             Email(1, send, email_info) // 发送邮件验证

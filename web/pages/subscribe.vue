@@ -36,10 +36,10 @@
                         欢迎订阅心情小镇的新文章通知，愿好~~
                     </p>
                     <input v-model="email" type="text" placeholder="Your email address">
-                    <button type="submit" @click="submit">{{count?`${count}s后可重发`:'subscribe'}}</button>   
-                    <span class="hint" :class="hint?'show':''">{{text}}</span>
+                    <button type="submit" @click="submit">{{ count ? `${count}s后可重发` : 'subscribe' }}</button>   
+                    <span class="hint" :class="hint?'show':''">{{ text }}</span>
                 </template>
-            </div>         
+            </div>
             <div class="waves-area">
                 <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
                     <defs>
@@ -78,29 +78,28 @@ export default {
     },
     head () {
         return {
-            title: `Subscribe | ${this.info.web_name}`
+            title: `Subscribe | ${this.info.base.name}`
         }
     },
     mounted(){
-        // 背景音乐
-        if(this.info.bg.bg_subscribe){
-            this.music = this.info.bg.bg_subscribe
+        if (this.info.page_music.subscribe) {
+            this.music = this.info.page_music.subscribe
             this.refresh = false
-            this.$nextTick(() => this.refresh = true )
+            this.$nextTick(() => this.refresh = true)
         }
     },
     async asyncData(context){
-        // 是否开启订阅通知功能
-        if(context.store.state.data.email_subscribe){
+        const isOpenSubscribe = context.store.state.data.administrator.subscribe
+        if (isOpenSubscribe) {
             const data = context.query
-            if(Object.keys(data).length > 1){
+            if (Object.keys(data).length > 1) {
                 const result = await context.$axios.post('subscribe_result', data)
-                return {status: result.data.status}
+                return { status: result.data.status }
             } else {
-                return {status: 0}
+                return { status: 0 }
             }
         } else {
-            context.error({ statusCode: 404, message: '页面未找到或无数据' })
+            context.error({ statusCode: 404, message: '页面未找到~~' })
         }
     },
     beforeRouteUpdate(to, from, next){
@@ -149,9 +148,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container ::v-deep header{
-    background: rgba(255, 255, 255, 0.13);
-    border-bottom: 1px solid rgba(246, 247, 248, 0.07);
+.container ::v-deep .header-content{
+    background: rgb(255 255 255 / 13%);
+    border-bottom: 1px solid rgba(246,247,248,.07);
     .icon{
         .iconfont{
             color: var(--color-bg-primary);
@@ -224,11 +223,11 @@ export default {
         .is-active{
             text-align: center;
             .iconfont{
-                color: var(--colorActive);
+                color: var(--color-active);
                 font-size: 40px;
             }
             p{
-                color: var(--colorActive);
+                color: var(--color-active);
                 font-size: 16px;
                 margin: 10px 0 0;
             }
@@ -239,7 +238,7 @@ export default {
         h2{
             font-size: 22px;
             margin-bottom: 20px;
-            color: var(--colorActive)
+            color: var(--color-active)
         }
         p{
             color: #606060;
@@ -248,7 +247,7 @@ export default {
             margin-bottom: 20px;
         }
         button{
-            background: var(--colorActive);
+            background: var(--color-active);
             color: var(--color-bg-primary);
             border: none;
             height: 34px;
@@ -277,6 +276,9 @@ export default {
         }
     }
 }
+.waves-area * {
+    transition: none;
+}
 .waves-area{
     width: 100%;
     position: absolute;
@@ -288,6 +290,7 @@ export default {
         height: 10rem;
     }
     .parallax > use{
+        transition: none;
         animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
         &:nth-child(1){
             animation-delay: -2s;
@@ -302,12 +305,12 @@ export default {
         &:nth-child(3){
             animation-delay: -4s;
             animation-duration: 13s;
-            fill: hsla(0,0%,100%,.3);
+            fill: rgb(255 255 255 / 30%);
         }
         &:nth-child(4){
             animation-delay: -5s;
             animation-duration: 20s;
-            fill: var(--color-bg-primary);
+            fill: #fff;
         }
     }
 }
