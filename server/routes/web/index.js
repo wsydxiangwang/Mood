@@ -191,7 +191,7 @@ module.exports = (app, plugin, model) => {
         }
 
         // 添加验证 or 重新验证
-        if(!result || !result.active){
+        if (!result || !result.active) {
             get_data(Object.prototype.toString.call(result) === "[object Null]")
         } else {
             // 已验证
