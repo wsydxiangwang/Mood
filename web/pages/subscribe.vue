@@ -29,15 +29,13 @@
                     </div>
                 </template>
                 <template v-else>
-                    <h2>嘿，你今天笑了么 ~~</h2>
-                    <p>
-                        愿你雨天有伞，深夜有灯，一生温暖纯良，不舍爱与自由，与尘世的万千美好都能不期而遇。
-                        <br>
-                        欢迎订阅心情小镇的新文章通知，愿好~~
-                    </p>
+                    <h2>嘿，欢迎订阅心情小镇 ~~</h2>
+                    <p>愿你雨天有伞，深夜有灯，一生温暖纯良，不舍爱与自由，与尘世的万千美好都能不期而遇。</p>
                     <input v-model="email" type="text" placeholder="Your email address">
                     <button type="submit" @click="submit">{{ count ? `${count}s后可重发` : 'subscribe' }}</button>   
-                    <span class="hint" :class="hint?'show':''">{{ text }}</span>
+                    <span class="hint" :class="[hintClass]">
+                        <span class="iconfont icon-close"></span>{{ text }}
+                    </span>
                 </template>
             </div>
             <div class="waves-area">
@@ -65,10 +63,11 @@ export default {
             music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
             email: '',
             refresh: true,
-            hint: false,
-            text: '请输入正确的邮箱哦~~',
+            hintClass: '',
+            text: '',
             count: 0,
-            time: null
+            time: null,
+            timer: null
         }
     },
     computed: {
@@ -108,15 +107,26 @@ export default {
     },
     methods: {
         submit(){
-            if(this.count) return;
+            if (this.count) return
 
-            // 邮箱错误
-            if(!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.email)){
-                this.hint = true
-                this.text = '请输入正确的邮箱哦~~'
+            if (!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.email)) {
+                this.text = '请输入正确的邮箱地址哦~~'
+                this.hintClass = 'show'
+
+
+                window.requestAnimationFrame((time) => {
+                    window.requestAnimationFrame((time) => {
+                        this.hintClass = 'show animation'
+                    })
+                })
+
+                // document.querySelector('.hint').addEventListener('animationend', () => {
+                //     console.log(2)
+                //     this.hintClass = 'show'
+                // })
+                
                 return
             }
-            this.loading = true
 
             /**
              * 发送邮箱验证状态 24小时后过期
@@ -128,19 +138,20 @@ export default {
                 active: false,
             }
             this.$axios.post('subscribe', data).then(res => {
-                if(res.data.status === 1){
+                if (res.data.status === 1) {
                     this.count = 60
                     this.time = setInterval(() => {
                         this.count--
-                        if(!this.count) clearInterval(this.time)
+                        if (!this.count) {
+                            clearInterval(this.time)
+                        }
                     }, 1000)
                     this.text = `${this.email}，已添加成功，请到邮箱内进行激活！！`
-                }else{
+                } else {
                     this.text = `${this.email}，邮箱已添加，请勿重复操作！！`
                 }
                 this.hint = true
                 this.email = ''
-                this.loading = false
             })
         }
     }
@@ -148,6 +159,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(+2px, 0, 0); }
+    30%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(+4px, 0, 0); }
+    50% { transform: translate3d(-4px, 0, 0); }
+}
 .container ::v-deep .header-content{
     background: rgb(255 255 255 / 13%);
     border-bottom: 1px solid rgba(246,247,248,.07);
@@ -199,13 +217,20 @@ export default {
     .hint{
         position: absolute;
         bottom: 18px;
-        left: 64px;
+        left: 50px;
         color: red;
         font-size: 12px;
         opacity: 0;
         transition: all .3s;
         &.show{
             opacity: 1;
+        }
+        &.animation{
+            animation: shake 800ms ease-in-out;
+        }
+        .iconfont{
+            font-size: 14px;
+            vertical-align: text-top;
         }
     }
     .main{
