@@ -112,19 +112,11 @@ export default {
             if (!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.email)) {
                 this.text = '请输入正确的邮箱地址哦~~'
                 this.hintClass = 'show'
-
-
-                window.requestAnimationFrame((time) => {
-                    window.requestAnimationFrame((time) => {
+                window.requestAnimationFrame(() => {
+                    window.requestAnimationFrame(() => {
                         this.hintClass = 'show animation'
                     })
                 })
-
-                // document.querySelector('.hint').addEventListener('animationend', () => {
-                //     console.log(2)
-                //     this.hintClass = 'show'
-                // })
-                
                 return
             }
 
