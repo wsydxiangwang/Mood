@@ -8,7 +8,12 @@ const nodemailer = require('nodemailer');
  * 
  * 扩展只需添加mode对应值,并且在setting添加对应值
  */
-function Email(type, data, info){    
+function Email(type, data, info, callback){
+
+    console.log('--------')
+    console.log(type, data, info)
+
+
     const mode = {
         'QQ': 'smtp.qq.com',
         '163': 'smtp.163.com',
@@ -126,7 +131,17 @@ function Email(type, data, info){
         },
     ]    
     
-    transporter.sendMail(options[type-1], (err, res) => err ? console.log(err) : console.log('Message sent: ' + res.response))
-    transporter.close(); // 关闭连接池
+    transporter.sendMail(options[type-1], (err, res) => {
+        if (err) {
+            callback(2, '发送失败，请验证邮箱信息或稍后再试！')
+        } else {
+            if (type === 1) {
+                callback(1, res.accepted[0] + '，发送邮件成功，请到邮箱内进行激活！！')
+            } else {
+                callback(1, res)
+            }
+        }
+    })
+    transporter.close() // 关闭连接池
 }
 module.exports = Email

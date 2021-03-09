@@ -34,7 +34,7 @@
                     <input v-model="email" type="text" placeholder="Your email address">
                     <button type="submit" @click="submit">{{ count ? `${count}s后可重发` : 'subscribe' }}</button>   
                     <span class="hint" :class="[hintClass]">
-                        <span class="iconfont icon-close"></span>{{ text }}
+                        <span class="iconfont" :class="[resultIcon]"></span>{{ text }}
                     </span>
                 </template>
             </div>
@@ -67,7 +67,7 @@ export default {
             text: '',
             count: 0,
             time: null,
-            timer: null
+            resultIcon: 'icon-close'
         }
     },
     computed: {
@@ -138,10 +138,17 @@ export default {
                             clearInterval(this.time)
                         }
                     }, 1000)
-                    this.text = `${this.email}，已添加成功，请到邮箱内进行激活！！`
+                    this.resultIcon = 'icon-success'
                 } else {
-                    this.text = `${this.email}，邮箱已添加，请勿重复操作！！`
+                    this.hintClass = 'show'
+                    window.requestAnimationFrame(() => {
+                        window.requestAnimationFrame(() => {
+                            this.hintClass = 'show animation'
+                        })
+                    })
+                    this.resultIcon = 'icon-close'
                 }
+                this.text = res.data.body
                 this.hint = true
                 this.email = ''
             })
