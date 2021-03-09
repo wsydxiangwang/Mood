@@ -200,7 +200,7 @@ module.exports = (app, plugin, model) => {
 
         async function get_data(type){
             let data = '';
-            if(type){
+            if (type) {
                 data = await Promise.all([
                     Subscribe.create(req.body),
                     Info.findOne()
@@ -215,10 +215,13 @@ module.exports = (app, plugin, model) => {
                     Info.findOne()
                 ])
             }
-            res.send(RequestResult(1, data[0]))
 
-            const email_info = Object.assign({}, data[1]['email'], {web_name: data[1]['web_name']})
-            Email(1, send, email_info) // 发送邮件验证
+            Email(1, send, data[1], (status, data) => { // 发送邮件验证
+                const params = status === 1 ? [ status, data ] : [ data ]
+                res.send(RequestResult(...params))
+                console.log(status, data)
+            })
+            // console.log(a)
         }
     })
 
