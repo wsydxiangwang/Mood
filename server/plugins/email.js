@@ -20,14 +20,15 @@ function Email(type, data, info, callback){
     }
     
     const transporter = nodemailer.createTransport({
-            host: mode[info.base.email_type],
-            port: 465,
-            secure: true,
-            auth: {
-                user: info.administrator.email,
-                pass: info.base.email_pass
-            }
-        })
+        host: mode[info.base.email_type],
+        port: 465,
+        secure: true,
+        auth: {
+            user: info.administrator.email,
+            pass: info.base.email_pass
+        }
+    })
+    
 
     const options = [
         {
@@ -133,7 +134,12 @@ function Email(type, data, info, callback){
     
     transporter.sendMail(options[type-1], (err, res) => {
         if (err) {
-            callback(2, '发送失败，请验证邮箱信息或稍后再试！')
+            const message = {
+                550: '发送失败，邮箱未找到或拒绝访问！',
+                535: '发送失败，管理员信息出错，请联系站长！',
+                404: '发生未知错误，请联系站长！'
+            }
+            callback(2, message[err.responseCode] || message[404])
         } else {
             if (type === 1) {
                 callback(1, res.accepted[0] + '，发送邮件成功，请到邮箱内进行激活！！')

@@ -33,8 +33,11 @@
                     <p>愿你雨天有伞，深夜有灯，一生温暖纯良，不舍爱与自由，与尘世的万千美好都能不期而遇。</p>
                     <input v-model="email" type="text" placeholder="Your email address">
                     <button type="submit" @click="submit">{{ count ? `${count}s后可重发` : 'subscribe' }}</button>   
-                    <span class="hint" :class="[hintClass]">
-                        <span class="iconfont" :class="[resultIcon]"></span>{{ text }}
+                    <span class="hint" :class="[hintClass, hintResult]">
+                        <span 
+                            class="iconfont" 
+                            :class="hintResult=='success'?'icon-success':'icon-close'"
+                        ></span>{{ text }}
                     </span>
                 </template>
             </div>
@@ -60,14 +63,14 @@ export default {
     name: 'subscribe',
     data(){
         return {
-            music: 'https://image.raindays.cn/Myself-Resources/music/jingxin.mp3',
+            music: '',
             email: '',
             refresh: true,
             hintClass: '',
             text: '',
             count: 0,
             time: null,
-            resultIcon: 'icon-close'
+            hintResult: ''
         }
     },
     computed: {
@@ -106,17 +109,21 @@ export default {
         next()
     },
     methods: {
+        hintError(){
+            this.hintClass = 'show'
+            this.hintResult = 'error'
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    this.hintClass = 'show animation'
+                })
+            })
+        },
         submit(){
             if (this.count) return
 
             if (!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.email)) {
                 this.text = '请输入正确的邮箱地址哦~~'
-                this.hintClass = 'show'
-                window.requestAnimationFrame(() => {
-                    window.requestAnimationFrame(() => {
-                        this.hintClass = 'show animation'
-                    })
-                })
+                this.hintError()
                 return
             }
 
@@ -138,15 +145,9 @@ export default {
                             clearInterval(this.time)
                         }
                     }, 1000)
-                    this.resultIcon = 'icon-success'
+                    this.hintResult = 'success'
                 } else {
-                    this.hintClass = 'show'
-                    window.requestAnimationFrame(() => {
-                        window.requestAnimationFrame(() => {
-                            this.hintClass = 'show animation'
-                        })
-                    })
-                    this.resultIcon = 'icon-close'
+                    this.hintError()
                 }
                 this.text = res.data.body
                 this.hint = true
@@ -217,10 +218,10 @@ export default {
         position: absolute;
         bottom: 18px;
         left: 50px;
-        color: red;
         font-size: 12px;
+        color: red;
         opacity: 0;
-        transition: all .3s;
+        transition: none;
         &.show{
             opacity: 1;
         }
@@ -229,7 +230,17 @@ export default {
         }
         .iconfont{
             font-size: 14px;
+            transition: none;
             vertical-align: text-top;
+            &::before{
+                transition: none;
+            }
+        }
+        &.success{
+            color: var(--color-active)
+        }
+        &.error{
+            color: red;
         }
     }
     .main{
