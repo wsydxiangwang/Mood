@@ -160,9 +160,8 @@ module.exports = (app, plugin, model) => {
             Envelope.find().sort({time:-1}).limit(Number(10)).skip(Number(10)*(page-1))
         ])
         
-        result[1].forEach(item => {
-            item._doc['time'] = time(item.time)
-        })
+        result[1].forEach(item => item._doc['time'] = time(item.time))
+
         /**
          * 数据
          * 当前页
@@ -185,45 +184,44 @@ module.exports = (app, plugin, model) => {
     router.post('/subscribe', async (req, res) => {
         const result = await Subscribe.findOne({email: req.body.email})
 
-        const send = {
-            email: req.body.email,
-            url: `${req.headers.origin}/subscribe?code=${req.body.code}&email=${req.body.email}`
-        }
-
         // 添加验证 or 重新验证
         if (!result || !result.active) {
-            get_data(Object.prototype.toString.call(result) === "[object Null]")
-        } else {
-            // 已验证
-            res.send(RequestResult())
-        }
-
-        async function get_data(type){
-            let data = '';
-            if (type) {
-                data = await Promise.all([
-                    Subscribe.create(req.body),
-                    Info.findOne()
-                ])
-            } else {
-                data = await Promise.all([
-                    Subscribe.findOneAndUpdate({
-                        email: req.body.email
-                    }, req.body, {
-                        new: true
-                    }),
-                    Info.findOne()
-                ])
+            const type = Object.prototype.toString.call(result) === "[object Null]"
+            const send = {
+                email: req.body.email,
+                url: `${req.headers.origin}/subscribe?code=${req.body.code}&email=${req.body.email}`
             }
-
-            Email(1, send, data[1], (status, data) => { // 发送邮件验证
-                const params = status === 1 ? [ status, data ] : [ data ]
-                res.send(RequestResult(...params))
-                console.log(status, data)
-            })
-            // console.log(a)
+            get_data(type, req.body, res, send)
+        } else {
+            res.send(RequestResult())   // 已验证
         }
     })
+
+    async function get_data(type, data, res, send){
+        let result = '';
+        if (type) {
+            result = await Promise.all([
+                Subscribe.create(data),
+                Info.findOne()
+            ])
+        } else {
+            result = await Promise.all([
+                Subscribe.findOneAndUpdate({
+                    email: data.email
+                }, data, {
+                    new: true
+                }),
+                Info.findOne()
+            ])
+        }
+        // 发送邮件验证
+        Email(1, send, result[1], (status, data) => { 
+            const params = status === 1 ? [status, data] : [data]
+            res.send(RequestResult(...params))
+            console.log(status, data)
+        })
+        // console.log(a)
+    }
 
     // subscribe result
     router.post('/subscribe_result', async (req, res) => {
