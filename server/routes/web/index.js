@@ -193,7 +193,7 @@ module.exports = (app, plugin, model) => {
             }
             get_data(type, req.body, res, send)
         } else {
-            res.send(RequestResult())   // 已验证
+            res.send(RequestResult(1, '邮箱已验证成功，请勿重复操作！'))   // 已验证
         }
     })
 
@@ -218,9 +218,7 @@ module.exports = (app, plugin, model) => {
         Email(1, send, result[1], (status, data) => { 
             const params = status === 1 ? [status, data] : [data]
             res.send(RequestResult(...params))
-            console.log(status, data)
         })
-        // console.log(a)
     }
 
     // subscribe result
@@ -229,38 +227,50 @@ module.exports = (app, plugin, model) => {
         const time = new Date().setDate(new Date().getDate())
 
         // 邮箱错误
-        if(!result){
-            res.send({
+        if (!result) {
+            subscribeResult({
                 status: 3,
-                message: '邮箱错误',
-            })
-            return;
+                email: req.body.email,
+                message: '验证邮箱与URL不匹配，请重新在邮箱内点击验证链接，或再次提交邮箱~'
+            }, res)
+            return
         }
 
-        // 开始验证
-        let data = {message:'success'}
-        if(!result.active){
-            if(req.body.code == result.code && time < result.time){
-                data = await Subscribe.findOneAndUpdate({
+        if (!result.active) {
+            if (req.body.code == result.code && time < result.time) {
+                const findResult = await Subscribe.findOneAndUpdate({
                     email: req.body.email
                 }, {
                     $set: { active: true }
                 }, {
                     multi: true
                 }, (err, doc) => {
-                    return doc;
+                    return doc
                 } )
-                // 验证成功
-                res.send(RequestResult(data))
+                subscribeResult(findResult, res, 1)
             } else {
-                // 验证失败
-                res.send(RequestResult())
+                subscribeResult({
+                    status: 2,
+                    email: req.body.email,
+                    message: '验证失效，请重新提交邮箱！'
+                }, res)
             }
         } else {
-            // 已验证
-            res.send(RequestResult(data))
+            subscribeResult(result, res, 1)
         }
     })
 
+    function subscribeResult(data, res, status) {
+        if (status) {
+            const result = {
+                ...data._doc, 
+                status: 1, 
+                message: '验证成功，感谢您的支持~'
+            }
+            res.send(RequestResult(1, result))
+        } else {
+            res.send(RequestResult(2, data))
+        }
+    }
     app.use('/web/api', router)
 }

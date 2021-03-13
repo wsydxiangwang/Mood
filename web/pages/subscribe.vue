@@ -9,23 +9,28 @@
         <div class="content">
             <h1>[一日之计在于晨]</h1>
             <div class="main">
-                <template v-if="status == 1">
+                <template v-if="result.status == 1">
                     <div class="is-active">
                         <span class="iconfont icon-success"></span>
-                        <p>验证成功，感谢您的支持~</p>
+                        <p class="email">{{ result.email }}</p>
+                        <p>{{ result.message }}</p>
+				        <nuxt-link to="/">去到首页</nuxt-link>
                     </div>
                 </template>
-                <template v-else-if="status == 2">
+                <template v-else-if="result.status == 2">
                     <div class="is-active error">
                         <span class="iconfont icon-error"></span>
-                        <p>验证失效，请重新提交邮箱！</p>
-				        <nuxt-link to="/subscribe">重新提交</nuxt-link>
+                        <p>{{ result.message }}</p>
+                        <a href="/subscribe">重新提交</a>
                     </div>
                 </template>
-                <template v-else-if="status == 3">
+                <template v-else-if="result.status == 3">
                     <div class="is-active error">
                         <span class="iconfont icon-error"></span>
-                        <p>验证地址出错，请重新在邮箱内进入本站~</p>
+                        <p class="email">{{ result.email }}</p>
+                        <p>{{ result.message }}</p>
+				        <nuxt-link to="/">去到首页</nuxt-link>
+                        <a href="/subscribe">重新提交</a>
                     </div>
                 </template>
                 <template v-else>
@@ -63,6 +68,9 @@ export default {
     name: 'subscribe',
     data(){
         return {
+            resultList: [
+                
+            ],
             music: '',
             email: '',
             refresh: true,
@@ -70,7 +78,8 @@ export default {
             text: '',
             count: 0,
             time: null,
-            hintResult: ''
+            hintResult: '',
+            status: null
         }
     },
     computed: {
@@ -96,25 +105,28 @@ export default {
             const data = context.query
             if (Object.keys(data).length > 1) {
                 const result = await context.$axios.post('subscribe_result', data)
-                return { status: result.data.status }
+                return { result: result.data.body }
             } else {
-                return { status: 0 }
+                return { result: 0 }
             }
         } else {
-            context.error({ statusCode: 404, message: '页面未找到~~' })
+            context.error({ 
+                statusCode: 404, 
+                message: '页面未找到~~' 
+            })
         }
     },
     beforeRouteUpdate(to, from, next){
-        this.status = 0
+        this.result = {}
         next()
     },
     methods: {
         hintError(){
-            this.hintClass = 'show'
+            this.hintClass = ''
             this.hintResult = 'error'
             window.requestAnimationFrame(() => {
                 window.requestAnimationFrame(() => {
-                    this.hintClass = 'show animation'
+                    this.hintClass = 'animation'
                 })
             })
         },
@@ -151,7 +163,6 @@ export default {
                 }
                 this.text = res.data.body
                 this.hint = true
-                this.email = ''
             })
         }
     }
@@ -222,9 +233,6 @@ export default {
         color: red;
         opacity: 0;
         transition: none;
-        &.show{
-            opacity: 1;
-        }
         &.animation{
             animation: shake 800ms ease-in-out;
         }
@@ -235,11 +243,16 @@ export default {
             &::before{
                 transition: none;
             }
+            &.icon-success{
+                margin-right: 5px;
+            }
         }
         &.success{
+            opacity: 1;
             color: var(--color-active)
         }
         &.error{
+            opacity: 1;
             color: red;
         }
     }
@@ -268,6 +281,9 @@ export default {
             }
             &.error .iconfont, &.error p{
                 color: red;
+            }
+            .email{
+                font-weight: 600;
             }
         }
         h2{
