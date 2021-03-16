@@ -3,9 +3,8 @@ const history = require('connect-history-api-fallback');
 const expressJwt = require("express-jwt");
 const bodyParser = require('body-parser')
 const fs = require('fs')
-const path = require('path')
 
-const app = express();
+const app = express()
 
 app.use(history({
     index: '/admin/index.html'
@@ -20,22 +19,19 @@ app.use(bodyParser.urlencoded({ extended: false }))     // 解析post请求数�
  * 静态文件
  */
 app.use('/admin', express.static(__dirname + '/admin'))
-app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/uploads', express.static(__dirname + '/uploads'))
 
 
 /**
  * 验证token
  * 跳过用户接口
  */
+const verifyToken = ['login', 'user', 'forgotPassword'].map(i => '/admin/api/' + i)
 app.use(expressJwt({
     secret: "Libai"
 }).unless({
-    path: [
-        "/admin/api/login", 
-        "/admin/api/user", 
-        "/admin/api/forgotPassword"
-    ]
-}));
+    path: [ ...verifyToken ]
+}))
 
 // 接口验证
 app.use((err, req, res, next) => {
@@ -74,10 +70,10 @@ const global = fs.readdirSync(__dirname).filter(i => fileName.includes(i)).reduc
 // 加载所有路由
 const dirname = __dirname + '/routes'
 fs.readdirSync(dirname).forEach((i) => {
-    const file = dirname + '/' + i;
-    if(fs.statSync(file).isDirectory()){
+    const file = dirname + '/' + i
+    if (fs.statSync(file).isDirectory()) {
         fs.readdirSync(file).forEach(item => {
-            const name = item.replace('.js', '');
+            const name = item.replace('.js', '')
             require( file + '/' + name )(app, global['plugins'], global['models'])
         })
     }

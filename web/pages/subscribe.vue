@@ -9,30 +9,16 @@
         <div class="content">
             <h1>[一日之计在于晨]</h1>
             <div class="main">
-                <template v-if="result.status == 1">
-                    <div class="is-active">
-                        <span class="iconfont icon-success"></span>
-                        <p class="email">{{ result.email }}</p>
+                <template v-if="resultInfo">
+                    <div class="is-active" :class="resultInfo.icon">
+                        <span class="iconfont" :class="'icon-'+resultInfo.icon"></span>
+                        <p class="email" v-if="resultInfo.email">{{ result.email }}</p>
                         <p>{{ result.message }}</p>
-				        <nuxt-link to="/">去到首页</nuxt-link>
+				        <nuxt-link to="/" v-if="resultInfo.home">去到首页</nuxt-link>
+                        <a href="/subscribe" v-if="resultInfo.reSubmit">重新提交</a>
                     </div>
                 </template>
-                <template v-else-if="result.status == 2">
-                    <div class="is-active error">
-                        <span class="iconfont icon-error"></span>
-                        <p>{{ result.message }}</p>
-                        <a href="/subscribe">重新提交</a>
-                    </div>
-                </template>
-                <template v-else-if="result.status == 3">
-                    <div class="is-active error">
-                        <span class="iconfont icon-error"></span>
-                        <p class="email">{{ result.email }}</p>
-                        <p>{{ result.message }}</p>
-				        <nuxt-link to="/">去到首页</nuxt-link>
-                        <a href="/subscribe">重新提交</a>
-                    </div>
-                </template>
+
                 <template v-else>
                     <h2>嘿，欢迎订阅心情小镇 ~~</h2>
                     <p>愿你雨天有伞，深夜有灯，一生温暖纯良，不舍爱与自由，与尘世的万千美好都能不期而遇。</p>
@@ -69,7 +55,24 @@ export default {
     data(){
         return {
             resultList: [
-                
+                {
+                    icon: 'success',
+                    reSubmit: false,
+                    home: true,
+                    email: true
+                },
+                {
+                    icon: 'error',
+                    reSubmit: true,
+                    home: true,
+                    email: false
+                },
+                {
+                    icon: 'error',
+                    reSubmit: true,
+                    home: true,
+                    email: true
+                }
             ],
             music: '',
             email: '',
@@ -83,9 +86,16 @@ export default {
         }
     },
     computed: {
-		info(){
+		info() {
 			return this.$store.state.data
-		}
+		},
+        resultInfo() {
+            const status = this.result.status
+            if (!status) {
+                return null
+            }
+            return [1,2,3].includes(status) ? this.resultList[status - 1] : null
+        }
     },
     head () {
         return {

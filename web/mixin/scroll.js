@@ -20,7 +20,7 @@ export default {
             const type = ['scrollTop', 'scrollHeight', 'clientHeight']
             const [t, h, windwH] = type.map(i => this.getWin(i))
             
-            if (h == windwH) {  // 兼容模式 路由切换
+            if (h == windwH) {  // 兼容路由切换
                 return
             }
             this.curScroll = t

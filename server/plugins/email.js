@@ -131,7 +131,7 @@ function Email(type, data, info, callback){
                 </center>
             `
         },
-    ]    
+    ]
     
     transporter.sendMail(options[type-1], (err, res) => {
         if (err) {
