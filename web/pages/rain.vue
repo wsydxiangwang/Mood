@@ -67,25 +67,23 @@ export default {
         let img = new Image();
         img.src = '/image/rain/rain-bg.gif'
         img.onload = () => {
+            console.log('ok')
             this.loading = false
             this.img = img.src
+            this.$nextTick(() => this.music(0, false))
         }
-        this.$nextTick(() => {
-            this.music(0, false)
-        })
     },
     methods: {
         toIndex(){
             this.$router.push('/')
         },
         music(type, active){
-            // icon
             this.$set(this.rainIcon[type], 'active', !active)
             let music = document.getElementsByClassName("music");
-            if(!active){                    
-                music[type].play();
-            }else{
-                music[type].pause();
+            if (!active) {                    
+                music[type].play()
+            } else {
+                music[type].pause()
             }
         }
     }
