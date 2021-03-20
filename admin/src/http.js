@@ -12,6 +12,7 @@ http.interceptors.request.use(
         // 设置token
         const token = localStorage.getItem("Authorization");
         config.headers.Authorization = `Bearer ${token}`;
+        // config.headers['Cache-Control'] = 'max-age=60';
 
         return config;
     }, 

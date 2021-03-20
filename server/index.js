@@ -79,6 +79,7 @@ fs.readdirSync(dirname).forEach((i) => {
     }
 })
 
+
 require('./plugins/db')(app)
 
 app.listen(3000, () => {

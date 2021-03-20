@@ -23,7 +23,15 @@
         </ul>
 
         <!-- loading -->
-		<Loading v-if="loading"></Loading>
+		<div class="progress" :class="[loadingClass]">
+            <div class="bar">
+                <span :style="{ width: width }"></span>
+            </div>
+            <div class="text">
+                <span>Loading</span>
+                <span>{{ parseInt(width) + '%' }}</span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -51,8 +59,9 @@ export default {
                     active: false
                 }
             ],
-            loading: true,
-            img: null
+            img: null,
+            width: 0,
+            loadingClass: ''
         }
     },
     head () {
@@ -64,13 +73,26 @@ export default {
         }
     },
     mounted(){
-        let img = new Image();
-        img.src = '/image/rain/rain-bg.gif'
-        img.onload = () => {
-            console.log('ok')
-            this.loading = false
-            this.img = img.src
-            this.$nextTick(() => this.music(0, false))
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', '/image/rain/rain-bg.gif')
+        xhr.send()
+        xhr.onprogress = (res) => {
+            if (res.lengthComputable) {
+                const result = res.loaded / res.total * 100
+                this.width = result + '%'
+            } else {
+                this.width = '99%'
+            }
+        }
+        xhr.onreadystatechange = (res) => {
+            const target = res.currentTarget
+            if (target.status === 200 && target.readyState === 4) {
+                setTimeout(() => {
+                    this.loadingClass = 'hide'
+                    this.img = '/image/rain/rain-bg.gif'
+                    this.$nextTick(() => this.music(0, false))
+                }, 100);
+            }
         }
     },
     methods: {
@@ -142,6 +164,49 @@ export default {
             cursor: pointer;
             span{
                 display: inline-block;
+            }
+        }
+    }
+    .progress{
+        position: fixed;
+        background: #fff;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        &.hide{
+            opacity: 0;
+            transform: scale(0);
+            background: rgba(255,255,255,0.2);
+        }
+        .bar{
+            width: 200px;
+            background: #dce4e8;
+            height: 10px;
+            overflow: hidden;
+            span{
+                background: var(--color-active);
+                display: block;
+                height: 100%;
+                transition: all 0.06s;
+            }
+        }
+        .text{
+            display: flex;
+            justify-content: space-between;
+            width: 200px;
+            margin-top: 8px;
+            color: #66b2ff;
+            text-transform: uppercase;
+            span{
+                font-size: 10px;
+                font-weight: bold;
             }
         }
     }

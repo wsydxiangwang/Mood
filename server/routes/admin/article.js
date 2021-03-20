@@ -8,6 +8,8 @@ module.exports = (app, plugin, model) => {
     // 获取文章
     router.get('/article', async (req, res) => {
         const data = await GetPage(Article, req.query.page, req.query.count)
+        // res.setHeader('Cache-Control','max-age=5')
+        // res.setHeader('last-modified', new Date().toUTCString())
         res.send(RequestResult(1, data))
     })
 
