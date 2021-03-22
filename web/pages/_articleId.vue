@@ -1,29 +1,6 @@
 <template>
     <div class="articleld">
 
-        <!-- ssr 待定-->
-        <!-- <div class="skeleton" v-if="Object.values(data).length < 0">
-            <h2></h2>
-            <h3>
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
-            </h3>
-            <div>
-                <p></p>
-                <p></p>
-                <p></p>
-            </div>
-            <div>
-                <p></p>
-                <p></p>
-                <p></p>
-            </div>
-        </div> -->
-
-    
         <!-- Article Progress -->
         <div class="scrollbar" :style="{ width: postProgress }"></div>
 
@@ -47,15 +24,35 @@
                 <span>喜欢 {{ data.like }}</span>
             </div>
 
-            <div class="content">
-                <client-only>
-                    <mavon-editor codeStyle="monokai-sublime" v-html="data.contentHtml"/>
-                </client-only>
-            </div>
+            <div class="content" v-html="data.contentHtml"></div>
         </section>
 
         <!-- Comment -->
         <Comment :id="data.id" :title="data.title" @total="totalComment"></Comment>
+
+        <footer>
+            <div class="foot-box">
+                <h2>{{ data.title }}</h2>
+                <div class="options">
+                    <div>
+                        <span>{{ data.read }}</span>
+                        <span class="iconfont icon-eye"></span>
+                    </div>
+                    <div>
+                        <span>{{ commentTotal }}</span>
+                        <span class="iconfont icon-eye"></span>
+                    </div>
+                    <div>
+                        <span>{{ data.like }}</span>
+                        <span class="iconfont icon-eye"></span>
+                    </div>
+                    <div>
+                        <span>{{ data.like }}</span>
+                        <span class="iconfont icon-eye"></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -117,11 +114,6 @@ export default {
                 return t
             }, 0)
             return height
-        },
-        oImage(e) {
-            if (e.target.tagName === 'IMG') {
-                console.log(e)
-            }
         },
         liked() {
             this.data.like++
@@ -263,12 +255,12 @@ export default {
     .content{
         padding: 100px 0;
         font-size: 14px;
-        ::v-deep 
-        .markdown-body{
-            box-shadow: none !important;
-            min-height: auto;
-            background: var(--color-bg-primary);
-            color: var(--color-text-primary);
+        ::v-deep {
+            // box-shadow: none !important;
+            // min-height: auto;
+            // background: var(--color-bg-primary);
+            // color: var(--color-text-primary);
+        color: var(--color-text-primary);
             p{
                 line-height: 36px;
                 margin: 0 0 22px;
@@ -325,34 +317,6 @@ export default {
                 height: 450px;
                 margin-bottom: 20px;
             }
-            pre{
-                padding: 0;
-                font-size: 16px;
-                max-height: 500px;
-                overflow: hidden;
-                border-radius: 4px;
-                .hljs{
-                    padding: 10px 0 10px 12px;
-                    line-height: 20px;
-                    overflow: hidden;
-                    max-height: 500px;
-                    box-sizing: border-box;
-                    & > code{
-                        overflow-y: auto;
-                        max-height: 480px;
-                        display: block;
-                        &::-webkit-scrollbar{
-                            width: 4px;
-                        }
-                        &::-webkit-scrollbar-thumb{
-                            background: #949494;
-                        }
-                        &::-webkit-scrollbar-track{
-                            background: #23241f;
-                        }
-                    }
-                }
-            }
         }
     }
     .back-top{
@@ -367,6 +331,29 @@ export default {
         padding: 0 5px;
         color: var(--color-bg-primary);
     }
+    footer{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        box-shadow: 0 0 45px 0 rgb(16 16 16 / 10%);
+        .foot-box{
+            width: 800px;
+            height: 70px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        h2{
+            font-size: 16px;
+            color: var(--color-text-1);
+        }
+        .options{
+            display: flex;
+        }
+    }
 }
 
 @media screen and (max-width: 800px) {
@@ -380,8 +367,7 @@ export default {
         }
         .content{
             padding: 60px 0;
-            ::v-deep 
-            .markdown-body{
+            ::v-deep {
                 p{
                     line-height: 28px;
                 }
@@ -407,8 +393,7 @@ export default {
             }
         }
         .content{
-            ::v-deep 
-            .markdown-body{
+            ::v-deep {
                 iframe{
                     height: 310px;
                 }
@@ -428,8 +413,7 @@ export default {
 @media screen and (max-width: 500px) {
     .articleld{
         .content{
-            ::v-deep 
-            .markdown-body{
+            ::v-deep {
                 iframe{
                     height: 260px;
                 }
@@ -439,8 +423,7 @@ export default {
 }
 @media screen and (max-width: 414px) {
     .content{
-        ::v-deep 
-        .markdown-body{
+        ::v-deep {
             iframe{
                 height: 220px;
             }

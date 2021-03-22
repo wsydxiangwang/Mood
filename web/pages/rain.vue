@@ -3,9 +3,6 @@
         <div class="logo-img" @click="toIndex">
             <img src="/image/logo/logo1.png">
         </div>
-
-        <!-- <span class="logo iconfont icon-logo4" @click="toIndex"></span> -->
-
         <img class="rain-bg" :src="img" draggable="false">
         <img class="words" src="/image/rain/words.png" draggable="false">
 
@@ -91,14 +88,11 @@ export default {
                     this.loadingClass = 'hide'
                     this.img = '/image/rain/rain-bg.gif'
                     this.$nextTick(() => this.music(0, false))
-                }, 100);
+                }, 100)
             }
         }
     },
     methods: {
-        toIndex(){
-            this.$router.push('/')
-        },
         music(type, active){
             this.$set(this.rainIcon[type], 'active', !active)
             let music = document.getElementsByClassName("music");
@@ -107,6 +101,9 @@ export default {
             } else {
                 music[type].pause()
             }
+        },
+        toIndex(){
+            this.$router.push('/')
         }
     }
 }
