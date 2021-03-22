@@ -33,24 +33,24 @@
         <footer>
             <div class="foot-box">
                 <h2>{{ data.title }}</h2>
-                <div class="options">
-                    <div>
+                <ul class="options">
+                    <li>
                         <span>{{ data.read }}</span>
                         <span class="iconfont icon-eye"></span>
-                    </div>
-                    <div>
+                    </li>
+                    <li>
                         <span>{{ commentTotal }}</span>
                         <span class="iconfont icon-eye"></span>
-                    </div>
-                    <div>
+                    </li>
+                    <li>
                         <span>{{ data.like }}</span>
                         <span class="iconfont icon-eye"></span>
-                    </div>
-                    <div>
+                    </li>
+                    <li>
                         <span>{{ data.like }}</span>
                         <span class="iconfont icon-eye"></span>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </footer>
     </div>
@@ -352,6 +352,22 @@ export default {
         }
         .options{
             display: flex;
+            li{
+                position: relative;
+                list-style: none;
+                margin-left: 40px;
+                span:first-child{
+                    position: absolute;
+                    top: -8px;
+                    right: 0;
+                    font-size: 13px;
+                    color: var(--color-text-4);
+                    transform: translateX(100%);
+                }
+                .iconfont{
+                    font-size: 20px;
+                }
+            }
         }
     }
 }
