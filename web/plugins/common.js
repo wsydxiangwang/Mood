@@ -4,6 +4,12 @@ var common = {
 
     install(Vue, option){
 
+        // 换肤
+        Vue.prototype.$skin = () => {
+            const type = Vue.prototype.$nuxt.$options.$colorMode
+            type.preference = type.preference == 'dark' ? '' : 'dark'
+        }
+        
         function getWin(type) {
             return document.documentElement[type] || document.body[type]
         }

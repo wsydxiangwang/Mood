@@ -34,22 +34,28 @@
             <div class="foot-box">
                 <h2>{{ data.title }}</h2>
                 <ul class="options">
-                    <li>
-                        <span>{{ data.read }}</span>
-                        <span class="iconfont icon-eye"></span>
+
+                    <li 
+                        v-for="(item, index) in options" 
+                        :key="index"
+                        @click="onOptions(item.type)"
+                    >
+                        <span>{{ data[item.type] }}</span>
+                        <span class="iconfont" :class="'icon-' + item.icon"></span>
                     </li>
-                    <li>
+
+                    <!-- <li>
                         <span>{{ commentTotal }}</span>
-                        <span class="iconfont icon-eye"></span>
+                        <span class="iconfont icon-like"></span>
+                    </li>
+                    <li>
+                        <span>{{ data.like }}</span>
+                        <span class="iconfont icon-like"></span>
                     </li>
                     <li>
                         <span>{{ data.like }}</span>
                         <span class="iconfont icon-eye"></span>
-                    </li>
-                    <li>
-                        <span>{{ data.like }}</span>
-                        <span class="iconfont icon-eye"></span>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </footer>
@@ -69,7 +75,25 @@ export default {
             commentTotal: 0,
             contentHeight: 0,
             clientHeight: 0,
-            header: true
+            header: true,
+            options: [
+                {
+                    type: 'read',
+                    icon: 'eye',
+                }, {
+                    type: 'comment',
+                    icon: 'eye',
+                }, {
+                    type: 'like',
+                    icon: 'like',
+                }, {
+                    type: 'top',
+                    icon: 'eye',
+                }, {
+                    type: 'skin',
+                    icon: 'eye'
+                }
+            ]
         }
     },
     head () {
@@ -107,6 +131,29 @@ export default {
         })
     },
     methods: {
+        onOptions(type){
+            const o = {
+                'comment': () => {
+                    const oCommentTop = document.getElementById('href-comment')
+                    if (oCommentTop) {
+                        oCommentTop.click()
+                        return
+                    }
+                    const a = document.createElement('a')
+                    a.setAttribute('href', '#comment')
+                    a.setAttribute('id', 'href-comment')
+                    document.body.appendChild(a)
+                    a.click()
+                },
+                'top': () => {
+                    this.$setScroll('top')
+                },
+                'skin': () => {
+                    this.$skin()
+                }
+            }
+            o[type]()
+        },
         getHeight() {
             const domList = ['.content', '.stuff', '.title']
             const height = domList.reduce((t, i) => {
@@ -348,7 +395,7 @@ export default {
         }
         h2{
             font-size: 16px;
-            color: var(--color-text-1);
+            color: var(--color-text-2);
         }
         .options{
             display: flex;

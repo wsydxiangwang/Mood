@@ -5,7 +5,7 @@
                 <div class="input-box">
                     <input 
                         v-for="(val, key, index) in { name: 'Name', email: 'Email'}"
-                        type="text" 
+                        type    ="text" 
                         :placeholder="val" 
                         v-model="form[key]"
                         :key="index"
@@ -25,6 +25,7 @@
                 <!-- submit button and loading -->
                 <div class="bottom">
                     <button 
+                        id="comment"
                         type="button" 
                         @click="submitVerify" 
                         :class="status == 9?'active':''"

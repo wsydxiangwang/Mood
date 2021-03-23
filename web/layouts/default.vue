@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="btn" @click="btn">换肤</div>
+		<!-- <div class="btn" @click="btn">换肤</div> -->
 		<nuxt class="page" keep-alive :keep-alive-props="{include: includeArr}"/>
 	</div>
 </template>
