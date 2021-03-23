@@ -34,28 +34,14 @@
             <div class="foot-box">
                 <h2>{{ data.title }}</h2>
                 <ul class="options">
-
                     <li 
                         v-for="(item, index) in options" 
                         :key="index"
                         @click="onOptions(item.type)"
                     >
-                        <span>{{ data[item.type] }}</span>
                         <span class="iconfont" :class="'icon-' + item.icon"></span>
+                        <span>{{ item.type == 'comment' ? commentTotal : data[item.type] }}</span>
                     </li>
-
-                    <!-- <li>
-                        <span>{{ commentTotal }}</span>
-                        <span class="iconfont icon-like"></span>
-                    </li>
-                    <li>
-                        <span>{{ data.like }}</span>
-                        <span class="iconfont icon-like"></span>
-                    </li>
-                    <li>
-                        <span>{{ data.like }}</span>
-                        <span class="iconfont icon-eye"></span>
-                    </li> -->
                 </ul>
             </div>
         </footer>
@@ -79,19 +65,19 @@ export default {
             options: [
                 {
                     type: 'read',
-                    icon: 'eye',
+                    icon: 'eye2',
                 }, {
                     type: 'comment',
-                    icon: 'eye',
+                    icon: 'comment',
                 }, {
                     type: 'like',
-                    icon: 'like',
-                }, {
-                    type: 'top',
-                    icon: 'eye',
+                    icon: 'xihuan',
                 }, {
                     type: 'skin',
-                    icon: 'eye'
+                    icon: 'yueliang'
+                }, {
+                    type: 'top',
+                    icon: 'top',
                 }
             ]
         }
@@ -132,6 +118,9 @@ export default {
     },
     methods: {
         onOptions(type){
+            if (type === 'read') {
+                return
+            }
             const o = {
                 'comment': () => {
                     const oCommentTop = document.getElementById('href-comment')
@@ -146,10 +135,13 @@ export default {
                     a.click()
                 },
                 'top': () => {
-                    this.$setScroll('top')
+                    this.$setScroll('top', 500)
                 },
                 'skin': () => {
                     this.$skin()
+                },
+                'like': () => {
+                    console.log(2)
                 }
             }
             o[type]()
@@ -402,17 +394,32 @@ export default {
             li{
                 position: relative;
                 list-style: none;
-                margin-left: 40px;
-                span:first-child{
-                    position: absolute;
-                    top: -8px;
-                    right: 0;
-                    font-size: 13px;
-                    color: var(--color-text-4);
-                    transform: translateX(100%);
+                margin-left: 6px;
+                min-width: 32px;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
+                cursor: pointer;
+                & *{
+                    transition: none;
+                }
+                span:last-child{
+                    font-size: 12px;
+                    color: #333;
+                    transform: translate(-4px, -14px);
+                    display: inline-block;
                 }
                 .iconfont{
+                    color: #333;
                     font-size: 20px;
+                    &.icon-top{
+                        font-size: 28px;
+                        color: #666;
+                    }
+                }
+                &:hover span{
+                    font-weight: 600;
+                    color: var(--color-active)
                 }
             }
         }
