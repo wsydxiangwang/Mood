@@ -55,6 +55,7 @@ body::-webkit-scrollbar-track{
 
 :root{
 	--color-bg-primary: #ffffff;
+	--color-bg-opacity: rgba(255, 255, 255, 0.9);
 
 	--color-border-1: #eeeeee;
 	--color-border-2: #f6f7f8;
@@ -77,6 +78,7 @@ body::-webkit-scrollbar-track{
 }
 .dark-mode{
 	--color-bg-primary: #0d1117;
+	--color-bg-opacity: rgba(0, 0, 0, 0.9);
 
 	--color-text-1: #fff;
 	--color-text-2: #ccc;
@@ -97,3 +99,5 @@ body::-webkit-scrollbar-track{
 	--color-dark: #080808;
 	--color-active: #0084ff;
 }
+
+.hljs{display:block;overflow-x:auto;padding:0.5em;background:#23241f}.hljs,.hljs-tag,.hljs-subst{color:#f8f8f2}.hljs-strong,.hljs-emphasis{color:#a8a8a2}.hljs-bullet,.hljs-quote,.hljs-number,.hljs-regexp,.hljs-literal,.hljs-link{color:#ae81ff}.hljs-code,.hljs-title,.hljs-section,.hljs-selector-class{color:#a6e22e}.hljs-strong{font-weight:bold}.hljs-emphasis{font-style:italic}.hljs-keyword,.hljs-selector-tag,.hljs-name,.hljs-attr{color:#f92672}.hljs-symbol,.hljs-attribute{color:#66d9ef}.hljs-params,.hljs-class .hljs-title{color:#f8f8f2}.hljs-string,.hljs-type,.hljs-built_in,.hljs-builtin-name,.hljs-selector-id,.hljs-selector-attr,.hljs-selector-pseudo,.hljs-addition,.hljs-variable,.hljs-template-variable{color:#e6db74}.hljs-comment,.hljs-deletion,.hljs-meta{color:#75715e}

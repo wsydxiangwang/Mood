@@ -28,6 +28,6 @@ export default {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 9999999999999999;
-	color: var(--color-text-primary);
+	color: var(--color-text-1);
 }
 </style>

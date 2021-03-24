@@ -53,7 +53,7 @@
                                 item.type == 'like' && isLike ? 'icon-like' : ''
                             ]"
                         ></span>
-                        <span>{{ item.type == 'comment' ? commentTotal : data[item.type] }}</span>
+                        <span :class="{skin:item.type=='skin'}">{{ getItemData(item.type) }}</span>
                     </li>
                 </ul>
             </div>
@@ -130,6 +130,14 @@ export default {
         })
     },
     methods: {
+        getItemData(type){
+            const o = {
+                skin: () => 'skin',
+                comment: () => this.commentTotal,
+                other: () => this.data[type]
+            }
+            return o[type] ? o[type]() : o.other()
+        },
         changeStatus(state){
             console.log(state)
             this.footClass = state
@@ -247,11 +255,12 @@ export default {
     .content{
         padding: 100px 0;
         font-size: 14px;
+        color: var(--color-text-1);
         ::v-deep {
             // box-shadow: none !important;
             // min-height: auto;
             // background: var(--color-bg-primary);
-            // color: var(--color-text-primary);
+            // color: var(--color-text-1);
             p{
                 line-height: 36px;
                 margin: 0 0 22px;
@@ -273,14 +282,25 @@ export default {
             h1, h2, h3, h4, h5{
                 border: 0;
                 padding: 0;
-                margin: 0 0 18px;
+                margin: 0 0 22px;
                 line-height: 28px;
+                font-size: revert;
+            }
+            img{
+                max-width: 100%;
+                border-radius: 4px;
+                &:hover{
+                    box-shadow: 0 0 10px #999;
+                }
             }
             blockquote{
-                background: var(--color-bg-primary);
                 border-radius: 10px;
                 padding-left: 22px;
                 margin-bottom: 20px;
+                padding: 0 1em;
+                color: var(--color-text-6);
+                border-left: .25em solid #dfe2e5;      
+                overflow: hidden;          
                 p{
                     margin: 10px 0;
                 }
@@ -327,8 +347,8 @@ export default {
         bottom: 0;
         left: 0;
         right: 0;
-        background: #fff;
-        box-shadow: 0 0 45px 0 rgb(16 16 16 / 10%);
+        background: var(--color-bg-opacity);
+        box-shadow: 0 -2px 12px #f0f9ff;
         transition: all 0.6s;
         transform: translateY(100%);
         &.show{
@@ -344,7 +364,7 @@ export default {
         }
         h2{
             font-size: 16px;
-            color: var(--color-text-2);
+            color: var(--color-text-6);
         }
         .options{
             display: flex;
@@ -369,16 +389,19 @@ export default {
                 }
                 span:last-child{
                     font-size: 12px;
-                    color: #333;
+                    color: var(--color-text-1);
                     transform: translate(-4px, -14px);
                     display: inline-block;
+                    &.skin{
+                        display: none;
+                    }
                 }
                 .iconfont{
-                    color: #333;
+                    color: var(--color-text-1);
                     font-size: 20px;
                     &.icon-top{
                         font-size: 28px;
-                        color: #666;
+                        color: var(--color-text-2);
                     }
                     &.icon-taiyang{
                         font-size: 22px;
@@ -438,7 +461,7 @@ export default {
     }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 820px) {
     .articleld{
         section{
             width: 90%;
@@ -455,6 +478,41 @@ export default {
                 }
                 iframe{
                     height: 390px;
+                }
+            }
+        }
+        footer{
+            width: 90%;
+            left: 5%;
+            box-shadow: 0 25px 150px -15px rgb(7 1 27 / 33%);
+            background: rgba(255, 255, 255, 0.95);
+            &.show{
+                bottom: 20px;
+            }
+            .foot-box{
+                width: 100%;
+                padding: 0 60px 5px;
+                h2{
+                    display: none;
+                }
+                .options{
+                    width: 100%;
+                    justify-content: space-between;
+                    li{
+                        display: flex;
+                        flex-direction: column;
+                        line-height: normal;
+                        span:last-child{
+                            transform: none;
+                            margin-top: 2px;
+                            &.skin{
+                                display: block;
+                            }
+                        }
+                        .icon-top{
+                            margin-top: 4px;
+                        }
+                    }
                 }
             }
         }

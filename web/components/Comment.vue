@@ -541,7 +541,7 @@ export default {
         }
         div{
             font-size: 14px;
-            color: var(--color-text-primary);
+            color: var(--color-text-1);
             margin-bottom: 14px;
         }
         p{
@@ -554,7 +554,7 @@ export default {
         }
     }
     h2{
-        color: var(--color-text-primary);
+        color: var(--color-text-1);
         font-weight: 400;
         margin-bottom: 20px;
         display: inline-block;
@@ -583,7 +583,7 @@ export default {
                 transition: border .3s;
                 border: none;
                 outline: none;
-                color: var(--color-text-primary);
+                color: var(--color-text-1);
                 background: var(--color-bg-primary);
                 border-bottom: 1px dashed var(--color-border-1);
                 &:focus{
@@ -615,7 +615,7 @@ export default {
             width: 100%;
             height: 200px;
             margin: 10px 0;
-            color: var(--color-text-primary);
+            color: var(--color-text-1);
             border: 1px dashed var(--color-border-1);
             -webkit-transition: all .3s;
             transition: all .3s;
@@ -631,7 +631,7 @@ export default {
         }
     }
     .comment-list{
-        padding: 0 0 60px;
+        padding: 0 0 80px;
         overflow: hidden;
         .comment-item{
             border-bottom: 1px solid var(--color-border-2);
@@ -760,7 +760,7 @@ export default {
                 }
             }
             .comment-content{
-                color: var(--color-text-primary);
+                color: var(--color-text-1);
                 line-height: 22px;
                 padding: 0 0 0 58px;
                 white-space: pre-wrap;
@@ -794,7 +794,7 @@ export default {
                     }
                 }
                 .comment-child-content{
-                    color: var(--color-text-primary);
+                    color: var(--color-text-1);
                     padding: 0;
                     line-height: 22px;
                     margin: 0 0 0 50px;
@@ -1016,9 +1016,12 @@ export default {
     }
 }
 
-@media screen and (max-width: 800px){
+@media screen and (max-width: 820px){
     .comment{
-        width: 90%
+        width: 90%;
+        .comment-list{
+            padding-bottom: 100px;
+        }
     }   
 }
 @media screen and (max-width: 600px) {

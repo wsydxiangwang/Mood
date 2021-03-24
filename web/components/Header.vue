@@ -261,13 +261,13 @@ export default {
         position: fixed;
         animation: headShow 0.6s both;
         box-shadow: 0 1px 8px #f0f9ff;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--color-bg-opacity);
     }
     &.exit{
         position: fixed;
         animation: headExit 0.6s both;
         box-shadow: 0 1px 8px #f0f9ff;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--color-bg-opacity);
     }
     .musicBar{
         position: absolute;
