@@ -1,28 +1,20 @@
 // 时间戳 转换
-function analysis(time){
-    // '2020-05-30 19:46' 转 ['2020', '05', '30', '19', '46']
-    return time.toString().replace(/-|\:|\/|\ /g, ',').split(',');
-}
 function dateFormat(timestamp) {
-    timestamp = analysis(timestamp)
-    
-    const week = ['日', '一', '二', '三', '四', '五', '六'];
-    const mArr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
-    const weekEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const enArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    const w = new Date(timestamp).getDay()
 
-    const opt = {
-        "Y": timestamp[0],
-        "M": timestamp[1],
-        "D": timestamp[2],
-        "H": timestamp[3],
-        "m": timestamp[4],
-        "w": new Date(Date.parse(`${timestamp[0]}/${timestamp[1]}/${timestamp[2]}`)).getDay(),
-    }
+    timestamp = timestamp.toString().replace(/-|\:|\/|\ /g, ',').split(',')
+    
+    const week = ['日', '一', '二', '三', '四', '五', '六']
+    const month = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
+    const weekEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const monthEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+    const opt = ['Y', 'M', 'D', 'h', 'm', 'W'].reduce((t, v, i) => {
+        t[v] = v === 'W' ? w : timestamp[i]
+        return t
+    }, {})
 
     // 日
-    let day = opt.D.slice(0, 1) == 0 ? opt.D.slice(1) : opt.D,
-        st = 'st',
+    let st = 'st',
         nd = 'nd',
         rd = 'rd',
         th = 'th',
@@ -36,28 +28,28 @@ function dateFormat(timestamp) {
             31: st
         };
 
-    day += obj[day] ? obj[day] : th;
-    
+    let day = opt.D + (obj[opt.D] ? obj[opt.D] : th)
+    day = day.startsWith(0) ? day.slice(1) : day    // 去除前面的0
+
     const time = {
-        date: `${opt.Y}/${opt.M}/${opt.D} ${opt.H}:${opt.m}`,
-        time: `${opt.H}:${opt.m}`,
+        date: `${opt.Y}/${opt.M}/${opt.D} ${opt.h}:${opt.m}`,
+        time: `${opt.h}:${opt.m}`,
         year: opt.Y,
         month: {
             on: opt.M,
-            cn: mArr[Number(opt.M) - 1],
-            en: enArr[Number(opt.M) - 1]
+            cn: month[Number(opt.M) - 1],
+            en: monthEn[Number(opt.M) - 1]
         },
         day: {
             on: opt.D,
             en: day
         },
         week: {
-            on: week[opt.w],
-            en: weekEn[opt.w],
+            on: week[opt.W],
+            en: weekEn[opt.W]
         }
     }
-
-    return time;
+    return time
 }
 
 module.exports = dateFormat

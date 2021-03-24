@@ -54,6 +54,13 @@ var common = {
                           t = form.offsetTop;
                     return t + h + 20 - getWin('clientHeight')
                 },
+                viewComment: () => {
+
+                    const comment = document.getElementById('comment')
+                    const top = comment.offsetTop
+                    console.log(top)
+                    return top
+                },
                 top: () => 0
             }
 
@@ -74,7 +81,7 @@ var common = {
                  * 终点 & 边界处理
                  */
                 let result = null
-                if (type === 'comment') {
+                if (type === 'comment' || type === 'viewComment') {
                     result = (beforeScroll && curScroll > beforeScroll) || curScroll <= target || curScroll === 0
                 } else if (type == 'top') {
                     result = curScroll == target || (beforeScroll && curScroll > beforeScroll)

@@ -12,6 +12,7 @@
             :playMusic="true"
             :articlePage="true"
             @liked="liked"
+            ref="header"
         />
 
         <section v-if="data">
@@ -38,6 +39,7 @@
                         v-for="(item, index) in options" 
                         :key="index"
                         @click="onOptions(item.type)"
+                        :class="{active: item.type == 'like' && isLike}"
                     >
                         <span class="iconfont" :class="'icon-' + item.icon"></span>
                         <span>{{ item.type == 'comment' ? commentTotal : data[item.type] }}</span>
@@ -56,12 +58,11 @@ export default {
 	components: { Comment },
     data(){
         return{
-            title: false,
-            isLike: false,
             commentTotal: 0,
             contentHeight: 0,
             clientHeight: 0,
             header: true,
+            isLike: false,
             options: [
                 {
                     type: 'read',
@@ -95,9 +96,6 @@ export default {
 		info() {
 			return this.$store.state.data
         },
-        /**
-         * Article Progress
-         */
         postProgress() {
             if (this.contentHeight < this.clientHeight) {
                 return '100%'
@@ -114,6 +112,7 @@ export default {
         setTimeout(() => {
             this.clientHeight = this.getWin('clientHeight')
             this.contentHeight = this.getHeight()
+            this.isLike = !!localStorage.getItem(`like-${this.data._id}`)
         })
     },
     methods: {
@@ -123,6 +122,9 @@ export default {
             }
             const o = {
                 'comment': () => {
+
+                    this.$setScroll('viewComment')
+                    return
                     const oCommentTop = document.getElementById('href-comment')
                     if (oCommentTop) {
                         oCommentTop.click()
@@ -141,7 +143,7 @@ export default {
                     this.$skin()
                 },
                 'like': () => {
-                    console.log(2)
+                    this.$refs.header.onLike()
                 }
             }
             o[type]()
@@ -159,13 +161,7 @@ export default {
         },
         totalComment(val) {
             this.commentTotal = val
-        },
-        myself(){
-            this.$router.push('/Libai')
-        },
-        toIndex(){
-            this.$router.push('/')
-        },
+        }
     },
     async asyncData(context){
         const id = context.params.articleId
@@ -400,7 +396,7 @@ export default {
                 line-height: 30px;
                 text-align: center;
                 cursor: pointer;
-                & *{
+                & *, & *::before{
                     transition: none;
                 }
                 span:last-child{
@@ -417,9 +413,14 @@ export default {
                         color: #666;
                     }
                 }
-                &:hover span{
-                    font-weight: 600;
-                    color: var(--color-active)
+                &:hover{
+                    span, span.icon-top{
+                        font-weight: 600;
+                        color: var(--color-active)
+                    }
+                }
+                &.active span{
+                    color: var(--color-pink)
                 }
             }
         }
