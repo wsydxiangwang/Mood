@@ -41,7 +41,10 @@
                         @click="onOptions(item.type)"
                         :class="{active: item.type == 'like' && isLike}"
                     >
-                        <span class="iconfont" :class="'icon-' + item.icon"></span>
+                        <span 
+                            class="iconfont" 
+                            :class="[item.type == 'skin' && $skinStatus() ? 'icon-taiyang' : item.icon]"
+                        ></span>
                         <span>{{ item.type == 'comment' ? commentTotal : data[item.type] }}</span>
                     </li>
                 </ul>
@@ -56,8 +59,8 @@ import scrollMixin from '~/mixin/scroll.js'
 export default {
     mixins: [ scrollMixin ],
 	components: { Comment },
-    data(){
-        return{
+    data() {
+        return {
             commentTotal: 0,
             contentHeight: 0,
             clientHeight: 0,
@@ -66,19 +69,19 @@ export default {
             options: [
                 {
                     type: 'read',
-                    icon: 'eye2',
+                    icon: 'icon-eye2',
                 }, {
                     type: 'comment',
-                    icon: 'comment',
+                    icon: 'icon-comment',
                 }, {
                     type: 'like',
-                    icon: 'xihuan',
+                    icon: 'icon-xihuan',
                 }, {
                     type: 'skin',
-                    icon: 'yueliang'
+                    icon: 'icon-yueliang'
                 }, {
                     type: 'top',
-                    icon: 'top',
+                    icon: 'icon-top',
                 }
             ]
         }
@@ -122,9 +125,6 @@ export default {
             }
             const o = {
                 'comment': () => {
-
-                    this.$setScroll('viewComment')
-                    return
                     const oCommentTop = document.getElementById('href-comment')
                     if (oCommentTop) {
                         oCommentTop.click()
@@ -395,9 +395,17 @@ export default {
                 height: 30px;
                 line-height: 30px;
                 text-align: center;
-                cursor: pointer;
-                & *, & *::before{
-                    transition: none;
+                &:not(:first-child){
+                    cursor: pointer;
+                    &:hover{
+                        span, span.icon-top{
+                            font-weight: 600;
+                            // color: var(--color-active)
+                        }
+                    }
+                    &.active span{
+                        color: var(--color-pink)
+                    }
                 }
                 span:last-child{
                     font-size: 12px;
@@ -412,15 +420,12 @@ export default {
                         font-size: 28px;
                         color: #666;
                     }
-                }
-                &:hover{
-                    span, span.icon-top{
-                        font-weight: 600;
-                        color: var(--color-active)
+                    &.icon-taiyang{
+                        font-size: 22px;
                     }
                 }
-                &.active span{
-                    color: var(--color-pink)
+                & *, & *::before{
+                    transition: none;
                 }
             }
         }

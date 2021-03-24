@@ -120,18 +120,24 @@ export default {
         }
     },
     mounted(){
-        // Article Page
-        if (this.articlePage) {
-            this.$nextTick(() => {
-                const canvas = document.getElementById('qrccode')
-                QRCode.toCanvas(canvas, window.location.href)
-            })
-            this.isLike = !!localStorage.getItem(`like-${this.like}`)
+        const o = {
+            articlePage: () => {
+                this.$nextTick(() => {
+                    const canvas = document.getElementById('qrccode')
+                    QRCode.toCanvas(canvas, window.location.href)
+                })
+                this.isLike = !!localStorage.getItem(`like-${this.like}`)
+            },
+            sticky: () => {
+                this.$watch('curScroll', this.scroll, { immediate: true })
+            },
+            playMusic: () => {
+                window.addEventListener('touchstart', this.touch)
+            }
         }
-        if (this.sticky) {
-            this.$watch('curScroll', this.scroll, { immediate: true })
+        for (let key in o) {
+            this[key] && o[key]()
         }
-        this.playMusic && window.addEventListener('touchstart', this.touch)
     },
     beforeDestroy() {
         this.playMusic && window.removeEventListener('touchstart', this.touch)
@@ -246,7 +252,7 @@ export default {
     }
 }
 .header-content{
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -260,6 +266,18 @@ export default {
     background: var(--color-bg-primary);
     z-index: 99999;
     transition: all .3s;
+    &.show{
+        position: fixed;
+        animation: headShow 0.6s both;
+        box-shadow: 0 1px 8px #f0f9ff;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    &.exit{
+        position: fixed;
+        animation: headExit 0.6s both;
+        box-shadow: 0 1px 8px #f0f9ff;
+        background: rgba(255, 255, 255, 0.9);
+    }
     .musicBar{
         position: absolute;
         left: 0;
@@ -449,18 +467,6 @@ export default {
 @media screen and (max-width: 600px) {
     .header-content{
         position: absolute;
-        &.show{
-            position: fixed;
-            animation: headShow 0.6s both;
-            box-shadow: 0 1px 8px #f0f9ff;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        &.exit{
-            position: fixed;
-            animation: headExit 0.6s both;
-            box-shadow: 0 1px 8px #f0f9ff;
-            background: rgba(255, 255, 255, 0.9);
-        }
         .scrollbar{
             position: fixed;
             height: 1px;

@@ -3,11 +3,14 @@ import Vue from 'vue'
 var common = {
 
     install(Vue, option){
-
         // 换肤
         Vue.prototype.$skin = () => {
-            const type = Vue.prototype.$nuxt.$options.$colorMode
-            type.preference = type.preference == 'dark' ? '' : 'dark'
+            const skinMode = Vue.prototype.$nuxt.$options.$colorMode
+            skinMode.preference = skinMode.preference == 'dark' ? '' : 'dark'
+        }
+        Vue.prototype.$skinStatus = () => {
+            const skinMode = Vue.prototype.$nuxt.$options.$colorMode
+            return skinMode.preference == 'dark'
         }
         
         function getWin(type) {
