@@ -12,6 +12,7 @@
             :playMusic="true"
             :articlePage="true"
             @liked="liked"
+            @changeStatus="changeStatus"
             ref="header"
         />
 
@@ -24,14 +25,13 @@
                 <span>评论 {{ commentTotal }}</span>
                 <span>喜欢 {{ data.like }}</span>
             </div>
-
             <div class="content" v-html="data.contentHtml"></div>
         </section>
 
         <!-- Comment -->
         <Comment :id="data.id" :title="data.title" @total="totalComment"></Comment>
 
-        <footer>
+        <footer :class="{show: scroll_current >= 100 && scroll_direction == 'bottom'}">
             <div class="foot-box">
                 <h2>{{ data.title }}</h2>
                 <ul class="options">
@@ -39,11 +39,19 @@
                         v-for="(item, index) in options" 
                         :key="index"
                         @click="onOptions(item.type)"
-                        :class="{active: item.type == 'like' && isLike}"
+                        :class="{ active: item.type == 'like' && isLike }"
                     >
+                        <div v-if="item.type == 'like'" class="like-hint-box" :class="{likeHint}">
+                            <div class="like-hint">只能点赞一次哦！</div>
+                            <span></span>
+                            <span></span>
+                        </div>
                         <span 
                             class="iconfont" 
-                            :class="[item.type == 'skin' && $skinStatus() ? 'icon-taiyang' : item.icon]"
+                            :class="[
+                                item.type == 'skin' && $skinStatus() ? 'icon-taiyang' : item.icon,
+                                item.type == 'like' && isLike ? 'icon-like' : ''
+                            ]"
                         ></span>
                         <span>{{ item.type == 'comment' ? commentTotal : data[item.type] }}</span>
                     </li>
@@ -66,6 +74,9 @@ export default {
             clientHeight: 0,
             header: true,
             isLike: false,
+            likeHint: false,
+            likeTime: null,
+            footClass: '',
             options: [
                 {
                     type: 'read',
@@ -103,11 +114,11 @@ export default {
             if (this.contentHeight < this.clientHeight) {
                 return '100%'
             }
-            if (!this.curScroll) {
+            if (!this.scroll_current) {
                 return
             }
             const h = this.contentHeight - this.clientHeight + 100
-            const n = (100 * (this.curScroll / h)).toFixed(4)
+            const n = (100 * (this.scroll_current / h)).toFixed(4)
             return n < 100 ? n + '%' : '100%'
         }
     },
@@ -119,6 +130,10 @@ export default {
         })
     },
     methods: {
+        changeStatus(state){
+            console.log(state)
+            this.footClass = state
+        },
         onOptions(type){
             if (type === 'read') {
                 return
@@ -143,6 +158,12 @@ export default {
                     this.$skin()
                 },
                 'like': () => {
+                    if (this.isLike) {
+                        clearTimeout(this.likeTime)
+                        this.likeHint = true
+                        this.likeTime = setTimeout(() => this.likeHint = false, 2000)
+                        return
+                    }
                     this.$refs.header.onLike()
                 }
             }
@@ -157,6 +178,7 @@ export default {
             return height
         },
         liked() {
+            this.isLike = true
             this.data.like++
         },
         totalComment(val) {
@@ -180,71 +202,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes width1 {
-    0%{ width: 60%; }
-    60%{ width: 80%; }
-    100%{ width: 60%; }
-}
-@keyframes width2 {
-    0%{ width: 40%; }
-    60%{ width: 80%; }
-    100%{ width: 40%; }
-}
-@keyframes width3 {
-    0%{ width: 50%; }
-    60%{ width: 70%; }
-    100%{ width: 50%; }
-}
-.skeleton{
-    width: 800px;
-    margin: 130px auto 100px;
-    h2{
-        background: #e4e4e4;
-        height: 40px;
-        width: 208px;
-        border-radius: 0px;
-    }
-    h3{
-        margin-top: 14px;
-        display: flex;
-        p{
-            width: 50px;
-            height: 15px;
-            margin-right: 12px;
-            background: #e4e4e4;
-        }
-    }
-    div{
-        margin-top: 40px;
-        p{
-            height: 20px;
-            background: #e7e7e7;
-            margin-top: 20px;
-        }
-        &:first-of-type{
-            p:nth-of-type(1){
-                animation: width1 1.3s linear infinite;
-            }
-            p:nth-of-type(2){
-                animation: width2 1.4s linear infinite;
-            }
-            p:nth-of-type(3){
-                animation: width3 1.2s linear infinite;
-            }
-        }
-        &:last-of-type{
-            p:nth-of-type(1){
-                animation: width1 1.3s linear infinite;
-            }
-            p:nth-of-type(2){
-                animation: width2 1.4s linear infinite;
-            }
-            p:nth-of-type(3){
-                animation: width3 1.2s linear infinite;
-            }
-        }
-    }
-}
 .articleld {
     position: absolute;
     width: 100%;
@@ -295,7 +252,6 @@ export default {
             // min-height: auto;
             // background: var(--color-bg-primary);
             // color: var(--color-text-primary);
-        color: var(--color-text-primary);
             p{
                 line-height: 36px;
                 margin: 0 0 22px;
@@ -373,6 +329,11 @@ export default {
         right: 0;
         background: #fff;
         box-shadow: 0 0 45px 0 rgb(16 16 16 / 10%);
+        transition: all 0.6s;
+        transform: translateY(100%);
+        &.show{
+            transform: translateY(0);
+        }
         .foot-box{
             width: 800px;
             height: 70px;
@@ -400,7 +361,6 @@ export default {
                     &:hover{
                         span, span.icon-top{
                             font-weight: 600;
-                            // color: var(--color-active)
                         }
                     }
                     &.active span{
@@ -426,6 +386,52 @@ export default {
                 }
                 & *, & *::before{
                     transition: none;
+                }
+                .like-hint-box{
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    transition: all .4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+                    transform-origin: right bottom;
+                    transform: scale(0);
+                    opacity: 0;
+                    visibility: hidden;
+                    & *{
+                        transition: all .3s;
+                    }
+                    .like-hint{
+                        position: absolute;
+                        top: -180px;
+                        right: 54px;
+                        background: #ef6c57;
+                        color: var(--color-bg-primary);
+                        font-size: 13px;
+                        width: 210px;
+                        height: 110px;
+                        line-height: 114px;
+                        text-align: center;
+                        border-radius: 220px / 120px;
+                    }
+                    span{
+                        position: absolute;
+                        top: -78px;
+                        right: 28px;
+                        height: 28px;
+                        width: 28px;
+                        border-radius: 50%;
+                        background: #ef6b57;  
+                        &:last-child{
+                            width: 14px;
+                            height: 14px;
+                            right: 12px;
+                            top: -34px;
+                        }
+                    }
+                    &.likeHint{
+                        opacity: 1;
+                        visibility: visible;
+                        transform: scale(1);
+                    }
                 }
             }
         }

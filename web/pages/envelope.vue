@@ -43,7 +43,7 @@ export default {
             this.$nextTick(() => this.refresh = true)
         }
         this.$loadStatus(this.list)
-        this.$watch('isScrollBottom', (val) => {
+        this.$watch('scroll_isBottom', (val) => {
             val && this.load()
         }, { immediate: true })
     },

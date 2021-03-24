@@ -15,7 +15,7 @@
                 ></span>
             </div>
 
-            <div class="title" :class="{ active: isTitle }">{{title}}</div>
+            <div class="title" :class="{ active: scroll_current >= 100 }">{{ title }}</div>
 
             <div class="r icon">
                 <!-- Article Page -->
@@ -101,7 +101,6 @@ export default {
     data(){
         return{
             palyStatus: 'icon-play',
-            isTitle: false,
             timer: null,
             progressLength: 0,
 
@@ -129,7 +128,7 @@ export default {
                 this.isLike = !!localStorage.getItem(`like-${this.like}`)
             },
             sticky: () => {
-                this.$watch('curScroll', this.scroll, { immediate: true })
+                this.$watch('scroll_current', this.scrollStatus, { immediate: true })
             },
             playMusic: () => {
                 window.addEventListener('touchstart', this.touch)
@@ -149,27 +148,19 @@ export default {
         }
     },
     methods: {
-        scroll(val, oldVal){
-            if (val === null || val === undefined) {
-                return
-            }
-            if (val >= 100) {
-                if (val - oldVal < 0) {
+        scrollStatus() {
+            if (this.scroll_current >= 100) {
+                if (this.scroll_direction === 'top') {
                     this.changeClass = 'show'
                 } else if (this.changeClass == 'show') {
                     this.changeClass = 'exit'
                 }
-                this.mobileMusic = 'show'
             } else {
                 this.changeClass = ''
-                if (this.mobileMusic == 'show') {
-                    this.mobileMusic = 'exit'
-                }
             }
-            if (this.playMusic && !this.played) {     // PC
+            if (this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
                 this.changeMusic()
             }
-            this.isTitle = val >= 100
         },
         changeMusic(){
             this.played = true

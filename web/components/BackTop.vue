@@ -1,5 +1,5 @@
 <template>
-    <div class="back-top" :class="{ show }" @click="backTop">
+    <div class="back-top" :class="{ show: scroll_current >= 1000 }" @click="backTop">
         <span class="iconfont icon-top"></span>
     </div>
 </template>
@@ -8,19 +8,6 @@
 import scrollMixin from '~/mixin/scroll.js'
 export default {
     mixins: [scrollMixin],
-    data(){
-        return{
-            show: '',
-        }
-    },
-    watch: {
-        curScroll: {
-            handler(val) {
-                this.show = val >= 1000 ? 'show' : ''
-            },
-            immediate: true
-        }   
-    },
     methods: {
         backTop(){
             this.$setScroll('top')
