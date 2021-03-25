@@ -70,6 +70,8 @@ body::-webkit-scrollbar-track{
 	--color-text-6: #5b6773;
 	--color-text-7: #024180;
 
+	--color-shadw-1: #f0f9ff;
+
 	--color-red: #ff3600;
 	--color-bar: #50bcb6;
 	--color-pink: #EF6D57;
@@ -88,6 +90,8 @@ body::-webkit-scrollbar-track{
 	--color-text-6: #fff;
 	--color-text-7: #fff;
 	
+	--color-shadw-1: rgba(0,0,0,0);
+
 	--color-border-1: #30363d;
 	--color-border-2: #1b1b1b;
 	--color-border-4: #1b1b1b;
