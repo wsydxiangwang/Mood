@@ -38,6 +38,8 @@
                 <span></span>
                 <span></span>
             </div>
+            
+                {{ ss }}
 
             <!-- Music Progress -->
             <div class="musicBar" :style="{ width: progressLength }"></div>
@@ -70,6 +72,7 @@
 <script>
 import QRCode from "qrcode"
 import scrollMixin from '~/mixin/scroll.js'
+let timer = null
 export default {
     mixins: [scrollMixin],
     props: {
@@ -115,7 +118,9 @@ export default {
             likeTime: null,
             likeHint: false,
 
-            played: false
+            played: false,
+
+            ss: 0
         }
     },
     mounted(){
@@ -131,7 +136,9 @@ export default {
                 this.$watch('scroll_current', this.scrollStatus, { immediate: true })
             },
             playMusic: () => {
-                window.addEventListener('touchstart', this.touch)
+                const ua = navigator.userAgent.toLowerCase()
+                this.platform = ua.match(/MicroMessenger/i) == "micromessenger" ? 'touchstart' : 'click'
+                window.addEventListener(this.platform, this.touch)
             }
         }
         for (let key in o) {
@@ -139,7 +146,7 @@ export default {
         }
     },
     beforeDestroy() {
-        this.playMusic && window.removeEventListener('touchstart', this.touch)
+        this.playMusic && window.removeEventListener(this.platform, this.touch)
     },
     computed: {
         // mobile music progress
@@ -159,6 +166,7 @@ export default {
                 this.changeClass = ''
             }
             if (this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
+                console.log(222222)
                 this.changeMusic()
             }
         },
@@ -175,22 +183,30 @@ export default {
 
             this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
 
-            if (this.palyStatus == 'icon-pause') {
-                music.play()
-                this.timer = setInterval(() => {
-                    result = music.currentTime / duration
-                    this.progressLength = (100 * result).toFixed(2) + '%'
-                    this.percent = result
-                }, 50)
-            } else {
-                music.pause()
-                clearInterval(this.timer)
-            }
+            // if (this.palyStatus == 'icon-pause') {
+            //     music.play()
+            //     const fn = () =>  {
+            //         setTimeout(() => {
+            //             result = music.currentTime / duration
+            //             console.log(music)
+            //             this.ss = result
+            //             this.progressLength = (100 * result).toFixed(2) + '%'
+            //             this.percent = result
+            //             if (this.palyStatus == 'icon-pause') {
+            //                 fn()
+            //             }
+            //         }, 50)
+            //     }
+            //     fn()
+            // } else {
+            //     music.pause()
+            // }
         },
         touch(e){
             const className = e.target.classList.value
             // Played for the first time
             if (!this.played && className != 'iconfont icon-play') {
+                console.log('默认')
                 this.changeMusic()
             }
             // Wechat code
@@ -260,13 +276,13 @@ export default {
     &.show{
         position: fixed;
         animation: headShow 0.6s both;
-        box-shadow: 0 1px 8px #f0f9ff;
+        box-shadow: 0 1px 8px var(--color-shadw-1);
         background: var(--color-bg-opacity);
     }
     &.exit{
         position: fixed;
         animation: headExit 0.6s both;
-        box-shadow: 0 1px 8px #f0f9ff;
+        box-shadow: 0 1px 8px var(--color-shadw-1);
         background: var(--color-bg-opacity);
     }
     .musicBar{
@@ -276,7 +292,7 @@ export default {
         width: 0;
         height: 50px;
         z-index: -1;
-        background: #eee;
+        background: var(--color-border-1);
     }
     .title{
         position: absolute;

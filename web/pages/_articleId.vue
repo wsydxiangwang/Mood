@@ -12,7 +12,6 @@
             :playMusic="true"
             :articlePage="true"
             @liked="liked"
-            @changeStatus="changeStatus"
             ref="header"
         />
 
@@ -76,7 +75,6 @@ export default {
             isLike: false,
             likeHint: false,
             likeTime: null,
-            footClass: '',
             options: [
                 {
                     type: 'read',
@@ -137,10 +135,6 @@ export default {
                 other: () => this.data[type]
             }
             return o[type] ? o[type]() : o.other()
-        },
-        changeStatus(state){
-            console.log(state)
-            this.footClass = state
         },
         onOptions(type){
             if (type === 'read') {
@@ -348,7 +342,7 @@ export default {
         left: 0;
         right: 0;
         background: var(--color-bg-opacity);
-        box-shadow: 0 -2px 12px #f0f9ff;
+        box-shadow: 0 -2px 12px var(--color-shadw-1);
         transition: all 0.6s;
         transform: translateY(100%);
         &.show{
@@ -364,7 +358,7 @@ export default {
         }
         h2{
             font-size: 16px;
-            color: var(--color-text-6);
+            color: var(--color-text-2);
         }
         .options{
             display: flex;
@@ -524,7 +518,7 @@ export default {
         ::v-deep header{
             // &.isUp{
             //     position: fixed;
-            //     box-shadow: 0 1px 8px #f0f9ff;
+            //     box-shadow: 0 1px 8px var(--color-shadw-1);
             //     background: rgba(255, 255, 255, 0.9);
             //     animation: headShow 0.6s both;
             // }
