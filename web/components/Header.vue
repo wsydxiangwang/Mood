@@ -38,9 +38,6 @@
                 <span></span>
                 <span></span>
             </div>
-            
-                {{ ss }}
-
             <!-- Music Progress -->
             <div class="musicBar" :style="{ width: progressLength }"></div>
         </div>
@@ -72,7 +69,6 @@
 <script>
 import QRCode from "qrcode"
 import scrollMixin from '~/mixin/scroll.js'
-let timer = null
 export default {
     mixins: [scrollMixin],
     props: {
@@ -104,7 +100,6 @@ export default {
     data(){
         return{
             palyStatus: 'icon-play',
-            timer: null,
             progressLength: 0,
 
             percent: 0,
@@ -119,7 +114,6 @@ export default {
             likeHint: false,
 
             played: false,
-
             ss: 0
         }
     },
@@ -166,47 +160,60 @@ export default {
                 this.changeClass = ''
             }
             if (this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
-                console.log(222222)
-                this.changeMusic()
+                setTimeout(() => {
+                    this.changeMusic()
+                }, 100);
             }
         },
-        changeMusic(){
+        async changeMusic(){
             this.played = true
             let music = document.getElementById("music"),
                 duration = music.duration,
                 result;
 
-            // WeChat Browser
-            music.ondurationchange = () => {
-                duration = music.duration
+            // music.load()
+
+            music.oncanplay = () => {
+                    alert(11 + music.duration)
+
             }
+
+            // WeChat Browser
+                music.ondurationchange = () => {
+                    alert(1 + music.duration)
+                    duration = music.duration
+                    // resolve(music.duration)
+                }
+            // duration = await new Promise((resolve, reject) => {
+                
+            // })
+            
+            alert(4 + duration)
 
             this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
 
-            // if (this.palyStatus == 'icon-pause') {
-            //     music.play()
-            //     const fn = () =>  {
-            //         setTimeout(() => {
-            //             result = music.currentTime / duration
-            //             console.log(music)
-            //             this.ss = result
-            //             this.progressLength = (100 * result).toFixed(2) + '%'
-            //             this.percent = result
-            //             if (this.palyStatus == 'icon-pause') {
-            //                 fn()
-            //             }
-            //         }, 50)
-            //     }
-            //     fn()
-            // } else {
-            //     music.pause()
-            // }
+            if (this.palyStatus == 'icon-pause') {
+                music.play()
+                const fn = () =>  {
+                    setTimeout(() => {
+                        result = music.currentTime / duration
+                        this.progressLength = (100 * result).toFixed(2) + '%'
+                        this.percent = result
+                        if (this.palyStatus == 'icon-pause') {
+                            fn()
+                        }
+                    }, 50)
+                }
+                fn()
+            } else {
+                music.pause()
+            }
         },
         touch(e){
             const className = e.target.classList.value
             // Played for the first time
             if (!this.played && className != 'iconfont icon-play') {
-                console.log('默认')
+                alert('默认')
                 this.changeMusic()
             }
             // Wechat code
