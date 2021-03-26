@@ -421,7 +421,7 @@ export default {
                         top: -180px;
                         right: 54px;
                         background: #ef6c57;
-                        color: var(--color-bg-primary);
+                        color: #fff;
                         font-size: 13px;
                         width: 210px;
                         height: 110px;
@@ -458,7 +458,7 @@ export default {
 @media screen and (max-width: 820px) {
     .articleld{
         section{
-            width: 90%;
+            width: 86%;
         }
         h1.title{
             font-size: 20px;
@@ -476,10 +476,8 @@ export default {
             }
         }
         footer{
-            width: 90%;
-            left: 5%;
-            box-shadow: 0 25px 150px -15px rgb(7 1 27 / 33%);
-            background: rgba(255, 255, 255, 0.95);
+            width: 86%;
+            left: 7%;
             &.show{
                 bottom: 20px;
             }
@@ -506,6 +504,10 @@ export default {
                         .icon-top{
                             margin-top: 4px;
                         }
+                        .like-hint-box{
+                            top: 8px;
+                            right: 10px;
+                        }
                     }
                 }
             }
@@ -516,14 +518,8 @@ export default {
 @media screen and (max-width: 600px) {
     .articleld{
         ::v-deep header{
-            // &.isUp{
-            //     position: fixed;
-            //     box-shadow: 0 1px 8px var(--color-shadw-1);
-            //     background: rgba(255, 255, 255, 0.9);
-            //     animation: headShow 0.6s both;
-            // }
-            .myself{
-                display: none;
+            .icon-like, .like{
+                display: none !important;
             }
         }
         .content{
@@ -550,6 +546,20 @@ export default {
             ::v-deep {
                 iframe{
                     height: 260px;
+                }
+            }
+        }
+        footer .foot-box{
+            padding: 0 8% 5px;
+            .options li .like-hint-box{
+                right: 14px;
+                transform-origin: center bottom;
+                span, .like-hint{
+                    right: 50% !important;
+                    transform: translateX(50%) !important;
+                }
+                span:nth-of-type(1){
+                    top: -65px;
                 }
             }
         }

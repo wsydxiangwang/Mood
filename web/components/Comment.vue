@@ -1018,7 +1018,7 @@ export default {
 
 @media screen and (max-width: 820px){
     .comment{
-        width: 90%;
+        width: 86%;
         .comment-list{
             padding-bottom: 100px;
         }
@@ -1026,7 +1026,6 @@ export default {
 }
 @media screen and (max-width: 600px) {
     .comment .comment-list{
-        padding: 0 0 40px;
         .comment-item{
             .head{
                 .img{
