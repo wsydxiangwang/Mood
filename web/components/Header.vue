@@ -38,6 +38,7 @@
                 <span></span>
                 <span></span>
             </div>
+            <div>{{ progressLength }}</div>
             <!-- Music Progress -->
             <div class="musicBar" :style="{ width: progressLength }"></div>
         </div>
@@ -149,7 +150,7 @@ export default {
         }
     },
     methods: {
-        scrollStatus() {
+        scrollStatus(oldVal, val) {
             if (this.scroll_current >= 100) {
                 if (this.scroll_direction === 'top') {
                     this.changeClass = 'show'
@@ -159,7 +160,7 @@ export default {
             } else {
                 this.changeClass = ''
             }
-            if (this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
+            if (val != undefined && this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
                 setTimeout(() => {
                     this.changeMusic()
                 }, 100);
@@ -167,33 +168,26 @@ export default {
         },
         async changeMusic(){
             this.played = true
+
             let music = document.getElementById("music"),
                 duration = music.duration,
                 result;
 
-            // music.load()
-
-            music.oncanplay = () => {
-                    alert(11 + music.duration)
-
-            }
-
+            console.log(duration)
             // WeChat Browser
-                music.ondurationchange = () => {
-                    alert(1 + music.duration)
-                    duration = music.duration
-                    // resolve(music.duration)
-                }
-            // duration = await new Promise((resolve, reject) => {
-                
-            // })
-            
-            alert(4 + duration)
-
             this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
 
-            if (this.palyStatus == 'icon-pause') {
-                music.play()
+            if (this.palyStatus == 'icon-pause') {        
+                console.log(music)
+                
+                try {
+                    await music.play()
+                } catch(err) {
+                    console.log(err)
+                    this.changeMusic()
+                    return
+                }
+                console.log(3)
                 const fn = () =>  {
                     setTimeout(() => {
                         result = music.currentTime / duration
