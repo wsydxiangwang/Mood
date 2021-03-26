@@ -182,13 +182,14 @@ export default {
             this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
 
             if (this.palyStatus == 'icon-pause') {
-
+                !music.ondurationchange && music.load()
                 duration = await new Promise((resolve, reject) => {
-                    music.onduratiοnchange = () => {
-                        alert(9)
+                    music.ondurationchange = function(){
+                        alert(music.duration)
                         resolve(music.duration)
-                    }                    
+                    }
                 })
+                alert(duration)
 
                 try {
                     await music.play()
