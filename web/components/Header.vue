@@ -183,8 +183,12 @@ export default {
 
             if (this.palyStatus == 'icon-pause') {
 
-                // duration = music.on
-
+                duration = await new Promise((resolve, reject) => {
+                    music.onduratiοnchange = () => {
+                        alert(9)
+                        resolve(music.duration)
+                    }                    
+                })
 
                 try {
                     await music.play()
