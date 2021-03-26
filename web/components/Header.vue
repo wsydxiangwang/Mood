@@ -38,7 +38,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <div>{{ progressLength }} {{ss}}</div>
+
             <!-- Music Progress -->
             <div class="musicBar" :style="{ width: progressLength }"></div>
         </div>
@@ -131,13 +131,13 @@ export default {
                 this.$watch('scroll_current', this.scrollStatus, { immediate: true })
             },
             playMusic: () => {
+                // PC or Mobile
                 try {
                     document.createEvent('TouchEvent')
                     this.platform = 'touchstart'
                 } catch(e) {
                     this.platform = 'click'
                 }
-                alert(this.platform)
                 window.addEventListener(this.platform, this.touch)
             }
         }
@@ -167,7 +167,7 @@ export default {
             }
             if (val != undefined && this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
                 setTimeout(() => {
-                    // this.changeMusic()
+                    this.changeMusic()
                 }, 100);
             }
         },
@@ -182,27 +182,24 @@ export default {
             this.palyStatus = this.palyStatus == 'icon-play' ? 'icon-pause' : 'icon-play'
 
             if (this.palyStatus == 'icon-pause') {
-                !music.ondurationchange && music.load()
-                duration = await new Promise((resolve, reject) => {
-                    music.ondurationchange = function(){
-                        alert(music.duration)
-                        resolve(music.duration)
-                    }
-                })
-                alert(duration)
-
+                if (!music.ondurationchange) {  // 第一次播放音乐
+                    music.load()
+                    duration = await new Promise((resolve, reject) => {
+                        music.ondurationchange = () => {
+                            resolve(music.duration)
+                        }
+                    })
+                }
                 try {
                     await music.play()
                 } catch(err) {
-                    alert(err)
+                    alert('自动音乐播放失败，请点击左上角进行播放！')
                     this.changeMusic()
-                    return
+                    return  
                 }
-                alert(3)
                 const fn = () =>  {
                     setTimeout(() => {
                         result = music.currentTime / duration
-                        this.ss = music.currentTime +','+ duration
                         this.progressLength = (100 * result).toFixed(2) + '%'
                         this.percent = result
                         if (this.palyStatus == 'icon-pause') {
