@@ -63,7 +63,6 @@
         <audio id="music" loop preload="auto">
             <source type="audio/mpeg" :src="music">
         </audio>
-
     </header>
 </template>
 
@@ -138,7 +137,7 @@ export default {
                 } catch(e) {
                     this.platform = 'click'
                 }
-                window.addEventListener(this.platform, this.touch)
+                document.addEventListener(this.platform, this.touch)
             }
         }
         for (let key in o) {
@@ -156,6 +155,7 @@ export default {
     },
     methods: {
         scrollStatus(oldVal, val) {
+            console.log(val)
             if (this.scroll_current >= 100) {
                 if (this.scroll_direction === 'top') {
                     this.changeClass = 'show'
@@ -165,11 +165,11 @@ export default {
             } else {
                 this.changeClass = ''
             }
-            if (val != undefined && this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
-                setTimeout(() => {
-                    this.changeMusic()
-                }, 100);
-            }
+            // if (val != undefined && this.playMusic && !this.played) {     // 偷偷摸摸 播放音乐
+            //     setTimeout(() => {
+            //         this.changeMusic()
+            //     }, 100);
+            // }
         },
         async changeMusic(){
             this.played = true
@@ -193,7 +193,7 @@ export default {
                 try {
                     await music.play()
                 } catch(err) {
-                    alert('自动音乐播放失败，请点击左上角进行播放！')
+                    alert('自动播放音乐出现错误，请点击左上角进行播放！')
                     this.changeMusic()
                     return  
                 }
@@ -214,15 +214,18 @@ export default {
         },
         touch(e){
             const className = e.target.classList.value
-            // Played for the first time
-            if (!this.played && className != 'iconfont icon-play') {
-                this.changeMusic()
-            }
             // Wechat code
             if (className == "iconfont icon-wechat") {
                 this.qrccode = this.qrccode ? '' : 'qrccode'
             } else {
                 this.qrccode = ''
+            }
+            if (['myself', 'logo-img'].includes(className)) {
+                return
+            }
+            // Played for the first time
+            if (!this.played && className != 'iconfont icon-play') {
+                this.changeMusic()
             }
         },
         // like +1
