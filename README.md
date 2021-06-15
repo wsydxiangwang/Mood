@@ -11,7 +11,7 @@
 
 ### 完成度85%，先暂停一下？？有急事？？优化一些操作体验，新增一些美的发现，优化重构所有代码！
 
-（coding...期间项目不可使用，请勿clone！！！避免出现各种未知情况，请熟知！！如果需要可联系我。
+（几个月了（2021.6.15），后面有时间完善的话，结束会发朋友圈告知，如有兴趣可加我微信，第一时间满足你们的需求：wsydxiangwang
 
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
