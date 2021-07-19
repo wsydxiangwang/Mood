@@ -15,6 +15,8 @@
 
 （如有建议，想法等，可以发邮件给我，看到会第一时间回复，
 
+（创业中，四个月了，身心疲倦，2021.7.19
+
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
