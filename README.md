@@ -9,14 +9,6 @@
     <img src="https://img.shields.io/badge/MongDB-v4.2.4-brightgreen">
 </div>
 
-### 完成度85%，先暂停一下？？有急事？？优化一些操作体验，新增一些美的发现，优化重构所有代码！
-
-（2021.6.15 几个月过去了，后面有时间完善的话，完成后会发朋友圈告知，如有兴趣可加我微信：wsydxiangwang
-
-（如有建议，想法等，可以发邮件给我，看到会第一时间回复，
-
-（创业中，四个月了，身心疲倦，2021.7.19
-
 <div align="center">
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
