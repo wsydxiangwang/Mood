@@ -13,6 +13,8 @@
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
+优化未结束，开始新旅程！
+
 ## 🎃 陌生人，你好呀~~
 
 恭喜你发现了一个宝藏，在这儿能拥有属于自己的网站。
