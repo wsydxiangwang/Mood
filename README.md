@@ -13,7 +13,10 @@
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
-优化未结束，开始新旅程！
+欢迎添加wx加入交流群：wsydxiangwang
+
+优化未结束，持续中...
+
 
 ## 🎃 陌生人，你好呀~~
 
