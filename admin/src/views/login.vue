@@ -1,18 +1,27 @@
 <template>
     <div>
-        
         <div class="form">
             <h2>Welcome Home!</h2>
             <div class="form-item">
                 <div class="ipt user">
-                    <input type="text" placeholder="Name" v-model="data.username" @keyup.enter="login">
-                    <img src="../assets/login-1.png">
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        v-model="data.username"
+                        @keyup.enter="login"
+                    />
+                    <img src="../assets/login-1.png" />
                 </div>
                 <div class="ipt pass">
-                    <input type="password" placeholder="Password" v-model="data.password" @keyup.enter="login">
-                    <img src="../assets/login-2.png">
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        v-model="data.password"
+                        @keyup.enter="login"
+                    />
+                    <img src="../assets/login-2.png" />
                 </div>
-                <img src="../assets/login-0.png" alt="">
+                <img src="../assets/login-0.png" alt="" />
                 <el-button @click="login" type="primary">sign in</el-button>
                 <p class="options">
                     <span @click="isPopup(0)">- SignUp</span>
@@ -37,23 +46,37 @@
                             <template v-for="(val, key, idx) in formList">
                                 <template v-if="val == '邮箱类型'">
                                     <el-form-item :label="val" :key="idx">
-                                        <el-radio-group v-model="form[key]">     
+                                        <el-radio-group v-model="form[key]">
                                             <el-radio label="QQ"></el-radio>
                                             <el-radio label="163"></el-radio>
                                         </el-radio-group>
                                     </el-form-item>
                                 </template>
+                                <template v-else-if="val == 'Email PASS'">
+                                    <el-tooltip
+                                        class="item"
+                                        effect="dark"
+                                        content="在邮箱设置开启SMTP服务器可获取PASS码"
+                                        placement="top"
+                                        :key="idx"
+                                    >
+                                        <el-input
+                                            v-model="form[key]"
+                                            :placeholder="val"
+                                        ></el-input>
+                                    </el-tooltip>
+                                </template>
                                 <template v-else>
-                                    <el-input 
-                                        :placeholder="val" 
-                                        v-model="form[key]" 
-                                        :key="idx" 
+                                    <el-input
+                                        :placeholder="val"
+                                        v-model="form[key]"
+                                        :key="idx"
                                         type="password"
                                         v-if="key == 'password' || key == 'passwords'"
                                     ></el-input>
-                                    <el-input 
-                                        :placeholder="val" 
-                                        v-model="form[key]" 
+                                    <el-input
+                                        :placeholder="val"
+                                        v-model="form[key]"
                                         :key="idx"
                                         v-else
                                     ></el-input>
@@ -61,18 +84,24 @@
                             </template>
                             <el-button @click="signIn">sign in</el-button>
                         </el-form>
-                        <p><span class="el-icon-warning"></span> 在邮箱设置开启SMTP服务器可获取（忘记密码、邮件通知必填，Emali PASS），账号只可注册一次！</p>
+                        <p><span class="el-icon-warning"></span> 账号只可注册一次！</p>
                     </template>
 
                     <!-- 忘记密码 -->
                     <template v-else>
                         <el-form>
-                            <el-input placeholder="请输入邮箱" v-model="form['email']" ></el-input>
+                            <el-input
+                                placeholder="请输入邮箱"
+                                v-model="form['email']"
+                            ></el-input>
                             <el-button @click="sendEmail">sign in</el-button>
                         </el-form>
-                        <p style="margin: 20px;"><span class="el-icon-warning"></span> 邮箱必须填写对应的 Emali PASS，才能发送邮件！</p>
+                        <p style="margin: 20px;">
+                            <span class="el-icon-warning"></span>
+                            邮箱必须填写对应的 Emali PASS，才能发送邮件！
+                        </p>
                     </template>
-                    
+
                     <span @click="isPopup" class="el-icon-circle-close"></span>
                 </div>
             </section>
@@ -82,75 +111,87 @@
 
 <script>
 export default {
-    data(){
+    data() {
         return {
             data: {},
             form: {},
             formList: {
-                name: 'Name',
-                password: 'Password',
-                passwords: 'Confirm Password',
-                email: 'Email',
-                pass: 'Email PASS',
-                email_type: '邮箱类型'
+                name: "Name",
+                password: "Password",
+                passwords: "Confirm Password",
+                email: "Email",
+                pass: "Email PASS",
+                email_type: "邮箱类型",
             },
             isShow: false,
-            popupTitle: '',
+            popupTitle: "",
         }
     },
     methods: {
-        isPopup(name){
-            const list = ['Create Account', 'Forgot Password']
+        isPopup(name) {
+            const list = ["Create Account", "Forgot Password"]
             this.popupTitle = list[name]
             this.isShow = !this.isShow
             this.form = {}
         },
         signIn() {
             if (Object.keys(this.form).length != 6) {
-                this.$message.error('请填写完整信息')
+                this.$message.error("请填写完整信息")
                 return
             }
             if (this.form.password !== this.form.passwords) {
-                this.$message.error('密码不一致')
+                this.$message.error("密码不一致")
                 return
             }
-            
-            this.$request(() => this.$http.post('/user', this.form)
-                .then(res => {
-                    if (res.data.status == 1) {
-                        this.$message.success(res.data.body.message)
-                        this.form = {}
-                        this.isCreate()
-                    } else {
-                        this.$alert(res.data.body, '注册失败', { confirmButtonText: '确定' })
-                    }
-                }), '#app', false)
+
+            this.$request(
+                () =>
+                    this.$http.post("/user", this.form).then((res) => {
+                        console.log(res)
+                        if (res.data.status == 1) {
+                            this.$message.success(res.data.body.message)
+                            this.form = {}
+                            this.isCreate()
+                        } else {
+                            this.$alert(res.data.body, "注册失败", {
+                                confirmButtonText: "确定",
+                            })
+                        }
+                    }),
+                "#app",
+                false
+            )
         },
-        login(){
-            this.$request(() => this.$http.post('/login', this.data)
-                .then(res => {
-                    if (res.data.status === 1) {
-                        localStorage.setItem("Authorization", res.data.body.token)
-                        this.$message.success('success')
-                        this.$router.push('/')
-                        this.$infoUpdate()
-                    } else {
-                        this.$message.error(res.data.body)
-                    }
-                }), '#app', false)
+        login() {
+            this.$request(
+                () =>
+                    this.$http.post("/login", this.data).then((res) => {
+                        if (res.data.status === 1) {
+                            localStorage.setItem(
+                                "Authorization",
+                                res.data.body.token
+                            )
+                            this.$message.success("success")
+                            this.$router.push("/")
+                            this.$infoUpdate()
+                        } else {
+                            this.$message.error(res.data.body)
+                        }
+                    }),
+                "#app",
+                false
+            )
         },
         sendEmail() {
-            this.$request(() => this.$http.post('/forgotPassword', this.form)
-                .then(res => {
-                    
-                })
+            this.$request(() =>
+                this.$http.post("/forgotPassword", this.form).then((res) => {})
             )
-        }
-    }
+        },
+    },
 }
 </script>
 <style lang="scss" scoped>
-.create{
+.create {
     position: fixed;
     left: 0;
     right: 0;
@@ -160,23 +201,23 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    &::before{
-        content: '';
+    &::before {
+        content: "";
         background: rgba(0, 0, 0, 0.5);
         display: block;
         height: 100%;
         width: 100%;
         position: absolute;
     }
-    .create-form{
+    .create-form {
         background: #fff;
         width: 430px;
         z-index: 99;
-        padding: 40px 50px 20px;
+        padding: 40px 50px 30px;
         border-radius: 10px;
         box-shadow: 0 2px 10px #e6e6e6;
         position: relative;
-        h3{
+        h3 {
             text-align: center;
             color: #409eff;
             font-size: 20px;
@@ -184,13 +225,13 @@ export default {
             font-weight: 400;
             letter-spacing: 2px;
         }
-        p{
+        p {
             font-size: 12px;
             color: #b5b5b5;
-            margin-top: 40px;
+            margin-top: 10px;
             text-align: center;
         }
-        input{
+        input {
             width: 100%;
             height: 44px;
             border-radius: 4px;
@@ -199,13 +240,13 @@ export default {
             font-size: 14px;
             padding: 0 12px;
             color: #606060;
-            transition: all .3s;
+            transition: all 0.3s;
             outline: none;
-            &:hover{
+            &:hover {
                 border-color: #0b9aff;
             }
         }
-        button{
+        button {
             border: none;
             color: #fff;
             background: #0b9aff;
@@ -217,42 +258,46 @@ export default {
             width: 100%;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all .3s;
+            transition: all 0.3s;
             outline: none;
-            margin-top: 10px;
-            &:hover{
+            &:hover {
                 background: #0486e2;
             }
         }
-        .el-input{
+        .el-input {
             margin-bottom: 12px;
-            input{
+            input {
                 height: 44px;
                 line-height: 44px;
                 border-color: #eee;
             }
         }
-        .el-icon-circle-close{
+        .el-form-item {
+            margin-bottom: 20px;
+        }
+        .el-icon-circle-close {
             position: absolute;
             right: 15px;
             top: 15px;
             font-size: 18px;
             color: #d2d2d2;
             cursor: pointer;
-            transition: all .3s;
-            &:hover{
+            transition: all 0.3s;
+            &:hover {
                 color: #0486e2;
             }
         }
     }
 }
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
     opacity: 0;
 }
-.form{
+.form {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -264,29 +309,29 @@ export default {
     transform: translate(-50%, -50%);
     box-shadow: 0 2px 10px #e6e6e6;
     z-index: 9;
-    .form-item{
+    .form-item {
         padding: 0 50px;
-        div img{
+        div img {
             display: none;
         }
-        .ipt:focus-within{
-            & ~ img{
+        .ipt:focus-within {
+            & ~ img {
                 display: none;
             }
-            img{
+            img {
                 display: block;
             }
-            &.user img{
+            &.user img {
                 width: 120px;
                 height: 113px;
             }
-            &.pass img{
+            &.pass img {
                 width: 103px;
                 height: 84px;
                 top: -60px;
             }
         }
-        img{
+        img {
             position: absolute;
             top: -80px;
             left: 50%;
@@ -294,25 +339,25 @@ export default {
             height: 95px;
             transform: translate(-50%, 0);
         }
-        .options{
+        .options {
             color: #ccc;
-            span{
+            span {
                 font-size: 12px;
                 display: inline-block;
                 margin-top: 6px;
                 cursor: pointer;
-                transition: all .3s;
+                transition: all 0.3s;
                 text-transform: uppercase;
-                &:hover{
+                &:hover {
                     color: #0b9aff;
                 }
-                &:last-child:hover{
+                &:last-child:hover {
                     color: red;
                 }
             }
         }
     }
-    input{
+    input {
         width: 100%;
         height: 44px;
         border-radius: 4px;
@@ -321,35 +366,35 @@ export default {
         font-size: 14px;
         padding: 0 12px;
         color: #606060;
-        transition: all .3s;
+        transition: all 0.3s;
         outline: none;
-        &:hover{
+        &:hover {
             border-color: #0b9aff;
         }
-        &:focus-within + img{
+        &:focus-within + img {
             display: block;
         }
     }
-    button{
+    button {
         border: none;
         background: #0b9aff;
         width: 100%;
         text-transform: uppercase;
         letter-spacing: 1px;
-        transition: all .3s;
+        transition: all 0.3s;
         margin-top: 10px;
-        &:hover{
+        &:hover {
             background: #0486e2;
         }
     }
-    h2{
+    h2 {
         font-size: 22px;
         color: #0b9aff;
         letter-spacing: 2px;
         margin: 10px 0 24px;
     }
 }
-.hint{
+.hint {
     position: absolute;
     bottom: 10px;
     left: 50%;
@@ -367,7 +412,7 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: linear-gradient(to bottom right, #50A3A2, #53E3A6);
+    background: linear-gradient(to bottom right, #50a3a2, #53e3a6);
     li {
         position: absolute;
         bottom: -160px;
@@ -446,7 +491,7 @@ export default {
             opacity: 0.5;
             transform: translateY(0px) rotate(0);
         }
-        50%{
+        50% {
             opacity: 1;
         }
         100% {
@@ -455,28 +500,31 @@ export default {
         }
     }
 }
-input::-webkit-input-placeholder{
-    color:#bbbbbb;
+input::-webkit-input-placeholder {
+    color: #bbbbbb;
 }
-input::-moz-placeholder{   /* Mozilla Firefox 19+ */
-    color:#bbbbbb;
-}　　
-input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
-    color:#bbbbbb;
+input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #bbbbbb;
 }
-input:-ms-input-placeholder{  /* Internet Explorer 10-1*/
-    color:#bbbbbb;
+　　 input:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #bbbbbb;
+}
+input:-ms-input-placeholder {
+    /* Internet Explorer 10-1*/
+    color: #bbbbbb;
 }
 
 @media screen and (max-width: 600px) {
-    .form{
+    .form {
         max-width: 90%;
         width: 400px;
-        .form-item{
-            padding: 0 40px
+        .form-item {
+            padding: 0 40px;
         }
     }
-    .create .create-form{
+    .create .create-form {
         max-width: 90%;
         width: 400px;
         padding: 40px 30px 20px;

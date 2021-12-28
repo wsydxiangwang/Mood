@@ -3,7 +3,7 @@
  * @param {Data} err 错误结果
  * @param {Data} doc 成功数据/信息
  */
-function requestResult(err, doc){
+ module.exports = function RequestResult(err, doc) {
     if (doc) {
         return {
             status: 1,
@@ -18,5 +18,3 @@ function requestResult(err, doc){
         }
     }
 }
-
-module.exports = requestResult
