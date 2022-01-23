@@ -59,22 +59,30 @@ const routes = [
 		]
 	},
 	{
-		path: '/login',
+		path: '/login/index',
 		name: "login", 
 		meta: {
-            requireAuth: true,  // 除此路由外，其他都需登录
-        },
-		component: resolve => require(['@/views/login'], resolve)
+			requireAuth: true,  // 除此路由外，其他都需登录
+		},
+		component: resolve => require(['@/views/login/main'], resolve)
 	},
-    {
-      name: '404',
-      path: '/404',
-	  component: resolve => require(['@/views/404'], resolve)
-    },
-    {
-      path: '*',    // 此处需特别注意至于最底部
-      redirect: '/404'
-    }
+	{
+		path: '/login/resetPassword',
+		name: "ResetPassword", 
+		meta: {
+			requireAuth: true,  // 除此路由外，其他都需登录
+		},
+		component: resolve => require(['@/views/login/resetPassword'], resolve)
+	},
+	{
+		name: '404',
+		path: '/404',
+		component: resolve => require(['@/views/404'], resolve)
+	},
+	{
+		path: '*',    // 此处需特别注意至于最底部
+		redirect: '/404'
+	}
 ]
 
 const router = new VueRouter({
@@ -92,12 +100,12 @@ router.beforeEach((to, from, next) => {
 	if (!to.meta.requireAuth) {
 		if (localStorage.getItem("Authorization")) {  // 是否已登录
 			next()
-        } else {
-            next({ path: '/login' })
-        }
-    } else {
-        next()
-    }
+		} else {
+			next({ path: '/login/index' })
+		}
+	} else {
+		next()
+	}
 })
 
 export default router

@@ -1,20 +1,20 @@
 /**
  * 请求结果
- * @param {Data} err 错误结果
- * @param {Data} doc 成功数据/信息
+ * @param {string} status 状态
+ * @param {Data} data 数据/信息
  */
- module.exports = function RequestResult(err, doc) {
-    if (doc) {
+ module.exports = function RequestResult({ status, data }) {
+    if (status == 'success') {
         return {
             status: 1,
             message: 'success',
-            body: doc
+            body: data
         }
     } else {
         return {
             status: 2,
             message: 'error',
-            body: err
+            body: data
         }
     }
 }
