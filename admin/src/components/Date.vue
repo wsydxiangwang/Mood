@@ -1,29 +1,29 @@
 <template>
-    <el-date-picker
-        v-model="value"
-        type="datetime"
-        value-format="yyyy/MM/dd HH:mm"
-        placeholder="选择日期时间"
-    >
-    </el-date-picker>
+	<el-date-picker
+		v-model="value"
+		type="datetime"
+		placeholder="选择日期时间"
+		value-format="timestamp"
+	>
+	</el-date-picker>
 </template>
 
 <script>
 export default {
-    name: 'Date',
-    props: ['originalDate'],
-    data(){
-        return{
-            value: '',
-        }
-    },
-    watch: {
-        value(val){
-            this.$emit('getDate', val)
-        },
-        originalDate(val) {
-            this.value = this.originalDate
-        }
-    }
+	name: 'Date',
+	props: ['originalDate'],
+	data() {
+		return {
+			value: '',
+		}
+	},
+	watch: {
+		value(timestamp) {
+			this.$emit('getDate', timestamp)
+		},
+		originalDate(val) {
+			this.value = this.originalDate
+		},
+	},
 }
 </script>

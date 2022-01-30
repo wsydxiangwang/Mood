@@ -62,14 +62,16 @@ const routes = [
 		path: '/login/index',
 		name: "login", 
 		meta: {
+			path: '/login/index',
 			requireAuth: true,  // 除此路由外，其他都需登录
 		},
 		component: resolve => require(['@/views/login/main'], resolve)
 	},
 	{
-		path: '/login/resetPassword',
-		name: "ResetPassword", 
+		path: '/resetPassword',
+		name: "resetPassword", 
 		meta: {
+			path: '/resetPassword',
 			requireAuth: true,  // 除此路由外，其他都需登录
 		},
 		component: resolve => require(['@/views/login/resetPassword'], resolve)
@@ -96,15 +98,19 @@ router.beforeEach((to, from, next) => {
 	let name = list.indexOf(to.path) > -1 ? '/' + to.path.split('/')[1] : to.path
 
 	store.commit('setMenu', name)
-	
-	if (!to.meta.requireAuth) {
+
+	console.log(to, from)
+
+	if (to.meta.requireAuth) {
+		next()
+		console.log('不需要登录')
+	} else {
+		console.log('需要登录')
 		if (localStorage.getItem("Authorization")) {  // 是否已登录
 			next()
 		} else {
 			next({ path: '/login/index' })
 		}
-	} else {
-		next()
 	}
 })
 

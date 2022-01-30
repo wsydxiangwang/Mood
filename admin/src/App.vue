@@ -6,9 +6,13 @@
 
 <script>
 export default {
-    created() {
-        this.$infoUpdate()
-    }	
+	mounted() {
+		// setTimeout(() => {
+		// 	console.log('route', this.$router.app._route)
+		  this.$infoUpdate()
+
+		// })
+	}	
 }
 </script>
 
@@ -35,22 +39,22 @@ body{
 	overflow: hidden;
 }
 #app{
-    padding: 0 15px;
-    border-radius: 10px;
-    height: 100vh;
-    width: 100vw;
+	padding: 0 15px;
+	border-radius: 10px;
+	height: 100vh;
+	width: 100vw;
 	display: flex;	
 }
 h2.tit{
-    border-left: 2px solid var(--color-main);
-    padding-left: 16px;
-    font-size: 18px;
-    font-weight: 400;
-    margin: 20px 0 30px;
+	border-left: 2px solid var(--color-main);
+	padding-left: 16px;
+	font-size: 18px;
+	font-weight: 400;
+	margin: 20px 0 30px;
 	color: var(--color-main);
 	display: flex;
-    align-items: center;
-    justify-content: space-between;
+	align-items: center;
+	justify-content: space-between;
 	.add{
 		height: 30px;
 		line-height: 32px;
@@ -86,7 +90,7 @@ h2.tit{
 		width: 90%;
 	}
 	.el-tooltip__popper{
-        display: none !important;
+		display: none !important;
 	}
 	h2.tit{
 		font-size: 16px;

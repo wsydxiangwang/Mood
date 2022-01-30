@@ -43,7 +43,7 @@
 			</template>
 			<el-button @click="register" :loading="loading">register</el-button>
 		</el-form>
-		<p><span class="el-icon-warning"></span> 账号只可注册一次！</p>
+		<p><span class="el-icon-warning"></span> 安全考虑，账号只可注册一次！</p>
 	</div>
 </template>
 

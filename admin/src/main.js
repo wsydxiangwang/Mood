@@ -5,9 +5,11 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import dayjs from 'dayjs'
 
-Vue.use(ElementUI);
+Vue.use(ElementUI)
 
+Vue.prototype.dayjs = dayjs
 Vue.prototype.$http = http
 Vue.config.productionTip = false
 
@@ -15,12 +17,13 @@ let loading = null
 
 // 设置个人信息 vuex
 Vue.prototype.$infoUpdate = () => {
-    http.get('/info').then(res => {
+	console.log(router.currentRoute)
+	http.get('/info').then(res => {
 		if(res && res.data.status == 1){
 			const data = res.data.body;
 			store.commit('data', data)
 		}
-    })
+	})
 }
 
 /**

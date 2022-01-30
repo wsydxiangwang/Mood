@@ -8,7 +8,6 @@
 			</div>
 			<div class="ipt pass">
 				<el-input
-					@change="login"
 					placeholder="Password"
 					v-model="form.password"
 					show-password
