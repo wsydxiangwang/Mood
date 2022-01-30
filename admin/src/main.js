@@ -39,7 +39,7 @@ Vue.prototype.$formData = (data) => {
 
 // 时间格式获取
 Vue.prototype.$getDate = (data) => {
-	return `${data.time} ${data.month.en} ${data.day.on}`
+	return `${data.time} ${data.month.en} ${data.day.on}, ${data.year}`
 }
 
 /**

@@ -15,6 +15,7 @@
     "co": "^4.6.0",
     "connect-history-api-fallback": "^1.6.0",
     "cors": "^2.8.5",
+    "dayjs": "^1.10.7",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "jsonwebtoken": "^8.5.1",

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <div>
     <div class="upload-box" v-if="isUploadType">
       <el-upload
         v-for="(item, index) in ['music', 'image']"
@@ -48,7 +48,7 @@
       active-text="文件上传"
       inactive-text="输入链接"
     ></el-switch>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -109,9 +109,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.el-switch, .el-input {
+  width: 100%;
+  height: 38px;
+  margin: 8px 0;
+}
 .upload-box {
 	display: flex;
-	margin: 10px -7px 20px;
+	margin: 10px -7px 5px;
 	.upload-item {
 		width: 50%;
 		max-width: 360px;

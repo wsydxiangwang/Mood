@@ -19,7 +19,17 @@ module.exports = (app, plugin, model) => {
 	// 获取指定id文章
 	router.get('/article/:id', (req, res) => {
 		Article.findOne({ id: req.params.id }, (err, doc) => {
-			res.send(RequestResult(err, doc))
+			if (doc) {
+				res.send(RequestResult({
+					status: 'success',
+					data: doc
+				}))
+			} else {
+				res.send(RequestResult({
+					status: 'error',
+					data: err
+				}))
+			}
 		})
 	})
 
@@ -90,14 +100,34 @@ module.exports = (app, plugin, model) => {
 			req.params.id,
 			req.body.data,
 			(err, doc) => {
-				res.send(RequestResult(err, doc))
+				if (doc) {
+					res.send(RequestResult({
+						status: 'success',
+						data: doc
+					}))
+				} else {
+					res.send(RequestResult({
+						status: 'error',
+						data: err
+					}))
+				}
 			})
 	})
 
 	// 删除文章
 	router.delete('/article/:id', (req, res) => {
 		Article.findByIdAndDelete(req.params.id, (err, doc) => {
-			res.send(RequestResult(err, doc))
+			if (doc) {
+				res.send(RequestResult({
+					status: 'success',
+					data: doc
+				}))
+			} else {
+				res.send(RequestResult({
+					status: 'error',
+					data: err
+				}))
+			}
 		})
 	})
 

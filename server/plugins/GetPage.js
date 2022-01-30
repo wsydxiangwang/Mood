@@ -11,7 +11,7 @@ async function GetPage(db, page = 1, size = 10) {
 		db.countDocuments(),
 		db.find().sort({ time: -1 }).limit(Number(size)).skip(Number(size) * (page - 1))
 	])
-	result[1].forEach(item => item._doc['time'] = dateFormat(item.time))
+	result[1].forEach(item => item._doc['time'] = DateFormat(item.time))
 	return {
 		total: result[0],
 		data: result[1],

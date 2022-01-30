@@ -13,7 +13,7 @@
 					<p>{{ scope.row.title }}</p>
 				</template>
 			</el-table-column>
-			<el-table-column label="Date" width="140" class="hidden">
+			<el-table-column label="Date" width="180" class="hidden">
 				<template slot-scope="scope">
 					<span>{{ $getDate(scope.row.time) }}</span>
 				</template>

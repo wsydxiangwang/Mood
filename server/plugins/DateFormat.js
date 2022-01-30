@@ -1,6 +1,12 @@
+const dayjs = require('dayjs')
+
 // 时间戳 转换
 function DateFormat(timestamp) {
-	const w = new Date(timestamp).getDay()
+	const w = dayjs(timestamp).day()
+
+	timestamp = dayjs(timestamp).format('YYYY-MM-DD HH:mm')
+
+	console.log(timestamp)
 
 	timestamp = timestamp.toString().replace(/-|\:|\/|\ /g, ',').split(',')
 
@@ -26,7 +32,7 @@ function DateFormat(timestamp) {
 			22: nd,
 			23: rd,
 			31: st
-		};
+		}
 
 	let day = opt.D + (obj[opt.D] ? obj[opt.D] : th)
 	day = day.startsWith(0) ? day.slice(1) : day    // 去除前面的0
