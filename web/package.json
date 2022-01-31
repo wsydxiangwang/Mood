@@ -8,11 +8,11 @@
   "config": {
     "nuxt": {
       "host": "0.0.0.0",
-      "port": "8000"
+      "port": "8800"
     }
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "serve": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"

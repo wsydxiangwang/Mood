@@ -37,8 +37,8 @@ export default {
         }
     },
     mounted(){
-        if (this.info.page_music.letter) {
-            this.music = this.info.page_music.letter
+        if (this.info.pageBgMusic.letter) {
+            this.music = this.info.pageBgMusic.letter
             this.refresh = false
             this.$nextTick(() => this.refresh = true)
         }

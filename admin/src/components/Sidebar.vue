@@ -3,9 +3,9 @@
         <div class="sidebar" :class="{hide:scale, show:show}">
             <div class="info">
                 <div class="photo">
-                    <img v-if="$info" :src="$info.base.admin_avatar || ''">
+                    <img v-if="$info" :src="$info.base.adminAvatar || ''">
                 </div>
-                <p class="name" v-if="$info">{{ $info.base.admin_name }}</p>
+                <p class="name" v-if="$info">{{ $info.base.adminName }}</p>
             </div>
             <el-menu 
                 :default-active="activeIndex" 

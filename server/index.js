@@ -1,6 +1,6 @@
-const express = require('express');
-const history = require('connect-history-api-fallback');
-const expressJwt = require("express-jwt");
+const express = require('express')
+const history = require('connect-history-api-fallback')
+const expressJwt = require("express-jwt")
 const bodyParser = require('body-parser')
 const fs = require('fs')
 
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }))     // 解析post请求数�
  */
 app.use('/admin', express.static(__dirname + '/admin'))
 app.use('/uploads', express.static(__dirname + '/uploads'))
-
+app.use('/assets', express.static(__dirname + '/assets'))
 
 /**
  * 验证token
@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
  * 全局方法
  * 接口模块
  */
-const fileName = ['plugins', 'models'];
+const fileName = ['plugins', 'models']
 const global = fs.readdirSync(__dirname).filter(i => fileName.includes(i)).reduce((total, item) => {
     const files = fs.readdirSync(__dirname + '/' + item)
     files.map(i => {

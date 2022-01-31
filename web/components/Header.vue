@@ -28,7 +28,7 @@
                     ></span>
                 </template>
                 <span class="myself" @click="toPage('/about')">
-                    <img :src="$store.state.data.base.admin_avatar">
+                    <img :src="$store.state.data.base.adminAvatar">
                 </span>
             </div>
 

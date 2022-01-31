@@ -82,7 +82,7 @@ export default {
 	},
 	computed: {
 		uploadType() {
-			return this.$store.state.$data.info.base.upload_type
+			return this.$store.state.$data.info.base.uploadType
 		},
 		musicName() {
 			return this.data['music'].url

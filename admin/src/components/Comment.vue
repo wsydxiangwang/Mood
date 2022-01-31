@@ -36,7 +36,7 @@ export default {
             return this.isShow ? 'active' : ''
         },
         avatarURL() {
-            return this.info ? this.info.base.admin_avatar : ''
+            return this.info ? this.info.base.adminAvatar : ''
         }
     },
     methods: {

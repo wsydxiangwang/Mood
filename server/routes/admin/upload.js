@@ -33,7 +33,7 @@ module.exports = (app, plugin, model) => {
 				var oss = JSON.parse(req.body.oss)
 			} else {
 				const result = await Info.find()
-				var oss = result['aliyun_oss']
+				var oss = result['ossAliyun']
 			}
 
 			//  文件信息

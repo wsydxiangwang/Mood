@@ -54,7 +54,7 @@ const routes = [
 			{
 				path: '/setting',
 				name: "setting",
-				component: resolve => require(['@/views/setting'], resolve)
+				component: resolve => require(['@/views/setting/index'], resolve)
 			},
 		]
 	},

@@ -103,8 +103,8 @@ export default {
         }
     },
     mounted(){
-        if (this.info.page_music.subscribe) {
-            this.music = this.info.page_music.subscribe
+        if (this.info.pageBgMusic.subscribe) {
+            this.music = this.info.pageBgMusic.subscribe
             this.refresh = false
             this.$nextTick(() => this.refresh = true)
         }

@@ -27,8 +27,8 @@ export default {
         }
     },
     mounted(){
-        if (this.info.page_music.about) {
-            this.music = this.info.page_music.about
+        if (this.info.pageBgMusic.about) {
+            this.music = this.info.pageBgMusic.about
             this.refresh = false
             this.$nextTick(() => this.refresh = true )
         }

@@ -137,7 +137,7 @@
 
         <div class="admin-popup" :class="adminPopupStatus">
             <span class="iconfont icon-close2" @click="verifyPopup('admin', false)"></span>
-            <img :src="data.base.admin_avatar">
+            <img :src="data.base.adminAvatar">
             <div>
                 哇哦～恭喜你，发现了一个小彩蛋～～
             </div>

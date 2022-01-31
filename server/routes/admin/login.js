@@ -87,8 +87,8 @@ module.exports = (app, plugin, model) => {
 		}
 		const info = {
 			base: {
-				email_pass: req.body.pass,
-				email_type: req.body.email_type,
+				emailPass: req.body.pass,
+				emailType: req.body.emailType,
 			},
 			administrator: { email: req.body.email },
 		}

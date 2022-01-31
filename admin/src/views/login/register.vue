@@ -59,7 +59,7 @@ export default {
 				passwords: 'Confirm Password',
 				email: 'Email',
 				pass: 'Email PASS',
-				email_type: 'Email Type',
+				emailType: 'Email Type',
 			},
 			loading: false
 		}

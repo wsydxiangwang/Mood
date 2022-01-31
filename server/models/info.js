@@ -1,59 +1,96 @@
 // 信息
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
-    base: {
-        admin_avatar: String,   // 管理员头像
-        admin_name: String,     // 管理员昵称
-        name: String,           // 网站名字
-        address: String,        // 网站域名
-        describe: String,       // 网站描述
-        seo: String,            // SEO关键词
-        upload_type: String,    // 文件上传方式
-        email_type: String,     // 邮箱类型
-        email_pass: String      // 邮箱PASS码
-    },
+	base: {
+		adminAvatar: {
+			type: String,
+			default: '/assets/admin-avatar.jpg'
+		},
+		adminName: {
+			type: String,
+			default: '一个名字'
+		},
+		websiteName: {
+			type: String,
+			default: '一个网站'
+		},
+		websiteAddress: {
+			type: String,
+			default: 'https://xxx.com'
+		},
+		websiteDescribe: String,
+		seo: String,
+		fileUploadType: {
+			type: String,
+			default: '服务器'
+		},
+		emailType: String,
+		emailPass: String
+	},
 
-    administrator: {
-        email: String,          // 邮箱
-        name: String,           // 名字
-        mark: String,           // 标识
-        code: String,           // 验证码
-        comment: Boolean,       // 评论通知
-        message: Boolean,       // 留言页面
-        subscribe: Boolean      // 订阅通知
-    },
+	website: {
+		email: String,
+		name: {
+			type: String,
+			default: '站长的名字'
+		},
+		mark: {
+			type: String,
+			default: '我是站长'
+		},
+		verificationCode: {
+			type: String,
+			default: 'admin123123'
+		},
+		comment: {
+			type: Boolean,
+			default: false
+		},
+		message: {
+			type: Boolean,
+			default: false
+		},
+		subscribe: {
+			type: Boolean,
+			default: false
+		}
+	},
 
-    page_music: {                   // 背景音乐
-        mood: String,
-        letter: String,
-        subscribe: String,
-        message: String,
-        about: String
-    },
+	bgMusic: {
+		mood: String,
+		letter: String,
+		subscribe: String,
+		message: String,
+		about: String
+	},
 
-    other: {
-        icp_txt: String,            // 备案号
-        icp_link: String,           // 备案链接
-        password: String,           // 原密码
-        password_new: String        // 新密码
-    },
-    
-    cover: {                        // 首屏效果
-        date: String,
-        title: String,
-        link: String,
-        color: String,
-        image: String,
-        describe: String
-    },
+	other: {
+		icpNumber: String,
+		icpLink: String
+	},
 
-    aliyun_oss: {                   // 阿里云oss
-        bucket: String,
-        region: String,
-        accessKeySecret: String,
-        accessKeyId: String,
-        domain: String
-    }
+	cover: {
+		date: String,
+		title: String,
+		link: String,
+		color: {
+			type: String,
+			default: 'rgb(147, 48, 14, 0.6)'
+		},
+		image: {
+			type: String,
+			default: '/assets/cover.jpg'
+		},
+		describe: String
+	},
+
+	ossAliyun: {
+		bucket: String,
+		region: String,
+		accessKeySecret: String,
+		accessKeyId: String,
+		domain: String
+	}
 })
 
 module.exports = mongoose.model('Info', schema)

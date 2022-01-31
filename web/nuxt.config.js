@@ -18,7 +18,7 @@ module.exports = {
     ]
   },
   server: {
-    port: 8000
+    port: 8800
   },
   env: {
     baseUrl: process.env.BASE_URL || 'http://server:3000/web/api',

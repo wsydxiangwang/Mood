@@ -69,8 +69,8 @@ export default {
 		}
     },
     mounted(){
-        if (this.info.page_music.mood) {
-            this.music = this.info.page_music.mood
+        if (this.info.pageBgMusic.mood) {
+            this.music = this.info.pageBgMusic.mood
             this.refresh = false
             this.$nextTick(() => this.refresh = true)
         }

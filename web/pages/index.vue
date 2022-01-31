@@ -1,25 +1,39 @@
 <template>
 	<div class="container index" :class="{ navActive: isNav }" v-if="info">
 		<div class="cover">
-			<div id="scene" :style="{ height:boxH }">
+			<div id="scene" :style="{ height: boxH }">
 				<div class="layer" data-depth="0.4" :style="layerStyle">
-					<img id="image" :style="imgStyle" :src="image" width="1920" height="1080">
+					<img
+						id="image"
+						:style="imgStyle"
+						:src="image"
+						width="1920"
+						height="1080"
+					/>
 				</div>
 			</div>
 			<div class="head">
 				<div class="logo-img">
-					<img src="/image/logo/logo1.png">
-					<img src="/image/logo/logo2.png">
+					<img src="/image/logo/logo1.png" />
+					<img src="/image/logo/logo2.png" />
 				</div>
 				<div class="menu" @click="menu">
-					<span class="iconfont" :class="isNav ? 'icon-close' : 'icon-menu'"></span>
+					<span
+						class="iconfont"
+						:class="isNav ? 'icon-close' : 'icon-menu'"
+					></span>
 				</div>
 			</div>
-			<div class="misk" :style="{ backgroundColor: info.cover.color }"></div>
+			<div
+				class="misk"
+				:style="{ backgroundColor: info.cover.color }"
+			></div>
 			<div class="post">
 				<div class="time">{{ info.cover.date }}</div>
 				<div class="title">
-					<nuxt-link :to="info.cover.link">{{ info.cover.title }}</nuxt-link>
+					<nuxt-link :to="info.cover.link">{{
+						info.cover.title
+					}}</nuxt-link>
 				</div>
 				<div class="describe">{{ info.cover.describe }}</div>
 			</div>
@@ -28,16 +42,17 @@
 
 		<template v-if="Object.keys(list.data).length > 0">
 			<div class="content">
-				<div class="post" 
-					v-for="(item, index) in list.data" 
+				<div
+					class="post"
+					v-for="(item, index) in list.data"
 					:key="index"
 				>
 					<div class="img-box" @click="toArticle(item.id)">
-						<img 
-							v-lazy="item.image.url" 
-							src="/image/other/default.jpg" 
+						<img
+							v-lazy="item.image.url"
+							src="/image/other/default.jpg"
 							:alt="item.image.name"
-						>
+						/>
 					</div>
 					<div class="info">
 						<div class="time">{{ getDate(item.time) }}</div>
@@ -47,8 +62,16 @@
 						<div class="describe">{{ item.describe }}</div>
 						<div class="stuff">
 							<div v-for="(v, i) in infoIcon" :key="i">
-								<i class="iconfont" :class="v.icon"></i><span>{{ item[v.name] }}</span>
-								<span class="hint" :style="{ backgroundColor: v.color }">{{ v.text }}<i :style="{ borderTopColor: v.color }"></i></span>
+								<i class="iconfont" :class="v.icon"></i
+								><span>{{ item[v.name] }}</span>
+								<span
+									class="hint"
+									:style="{ backgroundColor: v.color }"
+									>{{ v.text
+									}}<i
+										:style="{ borderTopColor: v.color }"
+									></i
+								></span>
 							</div>
 						</div>
 					</div>
@@ -59,20 +82,18 @@
 			</div>
 		</template>
 		<template v-else>
-			<div  class="content-null">
-				主人太懒了，还没发表任何文章！！
-			</div>
+			<div class="content-null">主人太懒了，还没发表任何文章！！</div>
 		</template>
-		<div class="foot" v-if="info.other && info.other.icp_txt">
-			<a :href="info.other.icp_link" target="_blank">{{ info.other.icp_txt }}</a>
+		<div class="foot" v-if="info.other && info.other.icpNumber">
+			<a :href="info.other.icpLink" target="_blank">{{
+				info.other.icpNumber
+			}}</a>
 		</div>
 		<BackTop />
 		<Loading v-if="loading" />
 	</div>
 
-	<div v-else class="empty-data">
-		请到管理员后台填写完整信息！
-	</div>
+	<div v-else class="empty-data">请到管理员后台填写完整信息！</div>
 </template>
 <script>
 import Parallax from 'parallax-js'
@@ -80,7 +101,7 @@ import Menu from '@/components/Menu'
 export default {
 	name: 'index',
 	components: {
-		Menu
+		Menu,
 	},
 	data() {
 		return {
@@ -92,70 +113,82 @@ export default {
 			loading: true,
 
 			image: null,
-            windowChange: () => {},
+			windowChange: () => {},
 
-			infoIcon: [{
-				icon: 'icon-text',
-				name: 'words',
-				text: '善良',
-				color: '#EF6D57'
-			}, {
-				icon: 'icon-eye',
-				name: 'read',
-				text: '勇敢',
-				color: '#50bcb6'
-			}, {
-				icon: 'icon-like',
-				name: 'like',
-				text: '热爱',
-				color: '#ffa800'
-			}]
+			infoIcon: [
+				{
+					icon: 'icon-text',
+					name: 'words',
+					text: '善良',
+					color: '#EF6D57',
+				},
+				{
+					icon: 'icon-eye',
+					name: 'read',
+					text: '勇敢',
+					color: '#50bcb6',
+				},
+				{
+					icon: 'icon-like',
+					name: 'like',
+					text: '热爱',
+					color: '#ffa800',
+				},
+			],
 		}
 	},
-    head () {
-        return {
+	head() {
+		return {
 			title: this.info?.base.name,
 			meta: [
-                { hid: 'keywords', name: 'keywords', content: this.info?.base.seo },
-                { hid: 'description', name: 'description', content: this.info?.base.describe },
-            ]
+				{
+					hid: 'keywords',
+					name: 'keywords',
+					content: this.info?.base.seo,
+				},
+				{
+					hid: 'description',
+					name: 'description',
+					content: this.info?.base.describe,
+				},
+			],
 		}
 	},
 	computed: {
 		info() {
 			return this.$store.state.data
-		}
+		},
 	},
-	mounted(){
+	mounted() {
 		if (!this.info) {
 			return
 		}
 		this.update()
 		this.loadImage()
-		
+
 		// Homepage info
 		this.$store.commit('isIndex')
 		this.$loadStatus(this.list)
 	},
-	beforeRouteEnter(to, from, next){
+	beforeRouteEnter(to, from, next) {
 		next(vm => {
 			vm.windowChange = vm.$debounce(vm.update, 100)
 			window.onresize = () => vm.windowChange()
 		})
 	},
-	beforeRouteLeave(to, from, next){
+	beforeRouteLeave(to, from, next) {
 		window.onresize = null
 		setTimeout(() => {
 			this.isNav = false
 			document.body.style.overflowY = ''
 		}, 800)
-        next()
-    },
+		next()
+	},
 	methods: {
 		// Cover image init
-		update(){
-			this.boxH = document.documentElement.clientHeight + 'px';
-			this.boxW = document.documentElement.clientWidth + 'px';
+		update() {
+			this.boxH = document.documentElement.clientHeight + 'px'
+			this.boxW = document.documentElement.clientWidth + 'px'
 			this.coverLayer()
 		},
 		// Load Image
@@ -183,52 +216,54 @@ export default {
 			})
 		},
 		// Cover image box calculation
-		coverLayer(){
-			let _w = parseInt(this.boxW), 
-                _h = parseInt(this.boxH), 
-				x, y, i,
-				e = (_w >= 1000 || _h >= 1000) ? 1000 : 500;
+		coverLayer() {
+			let _w = parseInt(this.boxW),
+				_h = parseInt(this.boxH),
+				x,
+				y,
+				i,
+				e = _w >= 1000 || _h >= 1000 ? 1000 : 500
 
-            if (_w >= _h) {
-                i = _w / e * 50;
-                y = i;
-                x = i * _w / _h;
-            } else {
-                i = _h / e * 50;
-                x = i;
-                y = i * _h / _w;
-            }
-			const style = {
-                width: _w + x + 'px',
-                height: _h + y + 'px',
-                marginLeft: -0.5 * x + 'px',
-                marginTop: -0.5 * y + 'px'
+			if (_w >= _h) {
+				i = (_w / e) * 50
+				y = i
+				x = (i * _w) / _h
+			} else {
+				i = (_h / e) * 50
+				x = i
+				y = (i * _h) / _w
 			}
-			this.layerStyle = Object.assign({}, this.layerStyle, style);
-            this.coverImg()
+			const style = {
+				width: _w + x + 'px',
+				height: _h + y + 'px',
+				marginLeft: -0.5 * x + 'px',
+				marginTop: -0.5 * y + 'px',
+			}
+			this.layerStyle = Object.assign({}, this.layerStyle, style)
+			this.coverImg()
 		},
 		// Cover image size calculation
-		coverImg(){
+		coverImg() {
 			const width = parseInt(this.layerStyle.width),
-                  height = parseInt(this.layerStyle.height),
-				  ratio = 1080 / 1920,
-				  compute = height / width > ratio;
+				height = parseInt(this.layerStyle.height),
+				ratio = 1080 / 1920,
+				compute = height / width > ratio
 
 			const style = {
-				width: compute ? (height / ratio + 'px') : `${width}px`,
-				height: compute ? `${height}px` : (width * ratio + 'px')
+				width: compute ? height / ratio + 'px' : `${width}px`,
+				height: compute ? `${height}px` : width * ratio + 'px',
 			}
-			style['left'] = (width - parseInt(style.width)) / 2 +'px'
-			style['top'] = (height - parseInt(style.height)) / 2 +'px'
+			style['left'] = (width - parseInt(style.width)) / 2 + 'px'
+			style['top'] = (height - parseInt(style.height)) / 2 + 'px'
 
 			this.imgStyle = Object.assign({}, this.imgStyle, style)
 		},
-		menu(){
+		menu() {
 			this.isNav = !this.isNav
 			document.body.style.overflowY = this.isNav ? 'hidden' : ''
 		},
-		loadMoreData(){
-			this.$loadMore('article', (res) => {
+		loadMoreData() {
+			this.$loadMore('article', res => {
 				if (res.status === 1) {
 					this.list.data = this.list.data.concat(res.body.data)
 				} else {
@@ -236,53 +271,54 @@ export default {
 				}
 			})
 		},
-		toArticle(id){
+		toArticle(id) {
 			this.$router.push(`/${id}`)
 		},
 		getDate(time) {
 			return time.month.cn + '月 ' + time.day.on + ', ' + time.year
-		}
+		},
 	},
-	async asyncData(context){
-		if (context.store.state.index) { // 防止重复加载 
+	async asyncData(context) {
+		if (context.store.state.index) {
+			// 防止重复加载
 			return
 		}
 		const { data } = await context.$axios.get('article')
 		return { list: data.status == 1 ? data.body : {} }
-	}
+	},
 }
 </script>
 <style lang="scss" scoped>
-.empty-data{
+.empty-data {
 	position: absolute;
-    top: 40%;
-    left: 50%;
-    font-size: 20px;
-    letter-spacing: 4px;
+	top: 40%;
+	left: 50%;
+	font-size: 20px;
+	letter-spacing: 4px;
 	transform: translate(-50%);
 	font-weight: 600;
-    color: red;
+	color: red;
 }
-.index{
+.index {
 	position: absolute;
 	width: 100%;
-	#scene{
+	#scene {
 		height: 100%;
 		position: relative;
 		overflow: hidden;
-		#image{
+		#image {
 			position: absolute;
 			max-width: none;
 			display: block;
 		}
 	}
-	.cover{
+	.cover {
 		width: 100%;
 		height: 100%;
 		position: relative;
 		z-index: 9999;
 		overflow: hidden;
-		.head{
+		.head {
 			position: absolute;
 			top: 70px;
 			width: 100%;
@@ -292,27 +328,27 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			.logo{
-				.iconfont{
+			.logo {
+				.iconfont {
 					font-size: 36px;
 					cursor: pointer;
 				}
 			}
-			.logo-img{
+			.logo-img {
 				width: 100px;
 				height: 44px;
 				position: relative;
-				img{
+				img {
 					opacity: 1;
 					width: 100%;
 					position: absolute;
 					cursor: pointer;
-					&:last-child{
+					&:last-child {
 						opacity: 0;
 					}
 				}
 			}
-			.menu{
+			.menu {
 				width: 30px;
 				height: 30px;
 				line-height: 32px;
@@ -321,19 +357,19 @@ export default {
 				color: var(--color-red);
 				text-align: center;
 				background: rgba(255, 255, 255, 0.9);
-				span{
+				span {
 					font-size: 20px;
 				}
 			}
 		}
-		.cover-bg{
+		.cover-bg {
 			width: 100%;
 			height: 100%;
-			img{
+			img {
 				position: absolute;
 			}
 		}
-		.misk{
+		.misk {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -342,40 +378,40 @@ export default {
 			background-color: rgba(176, 14, 37, 0.7);
 			clip-path: polygon(0 0, 25% 0, 60% 100%, 0% 100%);
 		}
-		.post{
+		.post {
 			position: absolute;
 			top: 54%;
 			left: 10%;
 			color: #fff;
 			width: 30%;
 			transform: translateY(-50%);
-			.time{
+			.time {
 				font-size: 14px;
 			}
-			.title{
+			.title {
 				margin: 15px 0 30px;
-				a{
+				a {
 					font-size: 28px;
 					color: #fff;
 					text-decoration: none;
 					cursor: pointer;
-					&:hover{
+					&:hover {
 						text-decoration: underline;
 					}
 				}
 			}
-			.describe{
+			.describe {
 				line-height: 22px;
 			}
 		}
 	}
-	.content{
+	.content {
 		width: 1200px;
 		margin: auto;
 		position: relative;
 		padding-bottom: 80px;
 		text-align: center;
-		&::after{
+		&::after {
 			content: '';
 			width: 1px;
 			height: calc(100% + 100px);
@@ -385,26 +421,26 @@ export default {
 			background: var(--color-border-1);
 			z-index: 0;
 		}
-		.more{
+		.more {
 			margin-top: 90px;
 			display: inline-block;
 		}
-		::v-deep .bottom-loading{
+		::v-deep .bottom-loading {
 			position: relative;
 			z-index: 999;
-			.btn{
+			.btn {
 				border-radius: 0;
 				display: inline-block;
 				border: 1px solid var(--color-border-1);
 				border-radius: 4px;
 			}
 		}
-		
-		.post{
+
+		.post {
 			position: relative;
 			margin-top: 100px;
 			z-index: 1;
-			.img-box{
+			.img-box {
 				width: 680px;
 				height: 440px;
 				font-size: 0;
@@ -415,15 +451,15 @@ export default {
 				overflow: hidden;
 				border-radius: 6px;
 				border: 1px solid var(--color-border-2);
-				img{
+				img {
 					width: 100%;
 					height: 100%;
 				}
-				&:hover img{
+				&:hover img {
 					opacity: 0.95;
 				}
 			}
-			.info{
+			.info {
 				width: 500px;
 				height: 400px;
 				position: absolute;
@@ -431,11 +467,11 @@ export default {
 				padding: 80px 100px 0 80px;
 				border: 1px solid var(--color-border-1);
 				border-radius: 6px;
-				.time{
+				.time {
 					color: #999;
 					font-size: 12px;
 				}
-				.title{
+				.title {
 					margin-top: 8px;
 					word-break: break-all;
 					display: -webkit-box;
@@ -443,27 +479,45 @@ export default {
 					-webkit-box-orient: vertical;
 					overflow: hidden;
 					transition: none;
-					a{
+					a {
 						font-size: 24px;
 						line-height: 30px;
 						cursor: pointer;
 						color: var(--color-text-1);
-						transition: backgroundPosition 0s, color .3s;
-						&:hover{
-							background: radial-gradient(circle at 10px -7px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x,
-							radial-gradient(circle at 10px 27px, transparent 8px, currentColor 8px, currentColor 9px, transparent 9px) repeat-x;
+						transition: backgroundPosition 0s, color 0.3s;
+						&:hover {
+							background: radial-gradient(
+										circle at 10px -7px,
+										transparent 8px,
+										currentColor 8px,
+										currentColor 9px,
+										transparent 9px
+									)
+									repeat-x,
+								radial-gradient(
+										circle at 10px 27px,
+										transparent 8px,
+										currentColor 8px,
+										currentColor 9px,
+										transparent 9px
+									)
+									repeat-x;
 							background-size: 20px 20px;
-							background-position: -10px calc(100% + 16px), 0 calc(100% - 4px);
+							background-position: -10px calc(100% + 16px),
+								0 calc(100% - 4px);
 							animation: waveFlow 1s infinite linear;
 						}
 						@keyframes waveFlow {
-							from { background-position-x: -10px, 0; }
-							to { background-position-x: -30px, -20px; }
+							from {
+								background-position-x: -10px, 0;
+							}
+							to {
+								background-position-x: -30px, -20px;
+							}
 						}
-
 					}
 				}
-				.describe{
+				.describe {
 					color: var(--color-text-2);
 					font-size: 14px;
 					line-height: 22px;
@@ -472,46 +526,46 @@ export default {
 					display: -webkit-box;
 					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
-					overflow: hidden; 
+					overflow: hidden;
 				}
-				.stuff{
+				.stuff {
 					font-size: 12px;
 					color: #999;
 					position: absolute;
 					bottom: 80px;
 					left: 80px;
 					display: flex;
-					div{
+					div {
 						padding: 6px;
 						font-size: 12px;
 						display: flex;
 						align-items: center;
 						position: relative;
 						transition: none;
-						&:nth-of-type(1):hover{
-							color: #EF6D57;
+						&:nth-of-type(1):hover {
+							color: #ef6d57;
 						}
-						&:nth-of-type(2):hover{
+						&:nth-of-type(2):hover {
 							color: #50bcb6;
 						}
-						&:nth-of-type(3):hover{
+						&:nth-of-type(3):hover {
 							color: #ffa800;
 						}
-						.iconfont{
+						.iconfont {
 							margin-right: 4px;
 							margin-top: -4px;
 							display: inline-block;
 							transition: none;
-							&.icon-like{
+							&.icon-like {
 								font-size: 14px;
 								margin-top: -1px;
 							}
-							&.icon-text{
+							&.icon-text {
 								font-size: 17px;
 								margin-top: -2px;
 							}
 						}
-						.hint{
+						.hint {
 							position: absolute;
 							bottom: 100%;
 							left: 50%;
@@ -523,7 +577,7 @@ export default {
 							white-space: nowrap;
 							opacity: 0;
 							visibility: hidden;
-							i{
+							i {
 								border: 5px solid transparent;
 								position: absolute;
 								left: 50%;
@@ -531,22 +585,22 @@ export default {
 								transform: translateX(-50%);
 							}
 						}
-						&:hover .hint{
+						&:hover .hint {
 							opacity: 1;
 							visibility: visible;
 						}
 					}
 				}
 			}
-			&:nth-child(odd){
+			&:nth-child(odd) {
 				text-align: left;
-				.info{
+				.info {
 					left: 660px;
 				}
 			}
-			&:nth-child(even){
+			&:nth-child(even) {
 				text-align: right;
-				.info{
+				.info {
 					text-align: left;
 					right: 660px;
 				}
@@ -561,9 +615,9 @@ export default {
 		font-weight: 600;
 		letter-spacing: 4px;
 	}
-	.foot{
+	.foot {
 		text-align: center;
-		a{
+		a {
 			margin: 0 auto;
 			font-size: 13px;
 			color: var(--color-text-2);
@@ -572,71 +626,71 @@ export default {
 			padding: 1px 0 2px;
 		}
 	}
-	
-	@media screen and (max-width: 1200px){
-		.content{
+
+	@media screen and (max-width: 1200px) {
+		.content {
 			width: 900px;
-			.post{
-				.img-box{
+			.post {
+				.img-box {
 					width: 480px;
 					height: 310px;
 				}
-				.info{
+				.info {
 					top: 10px;
 					width: 420px;
 					height: 290px;
 					padding: 50px 60px 0 60px;
-					.stuff{
+					.stuff {
 						bottom: 50px;
 						left: 60px;
 					}
-					.title{
+					.title {
 						margin-top: 10px;
 						line-height: 25px;
 					}
-					.describe{
+					.describe {
 						-webkit-line-clamp: 2;
 					}
 				}
-				&:nth-child(odd) .info{
+				&:nth-child(odd) .info {
 					left: 450px;
 				}
-				&:nth-child(even) .info{
+				&:nth-child(even) .info {
 					right: 450px;
 				}
 			}
 		}
 	}
-	@media screen and (max-width: 900px){
-		.cover{
-			.misk{
+	@media screen and (max-width: 900px) {
+		.cover {
+			.misk {
 				clip-path: polygon(0 0, 220px 0, 700px 100%, 0% 100%);
 			}
-			.post{
+			.post {
 				width: 40%;
-				.title a{
+				.title a {
 					font-size: 22px;
 				}
 			}
 		}
-		.content{
+		.content {
 			width: 100%;
-			.post{
+			.post {
 				margin-top: 60px;
 				background: var(--color-bg-primary);
 				border-bottom: 1px solid var(--color-border-1);
-				.img-box{
+				.img-box {
 					width: 100%;
 					height: auto;
 					display: block;
 					text-align: center;
 					border: none;
-					img{
+					img {
 						width: 680px;
 						max-width: 100%;
 					}
 				}
-				.info{
+				.info {
 					position: static;
 					width: 96%;
 					padding: 40px 20px 40px;
@@ -644,7 +698,7 @@ export default {
 					border: none;
 					background: var(--color-bg-primary);
 					height: auto;
-					.stuff{
+					.stuff {
 						position: static;
 						margin: 20px 0 0 -6px;
 					}
@@ -652,23 +706,23 @@ export default {
 			}
 		}
 	}
-	@media screen and (max-width: 780px){
-		.cover{
-			.head{
+	@media screen and (max-width: 780px) {
+		.cover {
+			.head {
 				top: 40px;
 			}
-			.misk{
+			.misk {
 				clip-path: none;
 			}
-			.post{
+			.post {
 				bottom: 8%;
 				left: 5%;
 				top: auto;
 				width: 70%;
 				transform: none;
 			}
-			.cover-bg{
-				img{
+			.cover-bg {
+				img {
 					position: absolute;
 					left: 50%;
 					top: 0;
@@ -678,10 +732,10 @@ export default {
 				}
 			}
 		}
-		.content{
+		.content {
 			width: 100%;
-			.post{
-				.img-box{
+			.post {
+				.img-box {
 					width: 100%;
 					height: auto;
 					border-radius: 0;
@@ -689,25 +743,25 @@ export default {
 			}
 		}
 	}
-	@media screen and (max-width: 480px){
-		.cover{
-			.head{
+	@media screen and (max-width: 480px) {
+		.cover {
+			.head {
 				padding: 0 24px 0 20px;
-				.logo-img{
+				.logo-img {
 					width: 80px;
-					img{
-						top: 6px
+					img {
+						top: 6px;
 					}
 				}
 			}
 			.post {
-				.time{
+				.time {
 					display: none;
 				}
-				.title{
+				.title {
 					margin-bottom: 10px;
 				}
-				.describe{
+				.describe {
 					font-size: 13px;
 					line-height: 20px;
 				}
@@ -715,17 +769,17 @@ export default {
 		}
 	}
 }
-.container.navActive{
-	.logo{
+.container.navActive {
+	.logo {
 		color: #333;
 	}
-	.cover .head .logo-img img{
+	.cover .head .logo-img img {
 		opacity: 0;
-		&:last-child{
+		&:last-child {
 			opacity: 1;
 		}
 	}
-	.nav{
+	.nav {
 		top: 0;
 	}
 }

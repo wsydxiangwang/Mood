@@ -17,12 +17,12 @@ function Email({ type, adminInfo, info, callback }) {
 			'163': 'smtp.163.com',
 		}
 		const transporter = nodemailer.createTransport({
-			host: mode[adminInfo.base.email_type],
+			host: mode[adminInfo.base.emailType],
 			port: 465,
 			secure: true,
 			auth: {
 				user: adminInfo.administrator.email,
-				pass: adminInfo.base.email_pass
+				pass: adminInfo.base.emailPass
 			}
 		})
 		// 读取发送邮件信息
