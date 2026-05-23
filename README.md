@@ -13,7 +13,6 @@
     <img src="https://image.raindays.cn/image/github/mood.png" width="350px" style="margin:20px 0 10px">
 </div>
 
-# 已转行，欢迎交朋友 add WeChat -> wsydxiangwang
 # 暂停更新，现有已知缺陷以及数据问题，请勿使用
 
 ## 🎃 陌生人，你好呀~~
